@@ -1,0 +1,489 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.body {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+}
+
+// main section of the screen (introduction & login form)
+.login-wrapper {
+  border-radius: 10px;
+  width: 55%;
+  height: 50%;
+  box-shadow: 0 0 80px 5px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+
+  // introduction (left side or in mobile screens the top)
+  .introduction {
+    position: relative;
+    padding: 1.5rem;
+    width: 50%;
+    height: 100%;
+    background: black;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    // SQL-Editor logo and text on the top-left side
+    .brand-identifier {
+      width: max-content;
+      z-index: 10;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      .brand-logo {
+        width: 24px;
+        height: 24px;
+        margin-right: 10px;
+      }
+
+      .navbar-brand {
+        color: white;
+        font-family: "Poppins", sans-serif;
+        font-weight: 600;
+        font-size: 18px;
+      }
+    }
+
+    // Small background image on the left side, maybe expandable to a introduction images slider
+    .brand-background {
+      top: 0;
+      left: 0;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      -webkit-transform: rotate(0deg);
+      -moz-transform: rotate(0deg);
+      -ms-transform: rotate(0deg);
+      -o-transform: rotate(0deg);
+      transform: rotate(0deg);
+
+      img {
+        width: 100%;
+        position: relative;
+        object-fit: fill;
+      }
+
+      .image-reference {
+        font-family: "Poppins", sans-serif;
+        z-index: 10;
+        position: fixed;
+        bottom: 1.5rem;
+        left: 1.5rem;
+        transition: all ease 100ms;
+
+
+        * {
+          margin: 0;
+        }
+
+        a {
+          text-transform: uppercase;
+          letter-spacing: 0.16em;
+          font-size: 12px;
+        }
+
+        opacity: 0;
+      }
+    }
+  }
+
+  .introduction:hover .image-reference {
+    opacity: 1;
+  }
+
+  // login form container & minor visual helpers like a help link & a quick description of what to do
+  .form-container {
+    padding: 1.5rem;
+    width: 50%;
+    height: 100%;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    .form-descriptor {
+      margin: 0 !important;
+    }
+
+    .row {
+      width: 100%;
+      margin: 0 0 0 0 !important;
+
+      .floating-label, .login-btn-group {
+        padding: 4px 4px 4px 4px;
+      }
+
+      .floating-label {
+
+        input {
+          padding: 26px 12px 10px 12px;
+          height: 58px !important;
+        }
+
+        label {
+          line-height: 24px;
+          padding: 0px 12px;
+          font-size: 16px !important;
+          font-weight: 400 !important;
+        }
+      }
+
+      h6 {
+        padding: 0 4px 0 4px;
+      }
+
+      h6 {
+        margin-top: 8px !important;
+      }
+    }
+
+    .form-hints {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+
+      a {
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 16.8px;
+      }
+    }
+  }
+
+  // todo position this part of the code in more meaningful way
+  h4,
+  p {
+    font-family: "Poppins", sans-serif;
+    margin-left: 0;
+  }
+
+  h6 {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 16.8px;
+    margin: 0;
+  }
+}
+
+.floating-label:focus-within > label,
+.floating-label > .floating-label-active {
+  opacity: .65;
+  transform: matrix(.95, 0, 0, .95, 3.5, -6.8)
+  scale(.85) translateY(-.2rem);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * ------------------------------------------
+ *  Responsive Grid Media Queries - 1280, 1024, 768, 480
+ *   1280-1024   - desktop (default grid)
+ *   1024-768    - tablet landscape
+ *   768-480     - tablet
+ *   480-less    - phone landscape & smaller
+ * --------------------------------------------
+ */
+@media all and (min-width: 1024px) and (max-width: 1280px) {
+}
+
+@media all and (min-width: 768px) and (max-width: 1024px) {
+}
+
+@media all and (min-width: 480px) and (max-width: 768px) {
+}
+
+@media all and (max-width: 480px) {
+}
+
+
+/* Portrait */
+@media screen and (orientation:portrait) {
+  /* Portrait styles here */
+}
+
+/* Landscape */
+@media screen and (orientation:landscape) {
+  /* Landscape styles here */
+}
+
+
+/* CSS for iPhone, iPad, and Retina Displays */
+
+/* Non-Retina */
+@media screen and (-webkit-max-device-pixel-ratio: 1) {
+}
+
+/* Retina */
+@media only screen and (-webkit-min-device-pixel-ratio: 1.5),
+only screen and (-o-min-device-pixel-ratio: 3/2),
+only screen and (min--moz-device-pixel-ratio: 1.5),
+only screen and (min-device-pixel-ratio: 1.5) {
+}
+
+/* iPhone Portrait */
+@media screen and (max-device-width: 480px) and (orientation:portrait) {
+}
+
+/* iPhone Landscape */
+@media screen and (max-device-width: 480px) and (orientation:landscape) {
+}
+
+/* iPad Portrait */
+@media screen and (min-device-width: 481px) and (orientation:portrait) {
+}
+
+/* iPad Landscape */
+@media screen and (min-device-width: 481px) and (orientation:landscape) {
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+
+// Width based breakpoints
+$breakpoint-w-l: 1000px;
+$breakpoint-w-ml: 800px;
+$breakpoint-w-m: 700px;
+$breakpoint-w-sm: 500px;
+
+// Height based breakpoints
+$breakpoint-h-l: 1000px;
+$breakpoint-h-ml: 800px;
+$breakpoint-h-m: 700px;
+$breakpoint-h-sm: 500px;
+
+// Large tablet view (no center card)
+@media screen and (max-width: $breakpoint-w-l) and (min-height: $breakpoint-h-m) {
+  .image-reference {
+    display: none;
+  }
+
+  .login-wrapper {
+    overflow: hidden;
+    border-radius: 0;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+
+    .introduction {
+      width: 100%;
+      height: 10%;
+      padding-left: 1.5rem;
+      padding-top: 0;
+      padding-bottom: 0;
+
+      .brand-identifier {
+        margin: auto 0;
+      }
+    }
+
+    .form-container {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .form-descriptor,
+      .row,
+      .form-hints {
+        width: 50vw;
+        margin-bottom: 2rem !important;
+        margin-top: 2rem !important;
+      }
+    }
+  }
+}
+
+// === Tablet views
+
+
+// Large tablet view in landscape (no center card)
+@media screen and (max-height: $breakpoint-h-l) and (min-width: $breakpoint-w-l) and (orientation: landscape) {
+
+  .login-wrapper {
+    height: 100%;
+    width: 100%;
+    border-radius: 0;
+
+    .introduction {
+      width: 30vw;
+    }
+
+    .form-container {
+      width: 70vw;
+
+      .row {
+        margin: 0 auto !important;
+        width: 30vw;
+      }
+    }
+  }
+}
+
+// === Mobile views
+
+// Strictly mobile view in portrait (no center card)
+@media screen and (min-height: $breakpoint-h-sm) and (max-width: $breakpoint-w-sm)  {
+  .login-wrapper {
+    overflow: hidden;
+    border-radius: 0;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+
+    .introduction {
+      background-color: chartreuse;
+      width: 100%;
+      height: 10%;
+    }
+
+    .form-container {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .form-descriptor,
+      .row,
+      .form-hints {
+        width: 100%;
+        margin-bottom: 0 !important;
+        margin-top: 0 !important;
+      }
+    }
+  }
+}
+
+
+
+// Strictly mobile view in landscape
+@media screen and (max-height: $breakpoint-h-sm) and (min-width: $breakpoint-w-l) {
+
+  .login-wrapper {
+    height: 100%;
+    width: 100%;
+    border-radius: 0;
+
+    .introduction {
+      width: 30vw;
+    }
+
+    .form-container {
+      .form-descriptor,
+      .form-hints {
+        display: none;
+      }
+
+      .row {
+        margin: auto auto !important;
+      }
+    }
+  }
+}
+
+
+// Insanely small.. actually unusable.. but okay, never mind I'll try designing it..
+@media screen and (max-width: $breakpoint-w-sm) and (max-height: $breakpoint-h-sm) {
+  .body {
+    background-color: aquamarine;
+    .login-wrapper {
+      display: none;
+    }
+  }
+}
+*/
+
+
+
+
+
+
+

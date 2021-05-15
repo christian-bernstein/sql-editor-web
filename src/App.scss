@@ -1,3 +1,16 @@
+@import "~bootstrap/scss/bootstrap";
+
+$theme-colors: (
+        "primary": #0d6efd,
+        "secondary": $secondary,
+        "success": $success,
+        "info": $info,
+        "warning": $warning,
+        "danger": $danger,
+        "light": $light,
+        "dark": $dark
+);
+
 .App {
   text-align: center;
 }
