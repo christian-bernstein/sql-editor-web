@@ -64,10 +64,12 @@ export const Login: FC<LoginProps> = (props): ReactElement => {
                         {/* API Endpoint specification */}
                         <h6 className="text-muted my-2 col-md-12">SQL-Editor Server</h6>
 
-                        <FloatingLabel className={"float-input col-md-9"} labelId={"label1"} label="API endpoint" type={"url"} initialValue={"http://localhost"}
+                        <FloatingLabel className={"float-input col-md-9"} labelId={"label1"} label="API endpoint"
+                                       type={"url"} initialValue={"http://localhost"}
                                        onChange={event => setLoginApiEndpoint(event.currentTarget.value)}/>
 
-                        <FloatingLabel className={"float-input col-md-3"} labelId={"label2"} label="Port" type={"number"} initialValue={"8000"}
+                        <FloatingLabel className={"float-input col-md-3"} labelId={"label2"} label="Port"
+                                       type={"number"} initialValue={"8000"}
                                        onChange={event => setLoginApiPort(+event.currentTarget.value)}/>
 
                         {/*
@@ -89,10 +91,12 @@ export const Login: FC<LoginProps> = (props): ReactElement => {
                         {/* User login credentials */}
                         <h6 className="text-muted my-2 col-md-12">Login Credentials</h6>
 
-                        <FloatingLabel className={"float-input col-md-6"} labelId={"label3"} label="Username" type={"text"} initialValue={""}
+                        <FloatingLabel className={"float-input col-md-6"} labelId={"label3"} label="Username"
+                                       type={"text"} initialValue={""}
                                        onChange={event => setUsername(event.currentTarget.value)}/>
 
-                        <FloatingLabel className={"float-input col-md-6"} labelId={"label4"} label="Password" type={"password"} initialValue={""}
+                        <FloatingLabel className={"float-input col-md-6"} labelId={"label4"} label="Password"
+                                       type={"password"} initialValue={""}
                                        onChange={event => setPassword(event.currentTarget.value)}/>
 
                         {/*

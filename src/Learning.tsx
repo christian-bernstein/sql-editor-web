@@ -1,21 +1,19 @@
-import React, {Dispatch, SetStateAction} from "react";
+import React, {FC, useState} from "react";
 import "./Learning.scss"
-import {Badge} from "@mui/material";
-import {Mail} from "@mui/icons-material";
+import {
+    Badge,
+    createTheme,
+    TextField,
+    Theme,
+    ThemeProvider,
+    useMediaQuery
+} from "@mui/material";
+import {Notifications} from "@mui/icons-material";
+import {usePersistent} from "./Context";
+import Cache from "./logic/Cache";
 
-export function useStickyState<T>(defaultValue: T, key: string): [T, Dispatch<SetStateAction<T>>] {
-    const [value, setValue] = React.useState(() => {
-        const stickyValue = window.localStorage.getItem(key);
-        return stickyValue !== null ? JSON.parse(stickyValue) : defaultValue;
-    });
-    React.useEffect(() => {
-        window.localStorage.setItem(key, JSON.stringify(value));
-    }, [key, value]);
-    return [value, setValue];
-}
-
-export function Counter() {
-    const [count, setCount] = useStickyState(0, "count");
+export const Counter: React.FC = ({}) => {
+    const [count, setCount] = usePersistent(0, "count");
     const changeCountBy = (off: number) => {
         setCount(prevState => prevState + off);
     };
@@ -24,12 +22,51 @@ export function Counter() {
             <button onClick={() => changeCountBy(-100)}>-100</button>
             <button onClick={() => changeCountBy(-10)}>-10</button>
             <button onClick={() => changeCountBy(-1)}>-1</button>
-            <Badge badgeContent={count} color={"error"}>
-                <Mail/>
+            <Badge badgeContent={count} color={"primary"}>
+                <Notifications/>
             </Badge>
             <button onClick={() => changeCountBy(1)}>1</button>
             <button onClick={() => changeCountBy(10)}>10</button>
             <button onClick={() => changeCountBy(100)}>100</button>
         </div>
+    );
+}
+
+export const Memo: React.FC = ({}) => {
+    const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+    const theme: Theme = React.useMemo(
+        () =>
+            createTheme({
+                palette: {
+                    mode: prefersDarkMode ? 'dark' : 'light',
+                },
+            }),
+        [prefersDarkMode]
+    );
+
+    const [memo, setMemo] = usePersistent("You're memo goes here", "memo")
+    return(
+        <ThemeProvider theme={theme}>
+            <div className={"memo"}>
+                <TextField
+                    id="memo-text-field"
+                    label="Memo"
+                    variant="outlined"
+                    value={memo}
+                    onChange={event => setMemo(event.target.value)}
+                    error={false}
+                    multiline={true}
+                />
+            </div>
+        </ThemeProvider>
+    );
+}
+
+
+export const StateWatcher: React.FC = ({}) => {
+    const text = Cache.optCache('public').getOrSet('text', 'This is a placeholder');
+
+    return(
+        <span>{text}</span>
     );
 }

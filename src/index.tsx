@@ -2,11 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.scss';
 import reportWebVitals from './reportWebVitals';
-import {Counter} from "./Learning";
+import {Counter, Memo} from "./Learning";
 
 ReactDOM.render(
   <React.StrictMode>
-    <Counter/>
+      <Memo/>
   </React.StrictMode>,
   document.getElementById('root')
 );
