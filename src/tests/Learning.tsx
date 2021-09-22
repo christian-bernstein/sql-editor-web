@@ -43,7 +43,6 @@ export const Memo: React.FC = ({}) => {
             }),
         [prefersDarkMode]
     );
-
     const [memo, setMemo] = Environment.usePersistent("You're memo goes here", "memo")
     return(
         <ThemeProvider theme={theme}>
@@ -65,7 +64,6 @@ export const Memo: React.FC = ({}) => {
 export const StateWatcher: React.FC = ({}) => {
     const [val, setVal] = useState("default state");
     const store: Store = Store.defStore();
-
     return(
         <>
             <span>{val}</span>
@@ -82,10 +80,9 @@ export const StateWatcher: React.FC = ({}) => {
 
 export const StateChanger: React.FC = ({}) => {
     const input: React.RefObject<HTMLInputElement> = createRef<HTMLInputElement>();
-
     return(
         <>
-            <input ref={input} type={"text"}/>
+            <input onChange={() => Store.optStore("default").set("val", input.current?.value)} ref={input} type={"text"}/>
             <button onClick={() => Store.optStore("default").set("val", input.current?.value)}>Change state</button>
         </>
     );
