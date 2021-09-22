@@ -9,12 +9,11 @@ import {
     useMediaQuery
 } from "@mui/material";
 import {Notifications} from "@mui/icons-material";
-import {usePersistent} from "./Context";
-import Store from "./Store";
-import {prependListener} from "cluster";
+import Store from "../logic/Store";
+import {Environment} from "../logic/Environment";
 
 export const Counter: React.FC = ({}) => {
-    const [count, setCount] = usePersistent(0, "count");
+    const [count, setCount] = Environment.usePersistent(0, "count");
     const changeCountBy = (off: number) => {
         setCount(prevState => prevState + off);
     };
@@ -45,7 +44,7 @@ export const Memo: React.FC = ({}) => {
         [prefersDarkMode]
     );
 
-    const [memo, setMemo] = usePersistent("You're memo goes here", "memo")
+    const [memo, setMemo] = Environment.usePersistent("You're memo goes here", "memo")
     return(
         <ThemeProvider theme={theme}>
             <div className={"memo"}>

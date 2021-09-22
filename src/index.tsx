@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.scss';
 import reportWebVitals from './reportWebVitals';
-import {Counter, Memo, StateChanger, StateWatcher} from "./Learning";
+import {Counter, Memo, StateChanger, StateWatcher} from "./tests/Learning";
 
 ReactDOM.render(
   <React.StrictMode>
