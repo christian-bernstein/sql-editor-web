@@ -1,5 +1,24 @@
-body {
-  padding: 10px;
+.counter button {
+  font-family: "JetBrains Mono", monospace;
+}
+.counter span {
+  font-family: "JetBrains Mono", monospace;
+}
+
+#root {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.memo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  width: 50%;
 }
 
 /*# sourceMappingURL=Learning.css.map */

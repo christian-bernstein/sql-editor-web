@@ -1,4 +1,4 @@
-import React, {FC, useState} from "react";
+import React, {createRef, FC, useRef, useState} from "react";
 import "./Learning.scss"
 import {
     Badge,
@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import {Notifications} from "@mui/icons-material";
 import {usePersistent} from "./Context";
-import Cache from "./logic/Cache";
+import Store from "./Store";
 import {prependListener} from "cluster";
 
 export const Counter: React.FC = ({}) => {
@@ -63,34 +63,31 @@ export const Memo: React.FC = ({}) => {
     );
 }
 
-
-class A {
-
-    static a:any;
-
-    static dispatch: React.Dispatch<any>;
-
-    public static sub(dispatch: React.Dispatch<any>) {
-        A.dispatch = dispatch;
-    }
-
-    public static change(newA: any) {
-        A.a = newA;
-        A.dispatch(newA);
-    }
-}
-
 export const StateWatcher: React.FC = ({}) => {
-    const [val, setVal] = useState<any>("def");
-    A.sub(setVal);
+    const [val, setVal] = useState("default state");
+    const store: Store = Store.defStore();
 
     return(
-        <span>{val}</span>
+        <>
+            <span>{val}</span>
+            <button onClick={() => {
+                if (store.isSubscribed("val", setVal)) {
+                    store.unsubscribe("val", setVal);
+                } else {
+                    store.subscribe("val", [val, setVal]);
+                }
+            }}>{"Toggle subscription"}</button>
+        </>
     );
 }
 
 export const StateChanger: React.FC = ({}) => {
+    const input: React.RefObject<HTMLInputElement> = createRef<HTMLInputElement>();
+
     return(
-        <button onClick={() => A.change("new state")}>Change state</button>
+        <>
+            <input ref={input} type={"text"}/>
+            <button onClick={() => Store.optStore("default").set("val", input.current?.value)}>Change state</button>
+        </>
     );
 }

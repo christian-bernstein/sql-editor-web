@@ -1,0 +1,279 @@
+/*!
+ * Copyright (C) 2021 Christian Bernstein
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
+ *
+ */
+@import url("https://fonts.googleapis.com/css2?family=Fira+Code&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&display=swap");
+:root {
+  --color-text-primary: rgb(201, 209, 217);
+  --color-bg-canvas: rgb(13, 17, 23);
+  --color-bg-tertiary: rgb(22, 27, 34);
+  --color-bg-highlight: rgb(56, 139, 253);
+}
+
+.body {
+  background-color: #0d1117 !important;
+  height: 100vh;
+  max-height: 100vh;
+  width: 100%;
+  padding: 0.6em;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  row-gap: 0.5rem;
+}
+.body * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  position: relative;
+}
+
+#settingsModal .modal-dialog .modal-content {
+  background-color: var(--color-bg-canvas) !important;
+}
+
+.navbar .brand-identifier {
+  display: flex;
+  align-items: center;
+}
+.navbar .brand-logo {
+  width: 24px;
+  height: 24px;
+  margin-right: 10px;
+}
+.navbar .navbar-brand {
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.rich-btn {
+  display: flex !important;
+  align-items: center !important;
+}
+.rich-btn .icon-20 {
+  height: 20px;
+  width: 20px;
+}
+.rich-btn .btn-icon-secondary {
+  fill: #fff;
+}
+.rich-btn .btn-icon-left {
+  margin-right: 5px;
+}
+
+.icon-whitify {
+  filter: brightness(0) invert(1);
+}
+
+.container-fluid {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.page {
+  height: 100%;
+  max-height: 100% !important;
+  width: 100%;
+  overflow-y: hidden;
+  display: flex;
+  flex-direction: row;
+}
+.page #document-page {
+  overflow: hidden;
+  max-width: 100%;
+  box-shadow: 0 0 20px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  background-color: #0a0e14;
+  margin-right: 0em;
+  width: 0%;
+  transition: all ease-in-out 300ms !important;
+  opacity: 0;
+}
+.page #document-page .markdown-body {
+  position: relative;
+  box-sizing: border-box;
+  height: 100%;
+  width: 100%;
+  overflow: scroll;
+  padding: 45px;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.page #document-page .markdown-body::-webkit-scrollbar {
+  display: none;
+}
+.page .document-page-active {
+  opacity: 1 !important;
+  width: 50% !important;
+  min-width: 50%;
+  margin-right: 0.5em !important;
+}
+
+#close-session-btn-group {
+  transition: all 0.3s ease-in-out;
+  -webkit-transition: all 0.3s ease-in;
+}
+#close-session-btn-group #close-session-btn {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  align-items: center;
+  transition: all 0.3s ease-in-out;
+  -webkit-transition: all 0.3s ease-in;
+}
+#close-session-btn-group #close-session-btn p {
+  padding: 0 !important;
+  margin: 0;
+  margin-right: 0.4em;
+  transition: all 0.3s ease-in-out;
+  -webkit-transition: all 0.3s ease-in;
+}
+
+.workbench {
+  height: 100%;
+  max-height: 100% !important;
+  max-width: 100%;
+  overflow-x: hidden;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  flex: 1 1 auto;
+  overflow-y: hidden;
+}
+
+.in-row {
+  align-items: center;
+}
+
+.in-row-margin-1 * + * {
+  margin-left: 1rem;
+}
+
+.panel {
+  box-shadow: 0px 0px 20px 5px rgba(0, 0, 0, 0.1);
+  min-width: 60%;
+  width: 100%;
+  height: 100%;
+  max-height: 100% !important;
+  border-radius: 5px;
+  overflow-y: hidden;
+  display: grid;
+  grid-template-rows: minmax(68px, 1fr) auto;
+  row-gap: 0.5em;
+}
+.panel * ::-webkit-scrollbar {
+  display: none;
+}
+.panel .CodeMirror {
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: 6px;
+  scroll-behavior: smooth;
+  height: 100%;
+  max-height: 100% !important;
+  border-radius: 5px;
+  min-width: inherit;
+  width: 100%;
+  padding: 18px 18px 18px 12px;
+  font-size: 14px;
+  line-height: 152%;
+  font-variant-ligatures: contextual;
+  font-feature-settings: "calt";
+  user-select: none;
+  font-family: "Fira Code", monospace !important;
+}
+.panel #editor {
+  grid-area: editor;
+}
+.panel #interface {
+  grid-area: interface;
+  flex-grow: 3;
+  border-radius: 0 0 5px 5px;
+  font-size: 14px;
+  line-height: 152%;
+  font-variant-ligatures: contextual;
+  font-feature-settings: "calt";
+  user-select: none;
+  font-family: "Fira Code", monospace !important;
+  border: none;
+  padding: 18px 18px 18px 12px;
+  color: white;
+  outline: none;
+}
+.panel #interface * {
+  background-color: #11191d !important;
+}
+
+@media (max-width: 1000px) {
+  .panel {
+    width: 100%;
+    height: 100%;
+  }
+  .panel .CodeMirror {
+    height: 100%;
+  }
+
+  .markdown-body {
+    padding: 0.75em !important;
+  }
+}
+@media (max-width: 550px) {
+  #interface-mode {
+    width: 100%;
+    margin-right: 0 !important;
+  }
+
+  #submitCtrlSwitch {
+    display: none;
+  }
+
+  .page {
+    height: 100%;
+    max-height: 100% !important;
+    width: 100%;
+    overflow-y: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .page #document-page {
+    overflow: hidden;
+    max-width: 100%;
+    box-shadow: 0 0 20px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    background-color: #0a0e14;
+    margin-right: 0em;
+    width: 100%;
+    height: 0;
+    transition: all ease-in-out 500ms;
+  }
+  .page .document-page-active {
+    width: 100% !important;
+    height: 100% !important;
+    margin-bottom: 0.75em !important;
+  }
+}
+@media (max-width: 767px) {
+  .markdown-body {
+    padding: 15px;
+  }
+}
+.box {
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: 6px;
+}
+
+/*# sourceMappingURL=SessionPage.css.map */
