@@ -1,8 +1,8 @@
 import React, {createRef, FC, useRef, useState} from "react";
 import "./Learning.scss"
 import {
-    Badge,
-    createTheme,
+    Badge, Button,
+    createTheme, Stack,
     TextField,
     Theme,
     ThemeProvider,
@@ -86,4 +86,59 @@ export const StateChanger: React.FC = ({}) => {
             <button onClick={() => Store.optStore("default").set("val", input.current?.value)}>Change state</button>
         </>
     );
+}
+
+export type LoginState = {
+    username: string,
+    password: string,
+    connector: Environment.Connector,
+    state: boolean
+}
+
+export const Login: React.FC = () => {
+    const [state, setState] = useState<LoginState>(() => {
+        return {
+            username: "",
+            password: "",
+            connector: new Environment.Connector("base").connect("ws:127.0.0.1:30001"),
+            state: true
+        }
+    });
+
+    const submitLogic: () => void = () => {
+        state.connector.singleton({
+            protocol: "login",
+            packetID: "LoginRequestPacketData",
+            data: {
+                username: state.username,
+                password: state.password
+            }
+        });
+    };
+
+    return(
+        <Stack className={"login-component"} spacing={2}>
+            <TextField
+                id="login-username"
+                label="Username"
+                variant="outlined"
+                type={"username"}
+                error={!state.state}
+                multiline={false}
+                onChange={event => state.username = event.target.value}
+            />
+            <TextField
+                id="login-password"
+                label="Password"
+                variant="outlined"
+                type={"password"}
+                error={!state.state}
+                multiline={false}
+                onChange={event => state.password = event.target.value}
+            />
+            <Button onClick={() => submitLogic()}
+                variant={"outlined"}
+            >Login</Button>
+        </Stack>
+    )
 }
