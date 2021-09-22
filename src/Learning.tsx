@@ -11,6 +11,7 @@ import {
 import {Notifications} from "@mui/icons-material";
 import {usePersistent} from "./Context";
 import Cache from "./logic/Cache";
+import {prependListener} from "cluster";
 
 export const Counter: React.FC = ({}) => {
     const [count, setCount] = usePersistent(0, "count");
@@ -63,10 +64,33 @@ export const Memo: React.FC = ({}) => {
 }
 
 
+class A {
+
+    static a:any;
+
+    static dispatch: React.Dispatch<any>;
+
+    public static sub(dispatch: React.Dispatch<any>) {
+        A.dispatch = dispatch;
+    }
+
+    public static change(newA: any) {
+        A.a = newA;
+        A.dispatch(newA);
+    }
+}
+
 export const StateWatcher: React.FC = ({}) => {
-    const text = Cache.optCache('public').getOrSet('text', 'This is a placeholder');
+    const [val, setVal] = useState<any>("def");
+    A.sub(setVal);
 
     return(
-        <span>{text}</span>
+        <span>{val}</span>
+    );
+}
+
+export const StateChanger: React.FC = ({}) => {
+    return(
+        <button onClick={() => A.change("new state")}>Change state</button>
     );
 }

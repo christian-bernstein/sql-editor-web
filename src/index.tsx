@@ -2,11 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.scss';
 import reportWebVitals from './reportWebVitals';
-import {Counter, Memo} from "./Learning";
+import {Counter, Memo, StateChanger, StateWatcher} from "./Learning";
 
 ReactDOM.render(
   <React.StrictMode>
-      <Memo/>
+      <StateWatcher/>
+      <StateChanger/>
   </React.StrictMode>,
   document.getElementById('root')
 );
