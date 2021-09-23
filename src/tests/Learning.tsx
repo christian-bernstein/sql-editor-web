@@ -100,7 +100,7 @@ export const Login: React.FC = () => {
         return {
             username: "",
             password: "",
-            connector: new Environment.Connector("base").connect("ws:127.0.0.1:30001"),
+            connector: new Environment.Connector("base", "ws:127.0.0.1:30001").connect(),
             state: true
         }
     });

@@ -48,20 +48,38 @@ export namespace Environment {
 
         private _protocols: Map<string, Protocol> = new Map<string, Environment.Protocol>();
 
-        constructor(protocol: string) {
+        private readonly address: string;
+
+        constructor(protocol: string, address: string) {
             this._protocol = protocol;
+            this.address = address;
         }
 
         public singleton(config: {protocol: string, packetID: string, data: object}): Connector {
             const uuid: string = v4();
-            this._socket?.send(JSON.stringify({
-                protocol: config.protocol,
-                timestamp: Date,
-                packetID: config.packetID,
-                id: v4(),
-                type: PacketType.REQUEST,
-                data: config.data
-            }));
+            const baseSend: () => void = () => {
+                this.socket?.send(JSON.stringify({
+                    protocol: config.protocol,
+                    timestamp: Date,
+                    packetID: config.packetID,
+                    id: v4(),
+                    type: PacketType.REQUEST,
+                    data: config.data
+                }));
+            };
+            if (this.socket !== undefined) {
+                if (this.socket.readyState === WebSocket.OPEN) {
+                    // Websocket is ready, message can be send.
+                    baseSend();
+                } else if (this.socket.readyState > WebSocket.OPEN) {
+                    // Websocket is closing or closed, it may be required to reconnect.
+                    this.connect();
+                    baseSend();
+                }
+            } else {
+                this.connect();
+                baseSend();
+            }
             return this;
         }
 
@@ -91,8 +109,8 @@ export namespace Environment {
             return this;
         }
 
-        public connect(address: string): Connector {
-            this._socket = new WebSocket(address);
+        public connect(): Connector {
+            this._socket = new WebSocket(this.address);
             this._socket.onmessage = ev => {
                 const packet: Packet = JSON.parse(ev.data) as Packet;
                 if (packet.type === PacketType.RESPONSE) {
