@@ -2,13 +2,13 @@ import React, {createRef, FC, useRef, useState} from "react";
 import "./Learning.scss"
 import {
     Badge, Button,
-    createTheme, Stack,
+    createTheme, FilledInput, FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, Stack,
     TextField,
     Theme,
     ThemeProvider,
     useMediaQuery
 } from "@mui/material";
-import {Notifications} from "@mui/icons-material";
+import {AccountBox, Notifications, Visibility, VisibilityOff} from "@mui/icons-material";
 import Store from "../logic/Store";
 import {Environment} from "../logic/Environment";
 
@@ -92,7 +92,8 @@ export type LoginState = {
     username: string,
     password: string,
     connector: Environment.Connector,
-    state: boolean
+    state: boolean,
+    showPassword: boolean,
 }
 
 export const Login: React.FC = () => {
@@ -101,7 +102,8 @@ export const Login: React.FC = () => {
             username: "",
             password: "",
             connector: new Environment.Connector("base", "ws:127.0.0.1:30001").connect(),
-            state: true
+            state: true,
+            showPassword: false
         }
     });
 
@@ -116,29 +118,61 @@ export const Login: React.FC = () => {
         });
     };
 
+    const handleChange = (prop: keyof LoginState) => (event: React.ChangeEvent<HTMLInputElement>) => {
+        setState({ ...state, [prop]: event.target.value });
+    };
+
     return(
         <Stack className={"login-component"} spacing={2}>
-            <TextField
-                id="login-username"
-                label="Username"
-                variant="outlined"
-                type={"username"}
-                error={!state.state}
-                multiline={false}
-                onChange={event => state.username = event.target.value}
-            />
-            <TextField
-                id="login-password"
-                label="Password"
-                variant="outlined"
-                type={"password"}
-                error={!state.state}
-                multiline={false}
-                onChange={event => state.password = event.target.value}
-            />
-            <Button onClick={() => submitLogic()}
-                variant={"outlined"}
-            >Login</Button>
+            {/* Field for username */}
+            <FormControl sx={{ m: 0, width: '25ch' }} variant="outlined">
+                <InputLabel htmlFor="outlined-adornment-username">Username</InputLabel>
+                <OutlinedInput
+                    id="outlined-adornment-username"
+                    inputProps={{spellCheck: 'false'}}
+                    label="Username"
+                    type={"text"}
+                    name={"username"}
+                    value={state.username}
+                    onChange={handleChange('username')}
+                />
+            </FormControl>
+            {/* Field for password */}
+            <FormControl sx={{ m: 0, width: '25ch' }} variant="outlined">
+                <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+                <OutlinedInput
+                    id="outlined-adornment-password"
+                    inputProps={{spellCheck: 'false'}}
+                    label="Password"
+                    type={state.showPassword ? 'text' : 'password'}
+                    name={"current-password"}
+                    value={state.password}
+                    onChange={handleChange('password')}
+                    endAdornment={
+                        <InputAdornment position="end">
+                            <IconButton
+                                aria-label="toggle password visibility"
+                                onClick={() => {setState(() => {
+                                    return ({
+                                        ...state,
+                                        showPassword: !state.showPassword
+                                    })
+                                })}}
+                                onMouseDown={(ev: React.MouseEvent<HTMLButtonElement>) => ev.preventDefault()}
+                                edge="end"
+                            >
+                                {state.showPassword ? <VisibilityOff /> : <Visibility />}
+                            </IconButton>
+                        </InputAdornment>
+                    }
+                />
+            </FormControl>
+            {/* Button to submit */}
+            <FormControl sx={{ m: 0, width: '25ch' }} variant="outlined">
+                <Button onClick={() => submitLogic()}
+                        variant={"outlined"}
+                >Login</Button>
+            </FormControl>
         </Stack>
     )
 }

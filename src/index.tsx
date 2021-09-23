@@ -2,11 +2,21 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.scss';
 import reportWebVitals from './reportWebVitals';
-import {Counter, Login, Memo, StateChanger, StateWatcher} from "./tests/Learning";
+import {createTheme, Theme, ThemeProvider} from "@mui/material";
+import App from "./App";
+
+const theme: Theme = createTheme({
+    palette: {
+        primary: {
+            main: '#238636',
+            light: '#2EA043'
+        }
+    }
+});
 
 ReactDOM.render(
   <React.StrictMode>
-      <Login/>
+      <App/>
   </React.StrictMode>,
   document.getElementById('root')
 );
