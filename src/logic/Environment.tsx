@@ -55,57 +55,95 @@ export namespace Environment {
             this.address = address;
         }
 
-        public singleton(config: {protocol: string, packetID: string, data: object}): Connector {
-            const uuid: string = v4();
-            const baseSend: () => void = () => {
-                this.socket?.send(JSON.stringify({
-                    protocol: config.protocol,
-                    timestamp: Date,
-                    packetID: config.packetID,
-                    id: v4(),
-                    type: PacketType.REQUEST,
-                    data: config.data
-                }));
-            };
+        private baseSend(payload: string): void {
             if (this.socket !== undefined) {
                 if (this.socket.readyState === WebSocket.OPEN) {
                     // Websocket is ready, message can be send.
-                    baseSend();
+                    this.saveSend(payload).then();
                 } else if (this.socket.readyState > WebSocket.OPEN) {
                     // Websocket is closing or closed, it may be required to reconnect.
                     this.connect();
-                    baseSend();
+                    this.saveSend(payload).then();
                 }
             } else {
                 this.connect();
-                baseSend();
+                this.saveSend(payload).then();
             }
-            return this;
         }
 
-        public call(config: {protocol: string, packetID: string, data: object, callback: Handler}): Connector {
+        private async saveSend(payload: string): Promise<void> {
+            if (this.socket?.readyState === WebSocket.OPEN) {
+                // Websocket is already connected and open for messages
+                this.socket?.send(payload);
+            } else {
+                // Websocket is still loading
+                try {
+                    await this.waitForOpenConnection();
+                    this.socket?.send(payload);
+                } catch (err) {
+                    console.error(err)
+                }
+            }
+        }
+
+        private waitForOpenConnection(): Promise<void> {
+            return new Promise<void>((resolve, reject) => {
+                const maxNumberOfAttempts = 10
+                const intervalTime = 200 //ms
+
+                let currentAttempt = 0
+                const interval = setInterval(() => {
+                    if (currentAttempt > maxNumberOfAttempts - 1) {
+                        clearInterval(interval)
+                        reject(new Error('Maximum number of attempts exceeded'))
+                    } else if (this.socket?.readyState === WebSocket.OPEN) {
+                        clearInterval(interval)
+                        resolve()
+                    }
+                    currentAttempt++
+                }, intervalTime)
+            })
+        }
+
+        public singleton(config: {protocol: string, packetID: string, data: object}): Connector {
             const uuid: string = v4();
-            this._socket?.send(JSON.stringify({
+            const packet: string = JSON.stringify({
                 protocol: config.protocol,
                 timestamp: Date,
                 packetID: config.packetID,
                 id: v4(),
                 type: PacketType.REQUEST,
                 data: config.data
-            }));
+            });
+            this.baseSend(packet);
+            return this;
+        }
+
+        public call(config: {protocol: string, packetID: string, data: object, callback: Handler}): Connector {
+            const uuid: string = v4();
+            const packet: string = JSON.stringify({
+                protocol: config.protocol,
+                timestamp: Date,
+                packetID: config.packetID,
+                id: v4(),
+                type: PacketType.REQUEST,
+                data: config.data
+            });
+            this.baseSend(packet);
             this._responseMap.set(uuid, config.callback);
             return this;
         }
 
-        public respond(config: {protocol: string, packetID: string, data: object, id: string, callback: Handler}): Connector {
-            this._socket?.send(JSON.stringify({
+        public respond(config: {protocol: string, packetID: string, data: object, id: string}): Connector {
+            const packet: string = JSON.stringify({
                 protocol: config.protocol,
                 timestamp: Date,
                 packetID: config.packetID,
                 id: config.id,
                 type: PacketType.REQUEST,
                 data: config.data
-            }));
+            });
+            this.baseSend(packet);
             return this;
         }
 
