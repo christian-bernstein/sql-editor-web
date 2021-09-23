@@ -1,7 +1,7 @@
 import './App.scss';
 import React from "react";
 import {createTheme, Theme, ThemeProvider} from "@mui/material";
-import {Login} from "./tests/Learning";
+import {Gif, Login} from "./tests/Learning";
 
 const theme: Theme = createTheme({
     palette: {

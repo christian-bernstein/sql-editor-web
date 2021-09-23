@@ -1,16 +1,36 @@
 import React, {createRef, FC, useRef, useState} from "react";
 import "./Learning.scss"
 import {
-    Badge, Button,
-    createTheme, FilledInput, FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, Stack,
+    Badge,
+    Button,
+    Container,
+    createTheme,
+    Divider,
+    FilledInput,
+    FormControl,
+    IconButton,
+    InputAdornment,
+    InputLabel,
+    OutlinedInput,
+    Skeleton,
+    Stack,
     TextField,
     Theme,
     ThemeProvider,
     useMediaQuery
 } from "@mui/material";
-import {AccountBox, Notifications, Visibility, VisibilityOff} from "@mui/icons-material";
+import {
+    AccountBox, ArrowBackIosNew, ArrowForward, ArrowForwardIos, ArrowForwardIosOutlined, ArrowForwardTwoTone,
+    ArrowRight,
+    ArrowRightAlt, ArrowRightSharp, Fingerprint,
+    Notifications,
+    Password,
+    Visibility,
+    VisibilityOff
+} from "@mui/icons-material";
 import Store from "../logic/Store";
 import {Environment} from "../logic/Environment";
+import bg from "../assets/background.gif";
 
 export const Counter: React.FC = ({}) => {
     const [count, setCount] = Environment.usePersistent(0, "count");
@@ -88,6 +108,12 @@ export const StateChanger: React.FC = ({}) => {
     );
 }
 
+export const Gif: React.FC = ({}) => {
+    return(
+        <img src={bg} alt={"loading..."} />
+    );
+}
+
 export type LoginState = {
     username: string,
     password: string,
@@ -125,7 +151,7 @@ export const Login: React.FC = () => {
     return(
         <Stack className={"login-component"} spacing={2}>
             {/* Field for username */}
-            <FormControl sx={{ m: 0, width: '25ch' }} variant="outlined">
+            <FormControl sx={{ m: 0, width: '100%'}} variant="outlined">
                 <InputLabel htmlFor="outlined-adornment-username">Username</InputLabel>
                 <OutlinedInput
                     id="outlined-adornment-username"
@@ -138,7 +164,7 @@ export const Login: React.FC = () => {
                 />
             </FormControl>
             {/* Field for password */}
-            <FormControl sx={{ m: 0, width: '25ch' }} variant="outlined">
+            <FormControl sx={{ m: 0, width: '100%'}} variant="outlined">
                 <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
                 <OutlinedInput
                     id="outlined-adornment-password"
@@ -150,27 +176,43 @@ export const Login: React.FC = () => {
                     onChange={handleChange('password')}
                     endAdornment={
                         <InputAdornment position="end">
-                            <IconButton
-                                aria-label="toggle password visibility"
-                                onClick={() => {setState(() => {
-                                    return ({
-                                        ...state,
-                                        showPassword: !state.showPassword
-                                    })
-                                })}}
-                                onMouseDown={(ev: React.MouseEvent<HTMLButtonElement>) => ev.preventDefault()}
-                                edge="end"
+                            <Stack
+                                direction={"row"}
+                                spacing={1}
+                                divider={<Divider orientation="vertical" flexItem />}
                             >
-                                {state.showPassword ? <VisibilityOff /> : <Visibility />}
-                            </IconButton>
+                                <IconButton
+                                    aria-label="toggle password visibility"
+                                    onClick={() => {setState(() => {
+                                        return ({
+                                            ...state,
+                                            showPassword: !state.showPassword
+                                        })
+                                    })}}
+                                    onMouseDown={(ev: React.MouseEvent<HTMLButtonElement>) => ev.preventDefault()}
+                                    color="success"
+                                    edge="start"
+                                >
+                                    {state.showPassword ? <VisibilityOff /> : <Visibility />}
+                                </IconButton>
+                                <IconButton
+                                    aria-label="fingerprint"
+                                    color="success"
+                                    edge="end"
+                                >
+                                    <Fingerprint />
+                                </IconButton>
+                            </Stack>
+
                         </InputAdornment>
                     }
                 />
             </FormControl>
             {/* Button to submit */}
-            <FormControl sx={{ m: 0, width: '25ch' }} variant="outlined">
+            <FormControl sx={{ m: 0, width: '100%'}} variant="outlined">
                 <Button onClick={() => submitLogic()}
                         variant={"outlined"}
+                        size="large"
                 >Login</Button>
             </FormControl>
         </Stack>
