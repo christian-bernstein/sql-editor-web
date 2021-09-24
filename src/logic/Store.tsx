@@ -86,6 +86,7 @@ export default class Store {
                 return state;
             }
         }
+        console.log("init subscription")
         if (this.get(key) !== undefined) {
             meta?.dispatches.push(state[1]);
             this.noopUpdate(key, state[1]);

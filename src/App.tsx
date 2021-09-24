@@ -16,14 +16,19 @@ const App: React.FC = props => {
     Store.defStore().subscribe("visual-config", [visualData, setVisualData]);
 
     const changeTheme: () => void = () => {
+        console.log("change theme")
         const store: Store = Store.defStore();
-        const visualData: Environment.EnvironmentVisualData = store.get("visual-config") as Environment.EnvironmentVisualData;
-        if (visualData.activeTheme === "light") {
-            visualData.activeTheme = "dark";
-            store.set("visual-config", visualData);
+        const visualData: Environment.EnvironmentVisualData | undefined = store.get("visual-config");
+        if (visualData !== undefined) {
+            if (visualData.activeTheme === "light") {
+                visualData.activeTheme = "dark";
+                store.set("visual-config", visualData);
+            } else {
+                visualData.activeTheme = "light";
+                store.set("visual-config", visualData);
+            }
         } else {
-            visualData.activeTheme = "light";
-            store.set("visual-config", visualData);
+            console.error("Undefined state of visual data: " + visualData)
         }
     };
 
