@@ -79,13 +79,20 @@ export default class Store {
     }
 
     public subscribe<T>(key: string, state: [T, React.Dispatch<T>]): [T, React.Dispatch<T>] {
+        const meta: Meta | undefined = this.meta.get(key);
+        if (meta !== undefined) {
+            if (Array.from(meta.dispatches.values()).includes(state[1])) {
+                console.error("dispatcher already registered")
+                return state;
+            }
+        }
         if (this.get(key) !== undefined) {
-            this.meta.get(key)?.dispatches.push(state[1]);
+            meta?.dispatches.push(state[1]);
             this.noopUpdate(key, state[1]);
             return [this.get<T>(key) as T, state[1]]
         } else {
             this.set<T>(key, state[0]);
-            this.meta.get(key)?.dispatches.push(state[1]);
+            meta?.dispatches.push(state[1]);
             this.noopUpdate(key, state[1]);
             return state;
         }
