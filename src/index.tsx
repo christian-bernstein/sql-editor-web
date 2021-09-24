@@ -2,17 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.scss';
 import reportWebVitals from './reportWebVitals';
-import {createTheme, Theme, ThemeProvider} from "@mui/material";
 import App from "./App";
-
-const theme: Theme = createTheme({
-    palette: {
-        primary: {
-            main: '#238636',
-            light: '#2EA043'
-        }
-    }
-});
+import {StateChanger, StateWatcher} from "./tests/Learning";
 
 ReactDOM.render(
   <React.StrictMode>

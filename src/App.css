@@ -1,17 +1,23 @@
-/* Error: Can't find stylesheet to import.
- *   ,
- * 1 | @import "~bootstrap/scss/bootstrap";
- *   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
- *   '
- *   App.scss 1:9  root stylesheet */
-
-body::before {
-  font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono",
-      "Droid Sans Mono", monospace, monospace;
-  white-space: pre;
-  display: block;
-  padding: 1em;
-  margin-bottom: 1em;
-  border-bottom: 2px solid black;
-  content: "Error: Can't find stylesheet to import.\a   \2577 \a 1 \2502  @import \"~bootstrap/scss/bootstrap\";\d\a   \2502          ^^^^^^^^^^^^^^^^^^^^^^^^^^^\a   \2575 \a   App.scss 1:9  root stylesheet";
+.App {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
+
+.debug-overlay {
+  z-index: 100;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  overflow: hidden;
+  opacity: 0.5;
+  -webkit-filter: invert(40%) grayscale(100%) brightness(40%) sepia(100%) hue-rotate(-50deg) saturate(400%) contrast(2);
+  filter: grayscale(100%) brightness(40%) sepia(100%) hue-rotate(-50deg) saturate(600%) contrast(0.8);
+  pointer-events: none;
+}
+
+/*# sourceMappingURL=App.css.map */

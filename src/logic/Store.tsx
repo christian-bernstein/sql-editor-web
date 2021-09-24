@@ -85,6 +85,7 @@ export default class Store {
                 console.error("dispatcher already registered")
                 return state;
             }
+            console.log("subscription not duplicate")
         }
         console.log("init subscription")
         if (this.get(key) !== undefined) {
@@ -105,13 +106,23 @@ export default class Store {
     }
 
     public set<T>(key: string, val: T): T {
+
+        console.log("key " + key + " changed to " + JSON.stringify(val))
+
         this.data.set(key, val);
         if (!this.meta.has(key)) {
+            console.log("meta " + key + " will be created");
             this.meta.set(key, {
                 dispatches: new Array<React.Dispatch<any>>()
             });
         }
-        this.meta.get(key)?.dispatches.forEach(dispatch => dispatch.call(this, val));
+
+        console.log("dispatches: " + this.meta.get(key)?.dispatches);
+
+        this.meta.get(key)?.dispatches.forEach(dispatch => {
+            console.log("call dispatch")
+            dispatch.call(this, val);
+        });
         return val;
     }
 }

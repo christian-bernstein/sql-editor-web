@@ -1,6 +1,6 @@
 import './App.scss';
 import React, {Dispatch, useState} from "react";
-import {CssBaseline, Link, Theme, ThemeProvider} from "@mui/material";
+import {Button, CssBaseline, Link, Theme, ThemeProvider} from "@mui/material";
 import {Login, MaterialUISwitch} from "./tests/Learning";
 import debugImage from "./assets/debug/login-screen.png";
 import SwipeableDebugDrawer from "./tests/SwipeableDebugDrawer";
@@ -8,6 +8,8 @@ import Store from "./logic/Store";
 import {Environment} from "./logic/Environment";
 
 const App: React.FC = props => {
+
+    console.log("render app component")
 
     const [visualData, setVisualData] = useState<Environment.EnvironmentVisualData>({
         activeTheme: "light"
@@ -18,14 +20,14 @@ const App: React.FC = props => {
     const changeTheme: () => void = () => {
         console.log("change theme")
         const store: Store = Store.defStore();
-        const visualData: Environment.EnvironmentVisualData | undefined = store.get("visual-config");
-        if (visualData !== undefined) {
-            if (visualData.activeTheme === "light") {
-                visualData.activeTheme = "dark";
-                store.set("visual-config", visualData);
+        const storedVisualData: Environment.EnvironmentVisualData | undefined = store.get("visual-config");
+        if (storedVisualData !== undefined) {
+            if (storedVisualData.activeTheme === "light") {
+                storedVisualData.activeTheme = "dark";
+                store.set("visual-config", storedVisualData);
             } else {
-                visualData.activeTheme = "light";
-                store.set("visual-config", visualData);
+                storedVisualData.activeTheme = "light";
+                store.set("visual-config", storedVisualData);
             }
         } else {
             console.error("Undefined state of visual data: " + visualData)
@@ -36,9 +38,21 @@ const App: React.FC = props => {
 
     return(
         <div className={"App"}>
-            <ThemeProvider theme={Environment.constants.themes.get(visualData.activeTheme) as Theme}>
+            <ThemeProvider theme={Environment.constants.themes.get(Store.defStore()?.get<Environment.EnvironmentVisualData>("visual-config")?.activeTheme as string) as Theme}>
                 <div className={""}>
-
+                    <Button variant={"outlined"} onClick={() => {
+                        setVisualData(prevState => {
+                            console.log("manually switch themes")
+                            if (prevState.activeTheme === "light") {
+                                prevState.activeTheme = "dark";
+                            } else {
+                                prevState.activeTheme = "light";
+                            }
+                            return prevState;
+                        });
+                    }}>
+                        switch theme
+                    </Button>
                 </div>
                 <CssBaseline />
                 <MaterialUISwitch onClick={() => changeTheme()}/>
