@@ -5,6 +5,40 @@ import {Themes} from "./Themes";
 
 export namespace Environment {
 
+    export function main(): boolean {
+
+        return true;
+    }
+
+    interface EnvironmentConstants {
+        themes: Map<string, Theme>;
+        defaultEnvironmentVisualData: EnvironmentVisualData;
+        defaultEnvironmentDebugData: EnvironmentDebugData;
+    }
+
+    export const constants: EnvironmentConstants = {
+        themes: new Map<string, Theme>([
+            ["light", Themes.lightTheme],
+            ["dark", Themes.darkTheme]
+        ]),
+        defaultEnvironmentVisualData: {
+            activeTheme: "dark"
+        },
+        defaultEnvironmentDebugData: {
+            showDebugPanel: true,
+            showOverlays: true
+        }
+    }
+
+    export type EnvironmentVisualData = {
+        activeTheme: string
+    }
+
+    export type EnvironmentDebugData = {
+        showDebugPanel: boolean,
+        showOverlays: boolean
+    }
+
     export function usePersistent<T>(defaultValue: T, key: string, category:string = 'public'): [T, Dispatch<SetStateAction<T>>] {
         key = category + ":" + key;
         const [value, setValue] = React.useState(() => {
@@ -15,17 +49,6 @@ export namespace Environment {
             window.localStorage.setItem(key, JSON.stringify(value));
         }, [key, value]);
         return [value, setValue];
-    }
-
-    export const constants = {
-        themes: new Map<string, Theme>([
-            ["light", Themes.lightTheme],
-            ["dark", Themes.darkTheme]
-        ])
-    }
-
-    export type EnvironmentVisualData = {
-        activeTheme: string
     }
 
     export enum PacketType {

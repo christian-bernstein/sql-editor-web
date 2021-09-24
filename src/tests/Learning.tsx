@@ -1,22 +1,22 @@
 import React, {createRef, FC, useRef, useState} from "react";
 import "./Learning.scss"
 import {
-    Badge,
+    Badge, Box,
     Button,
     Container,
     createTheme,
     Divider,
     FilledInput,
-    FormControl,
-    IconButton,
+    FormControl, Grid,
+    IconButton, Input,
     InputAdornment,
-    InputLabel,
+    InputLabel, Link,
     OutlinedInput,
     Skeleton,
     Stack, styled, Switch,
     TextField,
     Theme,
-    ThemeProvider,
+    ThemeProvider, Typography,
     useMediaQuery
 } from "@mui/material";
 import {
@@ -31,6 +31,8 @@ import {
 import Store from "../logic/Store";
 import {Environment} from "../logic/Environment";
 import bg from "../assets/background.gif";
+import logo from "../assets/logo.svg";
+import {App} from "../App";
 
 export const Counter: React.FC = ({}) => {
     const [count, setCount] = Environment.usePersistent(0, "count");
@@ -81,33 +83,6 @@ export const Memo: React.FC = ({}) => {
     );
 }
 
-export const StateWatcher: React.FC = ({}) => {
-    const [val, setVal] = useState("default state");
-    const store: Store = Store.defStore();
-    return(
-        <>
-            <span>{val}</span>
-            <button onClick={() => {
-                if (store.isSubscribed("val", setVal)) {
-                    store.unsubscribe("val", setVal);
-                } else {
-                    store.subscribe("val", [val, setVal]);
-                }
-            }}>{"Toggle subscription"}</button>
-        </>
-    );
-}
-
-export const StateChanger: React.FC = ({}) => {
-    const input: React.RefObject<HTMLInputElement> = createRef<HTMLInputElement>();
-    return(
-        <>
-            <input onChange={() => Store.optStore("default").set("val", input.current?.value)} ref={input} type={"text"}/>
-            <button onClick={() => Store.optStore("default").set("val", input.current?.value)}>Change state</button>
-        </>
-    );
-}
-
 export const Gif: React.FC = ({}) => {
     return(
         <img src={bg} alt={"loading..."} />
@@ -149,76 +124,112 @@ export const Login: React.FC = () => {
     };
 
     return(
-        <Stack className={"login-component"} spacing={2}>
-            {/* Field for username */}
-            <FormControl sx={{ m: 0, width: '100%'}} variant="outlined">
-                <InputLabel htmlFor="outlined-adornment-username">Username</InputLabel>
-                <OutlinedInput
-                    id="outlined-adornment-username"
-                    inputProps={{spellCheck: 'false'}}
-                    label="Username"
-                    type={"text"}
-                    name={"username"}
-                    value={state.username}
-                    onChange={handleChange('username')}
-                />
-            </FormControl>
-            {/* Field for password */}
-            <FormControl sx={{ m: 0, width: '100%'}} variant="outlined">
-                <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
-                <OutlinedInput
-                    id="outlined-adornment-password"
-                    inputProps={{spellCheck: 'false'}}
-                    label="Password"
-                    type={state.showPassword ? 'text' : 'password'}
-                    name={"current-password"}
-                    value={state.password}
-                    onChange={handleChange('password')}
-                    endAdornment={
-                        <InputAdornment position="end">
-                            <Stack
-                                direction={"row"}
-                                spacing={1}
-                                divider={<Divider orientation="vertical" flexItem />}
-                            >
-                                <IconButton
-                                    aria-label="toggle password visibility"
-                                    onClick={() => {setState(() => {
-                                        return ({
-                                            ...state,
-                                            showPassword: !state.showPassword
-                                        })
-                                    })}}
-                                    onMouseDown={(ev: React.MouseEvent<HTMLButtonElement>) => ev.preventDefault()}
-                                    color="success"
-                                    edge="start"
-                                >
-                                    {state.showPassword ? <VisibilityOff /> : <Visibility />}
-                                </IconButton>
-                                <IconButton
-                                    aria-label="fingerprint"
-                                    color="success"
-                                    edge="end"
-                                >
-                                    <Fingerprint />
-                                </IconButton>
-                            </Stack>
-                        </InputAdornment>
-                    }
-                />
-            </FormControl>
-            {/* Button to submit */}
-            <FormControl sx={{ m: 0, width: '100%'}} variant="outlined">
-                <Button onClick={() => submitLogic()}
-                        variant={"outlined"}
-                        size="large"
-                >Login</Button>
-            </FormControl>
-        </Stack>
+        <div className={"login-page"}>
+            <div className={"login-page-background"}>
+                <div className={"login-page-background-background"}>
+                    <Gif/>
+                </div>
+                <div className={"login-page-background-foreground"}>
+                    <img src={logo} className={"logo"} alt={"Logo"}/>
+                    <Typography variant={"subtitle1"} className={"brand-name"}>SQL-Editor</Typography>
+                    <Typography variant={"subtitle1"} className={"brand-hook"}>The place to learn SQL</Typography>
+                </div>
+            </div>
+            <Stack className={"login-component-form"} direction={"column"} alignItems={"start"} justifyContent={"start"}>
+                <Grid container spacing={0} width={"100%"}>
+                    <Grid item xs={6}>
+                        <Typography variant={"subtitle1"} className={"login-action-header"}>Log in</Typography>
+                    </Grid>
+                    <Grid item xs={6} display={"flex"} justifyContent={"end"} alignItems={"center"} className={"login-footer-text"}>
+
+                        <Switch checked onClick={() => {
+                            Environment.constants.defaultEnvironmentDebugData.showDebugPanel = !Environment.constants.defaultEnvironmentDebugData.showDebugPanel;
+                            Store.defStore().get<App>("app")?.forceUpdate();
+                        }}/>
+                    </Grid>
+                </Grid>
+                <Stack className={"login-component"} spacing={2}>
+                    {/* Field for username */}
+                    <FormControl sx={{ m: 0, width: '100%'}} variant="outlined">
+                        <InputLabel htmlFor="outlined-adornment-username">Username</InputLabel>
+                        <OutlinedInput
+                            id="outlined-adornment-username"
+                            inputProps={{spellCheck: 'false'}}
+                            label="Username"
+                            type={"text"}
+                            name={"username"}
+                            value={state.username}
+                            onChange={handleChange('username')}
+                        />
+                    </FormControl>
+                    {/* Field for password */}
+                    <FormControl sx={{ m: 0, width: '100%'}} variant="outlined">
+                        <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+                        <OutlinedInput
+                            id="outlined-adornment-password"
+                            inputProps={{spellCheck: 'false'}}
+                            label="Password"
+                            type={state.showPassword ? 'text' : 'password'}
+                            name={"current-password"}
+                            value={state.password}
+                            onChange={handleChange('password')}
+                            endAdornment={
+                                <InputAdornment position="end">
+                                    <Stack
+                                        direction={"row"}
+                                        spacing={1}
+                                        divider={<Divider orientation="vertical" flexItem />}
+                                    >
+                                        <IconButton
+                                            aria-label="toggle password visibility"
+                                            onClick={() => {setState(() => {
+                                                return ({
+                                                    ...state,
+                                                    showPassword: !state.showPassword
+                                                })
+                                            })}}
+                                            onMouseDown={(ev: React.MouseEvent<HTMLButtonElement>) => ev.preventDefault()}
+                                            color="success"
+                                            edge="start"
+                                        >
+                                            {state.showPassword ? <VisibilityOff /> : <Visibility />}
+                                        </IconButton>
+                                        <IconButton
+                                            aria-label="fingerprint"
+                                            color="success"
+                                            edge="end"
+                                        >
+                                            <Fingerprint />
+                                        </IconButton>
+                                    </Stack>
+                                </InputAdornment>
+                            }
+                        />
+                    </FormControl>
+                    {/* Button to submit */}
+                    <FormControl sx={{ m: 0, width: '100%'}} variant="outlined">
+                        <Button onClick={() => submitLogic()}
+                                variant={"outlined"}
+                                size="large"
+                        >Login</Button>
+                    </FormControl>
+                </Stack>
+                <Grid container spacing={0} width={"100%"}>
+                    <Grid item xs={4}>
+                    </Grid>
+                    <Grid item xs={4} display={"flex"} justifyContent={"center"} alignItems={"center"}>
+                        <Link href={"#"} underline="none" textAlign={"center"} display={"flex"} alignItems={"center"} className={"login-footer-text"}>Need help?</Link>
+                    </Grid>
+                    <Grid item xs={4} display={"flex"} justifyContent={"end"} alignItems={"center"} className={"login-footer-text"}>
+                        <Link href={"#"} underline="none">v3.2</Link>
+                    </Grid>
+                </Grid>
+            </Stack>
+        </div>
     )
 }
 
-export const MaterialUISwitch = styled(Switch)(({ theme }) => ({
+export const LightDarkThemeSwitch = styled(Switch)(({ theme }) => ({
     width: 62,
     height: 34,
     padding: 7,

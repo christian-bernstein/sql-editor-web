@@ -1,22 +1,3 @@
-.counter {
-  button {
-    font-family: "JetBrains Mono", monospace;
-  }
-
-  span {
-    // padding: 0 10px;
-    font-family: "JetBrains Mono", monospace;
-  }
-}
-
-#root {
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  // background-color: rgb(10, 25, 41);
-}
-
 .memo {
   display: flex;
   flex-direction: column;
@@ -26,6 +7,78 @@
   width: 50%;
 }
 
-.login-component {
-  width: 90%;
+.login-page {
+  width: 100%;
+  height: 100%;
+
+  .login-page-background {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+
+    .login-page-background-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      z-index: 1;
+      height: 100%;
+      background-color: black;
+
+      img {
+        width: 100vw;
+      }
+    }
+
+    .login-page-background-foreground {
+      z-index: 10;
+      position: absolute;
+      padding: 12% 8% 8% 8%;
+
+      .logo {
+        width: 22px;
+        height: 22px;
+        margin-bottom: 18%;
+      }
+
+      .brand-name {
+        font-size: 40px;
+        font-weight: bold;
+        margin-bottom: -3%;
+      }
+
+      .brand-hook {
+        font-size: 12px;
+      }
+    }
+  }
+
+  .login-component-form {
+    display: flex;
+    justify-content: space-between;
+    height: 53%;
+    position: absolute;
+    z-index: 5;
+    bottom: 0;
+    background-color: #161b22;
+    width: 100%;
+    align-items: center;
+    padding: 10% 8% 4% 8%;
+    border-radius: 27px 27px 0 0;
+
+    .login-action-header {
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .login-component {
+      width: 100%;
+    }
+
+    .login-footer-text {
+      font-size: 14px;
+    }
+  }
 }
+
+

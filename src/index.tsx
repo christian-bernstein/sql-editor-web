@@ -2,8 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.scss';
 import reportWebVitals from './reportWebVitals';
-import App from "./App";
-import {StateChanger, StateWatcher} from "./tests/Learning";
+import {App} from "./App";
+import SwipeableDebugDrawer from "./tests/SwipeableDebugDrawer";
 
 ReactDOM.render(
   <React.StrictMode>

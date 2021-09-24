@@ -1,8 +1,8 @@
 import {v4} from "uuid";
-import React, {Dispatch, SetStateAction} from "react";
+import React from "react";
 
 export type Meta = {
-    dispatches: Array<React.Dispatch<any>>
+    subscribedClassComponents: Array<React.Component<any, any>>
 }
 
 export default class Store {
@@ -57,72 +57,60 @@ export default class Store {
         }
     }
 
-    public isSubscribed(key: string, dispatch: React.Dispatch<any>): boolean {
+    public set<T>(key: string, val: T): T {
+        this.data.set(key, val);
+        if (!this.meta.has(key)) {
+            this.meta.set(key, {
+                subscribedClassComponents: new Array<React.Component<any, any>>()
+            });
+        }
+        this.forceUpdate(key);
+        return val;
+    }
+
+    public isSubscribed(key: string, component: React.Component<any, any>): boolean {
         const item: Meta | undefined = this.meta.get(key);
         let found: boolean = false;
-        item?.dispatches.forEach((value, index) => {
-            if (value === dispatch) {
+        item?.subscribedClassComponents.forEach((value, index) => {
+            if (value === component) {
                 found =  true;
             }
         })
         return found;
     }
 
-    public unsubscribe(key: string, dispatch: React.Dispatch<any>, triggerUpdate: boolean = true): Store {
+    public unsubscribe(key: string, component: React.Component<any, any>, triggerUpdate: boolean = true): Store {
         const item: Meta | undefined = this.meta.get(key);
-        item?.dispatches.forEach((value, index) => {
-            if (value === dispatch) {
-                item.dispatches.splice(index, 1);
+        item?.subscribedClassComponents.forEach((value, index) => {
+            if (value === component) {
+                item.subscribedClassComponents.splice(index, 1);
             }
         })
         return this;
     }
 
-    public subscribe<T>(key: string, state: [T, React.Dispatch<T>]): [T, React.Dispatch<T>] {
+    public subscribe<T>(key: string, val: T, component: React.Component<any, any>): Store {
         const meta: Meta | undefined = this.meta.get(key);
         if (meta !== undefined) {
-            if (Array.from(meta.dispatches.values()).includes(state[1])) {
-                console.error("dispatcher already registered")
-                return state;
+            if (Array.from(meta.subscribedClassComponents.values()).includes(component)) {
+                return this;
             }
-            console.log("subscription not duplicate")
         }
-        console.log("init subscription")
         if (this.get(key) !== undefined) {
-            meta?.dispatches.push(state[1]);
-            this.noopUpdate(key, state[1]);
-            return [this.get<T>(key) as T, state[1]]
+            meta?.subscribedClassComponents.push(component);
+            this.forceUpdate(key);
+            return this;
         } else {
-            this.set<T>(key, state[0]);
-            meta?.dispatches.push(state[1]);
-            this.noopUpdate(key, state[1]);
-            return state;
+            this.set<T>(key, val);
+            meta?.subscribedClassComponents.push(component);
+            this.forceUpdate(key);
+            return this;
         }
     }
 
-    private noopUpdate(key: string, dispatch: React.Dispatch<any>) {
-        const val: any = this.get(key);
-        dispatch(val);
-    }
-
-    public set<T>(key: string, val: T): T {
-
-        console.log("key " + key + " changed to " + JSON.stringify(val))
-
-        this.data.set(key, val);
-        if (!this.meta.has(key)) {
-            console.log("meta " + key + " will be created");
-            this.meta.set(key, {
-                dispatches: new Array<React.Dispatch<any>>()
-            });
-        }
-
-        console.log("dispatches: " + this.meta.get(key)?.dispatches);
-
-        this.meta.get(key)?.dispatches.forEach(dispatch => {
-            console.log("call dispatch")
-            dispatch.call(this, val);
-        });
-        return val;
+    private forceUpdate(key: string) {
+        this.meta.get(key)?.subscribedClassComponents.forEach(value => {
+            value.forceUpdate();
+        })
     }
 }

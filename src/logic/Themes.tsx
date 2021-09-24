@@ -15,7 +15,7 @@ export namespace Themes {
 
         },
         typography: {
-            fontFamily: ['JetBrains Mono', 'monospace'].join(',')
+            fontFamily: ['Poppins', 'JetBrains Mono', 'monospace'].join(',')
         },
     });
 
@@ -31,7 +31,7 @@ export namespace Themes {
             }
         },
         typography: {
-            fontFamily: "JetBrains Mono, monospace",
+            fontFamily: ['Poppins', 'JetBrains Mono', 'monospace'].join(',')
         },
     });
 }
