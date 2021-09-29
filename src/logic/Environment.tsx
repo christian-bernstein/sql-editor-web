@@ -25,8 +25,8 @@ export namespace Environment {
             activeTheme: "dark"
         },
         defaultEnvironmentDebugData: {
-            showDebugPanel: true,
-            showOverlays: true
+            showDebugPanel: false,
+            showOverlays: false
         }
     }
 

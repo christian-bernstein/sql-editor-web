@@ -1,15 +1,14 @@
 import * as React from 'react';
-import { Global } from '@emotion/react';
-import { styled } from '@mui/material/styles';
+import {Global} from '@emotion/react';
+import {styled} from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { grey } from '@mui/material/colors';
+import {grey} from '@mui/material/colors';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
-import Skeleton from '@mui/material/Skeleton';
 import Typography from '@mui/material/Typography';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import {LightDarkThemeSwitch} from "./Learning";
-import {AppBar, Container, Divider, FormControl, Grid, Input, Stack, Tab, Tabs, Theme, useTheme} from "@mui/material";
+import {Divider, Grid, Input, Stack, Switch, Tab, Tabs, useTheme} from "@mui/material";
 import Store from "../logic/Store";
 import {Environment} from "../logic/Environment";
 import SwipeableViews from "react-swipeable-views";
@@ -28,11 +27,13 @@ interface Props {
 
 const Root = styled('div')(({ theme }) => ({
     height: '100%',
-    backgroundColor: theme.palette.mode === 'light' ? grey[100] : theme.palette.background.default,
+    // backgroundColor: theme.palette.mode === 'light' ? grey[100] : theme.palette.background.default,
+    backgroundColor: theme.palette.background.default,
 }));
 
 const StyledBox = styled(Box)(({ theme }) => ({
-    backgroundColor: theme.palette.mode === 'light' ? '#fff' : grey[800],
+    // backgroundColor: theme.palette.mode === 'light' ? '#fff' : grey[800],
+    backgroundColor: theme.palette.background.default,
 }));
 
 const Puller = styled(Box)(({ theme }) => ({
@@ -87,9 +88,7 @@ export default function SwipeableDebugDrawer(props: Props) {
                         borderTopRightRadius: 8,
                         visibility: 'visible',
                         right: 0,
-                        left: 0,
-                        // todo remove
-                        opacity: ".3"
+                        left: 0
                     }}
                 >
                     <Puller />
@@ -154,10 +153,14 @@ export const FullWidthTabs: React.FC = () => {
                 <TabPanel value={value} index={0} direction={theme.direction}>
                     <Box paddingTop={1} sx={{px: 1}} height={"100%"}>
                         <Stack spacing={1} divider={<Divider/>}>
-                            {/* Theme switcher */}
+                            {/* Power actions */}
                             <Stack spacing={1}>
                                 <Typography>Power actions</Typography>
                                 <Button variant={"outlined"} onClick={() => Store.defStore().get<App>("app")?.forceUpdate()}>Rerender App</Button>
+                                <Button variant={"outlined"} onClick={() => {
+                                    Environment.constants.defaultEnvironmentDebugData.showDebugPanel = !Environment.constants.defaultEnvironmentDebugData.showDebugPanel;
+                                    Store.defStore().get<App>("app")?.forceUpdate()
+                                }}>Toggle debug panel</Button>
                             </Stack>
                         </Stack>
                     </Box>

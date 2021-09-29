@@ -4,8 +4,8 @@ import PropTypes from "prop-types";
 import FloatingLabel from "react-bootstrap-floating-label";
 
 import './Login.scss';
-import {ReactComponent as Logo} from '../../assets/logo.svg';
-import hero from '../../assets/hero.png';
+import {ReactComponent as Logo} from '../../../assets/logo.svg';
+import hero from '../../../assets/hero.png';
 
 
 type LoginProps = {

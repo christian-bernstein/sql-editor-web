@@ -1,33 +1,27 @@
-import React, {createRef, FC, useRef, useState} from "react";
+import React, {useState} from "react";
 import "./Learning.scss"
 import {
-    Badge, Box,
+    Badge,
     Button,
-    Container,
-    createTheme,
+    createTheme, CssBaseline,
     Divider,
-    FilledInput,
-    FormControl, Grid,
-    IconButton, Input,
+    FormControl,
+    Grid,
+    IconButton,
     InputAdornment,
-    InputLabel, Link,
+    InputLabel,
+    Link,
     OutlinedInput,
-    Skeleton,
-    Stack, styled, Switch,
+    Stack,
+    styled,
+    Switch,
     TextField,
     Theme,
-    ThemeProvider, Typography,
-    useMediaQuery
+    ThemeProvider,
+    Typography,
+    useMediaQuery, useTheme
 } from "@mui/material";
-import {
-    AccountBox, ArrowBackIosNew, ArrowForward, ArrowForwardIos, ArrowForwardIosOutlined, ArrowForwardTwoTone,
-    ArrowRight,
-    ArrowRightAlt, ArrowRightSharp, Fingerprint,
-    Notifications,
-    Password,
-    Visibility,
-    VisibilityOff
-} from "@mui/icons-material";
+import {Fingerprint, Notifications, Visibility, VisibilityOff} from "@mui/icons-material";
 import Store from "../logic/Store";
 import {Environment} from "../logic/Environment";
 import bg from "../assets/background.gif";
@@ -39,7 +33,7 @@ export const Counter: React.FC = ({}) => {
     const changeCountBy = (off: number) => {
         setCount(prevState => prevState + off);
     };
-    return(
+    return (
         <div className={"counter"}>
             <button onClick={() => changeCountBy(-100)}>-100</button>
             <button onClick={() => changeCountBy(-10)}>-10</button>
@@ -66,7 +60,7 @@ export const Memo: React.FC = ({}) => {
         [prefersDarkMode]
     );
     const [memo, setMemo] = Environment.usePersistent("You're memo goes here", "memo")
-    return(
+    return (
         <ThemeProvider theme={theme}>
             <div className={"memo"}>
                 <TextField
@@ -84,8 +78,8 @@ export const Memo: React.FC = ({}) => {
 }
 
 export const Gif: React.FC = ({}) => {
-    return(
-        <img src={bg} alt={"loading..."} />
+    return (
+        <img src={bg} alt={"loading..."}/>
     );
 }
 
@@ -98,6 +92,7 @@ export type LoginState = {
 }
 
 export const Login: React.FC = () => {
+    const theme: Theme = useTheme();
     const [state, setState] = useState<LoginState>(() => {
         return {
             username: "",
@@ -109,21 +104,26 @@ export const Login: React.FC = () => {
     });
 
     const submitLogic: () => void = () => {
-        state.connector.singleton({
+        state.connector.call({
             protocol: "login",
             packetID: "LoginRequestPacketData",
             data: {
                 username: state.username,
                 password: state.password
+            },
+            callback: {
+                handle: (connector: Environment.Connector, packet: Environment.Packet) => {
+                    // todo implement
+                }
             }
         });
     };
 
     const handleChange = (prop: keyof LoginState) => (event: React.ChangeEvent<HTMLInputElement>) => {
-        setState({ ...state, [prop]: event.target.value });
+        setState({...state, [prop]: event.target.value});
     };
 
-    return(
+    return (
         <div className={"login-page"}>
             <div className={"login-page-background"}>
                 <div className={"login-page-background-background"}>
@@ -135,22 +135,19 @@ export const Login: React.FC = () => {
                     <Typography variant={"subtitle1"} className={"brand-hook"}>The place to learn SQL</Typography>
                 </div>
             </div>
-            <Stack className={"login-component-form"} direction={"column"} alignItems={"start"} justifyContent={"start"}>
+            <Stack className={"login-component-form"} direction={"column"} alignItems={"start"}
+                   justifyContent={"start"} sx={{backgroundColor: theme.palette.background.default}}>
                 <Grid container spacing={0} width={"100%"}>
                     <Grid item xs={6}>
                         <Typography variant={"subtitle1"} className={"login-action-header"}>Log in</Typography>
                     </Grid>
-                    <Grid item xs={6} display={"flex"} justifyContent={"end"} alignItems={"center"} className={"login-footer-text"}>
-
-                        <Switch checked onClick={() => {
-                            Environment.constants.defaultEnvironmentDebugData.showDebugPanel = !Environment.constants.defaultEnvironmentDebugData.showDebugPanel;
-                            Store.defStore().get<App>("app")?.forceUpdate();
-                        }}/>
+                    <Grid item xs={6} display={"flex"} justifyContent={"end"} alignItems={"center"}
+                          className={"login-footer-text"}>
                     </Grid>
                 </Grid>
                 <Stack className={"login-component"} spacing={2}>
                     {/* Field for username */}
-                    <FormControl sx={{ m: 0, width: '100%'}} variant="outlined">
+                    <FormControl sx={{m: 0, width: '100%'}} variant="outlined">
                         <InputLabel htmlFor="outlined-adornment-username">Username</InputLabel>
                         <OutlinedInput
                             id="outlined-adornment-username"
@@ -163,7 +160,7 @@ export const Login: React.FC = () => {
                         />
                     </FormControl>
                     {/* Field for password */}
-                    <FormControl sx={{ m: 0, width: '100%'}} variant="outlined">
+                    <FormControl sx={{m: 0, width: '100%'}} variant="outlined">
                         <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
                         <OutlinedInput
                             id="outlined-adornment-password"
@@ -178,28 +175,30 @@ export const Login: React.FC = () => {
                                     <Stack
                                         direction={"row"}
                                         spacing={1}
-                                        divider={<Divider orientation="vertical" flexItem />}
+                                        divider={<Divider orientation="vertical" flexItem/>}
                                     >
                                         <IconButton
                                             aria-label="toggle password visibility"
-                                            onClick={() => {setState(() => {
-                                                return ({
-                                                    ...state,
-                                                    showPassword: !state.showPassword
+                                            onClick={() => {
+                                                setState(() => {
+                                                    return ({
+                                                        ...state,
+                                                        showPassword: !state.showPassword
+                                                    })
                                                 })
-                                            })}}
+                                            }}
                                             onMouseDown={(ev: React.MouseEvent<HTMLButtonElement>) => ev.preventDefault()}
                                             color="success"
                                             edge="start"
                                         >
-                                            {state.showPassword ? <VisibilityOff /> : <Visibility />}
+                                            {state.showPassword ? <VisibilityOff/> : <Visibility/>}
                                         </IconButton>
                                         <IconButton
                                             aria-label="fingerprint"
                                             color="success"
                                             edge="end"
                                         >
-                                            <Fingerprint />
+                                            <Fingerprint/>
                                         </IconButton>
                                     </Stack>
                                 </InputAdornment>
@@ -207,8 +206,13 @@ export const Login: React.FC = () => {
                         />
                     </FormControl>
                     {/* Button to submit */}
-                    <FormControl sx={{ m: 0, width: '100%'}} variant="outlined">
+                    <FormControl sx={{m: 0, width: '100%'}} variant="outlined">
                         <Button onClick={() => submitLogic()}
+                                sx={{
+                                    fontWeight: 800,
+                                    fontSize: "20px",
+                                    textTransform: "none"
+                                }}
                                 variant={"outlined"}
                                 size="large"
                         >Login</Button>
@@ -218,10 +222,22 @@ export const Login: React.FC = () => {
                     <Grid item xs={4}>
                     </Grid>
                     <Grid item xs={4} display={"flex"} justifyContent={"center"} alignItems={"center"}>
-                        <Link href={"#"} underline="none" textAlign={"center"} display={"flex"} alignItems={"center"} className={"login-footer-text"}>Need help?</Link>
+                        <Link href={"#"} underline="none" textAlign={"center"} display={"flex"} alignItems={"center"}
+                              className={"login-footer-text"}>Need help?</Link>
                     </Grid>
-                    <Grid item xs={4} display={"flex"} justifyContent={"end"} alignItems={"center"} className={"login-footer-text"}>
-                        <Link href={"#"} underline="none">v3.2</Link>
+                    <Grid item xs={4} display={"flex"} justifyContent={"end"} alignItems={"center"}
+                          className={"login-footer-text"}>
+                        <Button sx={{textTransform: "none"}} onClick={() => {
+                            const store: Store = Store.defStore();
+                            const debugData: Environment.EnvironmentDebugData = store.get("debug-config") as Environment.EnvironmentDebugData;
+                            if (debugData.showDebugPanel) {
+                                debugData.showDebugPanel = false;
+                                store.set("debug-config", debugData);
+                            } else {
+                                debugData.showDebugPanel = true;
+                                store.set("debug-config", debugData);
+                            }
+                        }}>v3.2</Button>
                     </Grid>
                 </Grid>
             </Stack>
@@ -229,7 +245,7 @@ export const Login: React.FC = () => {
     )
 }
 
-export const LightDarkThemeSwitch = styled(Switch)(({ theme }) => ({
+export const LightDarkThemeSwitch = styled(Switch)(({theme}) => ({
     width: 62,
     height: 34,
     padding: 7,

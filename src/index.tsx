@@ -3,11 +3,11 @@ import ReactDOM from 'react-dom';
 import './index.scss';
 import reportWebVitals from './reportWebVitals';
 import {App} from "./App";
-import SwipeableDebugDrawer from "./tests/SwipeableDebugDrawer";
+import {Main} from "./tests/routing/ReactRoutingTest";
 
 ReactDOM.render(
   <React.StrictMode>
-      <App/>
+      <Main/>
   </React.StrictMode>,
   document.getElementById('root')
 );
