@@ -21,32 +21,50 @@ export enum TimeUnit {
 export type KeyPress = {
     key: number,
     type: KeyPressType,
+    // delayAmount: number,
+    // delayUnit: TimeUnit
+}
+
+
+
+export type Micro = {
+    type: string,
     delayAmount: number,
-    delayUnit: TimeUnit
+    delayUnit: TimeUnit,
+    data: {
+        data: Map<string, object>
+    }
 }
 
-export type KeyPressesData = {
-    keys: KeyPress[]
+export type Macro = {
+    micros: Micro[]
 }
 
-export type ControlPanelState = {
-    connector: Environment.Connector
+const basicWrap: (wrap: Micro, ...micro: Micro[]) => Micro[] = (wrap: Micro, ...micro: Micro[]) => {
+
+    return [
+        {
+            key: 0x10,
+            type: KeyPressType.PRESS
+        },
+        ...keyPresses,
+        {
+            key: 0x10,
+            type: KeyPressType.RELEASE
+        }
+    ]
 }
 
 const basicWrap: (wrap: number, ...keyPresses: KeyPress[]) => KeyPress[] = (wrap, ...keyPresses) => {
     return [
         {
             key: 0x10,
-            type: KeyPressType.PRESS,
-            delayAmount: 0,
-            delayUnit: TimeUnit.NANOSECONDS
+            type: KeyPressType.PRESS
         },
         ...keyPresses,
         {
             key: 0x10,
-            type: KeyPressType.RELEASE,
-            delayAmount: 0,
-            delayUnit: TimeUnit.NANOSECONDS
+            type: KeyPressType.RELEASE
         }
     ]
 }
@@ -55,8 +73,23 @@ const shiftWrap: (...keyPresses: KeyPress[]) => KeyPress[] = (...keyPresses) => 
     return basicWrap(0x10, ...keyPresses);
 }
 
-const fnWrap: (...keyPresses: KeyPress[]) => KeyPress[] = (...keyPresses) => {
-    return basicWrap(0x10, ...keyPresses);
+const micro: (key: KeyPress, delayAmount?: number, delayUnit?: TimeUnit) => Micro = (key: KeyPress, delayAmount?: number, delayUnit?: TimeUnit) => {
+    const macro: Micro = {
+        type: "key",
+        delayAmount: delayAmount === undefined ? 0 : delayAmount,
+        delayUnit: delayUnit === undefined ? TimeUnit.MILLISECONDS : delayUnit,
+        data: {
+            data: new Map<string, object>([["wrapped", {
+                key: 0x10,
+                type: KeyPressType.PRESS
+            }]])
+        }
+    }
+    return macro;
+}
+
+export type ControlPanelState = {
+    connector: Environment.Connector
 }
 
 export const ControlPanel: React.FC = () => {
@@ -66,14 +99,14 @@ export const ControlPanel: React.FC = () => {
         }
     })
 
-    const handleClick: (...keys: KeyPress[]) => void = (...keys: KeyPress[]) => {
+    const execute: (...micros: Micro[]) => void = (...micros: Micro[]) => {
         if (state.connector !== undefined) {
-            const data: KeyPressesData = {
-                keys: keys
+            const data: Macro = {
+                micros: micros
             };
             state.connector.singleton({
                 protocol: "stream",
-                packetID: "ButtonPressedPacketData",
+                packetID: "MacroPacketData",
                 data: data
             });
         }
@@ -83,36 +116,30 @@ export const ControlPanel: React.FC = () => {
         <>
             <Button
                 onClick={() => {
-                    handleClick({
-                        key: 0x57,
-                        type: KeyPressType.CLICK,
-                        delayAmount: 0,
-                        delayUnit: TimeUnit.NANOSECONDS
-                    })
+                    execute(micro({
+                        key: 0x10,
+                        type: KeyPressType.PRESS
+                    }));
                 }}
                 variant={"outlined"}>
                 W
             </Button>
             <Button
                 onClick={() => {
-                    handleClick({
+                    execute(micro({
                         key: 0x41,
-                        type: KeyPressType.CLICK,
-                        delayAmount: 0,
-                        delayUnit: TimeUnit.NANOSECONDS
-                    })
+                        type: KeyPressType.CLICK
+                    }));
                 }}
                 variant={"outlined"}>
                 A
             </Button>
             <Button
                 onClick={() => {
-                    handleClick(
+                    execute(
                         ...basicWrap(0x10, {
                             key: 0x41,
-                            type: KeyPressType.CLICK,
-                            delayAmount: 0,
-                            delayUnit: TimeUnit.NANOSECONDS
+                            type: KeyPressType.CLICK
                         })
                     )
                 }}
