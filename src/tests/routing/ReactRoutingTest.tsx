@@ -16,7 +16,6 @@ export class Main extends React.Component {
 
     private toggleMenu(): void {
         // Move the app container to the right side and make it smaller
-        this.appContainer?.classList.toggle("on-sided");
     }
 
     // <Link to="/">Home</Link>
@@ -27,35 +26,23 @@ export class Main extends React.Component {
                 <div className={"app-background"}>
                     <h1>This is the app menu</h1>
                 </div>
-                {this.createAppContainer(
-                    <div className={"app-container"}>
-                        <Router>
-                            <Switch>
-                                <Route path="/about">
-                                    <Home />
-                                </Route>
-                                <Route path="/users">
-                                    <Users />
-                                </Route>
-                                <Route path="/">
-                                    <App />
-                                </Route>
-                            </Switch>
-                        </Router>
-                    </div>
-                )}
+                <div className={"app-container"}>
+                    <Router>
+                        <Switch>
+                            <Route path="/about">
+                                <Home />
+                            </Route>
+                            <Route path="/users">
+                                <Users />
+                            </Route>
+                            <Route path="/">
+                                <App />
+                            </Route>
+                        </Switch>
+                    </Router>
+                </div>
             </div>
         );
-    }
-
-    private createAppContainer(children: JSX.Element): JSX.Element {
-        const div: HTMLDivElement = (
-            <div className={"app-foreground"}>
-                {children}
-            </div>
-        );
-        this.appContainer = div;
-        return div;
     }
 }
 

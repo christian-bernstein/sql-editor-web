@@ -4,10 +4,11 @@ import './index.scss';
 import reportWebVitals from './reportWebVitals';
 import {App} from "./App";
 import {Main} from "./tests/routing/ReactRoutingTest";
+import {ControlPanel} from "./tests/panel/ControlPanel";
 
 ReactDOM.render(
   <React.StrictMode>
-      <Main/>
+      <ControlPanel/>
   </React.StrictMode>,
   document.getElementById('root')
 );
