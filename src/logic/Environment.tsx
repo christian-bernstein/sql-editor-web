@@ -76,6 +76,20 @@ export namespace Environment {
 
     export class Connector {
 
+        private static connectors: Array<Connector> = new Array<Environment.Connector>();
+
+        public static useConnector(id: string, factory: () => Connector): Connector {
+            const filter: Array<Connector> = Connector.connectors.filter(value => value.id === id);
+            if (filter.length === 0) {
+                // No connector found, create new one
+                const connector: Connector = factory();
+                Connector.connectors.push(connector)
+                return connector;
+            } else {
+                return filter[0];
+            }
+        }
+
         private _socket: WebSocket | undefined;
 
         private _protocol: string;
@@ -84,11 +98,15 @@ export namespace Environment {
 
         private _protocols: Map<string, Protocol> = new Map<string, Environment.Protocol>();
 
+        private _id: string;
+
         private readonly address: string;
 
-        constructor(protocol: string, address: string) {
+        constructor(protocol: string, address: string, id: string = v4()) {
             this._protocol = protocol;
             this.address = address;
+            this._id = id;
+            Connector.connectors.push(this);
         }
 
         private baseSend(payload: string): void {
@@ -141,7 +159,7 @@ export namespace Environment {
             })
         }
 
-        public singleton(config: {protocol: string, packetID: string, data: object}): Connector {
+        public singleton(config: {protocol: string, packetID: string, data: any}): Connector {
             const uuid: string = v4();
             const packet: string = JSON.stringify({
                 protocol: config.protocol,
@@ -151,11 +169,14 @@ export namespace Environment {
                 type: PacketType.REQUEST,
                 data: config.data
             });
+
+            console.log(packet);
+
             this.baseSend(packet);
             return this;
         }
 
-        public call(config: {protocol: string, packetID: string, data: object, callback: Handler}): Connector {
+        public call(config: {protocol: string, packetID: string, data: any, callback: Handler}): Connector {
             const uuid: string = v4();
             const packet: string = JSON.stringify({
                 protocol: config.protocol,
@@ -170,7 +191,7 @@ export namespace Environment {
             return this;
         }
 
-        public respond(config: {protocol: string, packetID: string, data: object, id: string}): Connector {
+        public respond(config: {protocol: string, packetID: string, data: any, id: string}): Connector {
             const packet: string = JSON.stringify({
                 protocol: config.protocol,
                 timestamp: Date,
@@ -207,6 +228,14 @@ export namespace Environment {
                 }
             };
             return this;
+        }
+
+        get id(): string {
+            return this._id;
+        }
+
+        set id(value: string) {
+            this._id = value;
         }
 
         get socket(): WebSocket | undefined {

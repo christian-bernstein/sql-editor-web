@@ -26,51 +26,17 @@ export type KeyPress = {
 }
 
 
-
 export type Micro = {
     type: string,
     delayAmount: number,
     delayUnit: TimeUnit,
     data: {
-        data: Map<string, object>
+        [key: string]: any
     }
 }
 
 export type Macro = {
     micros: Micro[]
-}
-
-const basicWrap: (wrap: Micro, ...micro: Micro[]) => Micro[] = (wrap: Micro, ...micro: Micro[]) => {
-
-    return [
-        {
-            key: 0x10,
-            type: KeyPressType.PRESS
-        },
-        ...keyPresses,
-        {
-            key: 0x10,
-            type: KeyPressType.RELEASE
-        }
-    ]
-}
-
-const basicWrap: (wrap: number, ...keyPresses: KeyPress[]) => KeyPress[] = (wrap, ...keyPresses) => {
-    return [
-        {
-            key: 0x10,
-            type: KeyPressType.PRESS
-        },
-        ...keyPresses,
-        {
-            key: 0x10,
-            type: KeyPressType.RELEASE
-        }
-    ]
-}
-
-const shiftWrap: (...keyPresses: KeyPress[]) => KeyPress[] = (...keyPresses) => {
-    return basicWrap(0x10, ...keyPresses);
 }
 
 const micro: (key: KeyPress, delayAmount?: number, delayUnit?: TimeUnit) => Micro = (key: KeyPress, delayAmount?: number, delayUnit?: TimeUnit) => {
@@ -79,10 +45,9 @@ const micro: (key: KeyPress, delayAmount?: number, delayUnit?: TimeUnit) => Micr
         delayAmount: delayAmount === undefined ? 0 : delayAmount,
         delayUnit: delayUnit === undefined ? TimeUnit.MILLISECONDS : delayUnit,
         data: {
-            data: new Map<string, object>([["wrapped", {
-                key: 0x10,
-                type: KeyPressType.PRESS
-            }]])
+            data: {
+                wrapped: key
+            }
         }
     }
     return macro;
@@ -95,7 +60,7 @@ export type ControlPanelState = {
 export const ControlPanel: React.FC = () => {
     const [state, setState] = useState<ControlPanelState>(() => {
         return {
-            connector: new Environment.Connector("v1", "ws:192.168.2.102:30001").connect()
+            connector: Environment.Connector.useConnector("panel", () => new Environment.Connector("v1", "ws:192.168.2.102:30001", "panel").connect())
         }
     })
 
@@ -116,20 +81,19 @@ export const ControlPanel: React.FC = () => {
         <>
             <Button
                 onClick={() => {
-                    execute(micro({
-                        key: 0x10,
-                        type: KeyPressType.PRESS
-                    }));
+                    execute(
+                        // todo set correct key code
+                        micro({key: 0x10, type: KeyPressType.CLICK})
+                    );
                 }}
                 variant={"outlined"}>
                 W
             </Button>
             <Button
                 onClick={() => {
-                    execute(micro({
-                        key: 0x41,
-                        type: KeyPressType.CLICK
-                    }));
+                    execute(
+                        micro({key: 0x41, type: KeyPressType.CLICK})
+                    );
                 }}
                 variant={"outlined"}>
                 A
@@ -137,14 +101,31 @@ export const ControlPanel: React.FC = () => {
             <Button
                 onClick={() => {
                     execute(
-                        ...basicWrap(0x10, {
-                            key: 0x41,
-                            type: KeyPressType.CLICK
-                        })
+                        micro({key: 0x10, type: KeyPressType.PRESS}),
+                        micro({key: 0x41, type: KeyPressType.CLICK}),
+                        micro({key: 0x10, type: KeyPressType.RELEASE}),
                     )
                 }}
                 variant={"outlined"}>
                 SHIFT + A
+            </Button>
+            <Button
+                onClick={() => {
+                    execute(
+                        {
+                            delayAmount: 0,
+                            delayUnit: TimeUnit.NANOSECONDS,
+                            type: "hello",
+                            data: {
+                                data: {
+                                    wrapped: "Hello world"
+                                }
+                            }
+                        }
+                    )
+                }}
+                variant={"outlined"}>
+                HELLO
             </Button>
         </>
     );
