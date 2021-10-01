@@ -144,13 +144,15 @@ export namespace Environment {
                 console.log("websocket isn't ready, wait for ready state OPEN (1)")
 
                 try {
-                    await this.waitForOpenConnection().then(() => {
-                        console.log("websocket connection opened")
-                    });
+                    // await this.waitForOpenConnection();
 
-                    console.log("websocket connection now in ready state")
+                    this.waitForOpenConnection().then(() => {
+                        console.log("websocket connection now in ready state")
+                        this.socket?.send(payload);
+                    })
 
-                    this.socket?.send(payload);
+                    // console.log("websocket connection now in ready state")
+                    // this.socket?.send(payload);
                 } catch (err) {
                     console.error(err)
                 }
@@ -177,6 +179,9 @@ export namespace Environment {
                         clearInterval(interval);
                         resolve();
                     }
+
+                    console.log("couldn't resolve opened websocket connection");
+
                     currentAttempt++;
                 }, intervalTime);
             })
