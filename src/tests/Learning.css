@@ -1,17 +1,3 @@
-.counter button {
-  font-family: "JetBrains Mono", monospace;
-}
-.counter span {
-  font-family: "JetBrains Mono", monospace;
-}
-
-#root {
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 .memo {
   display: flex;
   flex-direction: column;
@@ -21,8 +7,72 @@
   width: 50%;
 }
 
-.login-component {
-  width: 90%;
+.login-page {
+  width: 100%;
+  height: 100%;
+}
+.login-page .login-page-background {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.login-page .login-page-background .login-page-background-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  z-index: 1;
+  height: 100%;
+  background-color: black;
+}
+.login-page .login-page-background .login-page-background-background img {
+  width: 100vw;
+  max-height: 100vh;
+  overflow-y: hidden;
+}
+.login-page .login-page-background .login-page-background-foreground {
+  z-index: 10;
+  position: absolute;
+  padding: 12% 8% 8% 8%;
+}
+.login-page .login-page-background .login-page-background-foreground .logo {
+  width: 22px;
+  height: 22px;
+  margin-bottom: 18%;
+}
+.login-page .login-page-background .login-page-background-foreground .brand-name {
+  mix-blend-mode: difference;
+  color: white;
+  font-size: 40px;
+  font-weight: bold;
+  margin-bottom: -3%;
+}
+.login-page .login-page-background .login-page-background-foreground .brand-hook {
+  mix-blend-mode: difference;
+  color: white;
+  font-size: 12px;
+}
+.login-page .login-component-form {
+  display: flex;
+  justify-content: space-between;
+  height: 53%;
+  position: absolute;
+  z-index: 5;
+  bottom: 0;
+  width: 100%;
+  align-items: center;
+  padding: 10% 8% 4% 8%;
+  border-radius: 27px 27px 0 0;
+}
+.login-page .login-component-form .login-action-header {
+  font-size: 20px;
+  font-weight: bold;
+}
+.login-page .login-component-form .login-component {
+  width: 100%;
+}
+.login-page .login-component-form .login-footer-text {
+  font-size: 14px;
 }
 
 /*# sourceMappingURL=Learning.css.map */

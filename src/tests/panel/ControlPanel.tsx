@@ -53,14 +53,43 @@ const micro: (key: KeyPress, delayAmount?: number, delayUnit?: TimeUnit) => Micr
     return macro;
 }
 
+export type MicroDescription = {
+    type: string,
+    key: number, // todo remove
+    display: string
+}
+
 export type ControlPanelState = {
-    connector: Environment.Connector
+    connector: Environment.Connector,
+    widgets?: Array<MicroDescription>
 }
 
 export const ControlPanel: React.FC = () => {
     const [state, setState] = useState<ControlPanelState>(() => {
+        // 192.168.2.102
+        const connector: Environment.Connector = Environment.Connector.useConnector(
+            "panel",
+            () => new Environment.Connector("v1", "ws:127.0.0.1:30001", "panel").connect()
+        );
+        connector.call({
+            protocol: "stream",
+            packetID: "WidgetRequestPacketData",
+            data: {},
+            callback: {
+                handle: (connector1, packet) => {
+                    const descriptions: Array<MicroDescription> = packet.data as Array<MicroDescription>;
+                    setState(prevState => {
+                        prevState.widgets = descriptions;
+
+                        console.log("set new widgets");
+
+                        return prevState;
+                    })
+                }
+            }
+        });
         return {
-            connector: Environment.Connector.useConnector("panel", () => new Environment.Connector("v1", "ws:192.168.2.102:30001", "panel").connect())
+            connector: connector
         }
     })
 

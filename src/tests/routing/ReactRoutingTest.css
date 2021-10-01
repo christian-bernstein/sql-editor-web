@@ -1,0 +1,45 @@
+.app-screen {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  color: white;
+}
+.app-screen .app-background {
+  background-color: #171717;
+  padding: 30px;
+  position: relative;
+  height: 100%;
+  width: 100%;
+  z-index: 1;
+  overflow: hidden;
+}
+.app-screen .app-foreground {
+  background-color: #171717;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  overflow: hidden;
+  border-radius: 0;
+  border: 0 solid #3E3E3E;
+  transition: 350ms ease-out;
+}
+.app-screen .app-foreground.on-side, .app-screen .app-foreground:hover {
+  background-color: #0a0e14 !important;
+  transform: scale(0.7);
+  right: -60%;
+  border-radius: 27px;
+  border: 2px solid #3E3E3E;
+}
+.app-screen .app-foreground .app-side-close-rect {
+  background-color: transparent;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 20;
+}
+
+/*# sourceMappingURL=ReactRoutingTest.css.map */
