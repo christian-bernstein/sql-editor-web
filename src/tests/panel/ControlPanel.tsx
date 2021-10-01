@@ -69,8 +69,9 @@ export const ControlPanel: React.FC = () => {
         // 192.168.2.102
         const connector: Environment.Connector = Environment.Connector.useConnector(
             "panel",
-            () => new Environment.Connector("v1", "ws:127.0.0.1:30001", "panel").connect()
+            () => new Environment.Connector("v1", "ws:192.168.2.102:30001", "panel")
         );
+
         connector.call({
             protocol: "stream",
             packetID: "WidgetRequestPacketData",

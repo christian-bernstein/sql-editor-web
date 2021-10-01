@@ -110,16 +110,25 @@ export namespace Environment {
         }
 
         private baseSend(payload: string): void {
+
+            console.log("perform base-send routine")
+
             if (this.socket !== undefined) {
                 if (this.socket.readyState === WebSocket.OPEN) {
                     // Websocket is ready, message can be send.
+
+                    console.log("websocket already in ready state")
+
                     this.saveSend(payload).then();
-                } else if (this.socket.readyState > WebSocket.OPEN) {
+                } else if (this.socket.readyState !== WebSocket.OPEN) {
                     // Websocket is closing or closed, it may be required to reconnect.
                     this.connect();
                     this.saveSend(payload).then();
                 }
             } else {
+
+                console.log("websocket is undefined, connect")
+
                 this.connect();
                 this.saveSend(payload).then();
             }
@@ -131,8 +140,16 @@ export namespace Environment {
                 this.socket?.send(payload);
             } else {
                 // Websocket is still loading
+
+                console.log("websocket isn't ready, wait for ready state OPEN (1)")
+
                 try {
-                    await this.waitForOpenConnection();
+                    await this.waitForOpenConnection().then(() => {
+                        console.log("websocket connection opened")
+                    });
+
+                    console.log("websocket connection now in ready state")
+
                     this.socket?.send(payload);
                 } catch (err) {
                     console.error(err)
@@ -141,21 +158,27 @@ export namespace Environment {
         }
 
         private waitForOpenConnection(): Promise<void> {
-            return new Promise<void>((resolve, reject) => {
-                const maxNumberOfAttempts = 10
-                const intervalTime = 200 //ms
 
-                let currentAttempt = 0
-                const interval = setInterval(() => {
+            console.log("waiting for websocket connection to open")
+
+            return new Promise<void>((resolve, reject) => {
+                const maxNumberOfAttempts: number = 10;
+                const intervalTime: number = 200; //ms
+
+                let currentAttempt: number = 0;
+                const interval: NodeJS.Timeout = setInterval(() => {
+
+                    console.log("check websocket connection");
+
                     if (currentAttempt > maxNumberOfAttempts - 1) {
-                        clearInterval(interval)
+                        clearInterval(interval);
                         reject(new Error('Maximum number of attempts exceeded'))
                     } else if (this.socket?.readyState === WebSocket.OPEN) {
-                        clearInterval(interval)
-                        resolve()
+                        clearInterval(interval);
+                        resolve();
                     }
-                    currentAttempt++
-                }, intervalTime)
+                    currentAttempt++;
+                }, intervalTime);
             })
         }
 
@@ -177,6 +200,9 @@ export namespace Environment {
         }
 
         public call(config: {protocol: string, packetID: string, data: any, callback: Handler}): Connector {
+
+            console.log("calling server with: " + config.packetID);
+
             const uuid: string = v4();
             const packet: string = JSON.stringify({
                 protocol: config.protocol,
@@ -205,8 +231,14 @@ export namespace Environment {
         }
 
         public connect(): Connector {
+
+            console.log("Connect to: " + this.address)
+
             this._socket = new WebSocket(this.address);
             this._socket.onmessage = ev => {
+
+                console.log(ev)
+
                 const packet: Packet = JSON.parse(ev.data) as Packet;
                 if (packet.type === PacketType.RESPONSE) {
                     // It's a return packet
