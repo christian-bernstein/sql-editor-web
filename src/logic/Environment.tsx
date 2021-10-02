@@ -233,7 +233,7 @@ export namespace Environment {
                 this._socket.onopen = ev => this.fireSocketEvent(SocketEventTypes.ONOPEN, ev);
                 this._socket.onclose = ev => this.fireSocketEvent(SocketEventTypes.ONCLOSE, ev);
                 this._socket.onmessage = ev => {
-                    console.log(ev);
+                    // console.log(ev);
 
                     const packet: Packet = JSON.parse(ev.data) as Packet;
                     if (packet.type === PacketType.RESPONSE) {

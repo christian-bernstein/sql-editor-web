@@ -140,16 +140,12 @@ export class ControlPanelComponent extends React.Component<ControlPanelProps, Co
     }
 
     private load() {
-        console.log("loading")
-
         // Register the handler for the key press packet (key down & up)
         this.state.connector.registerProtocolPacketHandlerOnCurrentProtocol("KeyPressedPacketData", {
             handle: (con, packet) => {
                 const event: GlobalKeyEvent = packet.data.event as GlobalKeyEvent;
-                console.log("keypress event registered")
                 this.state.widgets?.filter(widget => widget.data.ids.includes(String(event.virtualKeyCode))).forEach(widget => {
-                    console.log(widget)
-                    widget.call();
+                    widget.call(true);
                 })
                 this.forceUpdate();
             }
@@ -162,9 +158,6 @@ export class ControlPanelComponent extends React.Component<ControlPanelProps, Co
             data: {},
             callback: {
                 handle: (connector1, packet) => {
-                    console.log("WidgetRequestPacketData response delivered");
-                    console.log((packet.data.micros as Array<MicroDescription>));
-
                     this.setState({
                         widgets: (packet.data.micros as Array<MicroDescription>).map(micro => {
                             return new Widget({
@@ -210,7 +203,6 @@ export class ControlPanelComponent extends React.Component<ControlPanelProps, Co
     };
 
     render() {
-        console.log("drawing ui");
         return(
            <>
                <div className="calculator">
@@ -275,9 +267,6 @@ export class ControlPanelComponent extends React.Component<ControlPanelProps, Co
                                {
                                    (() => {
                                        if (this.state !== null) {
-
-                                           console.log("state is defined")
-
                                            return this.state.widgets?.map((widget, index, array) => {
                                                return (
                                                    <div className={["button", "action-primary", widget.data.active ? "button-active" : ""].join(" ")} onClick={() => {
@@ -299,7 +288,7 @@ export class ControlPanelComponent extends React.Component<ControlPanelProps, Co
                                                );
                                            });
                                        } else {
-                                           console.log("state is null")
+                                           console.log("state is null") // todo remove
                                        }
                                    })()
                                }
