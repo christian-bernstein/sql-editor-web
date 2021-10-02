@@ -2,13 +2,14 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.scss';
 import reportWebVitals from './reportWebVitals';
-import {App} from "./App";
-import {Main} from "./tests/routing/ReactRoutingTest";
-import {ControlPanel} from "./tests/panel/ControlPanel";
+import {ControlPanelComponent} from "./tests/panel/ControlPanel";
 
 ReactDOM.render(
   <React.StrictMode>
-      <ControlPanel/>
+      <ControlPanelComponent
+          address={"ws:192.168.2.102:30001"}
+          connectorID={"panel"}
+      />
   </React.StrictMode>,
   document.getElementById('root')
 );

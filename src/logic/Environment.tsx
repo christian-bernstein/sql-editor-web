@@ -67,11 +67,21 @@ export namespace Environment {
         packetID: string,
         id: string,
         type: PacketType,
-        data: object
+        data: any
     }
 
     export type Protocol = {
         handlers: Map<string, Array<Handler>>
+    }
+
+    export type SocketEventHandler = {
+        handle: (ev: Event) => void,
+        stator: boolean,
+        usagesLeft?: number
+    }
+
+    export enum SocketEventTypes {
+        ONOPEN, ONCLOSE
     }
 
     export class Connector {
@@ -100,6 +110,10 @@ export namespace Environment {
 
         private _id: string;
 
+        private readonly socketEventHandlers: Map<SocketEventTypes, Array<SocketEventHandler>> = new Map<SocketEventTypes, Array<SocketEventHandler>>([
+            [SocketEventTypes.ONOPEN, new Array<SocketEventHandler>()]
+        ]);
+
         private readonly address: string;
 
         constructor(protocol: string, address: string, id: string = v4()) {
@@ -110,85 +124,46 @@ export namespace Environment {
         }
 
         private baseSend(payload: string): void {
-
-            console.log("perform base-send routine")
-
             if (this.socket !== undefined) {
                 if (this.socket.readyState === WebSocket.OPEN) {
                     // Websocket is ready, message can be send.
-
-                    console.log("websocket already in ready state")
-
-                    this.saveSend(payload).then();
+                    this.saveSend(payload);
                 } else if (this.socket.readyState !== WebSocket.OPEN) {
                     // Websocket is closing or closed, it may be required to reconnect.
+                    this.saveSend(payload);
                     this.connect();
-                    this.saveSend(payload).then();
                 }
             } else {
-
-                console.log("websocket is undefined, connect")
-
+                this.saveSend(payload);
                 this.connect();
-                this.saveSend(payload).then();
             }
         }
 
-        private async saveSend(payload: string): Promise<void> {
+        private saveSend(payload: string): void {
             if (this.socket?.readyState === WebSocket.OPEN) {
                 // Websocket is already connected and open for messages
                 this.socket?.send(payload);
             } else {
                 // Websocket is still loading
-
-                console.log("websocket isn't ready, wait for ready state OPEN (1)")
-
                 try {
-                    // await this.waitForOpenConnection();
-
-                    this.waitForOpenConnection().then(() => {
-                        console.log("websocket connection now in ready state")
-                        this.socket?.send(payload);
-                    })
-
-                    // console.log("websocket connection now in ready state")
-                    // this.socket?.send(payload);
+                    this.registerSocketEventHandler(SocketEventTypes.ONOPEN, {
+                        stator: false,
+                        handle: ev => {
+                            (ev.target as WebSocket).send(payload);
+                        }
+                    });
                 } catch (err) {
                     console.error(err)
                 }
             }
         }
 
-        private waitForOpenConnection(): Promise<void> {
-
-            console.log("waiting for websocket connection to open")
-
-            return new Promise<void>((resolve, reject) => {
-                const maxNumberOfAttempts: number = 10;
-                const intervalTime: number = 200; //ms
-
-                let currentAttempt: number = 0;
-                const interval: NodeJS.Timeout = setInterval(() => {
-
-                    console.log("check websocket connection");
-
-                    if (currentAttempt > maxNumberOfAttempts - 1) {
-                        clearInterval(interval);
-                        reject(new Error('Maximum number of attempts exceeded'))
-                    } else if (this.socket?.readyState === WebSocket.OPEN) {
-                        clearInterval(interval);
-                        resolve();
-                    }
-
-                    console.log("couldn't resolve opened websocket connection");
-
-                    currentAttempt++;
-                }, intervalTime);
-            })
+        public registerSocketEventHandler(type: SocketEventTypes, handler: SocketEventHandler): Connector {
+            this.socketEventHandlers.get(type)?.push(handler);
+            return this;
         }
 
         public singleton(config: {protocol: string, packetID: string, data: any}): Connector {
-            const uuid: string = v4();
             const packet: string = JSON.stringify({
                 protocol: config.protocol,
                 timestamp: Date,
@@ -197,23 +172,17 @@ export namespace Environment {
                 type: PacketType.REQUEST,
                 data: config.data
             });
-
-            console.log(packet);
-
             this.baseSend(packet);
             return this;
         }
 
         public call(config: {protocol: string, packetID: string, data: any, callback: Handler}): Connector {
-
-            console.log("calling server with: " + config.packetID);
-
             const uuid: string = v4();
             const packet: string = JSON.stringify({
                 protocol: config.protocol,
                 timestamp: Date,
                 packetID: config.packetID,
-                id: v4(),
+                id: uuid,
                 type: PacketType.REQUEST,
                 data: config.data
             });
@@ -235,36 +204,81 @@ export namespace Environment {
             return this;
         }
 
+        private fireSocketEvent(type: SocketEventTypes, ev: Event) {
+            if (this.socketEventHandlers.has(type)) {
+                const handlers: Array<SocketEventHandler> = this.socketEventHandlers.get(type) as Array<SocketEventHandler>;
+                handlers.forEach((handler, index, array) => {
+                    try {
+                        handler.handle(ev);
+                    } catch (e) {
+                        console.error(e);
+                    }
+                    if (!handler.stator) {
+                        if (handler.usagesLeft !== undefined) {
+                            (handler.usagesLeft as number)--;
+                            if ((handler.usagesLeft as number) < 1) {
+                                array.splice(index, 1);
+                            }
+                        } else {
+                            array.splice(index, 1);
+                        }
+                    }
+                });
+            }
+        }
+
         public connect(): Connector {
+            if (this._socket?.readyState !== WebSocket.OPEN && this._socket?.readyState !== WebSocket.CONNECTING) {
+                this._socket = new WebSocket(this.address);
+                this._socket.onopen = ev => this.fireSocketEvent(SocketEventTypes.ONOPEN, ev);
+                this._socket.onclose = ev => this.fireSocketEvent(SocketEventTypes.ONCLOSE, ev);
+                this._socket.onmessage = ev => {
+                    console.log(ev);
 
-            console.log("Connect to: " + this.address)
-
-            this._socket = new WebSocket(this.address);
-            this._socket.onmessage = ev => {
-
-                console.log(ev)
-
-                const packet: Packet = JSON.parse(ev.data) as Packet;
-                if (packet.type === PacketType.RESPONSE) {
-                    // It's a return packet
-                    const callback: Handler | undefined = this._responseMap.get(packet.id);
-                    callback?.handle(this, packet);
-                } else {
-                    // It's a singleton or request packet
-                    const protocol: Protocol | undefined = this._protocols.get(this._protocol);
-                    const handlerArray: Array<Handler> | undefined = protocol?.handlers.get(packet.packetID);
-                    if (handlerArray !== undefined) {
-                        for (const value of handlerArray) {
-                            try {
-                                value.handle(this, packet);
-                            } catch (e) {
-                                console.error(e);
+                    const packet: Packet = JSON.parse(ev.data) as Packet;
+                    if (packet.type === PacketType.RESPONSE) {
+                        // It's a return packet
+                        const callback: Handler | undefined = this._responseMap.get(packet.id);
+                        callback?.handle(this, packet);
+                    } else {
+                        // It's a singleton or request packet
+                        const protocol: Protocol | undefined = this._protocols.get(this._protocol);
+                        const handlerArray: Array<Handler> | undefined = protocol?.handlers.get(packet.packetID);
+                        if (handlerArray !== undefined) {
+                            for (const value of handlerArray) {
+                                try {
+                                    value.handle(this, packet);
+                                } catch (e) {
+                                    console.error(e);
+                                }
                             }
                         }
                     }
-                }
-            };
+                };
+            }
             return this;
+        }
+
+        public registerProtocolPacketHandler(protocolID: string, packetID: string, handler: Handler): Connector {
+            if (!this.protocols.has(protocolID)) {
+                this.protocols.set(protocolID, {
+                    handlers: new Map<string, Array<Environment.Handler>>()
+                });
+            }
+            const protocol: Protocol = this.protocols.get(protocolID) as Protocol;
+            if (!protocol.handlers.has(packetID)) {
+                protocol.handlers.set(packetID, new Array<Environment.Handler>());
+            }
+            protocol.handlers.get(packetID)?.push(handler);
+            return this;
+        }
+
+        public registerProtocolPacketHandlerOnCurrentProtocol(packetID: string, handler: Handler): Connector {
+            return this.registerProtocolPacketHandler(this.protocol, packetID, handler);
+        }
+
+        public getCurrentProtocol(): Protocol {
+            return this.protocols.get(this.protocol) as Protocol;
         }
 
         get id(): string {
