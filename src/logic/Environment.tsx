@@ -84,12 +84,20 @@ export namespace Environment {
         ONOPEN, ONCLOSE
     }
 
+    export type ConnectorConfig = {
+        maxConnectAttempts: number,
+        protocol: string,
+        address: string,
+        id: string
+    }
+
     export class Connector {
+
 
         private static connectors: Array<Connector> = new Array<Environment.Connector>();
 
         public static useConnector(id: string, factory: () => Connector): Connector {
-            const filter: Array<Connector> = Connector.connectors.filter(value => value.id === id);
+            const filter: Array<Connector> = Connector.connectors.filter(value => value.config.id === id);
             if (filter.length === 0) {
                 // No connector found, create new one
                 const connector: Connector = factory();
@@ -100,26 +108,42 @@ export namespace Environment {
             }
         }
 
+        // todo initialize
+        public static baseProtocol: Protocol = {
+            handlers: new Map<string, Array<Environment.Handler>>([
+                ["", new Array<Environment.Handler>({
+                    handle: (connector, packet) => {
+
+                    }
+                })]
+            ])
+        }
+        private readonly _baseProtocols: Array<Protocol> = new Array<Environment.Protocol>(Connector.baseProtocol);
+
         private _socket: WebSocket | undefined;
-
-        private _protocol: string;
-
-        private _responseMap: Map<string, Handler> = new Map<string, Handler>();
 
         private _protocols: Map<string, Protocol> = new Map<string, Environment.Protocol>();
 
-        private _id: string;
+        private _responseMap: Map<string, Handler> = new Map<string, Handler>();
+
+        private _currentProtocol: string;
+
+        private config: ConnectorConfig;
+
+        // todo reconnect lock
+        private reconnectLock: boolean;
+
+        private connectionAttempts: number;
 
         private readonly socketEventHandlers: Map<SocketEventTypes, Array<SocketEventHandler>> = new Map<SocketEventTypes, Array<SocketEventHandler>>([
             [SocketEventTypes.ONOPEN, new Array<SocketEventHandler>()]
         ]);
 
-        private readonly address: string;
-
-        constructor(protocol: string, address: string, id: string = v4()) {
-            this._protocol = protocol;
-            this.address = address;
-            this._id = id;
+        constructor(config: ConnectorConfig) {
+            this.config = config;
+            this.reconnectLock = false;
+            this.connectionAttempts = 0;
+            this._currentProtocol = config.protocol;
             Connector.connectors.push(this);
         }
 
@@ -227,14 +251,22 @@ export namespace Environment {
             }
         }
 
-        public connect(): Connector {
+        public connect(reconnect: boolean = false): Connector {
             if (this._socket?.readyState !== WebSocket.OPEN && this._socket?.readyState !== WebSocket.CONNECTING) {
-                this._socket = new WebSocket(this.address);
-                this._socket.onopen = ev => this.fireSocketEvent(SocketEventTypes.ONOPEN, ev);
-                this._socket.onclose = ev => this.fireSocketEvent(SocketEventTypes.ONCLOSE, ev);
+                this._socket = new WebSocket(this.config.address);
+                this._socket.onopen = ev => {
+                    this.connectionAttempts = 0;
+                    this.fireSocketEvent(SocketEventTypes.ONOPEN, ev)
+                };
+                this._socket.onclose = ev => {
+                    this.fireSocketEvent(SocketEventTypes.ONCLOSE, ev)
+                    if (this.connectionAttempts < this.config.maxConnectAttempts) {
+                        if (!this.reconnectLock){
+                            this.connect(true);
+                        }
+                    }
+                };
                 this._socket.onmessage = ev => {
-                    // console.log(ev);
-
                     const packet: Packet = JSON.parse(ev.data) as Packet;
                     if (packet.type === PacketType.RESPONSE) {
                         // It's a return packet
@@ -242,7 +274,10 @@ export namespace Environment {
                         callback?.handle(this, packet);
                     } else {
                         // It's a singleton or request packet
-                        const protocol: Protocol | undefined = this._protocols.get(this._protocol);
+                        // Call base protocols
+
+                        // Call current protocol
+                        const protocol: Protocol | undefined = this._protocols.get(this.config.protocol);
                         const handlerArray: Array<Handler> | undefined = protocol?.handlers.get(packet.packetID);
                         if (handlerArray !== undefined) {
                             for (const value of handlerArray) {
@@ -256,6 +291,7 @@ export namespace Environment {
                     }
                 };
             }
+            this.connectionAttempts++;
             return this;
         }
 
@@ -274,19 +310,23 @@ export namespace Environment {
         }
 
         public registerProtocolPacketHandlerOnCurrentProtocol(packetID: string, handler: Handler): Connector {
-            return this.registerProtocolPacketHandler(this.protocol, packetID, handler);
+            return this.registerProtocolPacketHandler(this.config.protocol, packetID, handler);
         }
 
         public getCurrentProtocol(): Protocol {
-            return this.protocols.get(this.protocol) as Protocol;
+            return this.protocols.get(this.config.protocol) as Protocol;
         }
 
-        get id(): string {
-            return this._id;
+        get baseProtocols(): Array<Environment.Protocol> {
+            return this._baseProtocols;
         }
 
-        set id(value: string) {
-            this._id = value;
+        get currentProtocol(): string {
+            return this._currentProtocol;
+        }
+
+        set currentProtocol(value: string) {
+            this._currentProtocol = value;
         }
 
         get socket(): WebSocket | undefined {
@@ -295,14 +335,6 @@ export namespace Environment {
 
         set socket(value: WebSocket | undefined) {
             this._socket = value;
-        }
-
-        get protocol(): string {
-            return this._protocol;
-        }
-
-        set protocol(value: string) {
-            this._protocol = value;
         }
 
         get responseMap(): Map<string, Environment.Handler> {

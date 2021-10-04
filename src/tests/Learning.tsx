@@ -27,6 +27,7 @@ import {Environment} from "../logic/Environment";
 import bg from "../assets/background.gif";
 import logo from "../assets/logo.svg";
 import {App} from "../App";
+import {v4} from "uuid";
 
 export const Counter: React.FC = ({}) => {
     const [count, setCount] = Environment.usePersistent(0, "count");
@@ -97,7 +98,12 @@ export const Login: React.FC = () => {
         return {
             username: "",
             password: "",
-            connector: new Environment.Connector("base", "ws:127.0.0.1:30001").connect(),
+            connector: new Environment.Connector({
+                protocol: "base",
+                address: "ws:127.0.0.1:30001",
+                id: v4(),
+                maxConnectAttempts: 10
+            }).connect(),
             state: true,
             showPassword: false
         }

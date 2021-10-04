@@ -38,6 +38,19 @@
     }
 }
 
+@mixin no-scrollbar($for-children: false) {
+    ::-webkit-scrollbar {
+        display: none;
+    }
+    @if $for-children {
+        * {
+            ::-webkit-scrollbar {
+                display: none;
+            }
+        }
+    }
+}
+
 // Default theme
 $button-primary: rgb(88, 101, 242);
 $button-action-primary: rgb(237, 66, 69);
@@ -135,6 +148,7 @@ $header-primary: #fff;
 }
 
 * {
+    @include no-scrollbar(true);
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -483,8 +497,6 @@ body {
             background-position-x: 113px;
         }
     }
-
-
 }
 
 

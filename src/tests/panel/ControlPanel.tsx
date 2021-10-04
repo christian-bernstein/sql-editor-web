@@ -185,7 +185,12 @@ export class ControlPanelComponent extends React.Component<ControlPanelProps, Co
     }
 
     private getConnector(): Environment.Connector {
-        return Environment.Connector.useConnector(this.props.connectorID, () => new Environment.Connector("stream", this.props.address, this.props.connectorID));
+        return Environment.Connector.useConnector(this.props.connectorID, () => new Environment.Connector({
+            protocol: "stream",
+            address: this.props.address,
+            id: this.props.connectorID,
+            maxConnectAttempts: 10
+        }));
     }
 
     private execute(...micros: Micro[]): ControlPanelComponent {
@@ -203,219 +208,256 @@ export class ControlPanelComponent extends React.Component<ControlPanelProps, Co
     };
 
     render() {
-        return(
-           <>
-               <div className="calculator">
-                   <div className="lower">
-                       <div className="specials">
-                           <div id="alpha" className="button action-special special static">
-                               <div className="content">
-                                   <h3>U</h3>
-                                   <p>Internet</p>
-                               </div>
-                           </div>
-                           <div id="" className="button action-special special static">
-                               <div className="content">
-                                   <h3>I</h3>
-                                   <p>Engines</p>
-                               </div>
-                           </div>
-                           <div id="" className="button action-special special static">
-                               <div className="content">
-                                   <h3>O</h3>
-                                   <p>Sound</p>
-                               </div>
-                           </div>
-                           <div id="" className="button action-special special static">
-                               <div className="content">
-                                   <h3>P</h3>
-                                   <p>Mic</p>
-                               </div>
-                           </div>
-                           <div className="spacer"/>
-                           <div id="iso" className="button action-tertiary special static">
-                               <div className="content">
-                                   <h3>Iso</h3>
-                                   <p/>
-                               </div>
-                           </div>
-                           <div id="fullscreen" className="button action-tertiary special">
-                               <div className="content">
-                                   <h3>F11</h3>
-                                   <p>fullscreen</p>
-                               </div>
-                           </div>
-                           <div id="connect" className="button action-tertiary static">
-                               <div className="container">
-                                   <div className="container-slider">
-                                       <div className="content">
-                                           <h3>F1</h3>
-                                           <p>Connect</p>
-                                       </div>
-                                       <div className="content">
-                                           <div className="spinner">
-                                               <div className="lds-dual-ring"/>
-                                           </div>
-                                       </div>
-                                   </div>
-                               </div>
-                           </div>
-                       </div>
+        return (
+            <>
+                <div className="calculator">
+                    <div className="lower">
+                        <div className="specials">
+                            <div id="alpha" className="button action-special special static">
+                                <div className="content">
+                                    <h3>U</h3>
+                                    <p>Internet</p>
+                                </div>
+                            </div>
+                            <div id="" className="button action-special special static">
+                                <div className="content">
+                                    <h3>I</h3>
+                                    <p>Engines</p>
+                                </div>
+                            </div>
+                            <div id="" className="button action-special special static">
+                                <div className="content">
+                                    <h3>O</h3>
+                                    <p>Sound</p>
+                                </div>
+                            </div>
+                            <div id="" className="button action-special special static">
+                                <div className="content">
+                                    <h3>P</h3>
+                                    <p>Mic</p>
+                                </div>
+                            </div>
+                            <div className="spacer"/>
+                            <div id="iso" className="button action-tertiary special static">
+                                <div className="content">
+                                    <h3>Iso</h3>
+                                    <p/>
+                                </div>
+                            </div>
+                            <div id="fullscreen" className="button action-tertiary special">
+                                <div className="content">
+                                    <h3>F11</h3>
+                                    <p>fullscreen</p>
+                                </div>
+                            </div>
+                            <div id="connect" className="button action-tertiary static">
+                                <div className="container">
+                                    <div className="container-slider">
+                                        <div className="content">
+                                            <h3>F1</h3>
+                                            <p>Connect</p>
+                                        </div>
+                                        <div className="content">
+                                            <div className="spinner">
+                                                <div className="lds-dual-ring"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-                       <div className="button-layout-container">
-                           <div className="button-layout">
-                               {
-                                   (() => {
-                                       if (this.state !== null) {
-                                           return this.state.widgets?.map((widget, index, array) => {
-                                               return (
-                                                   <div className={["button", "action-primary", widget.data.active ? "button-active" : ""].join(" ")} onClick={() => {
-                                                       if (widget.data.type === "key") {
-                                                           this.execute(
-                                                               micro({
-                                                                   key: (widget.data.micro as MicroDescription).key,
-                                                                   type: KeyPressType.CLICK
-                                                               })
-                                                           );
-                                                       }
+                        <div className="button-layout-container">
+                            <div className="button-layout">
+                                {
+                                    (() => {
+                                        if (this.state !== null) {
+                                            return this.state.widgets?.map((widget, index, array) => {
+                                                return (
+                                                    <div
+                                                        className={["button", "action-primary", widget.data.active ? "button-active" : ""].join(" ")}
+                                                        onMouseDown={() => {
+                                                            if (widget.data.type === "key") {
+                                                                this.execute(
+                                                                    micro({
+                                                                        key: (widget.data.micro as MicroDescription).key,
+                                                                        type: KeyPressType.PRESS
+                                                                    })
+                                                                );
+                                                            }
+                                                        }}
 
-                                                   }}>
-                                                       <div className="content">
-                                                           <h3>{widget.data.header}</h3>
-                                                           <p>{widget.data.description}</p>
-                                                       </div>
-                                                   </div>
-                                               );
-                                           });
-                                       } else {
-                                           console.log("state is null") // todo remove
-                                       }
-                                   })()
-                               }
-                           </div>
 
-                           <div className="button-layout">
-                               <div id="toggle-lights" className="button action-tertiary double static">
-                                   <div className="container">
-                                       <div className="container-slider">
-                                           <div className="content">
-                                               <h3>F1</h3>
-                                               <p>Connect</p>
-                                           </div>
-                                           <div className="content no-padding">
-                                               <div className="progress">
-                                                   <div className="progress-outline">
-                                                       <div className="progress-bar">
-                                                       </div>
-                                                   </div>
-                                               </div>
-                                           </div>
-                                       </div>
-                                   </div>
-                               </div>
-                               <div id="plus" className="button action-primary double static">
-                                   <div className="content">
-                                       <h3>V</h3>
-                                       <p>Decoupled Mode Toggle</p>
-                                   </div>
-                               </div>
-                               <div id="plus" className="button action-primary double static">
-                                   <div className="content">
-                                       <h3>C</h3>
-                                       <p>Cruise Control</p>
-                                   </div>
-                               </div>
-                               <div id="plus" className="button action-primary double static">
-                                   <div className="content">
-                                       <h3>N</h3>
-                                       <p>Landing Mode Toggle</p>
-                                   </div>
-                               </div>
-                               <div id="plus" className="button action-primary double static">
-                                   <div className="content">
-                                       <h3>ALT + B + C</h3>
-                                       <p>CPU boost mode</p>
-                                   </div>
-                               </div>
-                               <div id="plus" className="button action-primary double static">
-                                   <div className="content">
-                                       <h3>ALT + B + G</h3>
-                                       <p>GPU boost mode</p>
-                                   </div>
-                               </div>
-                               <div id="plus" className="button action-primary double static">
-                                   <div className="content">
-                                       <h3>ALT + A</h3>
-                                       <p>Panel Access</p>
-                                   </div>
-                               </div>
-                               <div id="reset" className="button action-primary double static">
-                                   <div className="content">
-                                       <h3>R</h3>
-                                       <p>reset</p>
-                                   </div>
-                               </div>
-                               <div id="plus" className="button action-secondary static">
-                                   <div className="content">
-                                       <h3>ALT + F4</h3>
-                                       <p>OS Shutdown</p>
-                                   </div>
-                               </div>
-                               <div id="plus" className="button action-secondary static">
-                                   <div className="content">
-                                       <h3>Shift</h3>
-                                       <p>Afterburner</p>
-                                   </div>
-                               </div>
-                               <div className="widget switch double">
-                                   <div className="button radio-label action-secondary static">
-                                       <div className="content">
-                                           <h3>X</h3>
-                                           <p>Spacebrake</p>
-                                       </div>
-                                   </div>
-                                   <div className="button radio-label action-secondary static">
-                                       <div className="content">
-                                           <h3>X</h3>
-                                           <p>Spacebrake</p>
-                                       </div>
-                                   </div>
-                               </div>
-                               <div id="plus" className="button action-secondary double">
-                                   <div className="container">
-                                       <div className="container-slider">
-                                           <div className="content">
-                                               <h3>Shift</h3>
-                                               <p>Afterburner</p>
-                                           </div>
-                                           <div className="content">
-                                               <div className="spinner">
-                                                   <div className="lds-dual-ring"/>
-                                               </div>
-                                           </div>
-                                       </div>
-                                   </div>
-                               </div>
-                               <div id="shift" className="button action-secondary double static">
-                                   <div className="container">
-                                       <div className="container-slider">
-                                           <div className="content">
-                                               <h3>Shift</h3>
-                                               <p>Afterburner</p>
-                                           </div>
-                                           <div className="content">
-                                               <div className="spinner">
-                                                   <div className="lds-dual-ring"/>
-                                               </div>
-                                           </div>
-                                       </div>
-                                   </div>
-                               </div>
-                           </div>
-                       </div>
-                   </div>
-               </div>
-           </>
+                                                        onMouseUp={() => {
+                                                            if (widget.data.type === "key") {
+                                                                this.execute(
+                                                                    micro({
+                                                                        key: (widget.data.micro as MicroDescription).key,
+                                                                        type: KeyPressType.RELEASE
+                                                                    })
+                                                                );
+                                                            }
+                                                        }}
+
+                                                        // todo prevent dragging from being counted
+                                                        onTouchStart={(event) => {
+                                                            if (widget.data.type === "key") {
+                                                                this.execute(
+                                                                    micro({
+                                                                        key: (widget.data.micro as MicroDescription).key,
+                                                                        type: KeyPressType.PRESS
+                                                                    })
+                                                                );
+                                                            }
+                                                        }}
+
+                                                        onTouchEnd={() => {
+                                                            if (widget.data.type === "key") {
+                                                                this.execute(
+                                                                    micro({
+                                                                        key: (widget.data.micro as MicroDescription).key,
+                                                                        type: KeyPressType.RELEASE
+                                                                    })
+                                                                );
+                                                            }
+                                                        }}
+                                                    >
+                                                        <div className="content">
+                                                            <h3>{widget.data.header}</h3>
+                                                            <p>{widget.data.description}</p>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            });
+                                        } else {
+                                            console.log("state is null") // todo remove
+                                        }
+                                    })()
+                                }
+                            </div>
+
+                            <div className="button-layout">
+                                <div id="toggle-lights" className="button action-tertiary double static">
+                                    <div className="container">
+                                        <div className="container-slider">
+                                            <div className="content">
+                                                <h3>F1</h3>
+                                                <p>Connect</p>
+                                            </div>
+                                            <div className="content no-padding">
+                                                <div className="progress">
+                                                    <div className="progress-outline">
+                                                        <div className="progress-bar">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="plus" className="button action-primary double static">
+                                    <div className="content">
+                                        <h3>V</h3>
+                                        <p>Decoupled Mode Toggle</p>
+                                    </div>
+                                </div>
+                                <div id="plus" className="button action-primary double static">
+                                    <div className="content">
+                                        <h3>C</h3>
+                                        <p>Cruise Control</p>
+                                    </div>
+                                </div>
+                                <div id="plus" className="button action-primary double static">
+                                    <div className="content">
+                                        <h3>N</h3>
+                                        <p>Landing Mode Toggle</p>
+                                    </div>
+                                </div>
+                                <div id="plus" className="button action-primary double static">
+                                    <div className="content">
+                                        <h3>ALT + B + C</h3>
+                                        <p>CPU boost mode</p>
+                                    </div>
+                                </div>
+                                <div id="plus" className="button action-primary double static">
+                                    <div className="content">
+                                        <h3>ALT + B + G</h3>
+                                        <p>GPU boost mode</p>
+                                    </div>
+                                </div>
+                                <div id="plus" className="button action-primary double static">
+                                    <div className="content">
+                                        <h3>ALT + A</h3>
+                                        <p>Panel Access</p>
+                                    </div>
+                                </div>
+                                <div id="reset" className="button action-primary double static">
+                                    <div className="content">
+                                        <h3>R</h3>
+                                        <p>reset</p>
+                                    </div>
+                                </div>
+                                <div id="plus" className="button action-secondary static">
+                                    <div className="content">
+                                        <h3>ALT + F4</h3>
+                                        <p>OS Shutdown</p>
+                                    </div>
+                                </div>
+                                <div id="plus" className="button action-secondary static">
+                                    <div className="content">
+                                        <h3>Shift</h3>
+                                        <p>Afterburner</p>
+                                    </div>
+                                </div>
+                                <div className="widget switch double">
+                                    <div className="button radio-label action-secondary static">
+                                        <div className="content">
+                                            <h3>X</h3>
+                                            <p>Spacebrake</p>
+                                        </div>
+                                    </div>
+                                    <div className="button radio-label action-secondary static">
+                                        <div className="content">
+                                            <h3>X</h3>
+                                            <p>Spacebrake</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="plus" className="button action-secondary double">
+                                    <div className="container">
+                                        <div className="container-slider">
+                                            <div className="content">
+                                                <h3>Shift</h3>
+                                                <p>Afterburner</p>
+                                            </div>
+                                            <div className="content">
+                                                <div className="spinner">
+                                                    <div className="lds-dual-ring"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="shift" className="button action-secondary double static">
+                                    <div className="container">
+                                        <div className="container-slider">
+                                            <div className="content">
+                                                <h3>Shift</h3>
+                                                <p>Afterburner</p>
+                                            </div>
+                                            <div className="content">
+                                                <div className="spinner">
+                                                    <div className="lds-dual-ring"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </>
         );
     }
 }
