@@ -51,6 +51,16 @@ export namespace Environment {
         return [value, setValue];
     }
 
+    export enum SocketShutdownReason {
+        DEPLETION = ("DEPLETION"),
+        CORE_SHUTDOWN = ("CORE_SHUTDOWN")
+    }
+
+    export type SocketClosingPacketData = {
+        activateReconnectLock: boolean,
+        reason: SocketShutdownReason
+    }
+
     export enum PacketType {
         REQUEST = "REQUEST",
         RESPONSE = "RESPONSE",
@@ -108,17 +118,21 @@ export namespace Environment {
             }
         }
 
-        // todo initialize
         public static coreProtocol: Protocol = {
             id: "core",
             handlers: new Map<string, Array<Environment.Handler>>([
                 ["SocketClosingPacketData", new Array<Environment.Handler>({
                     handle: (connector, packet) => {
-
+                        const data: SocketClosingPacketData = packet.data as SocketClosingPacketData;
+                        // If the server wants to stop any attempt of automatic reconnection,
+                        // Set reconnect lock to true
+                        console.log("set the lock to: " + data.activateReconnectLock);
+                        connector.reconnectLock = data.activateReconnectLock;
                     }
                 })]
             ])
         }
+
         private readonly _baseProtocols: Array<Protocol> = new Array<Environment.Protocol>(Connector.coreProtocol);
 
         private _socket: WebSocket | undefined;
@@ -132,7 +146,7 @@ export namespace Environment {
         private config: ConnectorConfig;
 
         // todo reconnect lock
-        private reconnectLock: boolean;
+        private _reconnectLock: boolean;
 
         private connectionAttempts: number;
 
@@ -142,7 +156,7 @@ export namespace Environment {
 
         constructor(config: ConnectorConfig) {
             this.config = config;
-            this.reconnectLock = false;
+            this._reconnectLock = false;
             this.connectionAttempts = 0;
             this._currentProtocol = config.protocol;
             Connector.connectors.push(this);
@@ -256,13 +270,16 @@ export namespace Environment {
             if (this._socket?.readyState !== WebSocket.OPEN && this._socket?.readyState !== WebSocket.CONNECTING) {
                 this._socket = new WebSocket(this.config.address);
                 this._socket.onopen = ev => {
+                    // Reset variables
                     this.connectionAttempts = 0;
+                    this._reconnectLock = false;
+                    // Fire 'open' event
                     this.fireSocketEvent(SocketEventTypes.ONOPEN, ev)
                 };
                 this._socket.onclose = ev => {
                     this.fireSocketEvent(SocketEventTypes.ONCLOSE, ev)
                     if (this.connectionAttempts < this.config.maxConnectAttempts) {
-                        if (!this.reconnectLock){
+                        if (!this._reconnectLock){
                             this.connect(true);
                         }
                     }
@@ -276,24 +293,45 @@ export namespace Environment {
                     } else {
                         // It's a singleton or request packet
                         // Call base protocols
-
+                        this.baseProtocols.forEach((protocol: Protocol) => {
+                            this.handlePacketForProtocol({
+                                packet: packet,
+                                protocol: protocol,
+                                errorHandler: console.error
+                            });
+                        })
                         // Call current protocol
                         const protocol: Protocol | undefined = this._protocols.get(this.config.protocol);
-                        const handlerArray: Array<Handler> | undefined = protocol?.handlers.get(packet.packetID);
-                        if (handlerArray !== undefined) {
-                            for (const value of handlerArray) {
-                                try {
-                                    value.handle(this, packet);
-                                } catch (e) {
-                                    console.error(e);
-                                }
-                            }
+                        if (protocol !== undefined) {
+                            this.handlePacketForProtocol({
+                                packet: packet,
+                                protocol: protocol,
+                                errorHandler: console.error
+                            });
                         }
                     }
                 };
             }
             this.connectionAttempts++;
             return this;
+        }
+
+        private handlePacketForProtocol(config: {packet: Packet, protocol?: Protocol, errorHandler?: (message?: any, ...optionalParams: any[]) => void}): void {
+            if (config.protocol !== undefined) {
+                const handlerArray: Array<Handler> | undefined = config.protocol.handlers.get(config.packet.packetID);
+                if (handlerArray !== undefined) {
+                    for (const value of handlerArray) {
+                        try {
+                            value.handle(this, config.packet);
+                        } catch (e) {
+                            config.errorHandler?.(e);
+                        }
+                    }
+                }
+            } else {
+                console.error()
+                config.errorHandler?.(new Error("Protocol cannot be undefined"));
+            }
         }
 
         public registerProtocolPacketHandler(protocolID: string, packetID: string, handler: Handler): Connector {
@@ -349,6 +387,14 @@ export namespace Environment {
 
         get protocols(): Map<string, Environment.Protocol> {
             return this._protocols;
+        }
+
+        get reconnectLock(): boolean {
+            return this._reconnectLock;
+        }
+
+        set reconnectLock(value: boolean) {
+            this._reconnectLock = value;
         }
     }
 }
