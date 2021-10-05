@@ -71,6 +71,7 @@ export namespace Environment {
     }
 
     export type Protocol = {
+        id: string,
         handlers: Map<string, Array<Handler>>
     }
 
@@ -93,7 +94,6 @@ export namespace Environment {
 
     export class Connector {
 
-
         private static connectors: Array<Connector> = new Array<Environment.Connector>();
 
         public static useConnector(id: string, factory: () => Connector): Connector {
@@ -109,16 +109,17 @@ export namespace Environment {
         }
 
         // todo initialize
-        public static baseProtocol: Protocol = {
+        public static coreProtocol: Protocol = {
+            id: "core",
             handlers: new Map<string, Array<Environment.Handler>>([
-                ["", new Array<Environment.Handler>({
+                ["SocketClosingPacketData", new Array<Environment.Handler>({
                     handle: (connector, packet) => {
 
                     }
                 })]
             ])
         }
-        private readonly _baseProtocols: Array<Protocol> = new Array<Environment.Protocol>(Connector.baseProtocol);
+        private readonly _baseProtocols: Array<Protocol> = new Array<Environment.Protocol>(Connector.coreProtocol);
 
         private _socket: WebSocket | undefined;
 
@@ -298,6 +299,7 @@ export namespace Environment {
         public registerProtocolPacketHandler(protocolID: string, packetID: string, handler: Handler): Connector {
             if (!this.protocols.has(protocolID)) {
                 this.protocols.set(protocolID, {
+                    id: protocolID,
                     handlers: new Map<string, Array<Environment.Handler>>()
                 });
             }
