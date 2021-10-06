@@ -118,7 +118,7 @@ export namespace Environment {
             }
         }
 
-        public static coreProtocol: Protocol = {
+        public static readonly coreProtocol: Protocol = {
             id: "core",
             handlers: new Map<string, Array<Environment.Handler>>([
                 ["SocketClosingPacketData", new Array<Environment.Handler>({
@@ -135,24 +135,24 @@ export namespace Environment {
 
         private readonly _baseProtocols: Array<Protocol> = new Array<Environment.Protocol>(Connector.coreProtocol);
 
+        private readonly socketEventHandlers: Map<SocketEventTypes, Array<SocketEventHandler>> = new Map<SocketEventTypes, Array<SocketEventHandler>>([
+            [SocketEventTypes.ONOPEN, new Array<SocketEventHandler>()],
+            [SocketEventTypes.ONCLOSE, new Array<SocketEventHandler>()]
+        ]);
+
         private _socket: WebSocket | undefined;
 
         private _protocols: Map<string, Protocol> = new Map<string, Environment.Protocol>();
 
         private _responseMap: Map<string, Handler> = new Map<string, Handler>();
 
+        private _reconnectLock: boolean;
+
         private _currentProtocol: string;
 
         private config: ConnectorConfig;
 
-        // todo reconnect lock
-        private _reconnectLock: boolean;
-
         private connectionAttempts: number;
-
-        private readonly socketEventHandlers: Map<SocketEventTypes, Array<SocketEventHandler>> = new Map<SocketEventTypes, Array<SocketEventHandler>>([
-            [SocketEventTypes.ONOPEN, new Array<SocketEventHandler>()]
-        ]);
 
         constructor(config: ConnectorConfig) {
             this.config = config;
@@ -160,6 +160,15 @@ export namespace Environment {
             this.connectionAttempts = 0;
             this._currentProtocol = config.protocol;
             Connector.connectors.push(this);
+        }
+
+        public requestServersideShutdownRoutine(): Connector {
+            this.singleton({
+                protocol: "core",
+                data: {},
+                packetID: "SocketClientShutdownRequestPacketData"
+            });
+            return this;
         }
 
         private baseSend(payload: string): void {
@@ -192,7 +201,7 @@ export namespace Environment {
                         }
                     });
                 } catch (err) {
-                    console.error(err)
+                    console.error(err);
                 }
             }
         }
@@ -286,6 +295,10 @@ export namespace Environment {
                     this.fireSocketEvent(SocketEventTypes.ONCLOSE, ev)
                     if (this.connectionAttempts < this.config.maxConnectAttempts) {
                         if (!this._reconnectLock){
+
+                            // todo set via timing function
+                            // setTimeout(() => {}, 234)
+
                             this.connect(true);
                         } else {
                             console.log("Cannot reopen socket, lock is active");
@@ -293,7 +306,7 @@ export namespace Environment {
                     }
                 };
                 this._socket.onmessage = ev => {
-                    console.log(ev);
+                    // console.log(ev);
 
 
                     const packet: Packet = JSON.parse(ev.data) as Packet;

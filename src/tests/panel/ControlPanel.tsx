@@ -99,7 +99,11 @@ export class Widget {
     }
 
     public call(autoRender: boolean = false): Widget {
-        this.data.active = !this.data.active;
+        if (this.data.active) {
+            this.data.active = false;
+        } else {
+            this.data.active = true;
+        }
         if (this.data.active && !this.data.stator) {
             this.deactivateAfterDelay(1500, autoRender).then(() => this.rerenderHook.run());
         }
@@ -160,7 +164,8 @@ export type ControlPanelState = {
     connector: Environment.Connector,
     widgets: Array<Widget>,
     advWidgets: WidgetStorage,
-    widgetRenderers: Map<string, WidgetRenderer>;
+    widgetRenderers: Map<string, WidgetRenderer>,
+    isometric: boolean
 }
 
 export class ControlPanelComponent extends React.Component<ControlPanelProps, ControlPanelState> {
@@ -169,7 +174,12 @@ export class ControlPanelComponent extends React.Component<ControlPanelProps, Co
         render(widget: Widget, panel: ControlPanelComponent, ...optionalProps): JSX.Element {
             return (
                 <div
-                    className={["button", "action-primary", widget.data.active ? "button-active" : ""].join(" ")}
+                    className={
+                        [
+                            "button",
+                            panel.state.connector.socket?.readyState === WebSocket.OPEN ? "action-primary" : "action-tertiary",
+                            widget.data.active ? "button-active" : ""
+                        ].join(" ")}
                     onMouseDown={() => {
                         if (widget.data.type === "key") {
                             panel.execute(
@@ -220,6 +230,29 @@ export class ControlPanelComponent extends React.Component<ControlPanelProps, Co
         }
     }
 
+    private static readonly buttonSpinnerWidgetRenderer: WidgetRenderer = {
+        render(widget: Widget, panel: ControlPanelComponent, ...optionalProps): JSX.Element {
+            return (
+                <div id="shift"
+                     className={["button", "action-special", widget.data.active ? "button-active" : ""].join(" ").trim()}>
+                    <div className="container">
+                        <div className="container-slider">
+                            <div className="content">
+                                <h3>{widget.data.header}</h3>
+                                <p>{String(widget.data.active)}</p>
+                            </div>
+                            <div className="content">
+                                <div className="spinner">
+                                    <div className="lds-dual-ring"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+    }
+
     constructor(props: ControlPanelProps) {
         super(props);
         this.state = {
@@ -229,8 +262,10 @@ export class ControlPanelComponent extends React.Component<ControlPanelProps, Co
             // todo map new packet to the widget store
             advWidgets: new WidgetStorage(),
             widgetRenderers: new Map<string, WidgetRenderer>([
-                ["button", ControlPanelComponent.buttonWidgetRenderer]
-            ])
+                ["button", ControlPanelComponent.buttonWidgetRenderer],
+                ["buttonSpinnerWidgetRenderer", ControlPanelComponent.buttonSpinnerWidgetRenderer]
+            ]),
+            isometric: false
         };
     }
 
@@ -250,6 +285,35 @@ export class ControlPanelComponent extends React.Component<ControlPanelProps, Co
                 this.forceUpdate();
             }
         });
+
+        this.state.connector.registerSocketEventHandler(Environment.SocketEventTypes.ONOPEN, {
+            stator: true,
+            handle: ev => this.forceUpdate()
+        })
+
+        this.state.connector.registerSocketEventHandler(Environment.SocketEventTypes.ONCLOSE, {
+            stator: true,
+            handle: ev => this.forceUpdate()
+        })
+
+        this.state.connector.registerSocketEventHandler(Environment.SocketEventTypes.ONOPEN, {
+            stator: true,
+            handle: ev => {
+                this.state.connector.call({
+                    protocol: "core",
+                    packetID: "SocketPingDataPacket",
+                    data: {
+                        timestamp: new Date().getTime()
+                    },
+                    callback: {
+                        handle: (connector, packet) => {
+                            console.log("Latency is: " + packet.data.latency);
+                        }
+                    }
+                })
+            }
+        })
+
         // Call the server for the widgets to display
         const instance: ControlPanelComponent = this;
         this.state.connector.call({
@@ -279,6 +343,7 @@ export class ControlPanelComponent extends React.Component<ControlPanelProps, Co
                 }
             }
         });
+
     }
 
     componentDidMount() {
@@ -319,76 +384,99 @@ export class ControlPanelComponent extends React.Component<ControlPanelProps, Co
     render() {
         return (
             <>
-                <div className="calculator">
+                <div className={["calculator", this.state.isometric ? "isometric" : ""].join(" ").trim()}>
                     <div className="lower">
                         <div className="specials">
                             {
-                                (() => {
-                                    const shift: Widget | undefined = this.getWidget("greater");
-                                    return(
-                                        <>
+                                <>
+                                    {(() => {
+                                        const widget: Widget | undefined = this.getWidget("Greater");
+                                        if (widget === undefined) {
+                                            return <></>;
+                                        } else {
+                                            return this.getRenderer("buttonSpinnerWidgetRenderer").render(widget as Widget, this);
+                                        }
+                                    })()}
+                                    {(() => {
+                                        const widget: Widget | undefined = this.getWidget("Right Brace");
+                                        if (widget === undefined) {
+                                            return <></>;
+                                        } else {
+                                            return this.getRenderer("buttonSpinnerWidgetRenderer").render(widget as Widget, this);
+                                        }
+                                    })()}
+                                    {(() => {
+                                        const widget: Widget | undefined = this.getWidget("Close Bracket");
+                                        if (widget === undefined) {
+                                            return <></>;
+                                        } else {
+                                            return this.getRenderer("buttonSpinnerWidgetRenderer").render(widget as Widget, this);
+                                        }
+                                    })()}
+                                </>
 
-                                        </>
-                                    );
-                                })()
                             }
-                            <div id="shift" className="button action-special special static">
-                                <div className="content">
-                                    <h3>Shift</h3>
-                                    <p></p>
-                                </div>
-                            </div>
 
-                            <div id="control" className="button action-special special static">
-                                <div className="content">
-                                    <h3>Control</h3>
-                                    <p></p>
-                                </div>
-                            </div>
+                            {/*<div className="spacer"/>*/}
 
-                            <div id="alternative" className="button action-special special static">
-                                <div className="content">
-                                    <h3>Alternative</h3>
-                                    <p></p>
-                                </div>
-                            </div>
-
-                            <div id="menu" className="button action-special special static">
-                                <div className="content">
-                                    <h3>Menu</h3>
-                                    <p></p>
-                                </div>
-                            </div>
-
-                            <div className="spacer"/>
-
-                            <div id="iso" className="button action-tertiary special static">
+                            <div id="iso" className="button action-tertiary special static" onClick={event => {
+                                const newState: ControlPanelState = this.state;
+                                newState.isometric = !newState.isometric;
+                                this.setState(newState);
+                            }}>
                                 <div className="content">
                                     <h3>Iso</h3>
                                     <p/>
                                 </div>
                             </div>
-                            <div id="fullscreen" className="button action-tertiary special">
+                            <div id="reboot" className={
+                                [
+                                    "button",
+                                    this.state.connector.socket?.readyState === WebSocket.OPEN ? "action-special" : "action-tertiary",
+                                    "double",
+                                    "static",
+                                ].join(" ").trim()}
+
+                            >
                                 <div className="content">
-                                    <h3>F11</h3>
-                                    <p>fullscreen</p>
+                                    <h3>Reboot</h3>
+                                    <p>Partial server reset</p>
                                 </div>
                             </div>
-                            <div id="connect" className="button action-tertiary static">
-                                <div className="container">
-                                    <div className="container-slider">
-                                        <div className="content">
-                                            <h3>F1</h3>
-                                            <p>Connect</p>
-                                        </div>
-                                        <div className="content">
-                                            <div className="spinner">
-                                                <div className="lds-dual-ring"/>
+
+                            {
+                                (() => {
+                                    // "action-success"
+                                    return (
+                                        <div id="connect"
+                                             className={["button", this.state.connector.socket?.readyState === WebSocket.OPEN ? "action-secondary" : "action-tertiary", "double", "static",
+                                                 this.state.connector.socket?.readyState === WebSocket.OPEN ? "button-active" : ""
+                                             ].join(" ").trim()}
+                                             onClick={event => {
+                                                 if (this.state.connector.socket?.readyState === WebSocket.OPEN) {
+                                                     this.state.connector.requestServersideShutdownRoutine();
+                                                 } else {
+                                                     this.state.connector.connect();
+                                                 }
+                                             }}
+                                        >
+                                            <div className="container">
+                                                <div className="container-slider">
+                                                    <div className="content">
+                                                        <h3>Connect</h3>
+                                                        <p>{this.state.connector.socket?.readyState}</p>
+                                                    </div>
+                                                    <div className="content">
+                                                        <div className="spinner">
+                                                            <div className="lds-dual-ring"/>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
+                                    );
+                                })()
+                            }
                         </div>
 
                         <div className="button-layout-container">

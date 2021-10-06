@@ -70,6 +70,7 @@ $button-primary: $background-secondary-alt;
 $button-action-secondary: rgb(228, 52, 125);
 $button-action-secondary: crimson;
 $button-action-primary: rgb(66, 217, 237);
+$button-action-success: rgb(59, 165, 92);
 
 @mixin widget($width) {
     grid-column: span $width !important;
@@ -139,7 +140,6 @@ $header-tertiary: rgb(189, 189, 189);
 $header-secondary: #000;
 $header-primary: #fff;
 */
-
 :root {
     --background-tertiary: rgb(32, 34, 37);
     --header-primary: #fff;
@@ -421,7 +421,8 @@ body {
     }
 
     .action-special {
-        @include colorize($button-action-tertiary, calc(var(--button-height) * 0.5), $emission: true);
+        // @include colorize($button-action-tertiary, calc(var(--button-height) * 0.5), $emission: true);
+        @include colorize($button-action-secondary, calc(var(--button-height) * 0.5), $emission: true);
     }
 
     .action-success {
