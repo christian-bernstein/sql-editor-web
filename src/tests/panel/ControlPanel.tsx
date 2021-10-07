@@ -73,6 +73,27 @@ export interface Hook {
     run(): void
 }
 
+export type BasicButtonData = {
+    color: string,
+    needConnection: boolean,
+    header: string,
+    key: number,
+}
+
+export type GenericWidgetData = {
+    positioning: boolean,
+    gridRow?: string,
+    gridColumn?: string,
+    type: string,
+    classes: Array<string>
+    data: {
+        data: {
+            [key: string]: any
+        }
+    }
+}
+
+// todo replace
 export type WidgetData = {
     type: string,
     active: boolean,
