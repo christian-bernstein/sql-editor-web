@@ -2,6 +2,7 @@ import React from "react";
 import {Environment} from "../../logic/Environment";
 import "./style.scss";
 import "./spinners.scss";
+import "./Chart.scss";
 
 export enum KeyPressType {
     PRESS = ("PRESS"),
@@ -376,7 +377,8 @@ export class ControlPanelComponent extends React.Component<ControlPanelProps, Co
             protocol: "stream",
             address: this.props.address,
             id: this.props.connectorID,
-            maxConnectAttempts: 10
+            maxConnectAttempts: 50,
+            connectionRetryDelayFunc: (i => 0.1 * (i)**2 * 1e3 - 10 * 1e3)
         }));
     }
 
@@ -457,7 +459,13 @@ export class ControlPanelComponent extends React.Component<ControlPanelProps, Co
                                     "double",
                                     "static",
                                 ].join(" ").trim()}
-
+                                onClick={() => {
+                                    this.state.connector.singleton({
+                                        packetID: "PartialServerResetPacketData",
+                                        protocol: "stream",
+                                        data: {}
+                                    });
+                                }}
                             >
                                 <div className="content">
                                     <h3>Reboot</h3>
@@ -501,17 +509,6 @@ export class ControlPanelComponent extends React.Component<ControlPanelProps, Co
                         </div>
 
                         <div className="button-layout-container">
-
-                            <div className="button-layout">
-                                <div id="plus" className="button action-primary double static">
-                                    <div className="content">
-                                        <h3>V</h3>
-                                        <p>Decoupled Mode Toggle</p>
-
-                                    </div>
-                                </div>
-                            </div>
-
                             <div className="button-layout">
                                 {
                                     (() => {

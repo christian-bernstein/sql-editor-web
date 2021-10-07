@@ -102,7 +102,8 @@ export const Login: React.FC = () => {
                 protocol: "base",
                 address: "ws:127.0.0.1:30001",
                 id: v4(),
-                maxConnectAttempts: 10
+                maxConnectAttempts: 10,
+                connectionRetryDelayFunc: (() => 0)
             }).connect(),
             state: true,
             showPassword: false

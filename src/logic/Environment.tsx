@@ -99,7 +99,8 @@ export namespace Environment {
         maxConnectAttempts: number,
         protocol: string,
         address: string,
-        id: string
+        id: string,
+        connectionRetryDelayFunc: (i: number) => number
     }
 
     export class Connector {
@@ -295,11 +296,19 @@ export namespace Environment {
                     this.fireSocketEvent(SocketEventTypes.ONCLOSE, ev)
                     if (this.connectionAttempts < this.config.maxConnectAttempts) {
                         if (!this._reconnectLock){
+                            let timeout: number = 0;
+                            try {
+                                timeout = Math.max(this.config.connectionRetryDelayFunc(this.connectionAttempts), 0);
+                            } catch (e) {
+                                console.error(e);
+                            }
 
-                            // todo set via timing function
-                            // setTimeout(() => {}, 234)
+                            // todo rem log
+                            console.log(timeout)
 
-                            this.connect(true);
+                            setTimeout(() => {
+                                this.connect(true);
+                            }, timeout);
                         } else {
                             console.log("Cannot reopen socket, lock is active");
                         }

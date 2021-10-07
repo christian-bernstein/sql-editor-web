@@ -72,6 +72,20 @@ $button-action-secondary: crimson;
 $button-action-primary: rgb(66, 217, 237);
 $button-action-success: rgb(59, 165, 92);
 
+// SQL-Editor theme
+// $button-primary: $background-secondary-alt;
+// $button-action-primary: #238636;
+// $button-action-secondary: #238636;
+// $button-action-tertiary: rgb(224, 156, 66);
+// $button-action-success: #238636;
+// $background-primary: #36393f;
+// $background-secondary: #2f3136;
+// $background-secondary-alt: #292b2f;
+// $background-tertiary: rgb(32, 34, 37);
+// $header-tertiary: rgb(189, 189, 189);
+// $header-secondary: #000;
+// $header-primary: #fff;
+
 @mixin widget($width) {
     grid-column: span $width !important;
 
@@ -504,6 +518,4 @@ body {
         }
     }
 }
-
-
 
