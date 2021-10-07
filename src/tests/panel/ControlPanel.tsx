@@ -501,6 +501,17 @@ export class ControlPanelComponent extends React.Component<ControlPanelProps, Co
                         </div>
 
                         <div className="button-layout-container">
+
+                            <div className="button-layout">
+                                <div id="plus" className="button action-primary double static">
+                                    <div className="content">
+                                        <h3>V</h3>
+                                        <p>Decoupled Mode Toggle</p>
+
+                                    </div>
+                                </div>
+                            </div>
+
                             <div className="button-layout">
                                 {
                                     (() => {
@@ -639,4 +650,6 @@ export class ControlPanelComponent extends React.Component<ControlPanelProps, Co
             </>
         );
     }
+
+
 }
