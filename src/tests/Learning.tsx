@@ -24,7 +24,7 @@ import {
 import {Fingerprint, Notifications, Visibility, VisibilityOff} from "@mui/icons-material";
 import Store from "../logic/Store";
 import {Environment} from "../logic/Environment";
-import bg from "../assets/background.gif";
+import bg from "../assets/filaments/profile.gif";
 import logo from "../assets/logo.svg";
 import {App} from "../App";
 import {v4} from "uuid";
@@ -236,13 +236,13 @@ export const Login: React.FC = () => {
                           className={"login-footer-text"}>
                         <Button sx={{textTransform: "none"}} onClick={() => {
                             const store: Store = Store.defStore();
-                            const debugData: Environment.EnvironmentDebugData = store.get("debug-config") as Environment.EnvironmentDebugData;
+                            const debugData: Environment.EnvironmentDebugData = store.get("overlays-config") as Environment.EnvironmentDebugData;
                             if (debugData.showDebugPanel) {
                                 debugData.showDebugPanel = false;
-                                store.set("debug-config", debugData);
+                                store.set("overlays-config", debugData);
                             } else {
                                 debugData.showDebugPanel = true;
-                                store.set("debug-config", debugData);
+                                store.set("overlays-config", debugData);
                             }
                         }}>v3.2</Button>
                     </Grid>

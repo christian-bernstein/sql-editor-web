@@ -368,10 +368,6 @@ export class ControlPanelComponent extends React.Component<ControlPanelProps, Co
 
     }
 
-    componentDidMount() {
-        this.load();
-    }
-
     private getConnector(): Environment.Connector {
         return Environment.Connector.useConnector(this.props.connectorID, () => new Environment.Connector({
             protocol: "stream",
@@ -402,6 +398,10 @@ export class ControlPanelComponent extends React.Component<ControlPanelProps, Co
         } else {
             throw new Error("WidgetRenderer cannot be undefined : " + id);
         }
+    }
+
+    componentDidMount() {
+        this.load();
     }
 
     render() {
@@ -647,6 +647,4 @@ export class ControlPanelComponent extends React.Component<ControlPanelProps, Co
             </>
         );
     }
-
-
 }
