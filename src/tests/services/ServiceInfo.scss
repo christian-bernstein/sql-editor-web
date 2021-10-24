@@ -21,6 +21,8 @@
 }
 
 .service-container-body {
+  transition: all ease-in-out 200ms;
+
   .service-annotation-container {
     .annotation-container-header {
       font-weight: bold;
@@ -35,8 +37,38 @@
   .service-annotation-container + .service-annotation-container {
     margin-top: 20px;
   }
+
+  &.collapsed {
+    height: 0;
+    opacity: 0;
+  }
+
+  &.expanded {
+    height: 500px;
+    opacity: 100%;
+  }
 }
 
 .collapsible-btn {
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 20px;
 
+  svg {
+    transition: all ease-in-out 250ms;
+  }
+
+  &.collapsed {
+    svg {
+      transform: rotate(180deg);
+    }
+  }
+
+  &.expanded {
+    svg {
+      transform: rotate(0deg);
+    }
+  }
 }

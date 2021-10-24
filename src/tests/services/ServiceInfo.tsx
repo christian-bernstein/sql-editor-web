@@ -1,6 +1,7 @@
 import React from "react";
 import {TitledContainer} from "../../components/TitledContainer";
 import {ReactComponent as Server} from "../../assets/icons/server.svg";
+import {ReactComponent as Chevron} from "../../assets/icons/chevron-up.svg";
 import {Badge} from "../../components/Badge";
 import {Color} from "../../Color";
 import {ServiceLoadState} from "./ServiceLoadState";
@@ -22,9 +23,9 @@ export class ServiceInfo extends React.Component<ServiceInfoProps, ServiceInfoSt
 
     constructor(props: ServiceInfoProps) {
         super(props);
-        this.setState({
+        this.state = {
             expanded: false
-        });
+        }
     }
 
     render() {
@@ -42,7 +43,7 @@ export class ServiceInfo extends React.Component<ServiceInfoProps, ServiceInfoSt
                     }
                     body={
                         <>
-                            <div className={"service-container-body"}>
+                            <div className={["service-container-body", this.state.expanded ? "expanded" : "collapsed"].join(" ").trim()}>
                                 {
                                     Array.from(this.props.kv.keys()).map(k => {
                                         return(
@@ -62,7 +63,11 @@ export class ServiceInfo extends React.Component<ServiceInfoProps, ServiceInfoSt
                                     })
                                 }
                             </div>
-                            <div className={"collapsible-btn"} onClick={() => this.toggleExpansion()}/>
+                            <div className={["collapsible-btn", this.state.expanded ? "expanded" : "collapsed"].join(" ").trim()} >
+                                <div onClick={() => this.toggleExpansion()}>
+                                    <Chevron/>
+                                </div>
+                            </div>
                         </>
                     }/>
             </>
@@ -73,10 +78,9 @@ export class ServiceInfo extends React.Component<ServiceInfoProps, ServiceInfoSt
         if(open != undefined) {
             this.setState({
                 expanded: open
-            })
+            });
         } else {
             this.setState({
-                ...this.state,
                 expanded: !this.state.expanded
             });
         }
