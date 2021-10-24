@@ -5,10 +5,13 @@ import './fonts.scss'
 import reportWebVitals from './reportWebVitals';
 
 import {ReactComponent as Warning} from "./assets/icons/warning.svg";
+import {ReactComponent as Report} from "./assets/icons/report.svg";
 import {Color} from "./Color";
-import {Annotation} from "./components/Annotation";
+import {Annotation, AnnotationProps} from "./components/Annotation";
 import {TitledContainer} from "./components/TitledContainer";
 import {Badge} from "./components/Badge";
+import {ServiceInfo} from "./tests/services/ServiceInfo";
+import {ServiceLoadState} from "./tests/services/ServiceLoadState";
 
 //import {ControlPanelComponent} from "./tests/panel/ControlPanel";
 //<ControlPanelComponent
@@ -19,21 +22,48 @@ import {Badge} from "./components/Badge";
 // 192.168.2.102
 ReactDOM.render(
     <React.StrictMode>
-        <TitledContainer
-            header={<>
-                <p style={{margin: 0}}>/infrastructure/</p>
-                <Badge background={Color.ofHex("#F0CF7B")}><p style={{fontWeight: "bold", margin: 0}}>deimos</p></Badge>
-            </>}
-            body={<Annotation
-                label={"uptime"}
-                value={"12:43:12 (0d, 1h, 14m)"}
-                badges={[
-                    <Warning fill={Color.ofHex("#F0CF7B").toHex()}/>
-                ]}
-            />}
+
+        <ServiceInfo
+            serviceID={"galileo"}
+            servicePath={"/engine/"}
+            serviceLoadState={ServiceLoadState.RUNNING}
+            kv={new Map<string, Array<AnnotationProps>>([
+                ["Annotations", [
+                    {
+                        label: "uptime",
+                        value: "12:43:12 (0d, 1h, 14m)"
+                    },
+                    {
+                        label: "node",
+                        value: "node-1"
+                    },
+                    {
+                        label: "oc",
+                        value: "oc-node-1"
+                    },
+                    {
+                        label: "errors",
+                        value: "1",
+                        badges: [
+                            <Report fill={Color.ofHex("#F0CF7B").toHex()}/>
+                        ]
+                    }
+                ]],
+                ["Engine Annotations", [
+                    {
+                        label: "stator",
+                        value: "yes"
+                    },
+                    {
+                        label: "monitor",
+                        value: "no",
+                        badges: [
+                            <Warning fill={Color.ofHex("#F0CF7B").toHex()}/>
+                        ]
+                    },
+                ]],
+            ])}
         />
-
-
     </React.StrictMode>,
     document.getElementById('root')
 );

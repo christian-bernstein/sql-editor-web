@@ -1,0 +1,42 @@
+.service-container-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  .icon {
+    margin-right: 11px;
+    height: 24px;
+    width: 24px;
+  }
+
+  .service-path {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    :nth-last-child(1) {
+      margin-left: 5px;
+    }
+  }
+}
+
+.service-container-body {
+  .service-annotation-container {
+    .annotation-container-header {
+      font-weight: bold;
+      margin: 0 0 15px 0;
+    }
+
+    .annotation + .annotation {
+      margin-top: 5px;
+    }
+  }
+
+  .service-annotation-container + .service-annotation-container {
+    margin-top: 20px;
+  }
+}
+
+.collapsible-btn {
+
+}
