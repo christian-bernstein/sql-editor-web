@@ -1,0 +1,28 @@
+import React from "react";
+import "../styles/components/TitledContainer.scss";
+import {Themeable} from "../Themeable";
+
+export type TitledContainerProps = Themeable & {
+    header: JSX.Element,
+    body: JSX.Element
+}
+
+export class TitledContainer extends React.Component<TitledContainerProps, any> {
+
+    constructor(props: TitledContainerProps) {
+        super(props);
+    }
+
+    render() {
+        return(
+            <div className={"titled-container"}>
+                <div className={"container-header"}>
+                    {this.props.header}
+                </div>
+                <div className={"container-body"}>
+                    {this.props.body}
+                </div>
+            </div>
+        );
+    }
+}

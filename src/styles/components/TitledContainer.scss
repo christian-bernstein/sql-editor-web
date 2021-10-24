@@ -1,0 +1,19 @@
+.titled-container {
+  background: #30363D;
+  border-radius: 18px;
+  border: 1px solid #3E3E3E;
+  overflow: hidden;
+  color: white;
+
+  .container-header {
+    background: #30363D;
+    padding: 20px;
+    border-bottom: 1px solid #3E3E3E;
+    box-sizing: border-box;
+  }
+
+  .container-body {
+    padding: 20px;
+    background: #222429;
+  }
+}

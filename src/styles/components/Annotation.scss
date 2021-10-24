@@ -1,0 +1,31 @@
+.annotation {
+  font-family: "OperatorMono", monospace;
+  font-weight: normal;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  .annotation-separator {
+    user-select: none;
+  }
+
+  .annotation-badge-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    .annotation-badge > * {
+      height: 24px;
+      width: 24px;
+      overflow: hidden;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  * + * {
+    margin-left: 9px;
+  }
+}
