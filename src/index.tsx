@@ -12,57 +12,61 @@ import {TitledContainer} from "./components/TitledContainer";
 import {Badge} from "./components/Badge";
 import {ServiceInfo} from "./tests/services/ServiceInfo";
 import {ServiceLoadState} from "./tests/services/ServiceLoadState";
+import {ControlPanelComponent} from "./tests/panel/ControlPanel";
 
-//import {ControlPanelComponent} from "./tests/panel/ControlPanel";
-//<ControlPanelComponent
-//    address={"ws:192.168.2.102:30001"}
-//    connectorID={"panel"}
-//>
 
 // 192.168.2.102
+//<ControlPanelComponent
+//             address={"ws:192.168.2.102:30001"}
+//             connectorID={"panel"}
+//         />
+
+// <ServiceInfo
+//             serviceID={"galileo"}
+//             servicePath={"/engine/"}
+//             serviceLoadState={ServiceLoadState.RUNNING}
+//             kv={new Map<string, Array<AnnotationProps>>([
+//                 ["Annotations", [
+//                     {
+//                         label: "uptime",
+//                         value: "12:43:12 (0d, 1h, 14m)"
+//                     },
+//                     {
+//                         label: "node",
+//                         value: "node-1"
+//                     },
+//                     {
+//                         label: "oc",
+//                         value: "oc-node-1"
+//                     },
+//                     {
+//                         label: "errors",
+//                         value: "1",
+//                         badges: [
+//                             <Report fill={Color.ofHex("#F0CF7B").toHex()}/>
+//                         ]
+//                     }
+//                 ]],
+//                 ["Engine Annotations", [
+//                     {
+//                         label: "stator",
+//                         value: "yes"
+//                     },
+//                     {
+//                         label: "monitor",
+//                         value: "no",
+//                         badges: [
+//                             <Warning fill={Color.ofHex("#F0CF7B").toHex()}/>
+//                         ]
+//                     },
+//                 ]],
+//             ])}
+//         />
 ReactDOM.render(
     <React.StrictMode>
-
-        <ServiceInfo
-            serviceID={"galileo"}
-            servicePath={"/engine/"}
-            serviceLoadState={ServiceLoadState.RUNNING}
-            kv={new Map<string, Array<AnnotationProps>>([
-                ["Annotations", [
-                    {
-                        label: "uptime",
-                        value: "12:43:12 (0d, 1h, 14m)"
-                    },
-                    {
-                        label: "node",
-                        value: "node-1"
-                    },
-                    {
-                        label: "oc",
-                        value: "oc-node-1"
-                    },
-                    {
-                        label: "errors",
-                        value: "1",
-                        badges: [
-                            <Report fill={Color.ofHex("#F0CF7B").toHex()}/>
-                        ]
-                    }
-                ]],
-                ["Engine Annotations", [
-                    {
-                        label: "stator",
-                        value: "yes"
-                    },
-                    {
-                        label: "monitor",
-                        value: "no",
-                        badges: [
-                            <Warning fill={Color.ofHex("#F0CF7B").toHex()}/>
-                        ]
-                    },
-                ]],
-            ])}
+        <ControlPanelComponent
+            address={"ws:192.168.2.102:30001"}
+            connectorID={"panel"}
         />
     </React.StrictMode>,
     document.getElementById('root')

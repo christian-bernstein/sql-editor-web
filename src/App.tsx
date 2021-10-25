@@ -17,18 +17,18 @@ export class App extends React.Component {
     }
 
     render() {
-        return (
-            <>
-                <div className={"App"}>
-                    {Store.defStore().get<Environment.EnvironmentDebugData>("overlays-config")?.showOverlays ? <img src={debugImage} alt={"Debug image"} height={"100%"} className={"debug-overlay"}/> : []}
-                    <ThemeProvider theme={Environment.constants.themes.get(Store.defStore()?.get<Environment.EnvironmentVisualData>("visual-config")?.activeTheme as string) as Theme}>
-                        <CssBaseline />
-                        <Login/>
-                        {Store.defStore().get<Environment.EnvironmentDebugData>("overlays-config")?.showDebugPanel ? <div className={"debug-overlay-base"}><SwipeableDebugDrawer/></div> : []}
-                    </ThemeProvider>
-                </div>
-
-            </>
-        );
+        // return (
+        //     <>
+        //         <div className={"App"}>
+        //             {Store.defStore().get<Environment.EnvironmentDebugData>("overlays-config")?.showOverlays ? <img src={debugImage} alt={"Debug image"} height={"100%"} className={"debug-overlay"}/> : []}
+        //             <ThemeProvider theme={Environment.constants.themes.get(Store.defStore()?.get<Environment.EnvironmentVisualData>("visual-config")?.activeTheme as string) as Theme}>
+        //                 <CssBaseline />
+        //                 <Login/>
+        //                 {Store.defStore().get<Environment.EnvironmentDebugData>("overlays-config")?.showDebugPanel ? <div className={"debug-overlay-base"}><SwipeableDebugDrawer/></div> : []}
+        //             </ThemeProvider>
+        //         </div>
+        //     </>
+        // );
+        return(<></>);
     }
 }

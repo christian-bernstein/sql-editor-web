@@ -195,9 +195,10 @@ export const FullWidthTabs: React.FC = () => {
                                 </Grid>
                                 <Grid item xs={3}>
                                     <Input type={"color"} fullWidth={true} onChange={event => {
-                                        Environment.constants.themes.forEach((theme, key) => {
-                                            theme.palette.primary.main = event.target.value;
-                                        });
+                                        // todo fix
+                                        // Environment.constants.themes.forEach((theme, key) => {
+                                        //     theme.palette.primary.main = event.target.value;
+                                        // });
                                     }}/>
                                 </Grid>
                             </Grid>
@@ -208,9 +209,10 @@ export const FullWidthTabs: React.FC = () => {
                                 </Grid>
                                 <Grid item xs={3}>
                                     <Input type={"color"} fullWidth={true} onChange={event => {
-                                        Environment.constants.themes.forEach((theme, key) => {
-                                            theme.palette.success.main = event.target.value;
-                                        });
+                                        // todo fix
+                                        // Environment.constants.themes.forEach((theme, key) => {
+                                        //     theme.palette.success.main = event.target.value;
+                                        // });
                                     }}/>
                                 </Grid>
                             </Grid>

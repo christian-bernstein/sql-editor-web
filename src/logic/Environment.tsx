@@ -1,7 +1,5 @@
 import React, {Dispatch, SetStateAction} from "react";
 import {v4} from "uuid";
-import {Theme} from "@mui/material";
-import {Themes} from "./Themes";
 
 export namespace Environment {
 
@@ -23,16 +21,11 @@ export namespace Environment {
     }
 
     export interface EnvironmentConstants {
-        themes: Map<string, Theme>;
         defaultEnvironmentVisualData: EnvironmentVisualData;
         defaultEnvironmentDebugData: EnvironmentDebugData;
     }
 
     export const constants: EnvironmentConstants = {
-        themes: new Map<string, Theme>([
-            ["light", Themes.lightTheme],
-            ["dark", Themes.darkTheme]
-        ]),
         defaultEnvironmentVisualData: {
             activeTheme: "dark"
         },
