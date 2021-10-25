@@ -16,11 +16,27 @@ export class EngineServiceDashboardPage extends React.Component<EngineServiceDas
         // todo set state
     }
 
+    private toggleGlobalExpansion(): void {
+
+    }
+
     render() {
         return(
             <>
+                <div className={"engine-service-dashboard-container"}>
+                    <div className={"engine-service-dashboard-container-header"}>
+                        <div className={"e-s-d-c-h-left-align"}>
+                            <h2>Services</h2>
+                        </div>
+                        <div className={"e-s-d-c-h-right-align"}>
+                            <div className={"e-s-d-c-expand-toggle"} onClick={() => this.toggleGlobalExpansion()}>
 
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </>
         );
     }
+
 }
