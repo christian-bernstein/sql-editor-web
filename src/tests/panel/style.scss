@@ -11,6 +11,7 @@
     // background: $theme-color !important;
     $darkened-theme-color: adjust-color($theme-color, $lightness: -50%, $alpha: -0.8);
     $darkened-theme-color: $theme-color;
+    // $darkened-theme-color: darken($darkened-theme-color, 10%);
     box-shadow: inset 0 $button-height $darkened-theme-color !important;
 
     &:hover {
@@ -25,6 +26,8 @@
     }
 
     &.button-active {
+        box-shadow: inset 0 $button-height darken($darkened-theme-color, 10%) !important;
+
         background-color: $theme-color !important;
         @if $emission {
             box-shadow: 0 0 42px 0 $theme-color;
@@ -168,7 +171,11 @@ $header-primary: #fff;
     box-sizing: border-box;
     // font-family: "Poppins", sans-serif;
     // todo define as a style variable
-    font-family: "JetBrains Mono", monospace;
+    // font-family: "JetBrains Mono", monospace;
+    font-family: "OperatorMono", monospace;
+    // font-style: italic;
+    // font-style: italic;
+    // font-style: italic;
     color: var(--header-secondary);
 }
 
@@ -440,6 +447,11 @@ body {
     .action-special {
         // @include colorize($button-action-tertiary, calc(var(--button-height) * 0.5), $emission: true);
         @include colorize($button-action-secondary, calc(var(--button-height) * 0.5), $emission: true);
+    }
+
+    .action-yellow {
+        // @include colorize($button-action-tertiary, calc(var(--button-height) * 0.5), $emission: true);
+        @include colorize($button-action-tertiary, calc(var(--button-height) * 0.5), $emission: true);
     }
 
     .action-success {

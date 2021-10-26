@@ -3,6 +3,8 @@ import {Environment} from "../../logic/Environment";
 import "./style.scss";
 import "./spinners.scss";
 import "./Chart.scss";
+import "./Keyboard.scss";
+import {Utils} from "../../logic/Utils";
 
 export enum KeyPressType {
     PRESS = ("PRESS"),
@@ -179,7 +181,7 @@ export type ControlPanelProps = {
 }
 
 export interface WidgetRenderer {
-    render(widget: Widget, panel: ControlPanelComponent, ...optionalProps: any[]): JSX.Element;
+    render(widget: Widget | undefined, panel: ControlPanelComponent, ...optionalProps: any[]): JSX.Element;
 }
 
 export type ControlPanelState = {
@@ -222,30 +224,31 @@ export class ControlPanelComponent extends React.Component<ControlPanelProps, Co
                             );
                         }
                     }}
-                    onTouchStart={(event) => {
-                        if (widget.data.type === "key") {
-                            panel.execute(
-                                micro({
-                                    key: (widget.data.micro as MicroDescription).key,
-                                    type: KeyPressType.PRESS
-                                })
-                            );
-                        }
-                    }}
-                    onTouchEnd={() => {
-                        if (widget.data.type === "key") {
-                            panel.execute(
-                                micro({
-                                    key: (widget.data.micro as MicroDescription).key,
-                                    type: KeyPressType.RELEASE
-                                })
-                            );
-                        }
-                    }}
+                    // onTouchStart={(event) => {
+                    //     if (widget.data.type === "key") {
+                    //         panel.execute(
+                    //             micro({
+                    //                 key: (widget.data.micro as MicroDescription).key,
+                    //                 type: KeyPressType.PRESS
+                    //             })
+                    //         );
+                    //     }
+                    // }}
+                    // onTouchEnd={() => {
+                    //     if (widget.data.type === "key") {
+                    //         panel.execute(
+                    //             micro({
+                    //                 key: (widget.data.micro as MicroDescription).key,
+                    //                 type: KeyPressType.RELEASE
+                    //             })
+                    //         );
+                    //     }
+                    // }}
                 >
                     <div className="content">
                         <h3>{widget.data.header}</h3>
-                        <p>{widget.data.description}</p>
+                        {/*<p>{widget.data.description}</p>*/}
+                        <p>{(widget.data.micro as MicroDescription).key}</p>
                     </div>
                 </div>
             );
@@ -275,6 +278,22 @@ export class ControlPanelComponent extends React.Component<ControlPanelProps, Co
         }
     }
 
+    private static readonly buttonFullscreenWidgetRenderer: WidgetRenderer = {
+        render(widget: Widget, panel: ControlPanelComponent, ...optionalProps): JSX.Element {
+            return (
+                <div id="fullscreen"
+                     className={["button", "action-yellow", document.fullscreenElement == null ? "" : "button-active"].join(" ").trim()}
+                     onClick={() => panel.handleFullscreenButtonPress()}>
+                    <div className="content">
+                        <h3>
+                            Fullscreen</h3>
+                        <p>{document.fullscreenElement == null ? "Disabled" : "Enabled"}</p>
+                    </div>
+                </div>
+            );
+        }
+    }
+
     constructor(props: ControlPanelProps) {
         super(props);
         this.state = {
@@ -285,10 +304,17 @@ export class ControlPanelComponent extends React.Component<ControlPanelProps, Co
             advWidgets: new WidgetStorage(),
             widgetRenderers: new Map<string, WidgetRenderer>([
                 ["button", ControlPanelComponent.buttonWidgetRenderer],
-                ["buttonSpinnerWidgetRenderer", ControlPanelComponent.buttonSpinnerWidgetRenderer]
+                ["buttonSpinnerWidgetRenderer", ControlPanelComponent.buttonSpinnerWidgetRenderer],
+                ["buttonFullscreenWidgetRenderer", ControlPanelComponent.buttonFullscreenWidgetRenderer]
             ]),
             isometric: false
         };
+    }
+
+    private handleFullscreenButtonPress(): void {
+        Utils.toggleFullScreen(() => {
+            this.forceUpdate();
+        });
     }
 
     public getWidget(id: string): Widget | undefined {
@@ -365,7 +391,6 @@ export class ControlPanelComponent extends React.Component<ControlPanelProps, Co
                 }
             }
         });
-
     }
 
     private getConnector(): Environment.Connector {
@@ -374,7 +399,7 @@ export class ControlPanelComponent extends React.Component<ControlPanelProps, Co
             address: this.props.address,
             id: this.props.connectorID,
             maxConnectAttempts: 50,
-            connectionRetryDelayFunc: (i => 0.1 * (i)**2 * 1e3 - 10 * 1e3)
+            connectionRetryDelayFunc: (i => 0.1 * (i) ** 2 * 1e3 - 10 * 1e3)
         }));
     }
 
@@ -436,6 +461,9 @@ export class ControlPanelComponent extends React.Component<ControlPanelProps, Co
                                             return this.getRenderer("buttonSpinnerWidgetRenderer").render(widget as Widget, this);
                                         }
                                     })()}
+                                    {(() => {
+                                        return this.getRenderer("buttonFullscreenWidgetRenderer").render(undefined, this);
+                                    })()}
                                 </>
 
                             }
@@ -459,13 +487,13 @@ export class ControlPanelComponent extends React.Component<ControlPanelProps, Co
                                     "double",
                                     "static",
                                 ].join(" ").trim()}
-                                onClick={() => {
-                                    this.state.connector.singleton({
-                                        packetID: "PartialServerResetPacketData",
-                                        protocol: "stream",
-                                        data: {}
-                                    });
-                                }}
+                                 onClick={() => {
+                                     this.state.connector.singleton({
+                                         packetID: "PartialServerResetPacketData",
+                                         protocol: "stream",
+                                         data: {}
+                                     });
+                                 }}
                             >
                                 <div className="content">
                                     <h3>Reboot</h3>
@@ -478,7 +506,7 @@ export class ControlPanelComponent extends React.Component<ControlPanelProps, Co
                                     // "action-success"
                                     return (
                                         <div id="connect"
-                                             className={["button", this.state.connector.socket?.readyState === WebSocket.OPEN ? "action-secondary" : "action-tertiary", "double", "static",
+                                             className={["button", this.state.connector.socket?.readyState === WebSocket.OPEN ? "action-secondary" : "action-tertiary", /*"double",*/ "static",
                                                  this.state.connector.socket?.readyState === WebSocket.OPEN ? "button-active" : ""
                                              ].join(" ").trim()}
                                              onClick={event => {
@@ -510,6 +538,46 @@ export class ControlPanelComponent extends React.Component<ControlPanelProps, Co
 
                         <div className="button-layout-container">
                             <div className="button-layout">
+                                <div className={"keyboard"}>
+                                    {
+                                        (() => {
+                                            const keyMap: number[] = [
+                                                27, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 8,
+                                                9, 81, 87, 69, 82, 90, 85, 73, 79, 80, 0, 46,
+                                                20, 65, 83, 68, 70, 71, 72, 74, 75, 76, 192, 222,
+                                                160, 226, 89, 88, 67, 86, 66, 78, 77, 44, 38, 161,
+                                                162, 524, 91, 32, 162, 0, 93, 0, 0, 37, 40, 39
+                                            ];
+                                            const widgets: Array<Widget | undefined> = new Array<Widget | undefined>();
+                                            const copy: Widget[] = this.state.widgets;
+                                            keyMap.forEach(key => {
+                                                if (key === 0) {
+                                                    widgets.push(undefined);
+                                                } else {
+                                                    const find: Widget | undefined = copy.find(widget => (widget.data.micro as MicroDescription).key == key);
+                                                    if (find === undefined) {
+                                                        widgets.push(undefined)
+                                                    } else {
+                                                        widgets.push(find);
+                                                    }
+                                                }
+                                            });
+
+                                            return widgets.map((widget) => {
+                                                if (widget === undefined) {
+                                                    return <div className="spacer"/>;
+                                                } else {
+                                                    return this.getRenderer("button").render(widget, this);
+                                                }
+                                            });
+                                        })()
+                                    }
+                                </div>
+
+                            </div>
+
+
+                            <div className="button-layout">
                                 {
                                     (() => {
                                         if (this.state !== null) {
@@ -522,7 +590,17 @@ export class ControlPanelComponent extends React.Component<ControlPanelProps, Co
                                     })()
                                 }
                             </div>
-
+                            <div className="button-layout">
+                                <div id="reload"
+                                     className={["button", "static"].join(" ").trim()}
+                                     onClick={() => Utils.reloadPage()}
+                                >
+                                    <div className="content">
+                                        <h3>Reload</h3>
+                                        <p>F5</p>
+                                    </div>
+                                </div>
+                            </div>
                             <div className="button-layout">
                                 <div id="toggle-lights" className="button action-tertiary double static">
                                     <div className="container">

@@ -1,0 +1,14 @@
+.keyboard {
+  display: grid;
+  grid-gap: 5px;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: repeat(5, 1fr);
+  width: 100%;
+  height: 100%;
+  grid-column: span 8 !important;
+  grid-row: span 3 !important;
+  transform: scaleY(0.8);
+  align-content: center;
+}
+
+/*# sourceMappingURL=Keyboard.css.map */
