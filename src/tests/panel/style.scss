@@ -291,8 +291,10 @@ body {
         background-color: var(--background-tertiary);
         display: grid;
         grid-auto-flow: row;
-        grid-gap: 1em;
-        grid-template-columns: repeat(8, 1fr);
+        // grid-gap: 1em;
+        grid-gap: 5px;
+        // grid-template-columns: repeat(8, 1fr);
+        grid-template-columns: repeat(12, 1fr);
 
         .special {
             column-span: 1 !important; // todo investigate
@@ -339,7 +341,7 @@ body {
         border-radius: 5px;
         position: relative;
         top: 0;
-        transition: all 100ms ease-in-out;
+        // transition: all 100ms ease-in-out;
         display: flex;
         justify-self: center;
         align-self: center;
@@ -361,7 +363,8 @@ body {
                 width: 100%;
                 // original value
                 // transition: all 1000ms;
-                transition: all ease-out 500ms;
+                // transition: all ease-out 500ms;
+                transition: all ease-out 200ms;
                 top: 0;
                 position: absolute;
 
@@ -380,7 +383,8 @@ body {
             h3 {
                 @include cut-text();
                 color: $header-primary;
-                font-size: 14px;
+                // font-size: 14px;
+                font-size: 12px;
                 font-weight: 900;
                 text-transform: uppercase;
             }
@@ -388,7 +392,8 @@ body {
             p {
                 @include cut-text();
                 color: $header-primary;
-                font-size: 12px;
+                // font-size: 12px;
+                font-size: 10px;
                 font-weight: 400;
                 text-transform: uppercase;
             }

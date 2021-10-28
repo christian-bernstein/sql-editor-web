@@ -3,11 +3,6 @@ import {v4} from "uuid";
 
 export namespace Environment {
 
-    export function main(): boolean {
-
-        return true;
-    }
-
     export function usePersistent<T>(defaultValue: T, key: string, category:string = 'public'): [T, Dispatch<SetStateAction<T>>] {
         key = category + ":" + key;
         const [value, setValue] = React.useState(() => {

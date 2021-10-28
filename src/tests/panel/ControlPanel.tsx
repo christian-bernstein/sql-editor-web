@@ -5,6 +5,7 @@ import "./spinners.scss";
 import "./Chart.scss";
 import "./Keyboard.scss";
 import {Utils} from "../../logic/Utils";
+import {ReactComponent as FullscreenIcon} from "../../assets/icons/ic-16/ic16-refresh.svg";
 
 export enum KeyPressType {
     PRESS = ("PRESS"),
@@ -224,26 +225,26 @@ export class ControlPanelComponent extends React.Component<ControlPanelProps, Co
                             );
                         }
                     }}
-                    // onTouchStart={(event) => {
-                    //     if (widget.data.type === "key") {
-                    //         panel.execute(
-                    //             micro({
-                    //                 key: (widget.data.micro as MicroDescription).key,
-                    //                 type: KeyPressType.PRESS
-                    //             })
-                    //         );
-                    //     }
-                    // }}
-                    // onTouchEnd={() => {
-                    //     if (widget.data.type === "key") {
-                    //         panel.execute(
-                    //             micro({
-                    //                 key: (widget.data.micro as MicroDescription).key,
-                    //                 type: KeyPressType.RELEASE
-                    //             })
-                    //         );
-                    //     }
-                    // }}
+                    onTouchStart={(event) => {
+                        if (widget.data.type === "key") {
+                            panel.execute(
+                                micro({
+                                    key: (widget.data.micro as MicroDescription).key,
+                                    type: KeyPressType.PRESS
+                                })
+                            );
+                        }
+                    }}
+                    onTouchEnd={() => {
+                        if (widget.data.type === "key") {
+                            panel.execute(
+                                micro({
+                                    key: (widget.data.micro as MicroDescription).key,
+                                    type: KeyPressType.RELEASE
+                                })
+                            );
+                        }
+                    }}
                 >
                     <div className="content">
                         <h3>{widget.data.header}</h3>
@@ -469,7 +470,7 @@ export class ControlPanelComponent extends React.Component<ControlPanelProps, Co
                             }
 
                             {/*<div className="spacer"/>*/}
-
+                            <div className="spacer"/>
                             <div id="iso" className="button action-tertiary special static" onClick={event => {
                                 const newState: ControlPanelState = this.state;
                                 newState.isometric = !newState.isometric;
@@ -480,6 +481,18 @@ export class ControlPanelComponent extends React.Component<ControlPanelProps, Co
                                     <p/>
                                 </div>
                             </div>
+                            <div id="reload"
+                                 className={["button", "special", "action-tertiary", "static"].join(" ").trim()}
+                                 onClick={() => Utils.reloadPage()}
+                            >
+                                <div className="content">
+                                    <h3>Reload</h3>
+                                    <p>F5</p>
+                                </div>
+                            </div>
+
+                            <div className="spacer"/>
+
                             <div id="reboot" className={
                                 [
                                     "button",
@@ -506,7 +519,7 @@ export class ControlPanelComponent extends React.Component<ControlPanelProps, Co
                                     // "action-success"
                                     return (
                                         <div id="connect"
-                                             className={["button", this.state.connector.socket?.readyState === WebSocket.OPEN ? "action-secondary" : "action-tertiary", /*"double",*/ "static",
+                                             className={["button", this.state.connector.socket?.readyState === WebSocket.OPEN ? "action-secondary" : "action-tertiary", "double", "static",
                                                  this.state.connector.socket?.readyState === WebSocket.OPEN ? "button-active" : ""
                                              ].join(" ").trim()}
                                              onClick={event => {
@@ -589,17 +602,6 @@ export class ControlPanelComponent extends React.Component<ControlPanelProps, Co
                                         }
                                     })()
                                 }
-                            </div>
-                            <div className="button-layout">
-                                <div id="reload"
-                                     className={["button", "static"].join(" ").trim()}
-                                     onClick={() => Utils.reloadPage()}
-                                >
-                                    <div className="content">
-                                        <h3>Reload</h3>
-                                        <p>F5</p>
-                                    </div>
-                                </div>
                             </div>
                             <div className="button-layout">
                                 <div id="toggle-lights" className="button action-tertiary double static">

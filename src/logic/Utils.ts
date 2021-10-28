@@ -5,7 +5,7 @@ export namespace Utils {
     }
 
     export function toggleFullScreen(onEffect: (() => void) | undefined, fullscreen: boolean | undefined = undefined): void {
-        if (fullscreen == undefined) {
+        if (fullscreen === undefined) {
             if (!document.fullscreenElement) {
                 document.documentElement.requestFullscreen().then(() => {
                     if (onEffect != undefined) {
@@ -15,7 +15,7 @@ export namespace Utils {
             } else {
                 if (document.exitFullscreen) {
                     document.exitFullscreen().then(() => {
-                        if (onEffect != undefined) {
+                        if (onEffect !== undefined) {
                             onEffect();
                         }
                     });
@@ -24,14 +24,14 @@ export namespace Utils {
         } else {
             if (fullscreen) {
                 document.documentElement.requestFullscreen().then(() => {
-                    if (onEffect != undefined) {
+                    if (onEffect !== undefined) {
                         onEffect();
                     }
                 });
             } else {
                 if (document.exitFullscreen) {
                     document.exitFullscreen().then(() => {
-                        if (onEffect != undefined) {
+                        if (onEffect !== undefined) {
                             onEffect();
                         }
                     });

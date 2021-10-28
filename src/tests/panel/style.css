@@ -185,8 +185,8 @@ body {
   background-color: var(--background-tertiary);
   display: grid;
   grid-auto-flow: row;
-  grid-gap: 1em;
-  grid-template-columns: repeat(8, 1fr);
+  grid-gap: 5px;
+  grid-template-columns: repeat(12, 1fr);
 }
 .lower .specials .special {
   column-span: 1 !important;
@@ -219,7 +219,6 @@ body {
   border-radius: 5px;
   position: relative;
   top: 0;
-  transition: all 100ms ease-in-out;
   display: flex;
   justify-self: center;
   align-self: center;
@@ -239,7 +238,7 @@ body {
 }
 .lower .button .container .container-slider {
   width: 100%;
-  transition: all ease-out 500ms;
+  transition: all ease-out 200ms;
   top: 0;
   position: absolute;
 }
@@ -257,7 +256,7 @@ body {
   overflow: hidden;
   white-space: nowrap;
   color: #fff;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 900;
   text-transform: uppercase;
 }
@@ -266,7 +265,7 @@ body {
   overflow: hidden;
   white-space: nowrap;
   color: #fff;
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 400;
   text-transform: uppercase;
 }
