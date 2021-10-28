@@ -13,6 +13,7 @@ import {Badge} from "./components/Badge";
 import {ServiceInfo} from "./tests/services/ServiceInfo";
 import {ServiceLoadState} from "./tests/services/ServiceLoadState";
 import {ControlPanelComponent} from "./tests/panel/ControlPanel";
+import {IntercomPage} from "./tests/intercom/IntercomPage";
 
 
 // 192.168.2.102
@@ -64,10 +65,7 @@ import {ControlPanelComponent} from "./tests/panel/ControlPanel";
 //         />
 ReactDOM.render(
     <React.StrictMode>
-        <ControlPanelComponent
-            address={"ws:192.168.2.102:30001"}
-            connectorID={"panel"}
-        />
+        <IntercomPage/>
     </React.StrictMode>,
     document.getElementById('root')
 );

@@ -1,0 +1,63 @@
+$ui-color-active: #85EA98;
+$ui-color-active-main: #2EA043;
+$ui-color-primary: white;
+$ui-color-secondary: #C4C4C4;
+$ui-color-border:#333333;
+$ui-color-background-highlight: #212121;
+$ui-color-background-dark: #131313;
+
+p {
+  margin: 0 !important;
+}
+
+.intercom {
+  color: $ui-color-primary;
+  background-color: $ui-color-background-dark;
+  box-sizing: border-box;
+  height: 100vh;
+  width: 100%;
+  padding: 1.3rem 2rem;
+
+  .bar {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+
+    .date {
+      width: 100%;
+      display: flex;
+      justify-content: start;
+      align-items: center;
+      font-family: "OperatorMono", monospace;
+      font-style: normal;
+      font-weight: bold;
+      font-size: 18px;
+      line-height: 22px;
+    }
+
+    .time {
+      width: 100%;
+      display: flex;
+      justify-content: end;
+      align-items: center;
+      font-family: "OperatorMono", monospace;
+      font-style: normal;
+      font-weight: bold;
+      font-size: 18px;
+      line-height: 22px;
+    }
+  }
+
+  .floors {
+
+    .floor {
+
+      .floor-title {
+      }
+
+      .floor-actions {
+        display: flex;
+        flex-direction: row;
+      }
+    }
+  }
+}

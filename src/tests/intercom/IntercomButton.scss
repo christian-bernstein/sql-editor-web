@@ -1,0 +1,120 @@
+@import "IntercomPage.scss";
+
+.button {
+  position: relative;
+  padding: 1rem;
+  border-radius: 9px;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  transition: all linear 200ms;
+  overflow: hidden;
+
+  .button-background {
+    left: 0;
+    top: 0;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+
+  .button-body {
+    width: 100%;
+    z-index: 10;
+    display: flex;
+    justify-content: space-between;
+
+    h3, p {
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+
+    .button-title-container {
+
+      .button-title {
+        font-style: normal;
+        font-weight: 350;
+        font-size: 18px;
+        margin-right: 2rem;
+      }
+    }
+
+    .button-appendix {
+      display: flex;
+      flex-direction: row-reverse;
+      justify-content: end;
+      align-items: center;
+
+      .button-icon {
+        width: 24px;
+        height: 24px;
+      }
+
+      .button-description {
+
+      }
+
+      * + * {
+        margin-right: 11px;
+      }
+    }
+  }
+}
+
+@mixin button-color($primary, $primary-main, $font-primary, $font-secondary, $background-shade, $background-base, $shade-opacity: 1 - .22) {
+  &.button {
+    border: 1.5px solid $primary;
+
+    .button-background {
+      background: linear-gradient(0deg, transparentize($background-shade, $shade-opacity), transparentize($background-shade, $shade-opacity)), $background-base;
+    }
+
+    .button-title-container {
+
+      .button-title {
+        color: $font-primary;
+      }
+    }
+
+    .button-appendix {
+
+      .button-icon {
+        path {
+          fill: $primary-main;
+        }
+      }
+
+      .button-description {
+        color: $primary-main;
+        font-style: normal;
+        font-weight: bold;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+      }
+    }
+  }
+}
+
+.activated {
+  @include button-color(
+                  $ui-color-active-main,
+                  $ui-color-active,
+                  $ui-color-primary,
+                  $ui-color-secondary,
+                  $ui-color-active-main,
+                  $ui-color-background-highlight
+  );
+}
+
+.deactivated {
+  @include button-color(
+                  $ui-color-active-main,
+                  $ui-color-active,
+                  $ui-color-primary,
+                  $ui-color-secondary,
+                  $ui-color-active-main,
+                  $ui-color-background-highlight
+  );
+}

@@ -1,0 +1,40 @@
+p {
+  margin: 0 !important;
+}
+
+.intercom {
+  color: white;
+  background-color: #131313;
+  box-sizing: border-box;
+  height: 100vh;
+  width: 100%;
+  padding: 1.3rem 2rem;
+}
+.intercom .bar {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+.intercom .bar .date {
+  width: 100%;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  font-family: "OperatorMono", monospace;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 18px;
+  line-height: 22px;
+}
+.intercom .bar .time {
+  width: 100%;
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  font-family: "OperatorMono", monospace;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 18px;
+  line-height: 22px;
+}
+
+/*# sourceMappingURL=IntercomPage.css.map */

@@ -1,0 +1,134 @@
+p {
+  margin: 0 !important;
+}
+
+.intercom {
+  color: white;
+  background-color: #131313;
+  box-sizing: border-box;
+  height: 100vh;
+  width: 100%;
+  padding: 1.3rem 2rem;
+}
+.intercom .bar {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+.intercom .bar .date {
+  width: 100%;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  font-family: "OperatorMono", monospace;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 18px;
+  line-height: 22px;
+}
+.intercom .bar .time {
+  width: 100%;
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  font-family: "OperatorMono", monospace;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 18px;
+  line-height: 22px;
+}
+.intercom .floors .floor .floor-actions {
+  display: flex;
+  flex-direction: row;
+}
+
+.button {
+  position: relative;
+  padding: 1rem;
+  border-radius: 9px;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  transition: all linear 200ms;
+  overflow: hidden;
+}
+.button .button-background {
+  left: 0;
+  top: 0;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+.button .button-body {
+  width: 100%;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+}
+.button .button-body h3, .button .button-body p {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.button .button-body .button-title-container .button-title {
+  font-style: normal;
+  font-weight: 350;
+  font-size: 18px;
+  margin-right: 2rem;
+}
+.button .button-body .button-appendix {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: end;
+  align-items: center;
+}
+.button .button-body .button-appendix .button-icon {
+  width: 24px;
+  height: 24px;
+}
+.button .button-body .button-appendix * + * {
+  margin-right: 11px;
+}
+
+.activated.button {
+  border: 1.5px solid #2EA043;
+}
+.activated.button .button-background {
+  background: linear-gradient(0deg, rgba(46, 160, 67, 0.22), rgba(46, 160, 67, 0.22)), #212121;
+}
+.activated.button .button-title-container .button-title {
+  color: white;
+}
+.activated.button .button-appendix .button-icon path {
+  fill: #85EA98;
+}
+.activated.button .button-appendix .button-description {
+  color: #85EA98;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+}
+
+.deactivated.button {
+  border: 1.5px solid #2EA043;
+}
+.deactivated.button .button-background {
+  background: linear-gradient(0deg, rgba(46, 160, 67, 0.22), rgba(46, 160, 67, 0.22)), #212121;
+}
+.deactivated.button .button-title-container .button-title {
+  color: white;
+}
+.deactivated.button .button-appendix .button-icon path {
+  fill: #85EA98;
+}
+.deactivated.button .button-appendix .button-description {
+  color: #85EA98;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+}
+
+/*# sourceMappingURL=IntercomButton.css.map */
