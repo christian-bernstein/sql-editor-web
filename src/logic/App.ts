@@ -1,4 +1,5 @@
 import {UserData} from "./UserData";
+import {Shard} from "./Shard";
 
 let instance: App | undefined = undefined;
 
@@ -11,18 +12,16 @@ export let app: () => App = () => {
 
 export class App {
 
-    private userData: UserData | undefined;
+    private shards: Map<String, Shard> = new Map<String, Shard>();
 
-    public getSessionID(): string | null {
-        return window.localStorage.getItem("session-id")
+    public shard<T extends Shard>(id: string, shard: T | undefined = undefined): T {
+        if (!Array.from(this.shards.keys()).includes(id) && shard !== undefined) {
+            this.shards.set(id, shard as T);
+        }
+        return this.shards.get(id) as T;
     }
 
-    public setSessionID(id: string): App {
-        window.localStorage.setItem("session-id", id);
-        return this;
-    }
+    public main(): void {
 
-    public userAction(action: () => void): App {
-        return this;
     }
 }

@@ -1,5 +1,6 @@
 import React, {Dispatch, SetStateAction} from "react";
 import {v4} from "uuid";
+import {ConnectorConfig} from "./ConnectorConfig";
 
 export namespace Environment {
 
@@ -81,14 +82,6 @@ export namespace Environment {
 
     export enum SocketEventTypes {
         ONOPEN, ONCLOSE
-    }
-
-    export type ConnectorConfig = {
-        maxConnectAttempts: number,
-        protocol: string,
-        address: string,
-        id: string,
-        connectionRetryDelayFunc: (i: number) => number
     }
 
     export class Connector {
@@ -300,6 +293,9 @@ export namespace Environment {
                         } else {
                             console.log("Cannot reopen socket, lock is active");
                         }
+                    } else {
+                        console.error("Socket was unable to connect");
+                        this.config.onConnectionFailed?.();
                     }
                 };
                 this._socket.onmessage = ev => {
