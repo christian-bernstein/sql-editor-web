@@ -1,0 +1,19 @@
+.login {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+
+  * + * {
+    margin-top: .4rem;
+  }
+}
+
+.session {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+
+  * + * {
+    margin-top: .4rem;
+  }
+}
