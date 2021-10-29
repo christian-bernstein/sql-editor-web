@@ -10,7 +10,8 @@ export type LoginPageState = {
     sessionID?: string,
     credentials: Credentials,
     loggedIn: boolean,
-    lastResults: Array<CredentialsPreCheckResult>
+    currentCredentialsCheckResults: Array<CredentialsPreCheckResult>,
+    sufficientCredentialsToLogin: boolean
 }
 
 export class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
@@ -23,7 +24,8 @@ export class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
                 password: ""
             },
             loggedIn: false,
-            lastResults: new Array<CredentialsPreCheckResult>()
+            currentCredentialsCheckResults: new Array<CredentialsPreCheckResult>(),
+            sufficientCredentialsToLogin: false
         };
     }
 
@@ -44,44 +46,61 @@ export class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
 
     private renderLogin(): JSX.Element {
         return (
-            <div className={"login"}>
+            <form className={"login"}>
                 <label htmlFor={"username"}>Username</label>
                 <input id={"username"}
                        onChange={(ev: ChangeEvent<HTMLInputElement>) => {
-                           this.setState({
-                               credentials: {
-                                   username: ev.currentTarget.value,
-                                   password: this.state.credentials.password,
-                               }
-                           });
-                           this.evaluate();
+                           this.updateCredentials("user", ev.currentTarget.value);
                        }}
                        value={this.state.credentials.username}/>
+
                 <label htmlFor={"password"}>Password</label>
                 <input id={"password"}
                        onChange={(ev: ChangeEvent<HTMLInputElement>) => {
-                           this.setState({
-                               credentials: {
-                                   username: this.state.credentials.username,
-                                   password: ev.currentTarget.value
-                               }
-                           });
-                           this.evaluate();
+                           this.updateCredentials("pass", ev.currentTarget.value);
                        }}
                        value={this.state.credentials.password}
                        type={"password"}/>
-                <button onClick={() => {
-                    this.login();
-                }}>Login
+                <button
+                    className={["login-btn", this.state.sufficientCredentialsToLogin ? "active" : "inactive"].join(" ")}
+                    onClick={(ev) => {
+                        ev.preventDefault();
+                        this.login();
+                    }}>Login
                 </button>
-            </div>
+            </form>
+
         );
+    }
+
+    private updateCredentials(source: "user" | "pass", val: string) {
+        const newCredentials: Credentials = this.state.credentials;
+        if (source === "user") {
+            newCredentials.username = val;
+        } else if (source === "pass") {
+            newCredentials.password = val;
+        }
+        this.reevaluate(newCredentials);
+    }
+
+    private reevaluate(newCredentials: Credentials | undefined) {
+        if (newCredentials === undefined) {
+            newCredentials = this.state.credentials;
+        }
+        const results: CredentialsPreCheckResult[] = this.evaluate(newCredentials);
+        this.setState({
+            currentCredentialsCheckResults: results,
+            credentials: newCredentials,
+            sufficientCredentialsToLogin: results.includes(CredentialsPreCheckResult.OK)
+        });
     }
 
     private renderSession(): JSX.Element {
         return (
             <div className={"session"}>
-                <button onClick={() => {
+                <button
+                    className={"logout-btn"}
+                    onClick={() => {
                     this.login();
                 }}>Logout
                 </button>
@@ -89,10 +108,10 @@ export class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
         );
     }
 
-    private evaluate(): Array<CredentialsPreCheckResult> {
-        const results: Array<CredentialsPreCheckResult> = new Array<CredentialsPreCheckResult>();
-        const union: <T>(x1: [], x2: []) => T[] = (x1, x2) => {
-            const x3: [] = x1;
+    private evaluate(credentials: Credentials): Array<CredentialsPreCheckResult> {
+        let results: CredentialsPreCheckResult[] = [];
+        const union: <T>(x1: any[], x2: any[]) => T[] = (x1, x2) => {
+            const x3: any[] = x1;
             x2.forEach(x => {
                 if (!x3.includes(x)) x3.push(x);
             });
@@ -113,14 +132,22 @@ export class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
                 return results;
             }
         });
-
-
+        checkers.forEach(checker => {
+            const result: CredentialsPreCheckResult[] = checker.check(credentials);
+            results = union(results, result);
+        })
         return results;
     }
 
-    private login(): void {
-        this.setState({
-            loggedIn: !this.state.loggedIn
-        });
+    private login(skipSession: boolean = true): void {
+        if (this.state.sufficientCredentialsToLogin) {
+            this.setState({
+                loggedIn: !this.state.loggedIn
+            });
+        }
+        const credentials = this.state.credentials;
+        if (credentials.username === "Christian") {
+
+        }
     }
 }

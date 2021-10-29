@@ -1,10 +1,44 @@
+#root {
+  padding: 1rem;
+}
+
+pre {
+  border: 1px solid black;
+  padding: 10px;
+}
+
 .login {
   width: 100%;
   display: flex;
   flex-direction: column;
 }
+.login * {
+  font-family: "OperatorMono", monospace;
+}
 .login * + * {
   margin-top: 0.4rem;
+}
+.login #username {
+  padding: 0 10px;
+  height: 2.4rem;
+  border: 1px solid black;
+}
+.login #password {
+  padding: 0 10px;
+  height: 2.4rem;
+  border: 1px solid black;
+}
+.login .login-btn {
+  background-color: white;
+  height: 2.4rem;
+  border: 1px solid black;
+}
+.login .login-btn.active {
+  background-color: blanchedalmond;
+}
+.login .login-btn.inactive {
+  text-decoration: line-through;
+  display: inline-block;
 }
 
 .session {
@@ -14,6 +48,11 @@
 }
 .session * + * {
   margin-top: 0.4rem;
+}
+.session .logout-btn {
+  background-color: blanchedalmond;
+  height: 2.4rem;
+  border: 1px solid black;
 }
 
 /*# sourceMappingURL=LoginPage.css.map */
