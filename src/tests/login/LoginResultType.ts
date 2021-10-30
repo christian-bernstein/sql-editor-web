@@ -1,0 +1,4 @@
+export enum LoginResultType {
+    OK = "OK",
+    INVALID_USERNAME_OR_PASSWORD = "INVALID_USERNAME_OR_PASSWORD"
+}

@@ -1,0 +1,66 @@
+#root {
+  padding: 1rem;
+}
+
+pre {
+  border: 1px solid black;
+  padding: 10px;
+}
+
+.login {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+
+  * {
+    font-family: "OperatorMono", monospace;
+  }
+
+  * + * {
+    margin-top: .4rem;
+  }
+
+  #username {
+    padding: 0 10px;
+    height: 2.4rem;
+    border: 1px solid black;
+  }
+
+  #password {
+    padding: 0 10px;
+    height: 2.4rem;
+    border: 1px solid black;
+  }
+
+  .login-btn {
+    background-color: white;
+    height: 2.4rem;
+    border: 1px solid black;
+
+    &.active {
+      background-color: blanchedalmond;
+      // background-color: springgreen;
+    }
+
+    &.inactive {
+      text-decoration: line-through;
+      display: inline-block;
+    }
+  }
+}
+
+.session {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+
+  * + * {
+    margin-top: .4rem;
+  }
+
+  .logout-btn {
+    background-color: blanchedalmond;
+    height: 2.4rem;
+    border: 1px solid black;
+  }
+}
