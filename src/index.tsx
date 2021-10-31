@@ -15,6 +15,9 @@ import {ServiceLoadState} from "./tests/services/ServiceLoadState";
 import {ControlPanelComponent} from "./tests/panel/ControlPanel";
 import {IntercomPage} from "./tests/intercom/IntercomPage";
 import {LoginPage} from "./tests/login/LoginPage";
+import {Login} from "./tests/Learning";
+import {App} from "./logic/App";
+import {AppPage} from "./pages/AppPage";
 
 
 // 192.168.2.102
@@ -64,9 +67,11 @@ import {LoginPage} from "./tests/login/LoginPage";
 //                 ]],
 //             ])}
 //         />
+
+// <LoginPage/>
 ReactDOM.render(
     <React.StrictMode>
-        <LoginPage/>
+        <AppPage/>
     </React.StrictMode>,
     document.getElementById('root')
 );
