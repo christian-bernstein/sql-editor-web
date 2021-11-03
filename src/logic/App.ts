@@ -1,16 +1,15 @@
-import {UserData} from "./UserData";
 import {Shard} from "./Shard";
 
-let instance: App | undefined = undefined;
-
-export let app: () => App = () => {
-    if (instance === undefined) {
-        instance = new App();
-    }
-    return instance;
-};
-
 export class App {
+
+    private static instance: App | undefined = undefined;
+
+    public static app: () => App = () => {
+        if (App.instance === undefined) {
+            App.instance = new App();
+        }
+        return App.instance;
+    };
 
     private shards: Map<String, Shard> = new Map<String, Shard>();
 
@@ -22,6 +21,6 @@ export class App {
     }
 
     public main(): void {
-
+        console.log("main")
     }
 }
