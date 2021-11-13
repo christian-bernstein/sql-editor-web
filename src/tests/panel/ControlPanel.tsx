@@ -400,7 +400,8 @@ export class ControlPanelComponent extends React.Component<ControlPanelProps, Co
             address: this.props.address,
             id: this.props.connectorID,
             maxConnectAttempts: 50,
-            connectionRetryDelayFunc: (i => 0.1 * (i) ** 2 * 1e3 - 10 * 1e3)
+            connectionRetryDelayFunc: (i => 0.1 * (i) ** 2 * 1e3 - 10 * 1e3),
+            packetInterceptor: () => {}
         }));
     }
 

@@ -6,6 +6,8 @@ import {ICredentialsPreChecker} from "./ICredentialsPreChecker";
 import {Environment} from "../../logic/Environment";
 import {Utils} from "../../logic/Utils";
 import {CredentialsLoginResponsePacketData} from "./CredentialsLoginResponsePacketData";
+import {CredentialsCheckResultType} from "./CredentialsCheckResultType";
+import ReactJson from 'react-json-view';
 
 export type LoginPageProps = {}
 
@@ -15,7 +17,7 @@ export type LoginPageState = {
     loggedIn: boolean,
     currentCredentialsCheckResults: Array<CredentialsPreCheckResult>,
     sufficientCredentialsToLogin: boolean,
-    connector: Environment.Connector
+    connector: Environment.Connector,
 }
 
 export class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
@@ -34,21 +36,6 @@ export class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
         };
     }
 
-    render() {
-        return (
-            <>
-                <pre>{JSON.stringify(this.state, null, 2)}</pre>
-                {(() => {
-                    if (this.state.loggedIn) {
-                        return this.renderSession();
-                    } else {
-                        return this.renderLogin();
-                    }
-                })()}
-            </>
-        );
-    }
-
     private updateCredentials(source: "user" | "pass", val: string) {
         const newCredentials: Credentials = this.state.credentials;
         if (source === "user") {
@@ -57,6 +44,17 @@ export class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
             newCredentials.password = val;
         }
         this.reevaluate(newCredentials);
+    }
+
+    private getConnector(): Environment.Connector {
+        return Environment.Connector.useConnector("login", () => new Environment.Connector({
+            protocol: "login",
+            address: "ws:192.168.2.102:80",
+            id: "login",
+            maxConnectAttempts: 50,
+            connectionRetryDelayFunc: (i => 0.1 * (i) ** 2 * 1e3 - 10 * 1e3),
+            packetInterceptor: () => {}
+        })).connect();
     }
 
     private reevaluate(newCredentials: Credentials | undefined) {
@@ -104,27 +102,37 @@ export class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
 
     private login(skipSession: boolean = true): void {
         if (this.state.sufficientCredentialsToLogin) {
-            const fullLoginProcedure = (loginResponseCallBack: (data: CredentialsLoginResponsePacketData) => void) => {
+            const credentialsLoginProcedure = (loginResponseCallback: (data: CredentialsLoginResponsePacketData) => void) => {
                 this.state.connector.call({
                     protocol: "login",
                     packetID: "CredentialsLoginPacketData",
                     data: this.state.credentials,
                     callback: {
-                        handle: (connector, packet) => loginResponseCallBack(packet.data as object as CredentialsLoginResponsePacketData)
+                        handle: (connector, packet) => loginResponseCallback(packet.data as object as CredentialsLoginResponsePacketData)
                     }
-                })
+                });
             }
 
             if (this.state.sessionID === undefined) {
-                // Need full login,
-                fullLoginProcedure(data => {
-                    console.log(data.success)
-                    if (data.success) {
-                        console.log("hello")
+                // No session state available to try session login, need credentials login procedure
+                credentialsLoginProcedure(data => {
+                    console.log(data)
+                    if (data.type === CredentialsCheckResultType.OK) {
+                        // Set user login state to 'logged in'
                         this.setState({
                             loggedIn: true,
                             sessionID: data.newSessionID
                         });
+                    } else if (data.type === CredentialsCheckResultType.UNKNOWN_USERNAME) {
+                        // The provided credentials were wrong, highlight the input fields
+                        // The username doesn't correlate to an account stored on the current server instance
+
+
+                    } else if (data.type === CredentialsCheckResultType.INCORRECT_PASSWORD) {
+                        // The provided credentials were wrong, highlight the input fields
+                        // The password doesn't correlate to the password stored on the current server instance
+
+
                     }
                 });
             } else {
@@ -138,19 +146,9 @@ export class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
             this.setState({
                 loggedIn: false,
                 // todo set to undefined
-                sessionID: ""
+                sessionID: undefined
             });
         }
-    }
-
-    private getConnector(): Environment.Connector {
-        return Environment.Connector.useConnector("login", () => new Environment.Connector({
-            protocol: "login",
-            address: "ws:192.168.2.102:80",
-            id: "login",
-            maxConnectAttempts: 50,
-            connectionRetryDelayFunc: (i => 0.1 * (i) ** 2 * 1e3 - 10 * 1e3)
-        })).connect();
     }
 
     private renderLogin(): JSX.Element {
@@ -158,17 +156,20 @@ export class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
             <form className={"login"}>
                 <label htmlFor={"username"}>Username</label>
                 <input id={"username"}
+                       type={"username"}
+                       autoComplete={"current-username"}
                        onChange={(ev: ChangeEvent<HTMLInputElement>) => {
                            this.updateCredentials("user", ev.currentTarget.value);
                        }}
                        value={this.state.credentials.username}/>
                 <label htmlFor={"password"}>Password</label>
                 <input id={"password"}
+                       type={"password"}
+                       autoComplete={"current-password"}
                        onChange={(ev: ChangeEvent<HTMLInputElement>) => {
                            this.updateCredentials("pass", ev.currentTarget.value);
                        }}
-                       value={this.state.credentials.password}
-                       type={"password"}/>
+                       value={this.state.credentials.password}/>
                 <button
                     className={["login-btn", this.state.sufficientCredentialsToLogin ? "active" : "inactive"].join(" ")}
                     onClick={(ev) => {
@@ -187,10 +188,33 @@ export class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
                 <button
                     className={"logout-btn"}
                     onClick={() => {
-                    this.login();
-                }}>Logout
+                        this.login();
+                    }}>Logout
                 </button>
             </div>
+        );
+    }
+
+    // codeschool
+    // google
+    // ashes
+    // grayscale
+    // ocean
+    render() {
+        return (
+            <>
+                <div className={"state-display"}>
+                    <ReactJson src={this.state} theme={"grayscale"} displayDataTypes={false} enableClipboard={false} collapsed={true}/>
+                </div>
+
+                {(() => {
+                    if (this.state.loggedIn) {
+                        return this.renderSession();
+                    } else {
+                        return this.renderLogin();
+                    }
+                })()}
+            </>
         );
     }
 }

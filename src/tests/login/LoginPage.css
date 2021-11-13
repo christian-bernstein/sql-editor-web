@@ -1,17 +1,38 @@
-#root {
-  padding: 1rem;
+html {
+  background-color: #171717;
 }
 
-pre {
-  border: 1px solid black;
+#root {
+  padding: 1rem;
+  background-color: #171717;
+  color: white;
+}
+
+.state-display {
+  border-radius: 6px;
+  margin-bottom: 1em;
+}
+.state-display:first-child {
+  background-color: #222429;
+  border: 1px solid #3E3E3E;
   padding: 10px;
-  overflow-x: scroll;
+}
+.state-display:first-child .react-json-view {
+  background-color: #222429 !important;
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+  outline: none;
 }
 
 .login {
   width: 100%;
   display: flex;
   flex-direction: column;
+  background-color: #171717;
 }
 .login * {
   font-family: "OperatorMono", monospace;
@@ -19,27 +40,39 @@ pre {
 .login * + * {
   margin-top: 0.4rem;
 }
-.login #username {
+.login #username, .login #password {
+  border-radius: 6px;
   padding: 0 10px;
   height: 2.4rem;
-  border: 1px solid black;
+  color: white;
+  border: 1px solid #3E3E3E;
+  background-color: #222429;
 }
-.login #password {
-  padding: 0 10px;
-  height: 2.4rem;
-  border: 1px solid black;
+.login #username:focus, .login #password:focus {
+  border: 1px solid #71D99E;
+  outline: 3px solid rgba(113, 217, 158, 0.13) !important;
+}
+.login #username:-webkit-autofill, .login #password:-webkit-autofill {
+  color: white;
+  background-color: #222429 !important;
 }
 .login .login-btn {
-  background-color: white;
-  height: 2.4rem;
-  border: 1px solid black;
+  margin-top: 1rem;
+  border-radius: 6px;
+  height: 2.7rem;
+  color: white;
+  border: 1px solid #3E3E3E;
 }
 .login .login-btn.active {
-  background-color: blanchedalmond;
+  background-color: #71D99E;
 }
 .login .login-btn.inactive {
-  text-decoration: line-through;
+  background-color: #222429;
   display: inline-block;
+  color: #434750;
+}
+.login .login-btn:active {
+  filter: brightness(105%);
 }
 
 .session {
@@ -51,9 +84,26 @@ pre {
   margin-top: 0.4rem;
 }
 .session .logout-btn {
-  background-color: blanchedalmond;
-  height: 2.4rem;
+  border-radius: 6px;
+  background-color: #71D99E;
+  height: 2.7rem;
+  color: white;
   border: 1px solid black;
+}
+
+/* Change Autocomplete styles in Chrome*/
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  -webkit-text-fill-color: white;
+  -webkit-box-shadow: 0 0 0 1000px #222429 inset;
+  transition: background-color 5000s ease-in-out 0s;
 }
 
 /*# sourceMappingURL=LoginPage.css.map */

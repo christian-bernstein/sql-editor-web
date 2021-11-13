@@ -14,10 +14,10 @@ import {ServiceInfo} from "./tests/services/ServiceInfo";
 import {ServiceLoadState} from "./tests/services/ServiceLoadState";
 import {ControlPanelComponent} from "./tests/panel/ControlPanel";
 import {IntercomPage} from "./tests/intercom/IntercomPage";
-import {LoginPage} from "./tests/login/LoginPage";
 import {Login} from "./tests/Learning";
 import {App} from "./logic/App";
 import {AppPage} from "./pages/AppPage";
+import {LoginPage} from "./pages/LoginPage";
 
 
 // 192.168.2.102

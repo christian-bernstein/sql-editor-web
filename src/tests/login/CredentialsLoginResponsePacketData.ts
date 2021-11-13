@@ -1,4 +1,6 @@
+import {CredentialsCheckResultType} from "./CredentialsCheckResultType";
+
 export type CredentialsLoginResponsePacketData = {
-    success: boolean,
+    type: CredentialsCheckResultType,
     newSessionID: string
 }

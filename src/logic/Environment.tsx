@@ -300,9 +300,10 @@ export namespace Environment {
                 };
                 this._socket.onmessage = ev => {
                     // console.log(ev);
-
-
                     const packet: Packet = JSON.parse(ev.data) as Packet;
+
+                    this.config.packetInterceptor(packet);
+
                     if (packet.type === PacketType.RESPONSE) {
                         // It's a return packet
                         const callback: Handler | undefined = this._responseMap.get(packet.id);

@@ -11,7 +11,8 @@ export const def: SocketShardConfig = {
         id: "central",
         connectionRetryDelayFunc: () => 1,
         maxConnectAttempts: 10,
-        protocol: "blanc"
+        protocol: "blanc",
+        packetInterceptor: () => {}
     }],
     roundRobinOnError: true
 }

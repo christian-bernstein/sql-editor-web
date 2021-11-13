@@ -1,17 +1,50 @@
-#root {
-  padding: 1rem;
+$primary-color: #71D99E;
+$background-primary-color: #171717;
+$background-primary-highlight: #222429;
+$font-primary-color: white;
+$font-deactivated-color: #434750;
+$border-primary-color: #3E3E3E;
+$outline-color: rgba(113, 217, 158, 0.13);
+
+$border-radius: 6px;
+
+html {
+  background-color: $background-primary-color;
 }
 
-pre {
-  border: 1px solid black;
-  padding: 10px;
-  overflow-x: scroll;
+#root {
+  padding: 1rem;
+  background-color: $background-primary-color;
+  color: $font-primary-color;
+}
+
+.state-display {
+  border-radius: $border-radius;
+  margin-bottom: 1em;
+
+  &:first-child {
+    background-color: $background-primary-highlight;
+    border: 1px solid $border-primary-color;
+    padding: 10px;
+
+    .react-json-view {
+      background-color: $background-primary-highlight !important;
+    }
+  }
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+  outline: none;
 }
 
 .login {
   width: 100%;
   display: flex;
   flex-direction: column;
+  background-color: $background-primary-color;
 
   * {
     font-family: "OperatorMono", monospace;
@@ -21,33 +54,47 @@ pre {
     margin-top: .4rem;
   }
 
-  #username {
+  #username, #password {
+    border-radius: $border-radius;
     padding: 0 10px;
     height: 2.4rem;
-    border: 1px solid black;
-  }
+    color: $font-primary-color;
+    border: 1px solid $border-primary-color;
+    background-color: $background-primary-highlight;
 
-  #password {
-    padding: 0 10px;
-    height: 2.4rem;
-    border: 1px solid black;
+    &:focus {
+      border: 1px solid $primary-color;
+      outline: 3px solid $outline-color !important;
+    }
+
+    &:-webkit-autofill {
+      color: $font-primary-color;
+      background-color: $background-primary-highlight !important;
+    }
   }
 
   .login-btn {
-     background-color: white;
-     height: 2.4rem;
-     border: 1px solid black;
+    margin-top: 1rem;
+    border-radius: $border-radius;
+    height: 2.7rem;
+    color: $font-primary-color;
+    border: 1px solid $border-primary-color;
 
-     &.active {
-       background-color: blanchedalmond;
-       // background-color: springgreen;
-     }
+    &.active {
+      background-color: $primary-color;
+      // background-color: springgreen;
+    }
 
-     &.inactive {
-       text-decoration: line-through;
-       display: inline-block;
-     }
-   }
+    &.inactive {
+      background-color: $background-primary-highlight;
+      display: inline-block;
+      color: $font-deactivated-color;
+    }
+
+    &:active {
+      filter: brightness(105%);
+    }
+  }
 }
 
 .session {
@@ -60,8 +107,26 @@ pre {
   }
 
   .logout-btn {
-    background-color: blanchedalmond;
-    height: 2.4rem;
+    border-radius: $border-radius;
+    background-color: $primary-color;
+    height: 2.7rem;
+    color: $font-primary-color;
     border: 1px solid black;
   }
+}
+
+/* Change Autocomplete styles in Chrome*/
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  // border: 1px solid green;
+  -webkit-text-fill-color: $font-primary-color;
+  -webkit-box-shadow: 0 0 0 1000px $background-primary-highlight inset;
+  transition: background-color 5000s ease-in-out 0s;
 }
