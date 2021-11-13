@@ -68,10 +68,11 @@ import {AppPage} from "./pages/AppPage";
 //             ])}
 //         />
 
+// <AppPage/>
 // <LoginPage/>
 ReactDOM.render(
     <React.StrictMode>
-        <AppPage/>
+        <LoginPage/>
     </React.StrictMode>,
     document.getElementById('root')
 );

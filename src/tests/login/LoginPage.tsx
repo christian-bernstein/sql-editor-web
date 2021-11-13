@@ -3,6 +3,9 @@ import React, {ChangeEvent} from "react";
 import {Credentials} from "./Credentials";
 import {CredentialsPreCheckResult} from "./CredentialsPreCheckResult";
 import {ICredentialsPreChecker} from "./ICredentialsPreChecker";
+import {Environment} from "../../logic/Environment";
+import {Utils} from "../../logic/Utils";
+import {CredentialsLoginResponsePacketData} from "./CredentialsLoginResponsePacketData";
 
 export type LoginPageProps = {}
 
@@ -11,7 +14,8 @@ export type LoginPageState = {
     credentials: Credentials,
     loggedIn: boolean,
     currentCredentialsCheckResults: Array<CredentialsPreCheckResult>,
-    sufficientCredentialsToLogin: boolean
+    sufficientCredentialsToLogin: boolean,
+    connector: Environment.Connector
 }
 
 export class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
@@ -25,7 +29,8 @@ export class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
             },
             loggedIn: false,
             currentCredentialsCheckResults: new Array<CredentialsPreCheckResult>(),
-            sufficientCredentialsToLogin: false
+            sufficientCredentialsToLogin: false,
+            connector: this.getConnector()
         };
     }
 
@@ -41,35 +46,6 @@ export class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
                     }
                 })()}
             </>
-        );
-    }
-
-    private renderLogin(): JSX.Element {
-        return (
-            <form className={"login"}>
-                <label htmlFor={"username"}>Username</label>
-                <input id={"username"}
-                       onChange={(ev: ChangeEvent<HTMLInputElement>) => {
-                           this.updateCredentials("user", ev.currentTarget.value);
-                       }}
-                       value={this.state.credentials.username}/>
-
-                <label htmlFor={"password"}>Password</label>
-                <input id={"password"}
-                       onChange={(ev: ChangeEvent<HTMLInputElement>) => {
-                           this.updateCredentials("pass", ev.currentTarget.value);
-                       }}
-                       value={this.state.credentials.password}
-                       type={"password"}/>
-                <button
-                    className={["login-btn", this.state.sufficientCredentialsToLogin ? "active" : "inactive"].join(" ")}
-                    onClick={(ev) => {
-                        ev.preventDefault();
-                        this.login();
-                    }}>Login
-                </button>
-            </form>
-
         );
     }
 
@@ -93,19 +69,6 @@ export class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
             credentials: newCredentials,
             sufficientCredentialsToLogin: results.includes(CredentialsPreCheckResult.OK)
         });
-    }
-
-    private renderSession(): JSX.Element {
-        return (
-            <div className={"session"}>
-                <button
-                    className={"logout-btn"}
-                    onClick={() => {
-                    this.login();
-                }}>Logout
-                </button>
-            </div>
-        );
     }
 
     private evaluate(credentials: Credentials): Array<CredentialsPreCheckResult> {
@@ -141,13 +104,93 @@ export class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
 
     private login(skipSession: boolean = true): void {
         if (this.state.sufficientCredentialsToLogin) {
+            const fullLoginProcedure = (loginResponseCallBack: (data: CredentialsLoginResponsePacketData) => void) => {
+                this.state.connector.call({
+                    protocol: "login",
+                    packetID: "CredentialsLoginPacketData",
+                    data: this.state.credentials,
+                    callback: {
+                        handle: (connector, packet) => loginResponseCallBack(packet.data as object as CredentialsLoginResponsePacketData)
+                    }
+                })
+            }
+
+            if (this.state.sessionID === undefined) {
+                // Need full login,
+                fullLoginProcedure(data => {
+                    console.log(data.success)
+                    if (data.success) {
+                        console.log("hello")
+                        this.setState({
+                            loggedIn: true,
+                            sessionID: data.newSessionID
+                        });
+                    }
+                });
+            } else {
+                // Try to login via sessionID
+
+            }
+        }
+
+        // todo call server
+        if (this.state.loggedIn) {
             this.setState({
-                loggedIn: !this.state.loggedIn
+                loggedIn: false,
+                // todo set to undefined
+                sessionID: ""
             });
         }
-        const credentials = this.state.credentials;
-        if (credentials.username === "Christian") {
+    }
 
-        }
+    private getConnector(): Environment.Connector {
+        return Environment.Connector.useConnector("login", () => new Environment.Connector({
+            protocol: "login",
+            address: "ws:192.168.2.102:80",
+            id: "login",
+            maxConnectAttempts: 50,
+            connectionRetryDelayFunc: (i => 0.1 * (i) ** 2 * 1e3 - 10 * 1e3)
+        })).connect();
+    }
+
+    private renderLogin(): JSX.Element {
+        return (
+            <form className={"login"}>
+                <label htmlFor={"username"}>Username</label>
+                <input id={"username"}
+                       onChange={(ev: ChangeEvent<HTMLInputElement>) => {
+                           this.updateCredentials("user", ev.currentTarget.value);
+                       }}
+                       value={this.state.credentials.username}/>
+                <label htmlFor={"password"}>Password</label>
+                <input id={"password"}
+                       onChange={(ev: ChangeEvent<HTMLInputElement>) => {
+                           this.updateCredentials("pass", ev.currentTarget.value);
+                       }}
+                       value={this.state.credentials.password}
+                       type={"password"}/>
+                <button
+                    className={["login-btn", this.state.sufficientCredentialsToLogin ? "active" : "inactive"].join(" ")}
+                    onClick={(ev) => {
+                        ev.preventDefault();
+                        this.login();
+                    }}>Login
+                </button>
+            </form>
+
+        );
+    }
+
+    private renderSession(): JSX.Element {
+        return (
+            <div className={"session"}>
+                <button
+                    className={"logout-btn"}
+                    onClick={() => {
+                    this.login();
+                }}>Logout
+                </button>
+            </div>
+        );
     }
 }

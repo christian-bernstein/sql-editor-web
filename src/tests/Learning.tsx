@@ -26,7 +26,6 @@ import Store from "../logic/Store";
 import {Environment} from "../logic/Environment";
 import bg from "../assets/filaments/profile.gif";
 import logo from "../assets/logo.svg";
-import {App} from "../App";
 import {v4} from "uuid";
 
 export const Counter: React.FC = ({}) => {

@@ -5,6 +5,7 @@
 pre {
   border: 1px solid black;
   padding: 10px;
+  overflow-x: scroll;
 }
 
 .login {
@@ -33,20 +34,20 @@ pre {
   }
 
   .login-btn {
-    background-color: white;
-    height: 2.4rem;
-    border: 1px solid black;
+     background-color: white;
+     height: 2.4rem;
+     border: 1px solid black;
 
-    &.active {
-      background-color: blanchedalmond;
-      // background-color: springgreen;
-    }
+     &.active {
+       background-color: blanchedalmond;
+       // background-color: springgreen;
+     }
 
-    &.inactive {
-      text-decoration: line-through;
-      display: inline-block;
-    }
-  }
+     &.inactive {
+       text-decoration: line-through;
+       display: inline-block;
+     }
+   }
 }
 
 .session {
