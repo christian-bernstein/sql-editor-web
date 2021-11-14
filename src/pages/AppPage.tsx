@@ -1,6 +1,6 @@
 import React from "react";
 import "../styles/pages/AppPage.scss";
-import {BrowserRouter, Route} from "react-router-dom";
+import {BrowserRouter, Route, Link} from "react-router-dom";
 import {DefaultSpecialPages} from "../logic/DefaultSpecialPages";
 import {BoardingPage} from "./BoardingPage";
 
@@ -25,6 +25,7 @@ export class AppPage extends React.Component<any, any> {
             <div className={"app"}>
                 <BrowserRouter>
                     <Route path={"/boarding"} render={() => <BoardingPage/>}/>
+                    <Route path={"/"} render={() => <Link to={"/boarding"}>Enter Boarding</Link>}/>
                 </BrowserRouter>
             </div>
         );

@@ -83,6 +83,33 @@
 .boarding-page .boarding-page-foreground .boarding {
   grid-area: d;
 }
+.boarding-page .boarding-page-foreground .boarding .boarding-form {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: end;
+}
+.boarding-page .boarding-page-foreground .boarding .boarding-form .boarding-type {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr fit-content(0) 1fr;
+  align-items: center;
+}
+.boarding-page .boarding-page-foreground .boarding .boarding-form .boarding-type .separator {
+  font-family: "Consolas", monospace;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 24px;
+  line-height: 33px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  letter-spacing: 0.03em;
+  color: #4F4F4F;
+  flex: none;
+  flex-grow: 0;
+  margin: 0 15px;
+}
 .boarding-page .boarding-page-background {
   background-color: #171717;
   z-index: 1;

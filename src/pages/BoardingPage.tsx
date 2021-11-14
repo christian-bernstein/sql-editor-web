@@ -24,7 +24,7 @@ export class BoardingPage extends React.Component<BoardingPageProps, BoardingPag
                             <div className={"logo-space"}>
                                 <Logo/>
                             </div>
-                            <h3 className={"page-name"}>Onboarding</h3>
+                            <h3 className={"page-name"}>Boarding</h3>
                         </div>
                     </div>
                     <div className={"title"}>
@@ -38,11 +38,11 @@ export class BoardingPage extends React.Component<BoardingPageProps, BoardingPag
                             <div className={"boarding-type"}>
                                 {/* boarding button */}
                                 <Link to={"/login"}>
-                                    <Button onClick={() => {}}>Login</Button>
+                                    <Button onClick={() => {}} internalStyling={true} theme={"default"}>Log in</Button>
                                 </Link>
                                 <span className={"separator"}>/</span>
                                 <Link to={"/register"}>
-                                    <Button onClick={() => {}}>Sign Up</Button>
+                                    <Button onClick={() => {}} internalStyling={true} theme={"primary"}>Sign up</Button>
                                 </Link>
                                 {/* Sign-In button */}
                             </div>
