@@ -1,11 +1,11 @@
-.login-page {
+.boarding-page {
   width: 100%;
   height: 100vh;
   color: white;
   box-sizing: border-box;
   position: relative;
 }
-.login-page .login-page-foreground {
+.boarding-page .boarding-page-foreground {
   box-sizing: border-box;
   padding: 2.4rem;
   z-index: 10;
@@ -16,24 +16,25 @@
   grid-template-areas: "a" "b" "c" "d";
   grid-template-rows: repeat(4, 1fr);
 }
-.login-page .login-page-foreground .header {
+.boarding-page .boarding-page-foreground .header {
   grid-area: a;
   width: 100%;
 }
-.login-page .login-page-foreground .header .header-container {
+.boarding-page .boarding-page-foreground .header .header-container {
   width: 100%;
   align-items: center;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
 }
-.login-page .login-page-foreground .header .header-container .logo-space {
+.boarding-page .boarding-page-foreground .header .header-container .logo-space {
   width: 100%;
 }
-.login-page .login-page-foreground .header .header-container .logo-space:first-child {
+.boarding-page .boarding-page-foreground .header .header-container .logo-space:first-child {
   height: 24px;
   fill: black;
 }
-.login-page .login-page-foreground .header .header-container .page-name {
+.boarding-page .boarding-page-foreground .header .header-container .page-name {
+  justify-self: center;
   color: black;
   margin: 0;
   font-family: "Poppins", sans-serif;
@@ -48,7 +49,7 @@
   letter-spacing: 0.03em;
   text-transform: uppercase;
 }
-.login-page .login-page-foreground .title {
+.boarding-page .boarding-page-foreground .title {
   grid-area: b;
   width: 100%;
   height: 100%;
@@ -57,7 +58,7 @@
   justify-content: center;
   flex-direction: column;
 }
-.login-page .login-page-foreground .title h1 {
+.boarding-page .boarding-page-foreground .title h1 {
   margin: 0;
   font-style: normal;
   font-weight: bold;
@@ -68,7 +69,7 @@
   letter-spacing: 0.03em;
   color: white;
 }
-.login-page .login-page-foreground .title h3 {
+.boarding-page .boarding-page-foreground .title h3 {
   margin: 10px 0 0;
   font-style: normal;
   font-weight: 350;
@@ -79,10 +80,10 @@
   letter-spacing: 0.03em;
   color: #C6C6C6;
 }
-.login-page .login-page-foreground .login {
+.boarding-page .boarding-page-foreground .boarding {
   grid-area: d;
 }
-.login-page .login-page-background {
+.boarding-page .boarding-page-background {
   background-color: #171717;
   z-index: 1;
   position: absolute;
@@ -92,11 +93,11 @@
   height: 100%;
   overflow-x: hidden;
 }
-.login-page .login-page-background :first-child {
+.boarding-page .boarding-page-background :first-child {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
 }
 
-/*# sourceMappingURL=LoginPage.css.map */
+/*# sourceMappingURL=BoardingPage.css.map */

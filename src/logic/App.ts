@@ -20,6 +20,10 @@ export class App {
         return this.shards.get(id) as T;
     }
 
+    public shouldDisplaySpecialPage(): String | undefined {
+        return "boarding";
+    }
+
     public main(): void {
         console.log("main")
     }

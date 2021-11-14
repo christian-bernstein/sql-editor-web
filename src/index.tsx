@@ -17,7 +17,7 @@ import {IntercomPage} from "./tests/intercom/IntercomPage";
 import {Login} from "./tests/Learning";
 import {App} from "./logic/App";
 import {AppPage} from "./pages/AppPage";
-import {LoginPage} from "./pages/LoginPage";
+import {BoardingPage} from "./pages/BoardingPage";
 
 
 // 192.168.2.102
@@ -69,10 +69,10 @@ import {LoginPage} from "./pages/LoginPage";
 //         />
 
 // <AppPage/>
-// <LoginPage/>
+// <BoardingPage/>
 ReactDOM.render(
     <React.StrictMode>
-        <LoginPage/>
+        <AppPage/>
     </React.StrictMode>,
     document.getElementById('root')
 );

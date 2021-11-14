@@ -5,14 +5,14 @@ $font-secondary-color: #C6C6C6;
 $primary-color: #71D99E;
 $primary-highlight-color: #A9E5C3;
 
-.login-page {
+.boarding-page {
   width: 100%;
   height: 100vh;
   color: $font-primary-color;
   box-sizing: border-box;
   position: relative;
 
-  .login-page-foreground {
+  .boarding-page-foreground {
     box-sizing: border-box;
     // padding: 40px;
     padding: 2.4rem;
@@ -44,6 +44,7 @@ $primary-highlight-color: #A9E5C3;
         }
 
         .page-name {
+          justify-self: center;
           color: $font-primary-inverted-color;
           margin: 0;
           font-family: 'Poppins', sans-serif;
@@ -95,16 +96,16 @@ $primary-highlight-color: #A9E5C3;
       }
     }
 
-    .login {
+    .boarding {
       grid-area: d;
 
-      .login-form {
+      .boarding-form {
 
         // Continue as button
 
-        .login-type {
+        .boarding-type {
 
-          // Login button
+          // boarding button
 
           .separator {
 
@@ -116,7 +117,7 @@ $primary-highlight-color: #A9E5C3;
     }
   }
 
-  .login-page-background {
+  .boarding-page-background {
     background-color: $background-color;
     z-index: 1;
     position: absolute;
