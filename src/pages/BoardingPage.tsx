@@ -5,6 +5,8 @@ import {ReactComponent as Wave} from "../assets/waves/wave-2.svg";
 import "../styles/pages/BoardingPage.scss";
 import {Button} from "../components/Button";
 import {ComponentStyle} from "../ComponentStyle";
+import {ContinueAs} from "../components/ContinueAs";
+import {v4} from "uuid";
 
 export type BoardingPageProps = {}
 
@@ -35,6 +37,20 @@ export class BoardingPage extends React.Component<BoardingPageProps, BoardingPag
                     </div>
                     <div className={"boarding"}>
                         <form className={"boarding-form"}>
+
+                            <ol className={"continue-as-list"}>
+                                <ContinueAs sessionHistoryEntry={{
+                                    sessionID: v4(),
+                                    userDisplayName: "root",
+                                    userAvatarURL: "https://deelay.me/2000/https://gravatar.com/avatar/root?s=400&d=identicon&r=x"
+                                }}/>
+                                <ContinueAs sessionHistoryEntry={{
+                                    sessionID: v4(),
+                                    userDisplayName: "Christian Bernstein",
+                                    userAvatarURL: "https://deelay.me/1000/https://gravatar.com/avatar/6b34fe24ac2ff8103f6fce1f0da2ef57?s=400&d=identicon&r=x"
+                                }}/>
+                            </ol>
+
                             {/* Continue as button */}
                             <div className={"boarding-type"}>
                                 {/* boarding button */}
@@ -42,18 +58,16 @@ export class BoardingPage extends React.Component<BoardingPageProps, BoardingPag
                                     <Button onClick={() => {}} internalStyling={true} theme={ComponentStyle.DEFAULT}>Log in</Button>
                                 </Link>
                                 <span className={"separator"}>/</span>
+                                {/* Sign-Up button */}
                                 <Link to={"/register"}>
                                     <Button onClick={() => {}} internalStyling={true} theme={ComponentStyle.PRIMARY}>Sign up</Button>
                                 </Link>
-                                <Button onClick={() => {}} internalStyling={true} theme={ComponentStyle.DEFAULT}>Sign up</Button>
-
-                                {/* Sign-In button */}
                             </div>
                         </form>
                     </div>
                 </div>
                 <div className={"boarding-page-background"}>
-                    <Wave/>
+                    {/*<Wave/>*/}
                 </div>
             </div>
         );

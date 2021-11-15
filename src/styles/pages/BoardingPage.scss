@@ -6,7 +6,6 @@ $font-deactivated-color: #4F4F4F;
 $primary-color: #71D99E;
 $primary-highlight-color: #A9E5C3;
 
-
 .boarding-page {
   width: 100%;
   height: 100vh;
@@ -16,11 +15,11 @@ $primary-highlight-color: #A9E5C3;
 
   .boarding-page-foreground {
     box-sizing: border-box;
-    // padding: 40px;
     padding: 2.4rem;
     z-index: 10;
     position: relative;
     width: 100%;
+    max-width: 100%;
     height: 100%;
     display: grid;
     grid-template-areas: "a" "b" "c" "d";
@@ -41,13 +40,13 @@ $primary-highlight-color: #A9E5C3;
 
           &:first-child {
             height: 24px;
-            fill: $font-primary-inverted-color;
+            fill: $font-primary-color;
           }
         }
 
         .page-name {
           justify-self: center;
-          color: $font-primary-inverted-color;
+          color: $font-primary-color;
           margin: 0;
           font-family: 'Poppins', sans-serif;
           font-style: normal;
@@ -100,16 +99,28 @@ $primary-highlight-color: #A9E5C3;
 
     .boarding {
       grid-area: d;
+      width: 100%;
+      max-width: 100%;
 
       .boarding-form {
         height: 100%;
         width: 100%;
         display: flex;
-        align-items: end;
+        align-items: flex-start;
+        justify-content: flex-end;
+        flex-direction: column;
+
+        .continue-as-list {
+          padding: 0;
+          width: 100%;
+          max-width: 100%;
+          margin-bottom: 1em;
+          display: flex;
+          flex-direction: column;
+          gap: 1em;
+        }
 
         // Continue as button
-
-
         .boarding-type {
           width: 100%;
           display: grid;

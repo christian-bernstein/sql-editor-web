@@ -4,20 +4,25 @@ import {Credentials} from "./Credentials";
 import {CredentialsPreCheckResult} from "./CredentialsPreCheckResult";
 import {ICredentialsPreChecker} from "./ICredentialsPreChecker";
 import {Environment} from "../../logic/Environment";
-import {Utils} from "../../logic/Utils";
 import {CredentialsLoginResponsePacketData} from "./CredentialsLoginResponsePacketData";
 import {CredentialsCheckResultType} from "./CredentialsCheckResultType";
 import ReactJson from 'react-json-view';
+import {Redirect} from "react-router-dom";
+import {BarLoader, BounceLoader, ClipLoader} from "react-spinners";
+import {css} from "@emotion/react";
 
-export type LoginPageProps = {}
+export type LoginPageProps = {
+    calledFromWhere?: string
+}
 
 export type LoginPageState = {
     sessionID?: string,
     credentials: Credentials,
-    loggedIn: boolean,
+    loginInProcess: boolean,
     currentCredentialsCheckResults: Array<CredentialsPreCheckResult>,
     sufficientCredentialsToLogin: boolean,
     connector: Environment.Connector,
+    redirect: boolean
 }
 
 export class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
@@ -29,10 +34,11 @@ export class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
                 username: "",
                 password: ""
             },
-            loggedIn: false,
+            loginInProcess: false,
             currentCredentialsCheckResults: new Array<CredentialsPreCheckResult>(),
             sufficientCredentialsToLogin: false,
-            connector: this.getConnector()
+            connector: this.getConnector(),
+            redirect: false
         };
     }
 
@@ -103,12 +109,20 @@ export class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
     private login(skipSession: boolean = true): void {
         if (this.state.sufficientCredentialsToLogin) {
             const credentialsLoginProcedure = (loginResponseCallback: (data: CredentialsLoginResponsePacketData) => void) => {
+                this.setState({
+                    loginInProcess: true
+                });
                 this.state.connector.call({
                     protocol: "login",
                     packetID: "CredentialsLoginPacketData",
                     data: this.state.credentials,
                     callback: {
-                        handle: (connector, packet) => loginResponseCallback(packet.data as object as CredentialsLoginResponsePacketData)
+                        handle: (connector, packet) => {
+                            this.setState({
+                                loginInProcess: false
+                            });
+                            loginResponseCallback(packet.data as object as CredentialsLoginResponsePacketData)
+                        }
                     }
                 });
             }
@@ -120,8 +134,8 @@ export class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
                     if (data.type === CredentialsCheckResultType.OK) {
                         // Set user login state to 'logged in'
                         this.setState({
-                            loggedIn: true,
-                            sessionID: data.newSessionID
+                            sessionID: data.newSessionID,
+                            redirect: true
                         });
                     } else if (data.type === CredentialsCheckResultType.UNKNOWN_USERNAME) {
                         // The provided credentials were wrong, highlight the input fields
@@ -139,15 +153,6 @@ export class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
                 // Try to login via sessionID
 
             }
-        }
-
-        // todo call server
-        if (this.state.loggedIn) {
-            this.setState({
-                loggedIn: false,
-                // todo set to undefined
-                sessionID: undefined
-            });
         }
     }
 
@@ -175,46 +180,45 @@ export class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
                     onClick={(ev) => {
                         ev.preventDefault();
                         this.login();
-                    }}>Login
+                    }}
+                >
+                    {
+                        (() => {
+                            if (this.state.loginInProcess) {
+                                const override = css`
+                                  display: block;
+                                  margin: 0 auto;
+                                `;
+                                return <BarLoader color={"white"} css={override} loading={true} />
+                            } else {
+                                return "Login";
+                            }
+                        })()
+                    }
                 </button>
             </form>
 
         );
     }
 
-    private renderSession(): JSX.Element {
-        return (
-            <div className={"session"}>
-                <button
-                    className={"logout-btn"}
-                    onClick={() => {
-                        this.login();
-                    }}>Logout
-                </button>
-            </div>
-        );
-    }
-
-    // codeschool
-    // google
-    // ashes
-    // grayscale
-    // ocean
     render() {
+        // After completing the login, the user should automatically be  redirected to another page.
+        // The login page should only be a small prompt, so afterwards, the user should return to the page,
+        // thy originated from.
+        if (this.state.redirect) {
+            const location = this.props.calledFromWhere === undefined ? "/dashboard" : this.props.calledFromWhere;
+            return <Redirect push to={location}/>
+        }
+        // Display the default login form
         return (
-            <>
+            <div className={"login-page"}>
                 <div className={"state-display"}>
                     <ReactJson src={this.state} theme={"grayscale"} displayDataTypes={false} enableClipboard={false} collapsed={true}/>
                 </div>
-
-                {(() => {
-                    if (this.state.loggedIn) {
-                        return this.renderSession();
-                    } else {
-                        return this.renderLogin();
-                    }
-                })()}
-            </>
+                {
+                    this.renderLogin()
+                }
+            </div>
         );
     }
 }

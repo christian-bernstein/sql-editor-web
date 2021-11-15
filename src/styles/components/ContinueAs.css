@@ -1,0 +1,86 @@
+.session-history-entry {
+  width: 100%;
+  max-width: 100%;
+  border-radius: 6px;
+  font-family: "OperatorMono", monospace;
+  align-items: center;
+  text-align: center;
+  letter-spacing: 0.03em;
+  font-size: 16px;
+  font-weight: bold;
+  border: 1px solid #30363D;
+  background-color: #222429;
+  color: white;
+  padding: 16px 12px;
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-gap: 10px;
+  user-select: none;
+  white-space: nowrap;
+  box-sizing: border-box;
+  position: relative;
+}
+.session-history-entry:hover {
+  filter: brightness(120%);
+  box-shadow: 0 0 0 4px rgba(113, 217, 158, 0.13);
+  border: 1px solid #A9E5C3 !important;
+}
+.session-history-entry .name-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  overflow: hidden;
+  width: 100%;
+}
+.session-history-entry .name-container p {
+  font-style: normal;
+  font-weight: 350;
+  font-size: 14px;
+  line-height: 19px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  letter-spacing: 0.03em;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+}
+.session-history-entry .name-container .name {
+  user-select: text;
+  margin-left: 6px;
+  text-overflow: ellipsis;
+  color: #C6C6C6;
+}
+.session-history-entry .name-container .avatar {
+  margin-left: 10px;
+  border-radius: 50%;
+  height: 20px;
+  width: 20px;
+  border: 1px solid #30363D;
+}
+.session-history-entry .name-container .avatar-loader {
+  margin-left: 10px;
+  border-radius: 50%;
+  border: 1px solid #30363D;
+  height: 20px;
+  width: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+.session-history-entry .name-container .avatar-loader * {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.session-history-entry .icon {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.session-history-entry .icon svg {
+  fill: #71D99E;
+}
+
+/*# sourceMappingURL=ContinueAs.css.map */

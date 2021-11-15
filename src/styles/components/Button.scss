@@ -20,7 +20,8 @@
 
     &:hover {
       filter: brightness(120%);
-      border: 10px $border-color-secondary !important;
+      box-shadow: 0 0 0 4px $border-primary-shadow;
+      border: 1px solid $primary-highlight-color !important;
     }
 
     &:active {

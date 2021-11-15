@@ -16,7 +16,8 @@
 }
 .button.internally-styled:hover {
   filter: brightness(120%);
-  border: 10px #30363D !important;
+  box-shadow: 0 0 0 4px rgba(113, 217, 158, 0.13);
+  border: 1px solid #A9E5C3 !important;
 }
 .button.internally-styled:active {
   border: 1px solid #A9E5C3, 3px solid rgba(113, 217, 158, 0.13) !important;
