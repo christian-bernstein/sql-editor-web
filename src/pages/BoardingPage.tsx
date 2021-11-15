@@ -4,6 +4,7 @@ import {ReactComponent as Logo} from "../assets/logo.svg";
 import {ReactComponent as Wave} from "../assets/waves/wave-2.svg";
 import "../styles/pages/BoardingPage.scss";
 import {Button} from "../components/Button";
+import {ComponentStyle} from "../ComponentStyle";
 
 export type BoardingPageProps = {}
 
@@ -38,12 +39,14 @@ export class BoardingPage extends React.Component<BoardingPageProps, BoardingPag
                             <div className={"boarding-type"}>
                                 {/* boarding button */}
                                 <Link to={"/login"}>
-                                    <Button onClick={() => {}} internalStyling={true} theme={"default"}>Log in</Button>
+                                    <Button onClick={() => {}} internalStyling={true} theme={ComponentStyle.DEFAULT}>Log in</Button>
                                 </Link>
                                 <span className={"separator"}>/</span>
                                 <Link to={"/register"}>
-                                    <Button onClick={() => {}} internalStyling={true} theme={"primary"}>Sign up</Button>
+                                    <Button onClick={() => {}} internalStyling={true} theme={ComponentStyle.PRIMARY}>Sign up</Button>
                                 </Link>
+                                <Button onClick={() => {}} internalStyling={true} theme={ComponentStyle.DEFAULT}>Sign up</Button>
+
                                 {/* Sign-In button */}
                             </div>
                         </form>

@@ -11,9 +11,17 @@
   background-color: #222429;
   color: white;
   padding: 16px 16px;
+  transition: all 100ms linear;
+  user-select: none;
 }
-
-.primary {
+.button.internally-styled:hover {
+  filter: brightness(120%);
+  border: 10px #30363D !important;
+}
+.button.internally-styled:active {
+  border: 1px solid #A9E5C3, 3px solid rgba(113, 217, 158, 0.13) !important;
+}
+.button.primary {
   border: 1px solid #A9E5C3;
   background-color: #71D99E;
 }
