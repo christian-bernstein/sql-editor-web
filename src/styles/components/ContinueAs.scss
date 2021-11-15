@@ -1,6 +1,5 @@
 @import "../../themes";
 
-
 .session-history-entry {
   width: 100%;
   max-width: 100%;
@@ -15,7 +14,7 @@
   background-color: $background-highlight-color;
   color: $font-primary-color;
   padding: 16px 12px;
-  // transition: all 100ms linear;
+  transition: all 100ms linear;
   display: grid;
   grid-template-columns: auto auto;
   grid-gap: 10px;

@@ -1,20 +1,40 @@
 import {Shard} from "./Shard";
 import {SessionHistoryEntry} from "./SessionHistoryEntry";
+import {Environment} from "./Environment";
+import {AppConfig} from "./AppConfig";
+import SocketEventTypes = Environment.SocketEventTypes;
 
 export class App {
+    get config(): AppConfig {
+        return this._config;
+    }
+
+    set config(value: AppConfig) {
+        this._config = value;
+    }
 
     private static instance: App | undefined = undefined;
 
-    public static app: () => App = () => {
+    public static appOrCreate: (config: AppConfig) => App = (config: AppConfig) => {
         if (App.instance === undefined) {
-            App.instance = new App();
+            App.instance = new App(config);
         }
         return App.instance;
     };
 
+    public static app: () => App = () => {
+        return App.instance as App;
+    };
+
     private shards: Map<String, Shard> = new Map<String, Shard>();
 
+    private _config: AppConfig;
+
     private _sessionID?: string;
+
+    constructor(config: AppConfig) {
+        this._config = config;
+    }
 
     public set sessionID(value: string) {
         this._sessionID = value;
@@ -49,4 +69,25 @@ export class App {
             return sheObj.slice(0, maxCount);
         }
     }
+
+    public useConnector<T>(action: (connector: Environment.Connector) => T): T | undefined {
+        // Get or create default connector instance
+        const connector = Environment.Connector.useConnector(this.config.connectorConfig.id, () => new Environment.Connector(this.config.connectorConfig));
+
+        //
+        connector.registerSocketEventHandler(SocketEventTypes.ONOPEN, {
+            handle: ev => {
+
+            },
+            stator: false,
+            usagesLeft: 1
+        });
+
+        // If the connector isn't
+
+
+        return undefined;
+    }
+
+
 }
