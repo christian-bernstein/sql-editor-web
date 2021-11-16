@@ -258,13 +258,9 @@ export namespace Environment {
         }
 
         public connect(reconnect: boolean = false): Connector {
-            console.log("Try to connect");
-
             if (this._socket?.readyState !== WebSocket.OPEN && this._socket?.readyState !== WebSocket.CONNECTING) {
                 this._socket = new WebSocket(this.config.address);
                 this._socket.onopen = ev => {
-                    console.log("Connection opened");
-
                     // Reset variables
                     this.connectionAttempts = 0;
                     this._reconnectLock = false;
@@ -272,8 +268,6 @@ export namespace Environment {
                     this.fireSocketEvent(SocketEventTypes.ONOPEN, ev)
                 };
                 this._socket.onclose = ev => {
-                    console.log("Closing socket connection");
-
                     this.fireSocketEvent(SocketEventTypes.ONCLOSE, ev)
                     if (this.connectionAttempts < this.config.maxConnectAttempts) {
                         if (!this._reconnectLock){
@@ -283,10 +277,6 @@ export namespace Environment {
                             } catch (e) {
                                 console.error(e);
                             }
-
-                            // todo rem log
-                            console.log(timeout)
-
                             setTimeout(() => {
                                 this.connect(true);
                             }, timeout);
@@ -299,11 +289,8 @@ export namespace Environment {
                     }
                 };
                 this._socket.onmessage = ev => {
-                    // console.log(ev);
                     const packet: Packet = JSON.parse(ev.data) as Packet;
-
                     this.config.packetInterceptor(packet);
-
                     if (packet.type === PacketType.RESPONSE) {
                         // It's a return packet
                         const callback: Handler | undefined = this._responseMap.get(packet.id);

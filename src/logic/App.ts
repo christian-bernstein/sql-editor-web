@@ -44,6 +44,10 @@ export class App {
         return this._sessionID;
     }
 
+    public shouldBeLoggedIn(): boolean {
+        return true;
+    }
+
     public shard<T extends Shard>(id: string, shard: T | undefined = undefined): T {
         if (!Array.from(this.shards.keys()).includes(id) && shard !== undefined) {
             this.shards.set(id, shard as T);
