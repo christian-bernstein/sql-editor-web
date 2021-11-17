@@ -24,7 +24,12 @@ export class AppPage extends React.Component<any, any> {
                 <BrowserRouter>
                     <Route path={"/boarding"} render={() => <BoardingPage/>}/>
                     <Route path={"/login"} render={() => <LoginPage/>}/>
-                    <Route path={"/dashboard"} render={() => <h3>Dashboard</h3>}/>
+                    <Route path={"/dashboard"} render={() => (
+                        <>
+                            <h3>Dashboard</h3>
+                            <pre>{window.localStorage.getItem("session-id")}</pre>
+                        </>
+                    )}/>
                     <Route path={"/"} render={() => <Link to={"/boarding"}>Enter Boarding</Link>}/>
                 </BrowserRouter>
             </div>

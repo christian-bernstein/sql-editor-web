@@ -10,6 +10,7 @@ import ReactJson from 'react-json-view';
 import {Redirect} from "react-router-dom";
 import {BarLoader, BounceLoader, ClipLoader} from "react-spinners";
 import {css} from "@emotion/react";
+import {App} from "../../logic/App";
 
 export type LoginPageProps = {
     calledFromWhere?: string
@@ -115,7 +116,9 @@ export class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
                 this.state.connector.call({
                     protocol: "login",
                     packetID: "CredentialsLoginPacketData",
-                    data: this.state.credentials,
+                    data: {
+                        credentials: this.state.credentials
+                    },
                     callback: {
                         handle: (connector, packet) => {
                             this.setState({
@@ -132,6 +135,17 @@ export class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
                 credentialsLoginProcedure(data => {
                     console.log(data)
                     if (data.type === CredentialsCheckResultType.OK) {
+
+                        App.appOrCreate({
+                            connectorConfig: {
+                                protocol: "login",
+                                address: "ws:192.168.2.102:80",
+                                id: "login",
+                                maxConnectAttempts: 50,
+                                connectionRetryDelayFunc: (i => 0.1 * (i) ** 2 * 1e3 - 10 * 1e3),
+                                packetInterceptor: () => {}
+                            }
+                        }).sessionID = data.newSessionID;
                         // Set user login state to 'logged in'
                         this.setState({
                             sessionID: data.newSessionID,

@@ -2,7 +2,6 @@ import {Shard} from "./Shard";
 import {SessionHistoryEntry} from "./SessionHistoryEntry";
 import {Environment} from "./Environment";
 import {AppConfig} from "./AppConfig";
-import SocketEventTypes = Environment.SocketEventTypes;
 
 export class App {
     get config(): AppConfig {
@@ -37,6 +36,7 @@ export class App {
     }
 
     public set sessionID(value: string) {
+        window.localStorage.setItem("session-id", value);
         this._sessionID = value;
     }
 
@@ -79,7 +79,7 @@ export class App {
         const connector = Environment.Connector.useConnector(this.config.connectorConfig.id, () => new Environment.Connector(this.config.connectorConfig));
 
         //
-        connector.registerSocketEventHandler(SocketEventTypes.ONOPEN, {
+        connector.registerSocketEventHandler(Environment.SocketEventTypes.ONOPEN, {
             handle: ev => {
 
             },
