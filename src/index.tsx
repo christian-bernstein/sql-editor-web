@@ -16,8 +16,8 @@ import {ControlPanelComponent} from "./tests/panel/ControlPanel";
 import {IntercomPage} from "./tests/intercom/IntercomPage";
 import {Login} from "./tests/Learning";
 import {App} from "./logic/App";
-import {AppPage} from "./pages/AppPage";
-import {BoardingPage} from "./pages/BoardingPage";
+import {AppPage} from "./pages/app/AppPage";
+import {BoardingPage} from "./pages/boarding/BoardingPage";
 
 
 // 192.168.2.102

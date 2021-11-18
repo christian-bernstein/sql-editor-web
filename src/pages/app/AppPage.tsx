@@ -1,20 +1,34 @@
 import React from "react";
-import "../styles/pages/AppPage.scss";
-import "../utils.scss";
+import "../../styles/pages/AppPage.scss";
+import "../../utils.scss";
 import {BrowserRouter, Route, Link} from "react-router-dom";
-import {DefaultSpecialPages} from "../logic/DefaultSpecialPages";
-import {ReactComponent as InboxIcon} from "../assets/icons/ic-24/ic24-inbox.svg";
-import {BoardingPage} from "./BoardingPage";
-import {LoginPage} from "../tests/login/LoginPage";
-import {BadgedWrapper} from "../components/BadgedWrapper";
-import {Badge} from "../components/Badge";
-import {Color} from "../Color";
+import {DefaultSpecialPages} from "../../logic/DefaultSpecialPages";
+import {ReactComponent as InboxIcon} from "../../assets/icons/ic-24/ic24-inbox.svg";
+import {BoardingPage} from "../boarding/BoardingPage";
+import {LoginPage} from "../login/LoginPage";
+import {BadgedWrapper} from "../../components/BadgedWrapper";
+import {Badge} from "../../components/Badge";
+import {Color} from "../../Color";
 
-export class AppPage extends React.Component<any, any> {
+export type AppPageProps = {
+}
+
+export type AppPageState = {
+    showMenu: boolean
+}
+
+export class AppPage extends React.Component<AppPageProps, AppPageState> {
 
     private readonly specialPageRenderers: Map<string, () => JSX.Element> = new Map<string, () => JSX.Element>([
         [DefaultSpecialPages.BOARDING, () => <></>]
     ]);
+
+    constructor(props: AppPageProps) {
+        super(props);
+        this.state = {
+            showMenu: false
+        };
+    }
 
     public renderSpecialPage(id: string): JSX.Element | undefined {
         if (this.specialPageRenderers.has(id)) {

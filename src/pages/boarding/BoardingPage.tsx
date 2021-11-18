@@ -1,11 +1,11 @@
 import React from "react";
 import {Link} from "react-router-dom";
-import {ReactComponent as Logo} from "../assets/logo.svg";
-import {ReactComponent as Wave} from "../assets/waves/wave-2.svg";
-import "../styles/pages/BoardingPage.scss";
-import {Button} from "../components/Button";
-import {ComponentStyle} from "../ComponentStyle";
-import {ContinueAs} from "../components/ContinueAs";
+import {ReactComponent as Logo} from "../../assets/logo.svg";
+import {ReactComponent as Wave} from "../../assets/waves/wave-2.svg";
+import "../../styles/pages/BoardingPage.scss";
+import {Button} from "../../components/Button";
+import {ComponentStyle} from "../../ComponentStyle";
+import {ContinueAs} from "../../components/ContinueAs";
 import {v4} from "uuid";
 
 export type BoardingPageProps = {}
