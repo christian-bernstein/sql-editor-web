@@ -2,8 +2,13 @@ import {Shard} from "./Shard";
 import {SessionHistoryEntry} from "./SessionHistoryEntry";
 import {Environment} from "./Environment";
 import {AppConfig} from "./AppConfig";
+import {UserData} from "./UserData";
 
 export class App {
+
+    set userData(value: UserData) {
+        this._userData = value;
+    }
     get config(): AppConfig {
         return this._config;
     }
@@ -31,6 +36,8 @@ export class App {
 
     private _sessionID?: string;
 
+    private _userData: UserData | undefined;
+
     constructor(config: AppConfig) {
         this._config = config;
     }
@@ -38,6 +45,10 @@ export class App {
     public set sessionID(value: string) {
         window.localStorage.setItem("session-id", value);
         this._sessionID = value;
+    }
+    
+    public getUserData(): UserData | undefined {
+        return this._userData;
     }
 
     public getSessionID(): string | undefined {

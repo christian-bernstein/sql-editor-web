@@ -1,0 +1,21 @@
+.badged-wrapper {
+  position: relative;
+  width: fit-content;
+  height: fit-content;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .wrapped {
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .badge-container {
+    z-index: 10;
+    position: absolute;
+    bottom: -50%;
+  }
+}
