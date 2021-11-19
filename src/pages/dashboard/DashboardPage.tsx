@@ -24,7 +24,7 @@ export default class DashboardPage extends React.Component<DashboardPageProps, D
     render() {
         return (
             <div className={"dashboard-page"}>
-                {/* Header */}
+                {/* header */}
                 <div className={"dashboard-header"}>
                     <div className={"left-icons"}>
                         <MenuIcon/>
@@ -38,10 +38,26 @@ export default class DashboardPage extends React.Component<DashboardPageProps, D
                         </BadgedWrapper>
                     </div>
                 </div>
-                {/* Title */}
+
+                {/* title */}
                 <div className={"dashboard-title"}>
+                    <p>Hello,</p>
                     <h2 className={"name"}>Christian Bernstein</h2>
                     <pre>{window.localStorage.getItem("session-id")}</pre>
+
+                    {/* project view */}
+                    <div className={"project-view"}>
+                        <div className={"project-view-header"}>
+                            <h2>SQL Projects</h2>
+                        </div>
+                    </div>
+
+                    {/* template view */}
+                    <div className={"template-view"}>
+                        <div className={"template-view-header"}>
+                            <h2>SQL Templates</h2>
+                        </div>
+                    </div>
                 </div>
                 {/* Content */}
                 <div className={"dashboard-content"}>

@@ -1,143 +1,17 @@
-.boarding-page {
-  width: 100%;
-  height: 100vh;
-  color: white;
-  box-sizing: border-box;
-  position: relative;
-}
-.boarding-page .boarding-page-foreground {
-  box-sizing: border-box;
-  padding: 2.4rem;
-  z-index: 10;
-  position: relative;
-  width: 100%;
-  max-width: 100%;
-  height: 100%;
-  display: grid;
-  grid-template-areas: "a" "b" "c" "d";
-  grid-template-rows: repeat(4, 1fr);
-}
-.boarding-page .boarding-page-foreground .header {
-  grid-area: a;
-  width: 100%;
-}
-.boarding-page .boarding-page-foreground .header .header-container {
-  width: 100%;
-  align-items: center;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-}
-.boarding-page .boarding-page-foreground .header .header-container .logo-space {
-  width: 100%;
-}
-.boarding-page .boarding-page-foreground .header .header-container .logo-space:first-child {
-  height: 24px;
-  fill: white;
-}
-.boarding-page .boarding-page-foreground .header .header-container .page-name {
-  justify-self: center;
-  color: white;
-  margin: 0;
-  font-family: "Poppins", sans-serif;
-  font-style: normal;
-  font-weight: 900;
-  font-size: 14px;
-  line-height: 27px;
-  display: flex;
-  align-items: center;
-  text-align: center;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-}
-.boarding-page .boarding-page-foreground .title {
-  grid-area: b;
-  width: 100%;
-  height: 100%;
-  font-family: "OperatorMono", monospace;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-}
-.boarding-page .boarding-page-foreground .title h1 {
-  margin: 0;
-  font-style: normal;
-  font-weight: bold;
-  font-size: 38px;
-  line-height: 58px;
-  display: flex;
-  align-items: center;
-  letter-spacing: 0.03em;
-  color: white;
-}
-.boarding-page .boarding-page-foreground .title h3 {
-  margin: 10px 0 0;
-  font-style: normal;
-  font-weight: 350;
-  font-size: 14px;
-  line-height: 22px;
-  display: flex;
-  align-items: center;
-  letter-spacing: 0.03em;
-  color: #C6C6C6;
-}
-.boarding-page .boarding-page-foreground .boarding {
-  grid-area: d;
-  width: 100%;
-  max-width: 100%;
-}
-.boarding-page .boarding-page-foreground .boarding .boarding-form {
-  height: 100%;
-  width: 100%;
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-end;
-  flex-direction: column;
-}
-.boarding-page .boarding-page-foreground .boarding .boarding-form .continue-as-list {
-  padding: 0;
-  width: 100%;
-  max-width: 100%;
-  margin-bottom: 1em;
-  display: flex;
-  flex-direction: column;
-  gap: 1em;
-}
-.boarding-page .boarding-page-foreground .boarding .boarding-form .boarding-type {
-  width: 100%;
-  display: grid;
-  grid-template-columns: 1fr fit-content(0) 1fr;
-  align-items: center;
-}
-.boarding-page .boarding-page-foreground .boarding .boarding-form .boarding-type .separator {
-  font-family: "Consolas", monospace;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 24px;
-  line-height: 33px;
-  display: flex;
-  align-items: center;
-  text-align: center;
-  letter-spacing: 0.03em;
-  color: #4F4F4F;
-  flex: none;
-  flex-grow: 0;
-  margin: 0 15px;
-}
-.boarding-page .boarding-page-background {
-  background-color: #171717;
-  z-index: 1;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  overflow-x: hidden;
-}
-.boarding-page .boarding-page-background :first-child {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-}
+/* Error: Can't find stylesheet to import.
+ *   ,
+ * 1 | @import "src/themes";
+ *   |         ^^^^^^^^^^^^
+ *   '
+ *   boardingpage.scss 1:9  root stylesheet */
 
-/*# sourceMappingURL=BoardingPage.css.map */
+body::before {
+  font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono",
+      "Droid Sans Mono", monospace, monospace;
+  white-space: pre;
+  display: block;
+  padding: 1em;
+  margin-bottom: 1em;
+  border-bottom: 2px solid black;
+  content: "Error: Can't find stylesheet to import.\a   \2577 \a 1 \2502  @import \"src/themes\";\d\a   \2502          ^^^^^^^^^^^^\a   \2575 \a   boardingpage.scss 1:9  root stylesheet";
+}
