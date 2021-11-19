@@ -15,14 +15,22 @@
     .left-icons {
       display: inline-flex;
       flex-wrap: wrap;
-      gap: 1.3rem;
+      gap: 1.4rem;
+
+      * {
+        fill: white;
+      }
     }
 
     .right-icons {
       display: inline-flex;
       flex-wrap: wrap;
       flex-direction: row-reverse;
-      gap: 1.3rem;
+      gap: 1.4rem;
+
+      * {
+        fill: white;
+      }
     }
   }
 
