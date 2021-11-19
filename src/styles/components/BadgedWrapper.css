@@ -15,7 +15,8 @@
 .badged-wrapper .badge-container {
   z-index: 10;
   position: absolute;
-  bottom: -50%;
+  bottom: -25%;
+  border-radius: 50%;
 }
 
 /*# sourceMappingURL=BadgedWrapper.css.map */

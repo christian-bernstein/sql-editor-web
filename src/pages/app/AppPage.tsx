@@ -1,7 +1,7 @@
 import React from "react";
 import "../../styles/pages/AppPage.scss";
 import "../../utils.scss";
-import {BrowserRouter, Route, Link} from "react-router-dom";
+import {BrowserRouter, Route, Link, Redirect} from "react-router-dom";
 import {DefaultSpecialPages} from "../../logic/DefaultSpecialPages";
 import {ReactComponent as InboxIcon} from "../../assets/icons/ic-24/ic24-inbox.svg";
 import {BoardingPage} from "../boarding/BoardingPage";
@@ -9,6 +9,8 @@ import {LoginPage} from "../login/LoginPage";
 import {BadgedWrapper} from "../../components/BadgedWrapper";
 import {Badge} from "../../components/Badge";
 import {Color} from "../../Color";
+import DashboardPage from "../dashboard/DashboardPage";
+import MenuPage from "../menu/MenuPage";
 
 export type AppPageProps = {
 }
@@ -40,18 +42,12 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
         return (
             <div className={"app"}>
                 <BrowserRouter>
-                    <Route path={"/boarding"} render={() => <BoardingPage/>}/>
-                    <Route path={"/login"} render={() => <LoginPage/>}/>
-                    <Route path={"/dashboard"} render={() => (
-                        <>
-                            <h3>Dashboard</h3>
-                            <pre>{window.localStorage.getItem("session-id")}</pre>
-                            <BadgedWrapper badgeFlowDirection={"right"} badge={<Badge background={Color.ofHex("71D99E")}>105</Badge>} showBadgeInitially={true}>
-                                <InboxIcon/>
-                            </BadgedWrapper>
-                        </>
-                    )}/>
-                    <Route path={"/"} render={() => <Link to={"/boarding"}>Enter Boarding</Link>}/>
+                    <MenuPage>
+                        <Route path={"/boarding"} render={() => <BoardingPage/>}/>
+                        <Route path={"/login"} render={() => <LoginPage/>}/>
+                        <Route path={"/dashboard"} render={() => <DashboardPage/>}/>
+                        <Route path={"/"} render={() => <Redirect push to={"/dashboard"}/>}/>
+                    </MenuPage>
                 </BrowserRouter>
             </div>
         );

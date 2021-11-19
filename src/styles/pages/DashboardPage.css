@@ -1,3 +1,17 @@
+/* Error: Can't find stylesheet to import.
+ *   ,
+ * 1 | @import "src/themes";
+ *   |         ^^^^^^^^^^^^
+ *   '
+ *   dashboardpage.scss 1:9  root stylesheet */
 
-
-/*# sourceMappingURL=DashboardPage.css.map */
+body::before {
+  font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono",
+      "Droid Sans Mono", monospace, monospace;
+  white-space: pre;
+  display: block;
+  padding: 1em;
+  margin-bottom: 1em;
+  border-bottom: 2px solid black;
+  content: "Error: Can't find stylesheet to import.\a   \2577 \a 1 \2502  @import \"src/themes\";\d\a   \2502          ^^^^^^^^^^^^\a   \2575 \a   dashboardpage.scss 1:9  root stylesheet";
+}
