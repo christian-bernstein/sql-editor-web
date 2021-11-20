@@ -467,7 +467,6 @@ export class ControlPanelComponent extends React.Component<ControlPanelProps, Co
                                         return this.getRenderer("buttonFullscreenWidgetRenderer").render(undefined, this);
                                     })()}
                                 </>
-
                             }
 
                             {/*<div className="spacer"/>*/}

@@ -1,0 +1,39 @@
+@import "src/themes";
+
+.project-info {
+  scroll-snap-align: start;
+  width: 300px;
+  height: 300px;
+  box-sizing: border-box;
+  padding: $padding-page;
+  border-radius: 27px;
+  background-color: $background-highlight-color;
+  border: 1px solid $border-color-secondary;
+
+  .project-header {
+
+    .project-badge {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 50%;
+      background-color: $primary-highlight-color;
+      padding: 5px;
+      transform: scale(.8);
+
+      * {
+        fill: white;
+      }
+    }
+
+    .project-contributors {
+
+    }
+  }
+
+  .project-title {
+
+  }
+}

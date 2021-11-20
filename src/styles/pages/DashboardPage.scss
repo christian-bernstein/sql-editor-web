@@ -35,13 +35,32 @@
   }
 
   .dashboard-title {
-
     .name {
 
     }
   }
 
   .dashboard-content {
+    .project-view {
+      .project-view-header {
+        h2 {
 
+        }
+
+        .projects {
+          display: flex;
+          overflow-x: scroll;
+          margin: 10px 0;
+          width: 100%;
+          scroll-snap-type: x mandatory;
+          gap: 1em;
+          // margin: 10px -$padding-page;
+
+          * {
+            margin: 0;
+          }
+        }
+      }
+    }
   }
 }

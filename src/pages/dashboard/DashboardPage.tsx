@@ -6,6 +6,8 @@ import {Color} from "../../Color";
 import {ReactComponent as InboxIcon} from "../../assets/icons/ic-24/ic24-inbox.svg";
 import {ReactComponent as MenuIcon} from "../../assets/icons/ic-24/ic24-menu.svg";
 import {ReactComponent as FilterIcon} from "../../assets/icons/ic-24/ic24-filter.svg";
+import {ProjectInfo} from "../../components/ProjectInfo";
+import {LoadState} from "../../logic/LoadState";
 
 export type DashboardPageProps = {
 
@@ -44,11 +46,35 @@ export default class DashboardPage extends React.Component<DashboardPageProps, D
                     <p>Hello,</p>
                     <h2 className={"name"}>Christian Bernstein</h2>
                     <pre>{window.localStorage.getItem("session-id")}</pre>
+                </div>
 
+                {/* Content */}
+                <div className={"dashboard-content"}>
                     {/* project view */}
                     <div className={"project-view"}>
                         <div className={"project-view-header"}>
                             <h2>SQL Projects</h2>
+                            <div className={"projects"}>
+                                {
+                                    (() => {
+                                        const arr: JSX.Element[] = [];
+                                        for (let i = 0; i < 20; i++) {
+                                            arr.push(
+                                                <ProjectInfo
+                                                    contributorIDs={["christian"]}
+                                                    state={LoadState.ONLINE}
+                                                    stator={true}
+                                                    edits={10}
+                                                    rows={1023}
+                                                    lastEdited={new Date()}
+                                                    title={"SQL lesson 21"}
+                                                />
+                                            );
+                                        }
+                                        return arr;
+                                    })()
+                                }
+                            </div>
                         </div>
                     </div>
 
@@ -56,12 +82,11 @@ export default class DashboardPage extends React.Component<DashboardPageProps, D
                     <div className={"template-view"}>
                         <div className={"template-view-header"}>
                             <h2>SQL Templates</h2>
+                            <div className={"templates"}>
+
+                            </div>
                         </div>
                     </div>
-                </div>
-                {/* Content */}
-                <div className={"dashboard-content"}>
-
                 </div>
             </div>
         );
