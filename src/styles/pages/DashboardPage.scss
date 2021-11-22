@@ -55,9 +55,13 @@
         }
 
         .projects {
+          margin-left: -$padding-page;
+          margin-right: -$padding-page;
+          margin-top: 10px;
+          box-sizing: content-box;
+          padding: 0 $padding-page;
           position: relative;
           width: 100%;
-          margin: 10px 0;
           display: flex;
           flex-direction: row;
           gap: 1em;

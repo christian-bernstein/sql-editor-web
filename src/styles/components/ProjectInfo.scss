@@ -2,6 +2,7 @@
 
 .project-info {
   scroll-snap-align: start;
+  scroll-margin-left: $padding-page;
   width: 200px;
   flex: 0 0 200px;
   height: 200px;

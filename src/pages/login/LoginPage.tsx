@@ -139,7 +139,7 @@ export class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
                         App.appOrCreate({
                             connectorConfig: {
                                 protocol: "login",
-                                address: "ws:192.168.2.102:80",
+                                address: "wss:192.168.2.102:80",
                                 id: "login",
                                 maxConnectAttempts: 50,
                                 connectionRetryDelayFunc: (i => 0.1 * (i) ** 2 * 1e3 - 10 * 1e3),
