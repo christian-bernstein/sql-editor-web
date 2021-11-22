@@ -2,8 +2,10 @@
 
 .project-info {
   scroll-snap-align: start;
-  width: 300px;
-  height: 300px;
+  width: 200px;
+  flex: 0 0 200px;
+  height: 200px;
+  position: relative;
   box-sizing: border-box;
   padding: $padding-page;
   border-radius: 27px;
@@ -13,18 +15,25 @@
   .project-header {
 
     .project-badge {
-      width: 20px;
-      height: 20px;
+      width: 12px;
+      height: 12px;
       display: flex;
       justify-content: center;
       align-items: center;
       border-radius: 50%;
       background-color: $primary-highlight-color;
       padding: 5px;
-      transform: scale(.8);
+      // transform: scale(.6);
 
-      * {
-        fill: white;
+      svg {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        path {
+          fill: black;
+        }
+
       }
     }
 
@@ -34,6 +43,13 @@
   }
 
   .project-title {
-
+    margin-top: .5em;
+    font-style: normal;
+    font-weight: bold;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 16px;
+    line-height: 27px;
+    overflow: hidden;
   }
 }

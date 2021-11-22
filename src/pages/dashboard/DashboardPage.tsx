@@ -58,6 +58,17 @@ export default class DashboardPage extends React.Component<DashboardPageProps, D
                                 {
                                     (() => {
                                         const arr: JSX.Element[] = [];
+                                        arr.push(
+                                            <ProjectInfo
+                                                contributorIDs={["christian"]}
+                                                state={LoadState.OFFLINE}
+                                                stator={false}
+                                                edits={10}
+                                                rows={1023}
+                                                lastEdited={new Date()}
+                                                title={"Christian's great database"}
+                                            />
+                                        );
                                         for (let i = 0; i < 20; i++) {
                                             arr.push(
                                                 <ProjectInfo
