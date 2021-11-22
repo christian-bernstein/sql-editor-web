@@ -4,7 +4,12 @@
   width: 100%;
   height: 100%;
   padding: $padding-page;
+  background-color: $background-color;
   box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 
   .dashboard-header {
     width: 100%;
@@ -48,8 +53,6 @@
           font-weight: bold;
           font-size: 20px;
           line-height: 29px;
-          /* identical to box height */
-
           display: flex;
           align-items: center;
         }
@@ -68,10 +71,6 @@
           flex: 0 0 300px;
           overflow-x: scroll;
           scroll-snap-type: x mandatory;
-
-          // * {
-          //   margin: 0;
-          // }
         }
       }
     }

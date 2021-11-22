@@ -5,24 +5,24 @@
   scroll-margin-left: $padding-page;
   width: 200px;
   flex: 0 0 200px;
-  height: 200px;
   position: relative;
   box-sizing: border-box;
-  padding: $padding-page;
+  // padding: $padding-page;
+  padding: 1.2em;
   border-radius: 27px;
-  background-color: $background-highlight-color;
+  // background-color: $background-highlight-color;
   border: 1px solid $border-color-secondary;
 
   .project-header {
 
     .project-badge {
-      width: 12px;
-      height: 12px;
+      width: 10px;
+      height: 10px;
       display: flex;
       justify-content: center;
       align-items: center;
       border-radius: 50%;
-      background-color: $primary-highlight-color;
+      background-color: $background-highlight-color;
       padding: 5px;
       // transform: scale(.6);
 
@@ -34,7 +34,22 @@
         path {
           fill: black;
         }
+      }
 
+      &.offline {
+        background-color: $background-highlight-color;
+      }
+
+      &.error {
+        background-color: $error-color;
+      }
+
+      &.warn {
+        background-color: $warn-color;
+      }
+
+      &.online {
+        background-color: $primary-highlight-color;
       }
     }
 
@@ -52,5 +67,27 @@
     font-size: 16px;
     line-height: 27px;
     overflow: hidden;
+  }
+
+  .project-charts {
+    width: 100%;
+    display: grid;
+    box-sizing: content-box;
+    grid-gap: .5rem;
+    grid-template:
+            "a b" 1fr
+            "c c" 1fr;
+
+    :nth-child(1) {
+      grid-area: a;
+    }
+
+    :nth-child(2) {
+      grid-area: b;
+    }
+
+    :nth-child(3) {
+      grid-area: c;
+    }
   }
 }

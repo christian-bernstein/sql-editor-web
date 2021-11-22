@@ -67,6 +67,15 @@ export default class DashboardPage extends React.Component<DashboardPageProps, D
                                                 rows={1023}
                                                 lastEdited={new Date()}
                                                 title={"Christian's great database"}
+                                            />,
+                                            <ProjectInfo
+                                                contributorIDs={["christian"]}
+                                                state={LoadState.STOPPING}
+                                                stator={false}
+                                                edits={10}
+                                                rows={1023}
+                                                lastEdited={new Date()}
+                                                title={"Christian's great database"}
                                             />
                                         );
                                         for (let i = 0; i < 20; i++) {
@@ -89,7 +98,7 @@ export default class DashboardPage extends React.Component<DashboardPageProps, D
                         </div>
                     </div>
 
-                    {/* template view */}
+                    {/* template view
                     <div className={"template-view"}>
                         <div className={"template-view-header"}>
                             <h2>SQL Templates</h2>
@@ -97,7 +106,7 @@ export default class DashboardPage extends React.Component<DashboardPageProps, D
 
                             </div>
                         </div>
-                    </div>
+                    </div>*/}
                 </div>
             </div>
         );
