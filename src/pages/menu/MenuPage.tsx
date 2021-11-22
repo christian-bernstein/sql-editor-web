@@ -1,21 +1,31 @@
 import React from "react";
 import "../../styles/pages/MenuPage.scss";
+import {App} from "../../logic/App";
 
 export type MenuPageProps = {
-
+    showMenuInitially?: boolean
 }
 
 export type MenuPageState = {
     showMenu: boolean
 }
 
-export default class MenuPage extends React.Component<MenuPageProps, MenuPageState>{
+export default class MenuPage extends React.Component<MenuPageProps, MenuPageState> {
 
     constructor(props: MenuPageProps) {
         super(props);
         this.state = {
-            showMenu: false
+            showMenu: (this.props.showMenuInitially) ? this.props.showMenuInitially : false
         };
+    }
+
+    // todo investigate bug!
+    componentDidMount() {
+        App.app().registerAction("show-menu", () => {
+            this.setState({
+                showMenu: true
+            });
+        });
     }
 
     private handleWrapperClick(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {

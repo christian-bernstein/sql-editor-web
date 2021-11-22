@@ -38,6 +38,8 @@ export class App {
 
     private _userData: UserData | undefined;
 
+    private actions: Map<String, Array<() => void>> = new Map<String, Array<() => void>>();
+
     constructor(config: AppConfig) {
         this._config = config;
     }
@@ -46,7 +48,7 @@ export class App {
         window.localStorage.setItem("session-id", value);
         this._sessionID = value;
     }
-    
+
     public getUserData(): UserData | undefined {
         return this._userData;
     }
@@ -58,6 +60,7 @@ export class App {
     public shouldBeLoggedIn(): boolean {
         return true;
     }
+
 
     public shard<T extends Shard>(id: string, shard: T | undefined = undefined): T {
         if (!Array.from(this.shards.keys()).includes(id) && shard !== undefined) {
@@ -83,6 +86,22 @@ export class App {
             const sheObj: Array<SessionHistoryEntry> = JSON.parse(she);
             return sheObj.slice(0, maxCount);
         }
+    }
+
+    public registerAction(name: string, action: () => void) {
+        if (!this.actions.has(name)) {
+            this.actions.set(name, [action]);
+        } else {
+            this.actions.get(name)?.push(action);
+        }
+    }
+
+    public callAction(name: string) {
+        this.actions.get(name)?.forEach(act => act());
+    }
+
+    public openMenu() {
+        this.callAction("show-menu");
     }
 
     public useConnector<T>(action: (connector: Environment.Connector) => T): T | undefined {

@@ -36,8 +36,11 @@
       right: -80%;
       transform: scale(.85);
       transform-origin: left;
-      border-radius: 49px;
-      box-shadow: 0 0 0 1px $border-color-secondary, 0 0 45px 0 rgba(0, 0, 0, .5);
+      // border-radius: 49px;
+      border-radius: 27px;
+      box-shadow:
+              0 0 0 1px $border-color-secondary;
+              // 0 0 45px 10px rgba(10, 10, 10, .5)
     }
   }
 }

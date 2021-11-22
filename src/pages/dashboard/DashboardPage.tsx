@@ -9,6 +9,7 @@ import {ReactComponent as FilterIcon} from "../../assets/icons/ic-24/ic24-filter
 import {ReactComponent as CreateIcon} from "../../assets/icons/ic-24/ic24-edit.svg";
 import {ProjectInfo} from "../../components/ProjectInfo";
 import {LoadState} from "../../logic/LoadState";
+import {App} from "../../logic/App";
 
 export type DashboardPageProps = {
 
@@ -24,13 +25,17 @@ export default class DashboardPage extends React.Component<DashboardPageProps, D
         super(props);
     }
 
+    private menuIconClickHandle(event: React.MouseEvent<SVGSVGElement, MouseEvent>) {
+        App.app().openMenu();
+    }
+
     render() {
         return (
             <div className={"dashboard-page"}>
                 {/* header */}
                 <div className={"dashboard-header"}>
                     <div className={"left-icons"}>
-                        <MenuIcon/>
+                        <MenuIcon onClick={event => this.menuIconClickHandle(event)}/>
                     </div>
                     <div className={"right-icons"}>
                         <BadgedWrapper badgeFlowDirection={"right"} badge={<Badge background={Color.ofHex("71D99E")}>20</Badge>} showBadgeInitially={true}>
