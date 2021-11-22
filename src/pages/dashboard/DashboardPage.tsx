@@ -6,6 +6,7 @@ import {Color} from "../../Color";
 import {ReactComponent as InboxIcon} from "../../assets/icons/ic-24/ic24-inbox.svg";
 import {ReactComponent as MenuIcon} from "../../assets/icons/ic-24/ic24-menu.svg";
 import {ReactComponent as FilterIcon} from "../../assets/icons/ic-24/ic24-filter.svg";
+import {ReactComponent as CreateIcon} from "../../assets/icons/ic-24/ic24-edit.svg";
 import {ProjectInfo} from "../../components/ProjectInfo";
 import {LoadState} from "../../logic/LoadState";
 
@@ -37,6 +38,9 @@ export default class DashboardPage extends React.Component<DashboardPageProps, D
                         </BadgedWrapper>
                         <BadgedWrapper badgeFlowDirection={"right"} badge={<Badge background={Color.ofHex("71D99E")}>4</Badge>} showBadgeInitially={false}>
                             <FilterIcon/>
+                        </BadgedWrapper>
+                        <BadgedWrapper badgeFlowDirection={"right"} badge={<Badge background={Color.ofHex("71D99E")}>1</Badge>} showBadgeInitially={false}>
+                            <CreateIcon/>
                         </BadgedWrapper>
                     </div>
                 </div>

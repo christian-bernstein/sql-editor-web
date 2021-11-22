@@ -6,6 +6,7 @@ export type BadgedWrapperProps = {
     badge: JSX.Element,
     showBadgeInitially: boolean,
     badgeFlowDirection?: "outwards" | "right"
+    numberBadge?: boolean
 }
 
 export type BadgedWrapperState = {
@@ -37,4 +38,8 @@ export class BadgedWrapper extends React.Component<BadgedWrapperProps, BadgedWra
         );
     }
 
+    // todo implement method and use
+    private shouldShowWrappedChildren(): boolean {
+        return true;
+    }
 }
