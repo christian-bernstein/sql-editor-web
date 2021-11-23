@@ -109,64 +109,88 @@ export class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
 
     private login(skipSession: boolean = true): void {
         if (this.state.sufficientCredentialsToLogin) {
-            const credentialsLoginProcedure = (loginResponseCallback: (data: CredentialsLoginResponsePacketData) => void) => {
-                this.setState({
-                    loginInProcess: true
-                });
-                this.state.connector.call({
-                    protocol: "login",
-                    packetID: "CredentialsLoginPacketData",
-                    data: {
-                        credentials: this.state.credentials
-                    },
-                    callback: {
-                        handle: (connector, packet) => {
-                            this.setState({
-                                loginInProcess: false
-                            });
-                            loginResponseCallback(packet.data as object as CredentialsLoginResponsePacketData)
-                        }
-                    }
-                });
-            }
 
-            if (this.state.sessionID === undefined) {
-                // No session state available to try session login, need credentials login procedure
-                credentialsLoginProcedure(data => {
-                    console.log(data)
-                    if (data.type === CredentialsCheckResultType.OK) {
-
-                        App.appOrCreate({
-                            connectorConfig: {
-                                protocol: "login",
-                                address: "wss:192.168.2.102:80",
-                                id: "login",
-                                maxConnectAttempts: 50,
-                                connectionRetryDelayFunc: (i => 0.1 * (i) ** 2 * 1e3 - 10 * 1e3),
-                                packetInterceptor: () => {}
-                            }
-                        }).sessionID = data.newSessionID;
-                        // Set user login state to 'logged in'
+            App.app().login({
+                initialLoginProcedure: "credentials",
+                credentials: this.state.credentials,
+                onLoginProcessStarted: () => {
+                    console.log("log in process started")
+                    this.setState({
+                        loginInProcess: true
+                    });
+                },
+                onLoginProcessEnded: () => {
+                    console.log("log in process ended")
+                    if (!this.state.redirect) {
                         this.setState({
-                            sessionID: data.newSessionID,
-                            redirect: true
+                            loginInProcess: false
                         });
-                    } else if (data.type === CredentialsCheckResultType.UNKNOWN_USERNAME) {
-                        // The provided credentials were wrong, highlight the input fields
-                        // The username doesn't correlate to an account stored on the current server instance
-
-
-                    } else if (data.type === CredentialsCheckResultType.INCORRECT_PASSWORD) {
-                        // The provided credentials were wrong, highlight the input fields
-                        // The password doesn't correlate to the password stored on the current server instance
-
-
                     }
-                });
-            } else {
-                // Try to login via sessionID
+                },
+                onLoginSuccess: () => {
+                    this.setState({
+                        redirect: true
+                    });
+                }
+            });
 
-            }
+            // const credentialsLoginProcedure = (loginResponseCallback: (data: CredentialsLoginResponsePacketData) => void) => {
+            //     this.setState({
+            //         loginInProcess: true
+            //     });
+            //     this.state.connector.call({
+            //         protocol: "login",
+            //         packetID: "CredentialsLoginPacketData",
+            //         data: {
+            //             credentials: this.state.credentials
+            //         },
+            //         callback: {
+            //             handle: (connector, packet) => {
+            //                 this.setState({
+            //                     loginInProcess: false
+            //                 });
+            //                 loginResponseCallback(packet.data as object as CredentialsLoginResponsePacketData)
+            //             }
+            //         }
+            //     });
+            // }
+            //
+            // if (this.state.sessionID === undefined) {
+            //     // No session state available to try session login, need credentials login procedure
+            //     credentialsLoginProcedure(data => {
+            //         console.log(data)
+            //         if (data.type === CredentialsCheckResultType.OK) {
+            //
+            //             App.appOrCreate({
+            //                 connectorConfig: {
+            //                     protocol: "login",
+            //                     address: "wss:192.168.2.102:80",
+            //                     id: "login",
+            //                     maxConnectAttempts: 50,
+            //                     connectionRetryDelayFunc: (i => 0.1 * (i) ** 2 * 1e3 - 10 * 1e3),
+            //                     packetInterceptor: () => {}
+            //                 }
+            //             }).sessionID = data.newSessionID;
+            //             // Set user login state to 'logged in'
+            //             this.setState({
+            //                 sessionID: data.newSessionID,
+            //                 redirect: true
+            //             });
+            //         } else if (data.type === CredentialsCheckResultType.UNKNOWN_USERNAME) {
+            //             // The provided credentials were wrong, highlight the input fields
+            //             // The username doesn't correlate to an account stored on the current server instance
+            //
+            //
+            //         } else if (data.type === CredentialsCheckResultType.INCORRECT_PASSWORD) {
+            //             // The provided credentials were wrong, highlight the input fields
+            //             // The password doesn't correlate to the password stored on the current server instance
+            //
+            //
+            //         }
+            //     });
+            // } else {
+            //     // Try to login via sessionID
+            // }
         }
     }
 

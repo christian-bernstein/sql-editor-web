@@ -8,6 +8,7 @@ import {LoginPage} from "../login/LoginPage";
 import DashboardPage from "../dashboard/DashboardPage";
 import MenuPage from "../menu/MenuPage";
 import {App} from "../../logic/App";
+import {Environment} from "../../logic/Environment";
 
 export type AppPageProps = {
 }
@@ -28,15 +29,16 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
             showMenu: false
         };
 
-
         App.appOrCreate({
             connectorConfig: {
                 protocol: "login",
-                address: "wss:192.168.2.102:80",
-                id: "login",
+                address: "ws:192.168.2.102:80",
+                id: "ton",
                 maxConnectAttempts: 50,
                 connectionRetryDelayFunc: (i => 0.1 * (i) ** 2 * 1e3 - 10 * 1e3),
-                packetInterceptor: () => {}
+                packetInterceptor: (packet: Environment.Packet) => {
+                    console.log(packet);
+                }
             }
         });
     }
@@ -51,11 +53,11 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
         return (
             <div className={"app"}>
                 <BrowserRouter>
-                    <MenuPage showMenuInitially={true}>
+                    <MenuPage showMenuInitially={false}>
                         <Route path={"/boarding"} render={() => <BoardingPage/>}/>
                         <Route path={"/login"} render={() => <LoginPage/>}/>
                         <Route path={"/dashboard"} render={() => <DashboardPage/>}/>
-                        <Route path={"/"} render={() => <Redirect push to={"/dashboard"}/>}/>
+                        <Route path={"/"} render={() => <Redirect push to={"/boarding"}/>}/>
                     </MenuPage>
                 </BrowserRouter>
             </div>

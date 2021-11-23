@@ -3,19 +3,13 @@ import {SessionHistoryEntry} from "./SessionHistoryEntry";
 import {Environment} from "./Environment";
 import {AppConfig} from "./AppConfig";
 import {UserData} from "./UserData";
+import {CredentialsLoginResponsePacketData} from "../pages/login/CredentialsLoginResponsePacketData";
+import {Credentials} from "../pages/login/Credentials";
+import {CredentialsCheckResultType} from "../pages/login/CredentialsCheckResultType";
+import {SessionIDLoginResponsePacketData} from "../pages/login/SessionIDLoginResponsePacketData";
+import {SessionIDCheckResultType} from "../pages/login/SessionIDCheckResultType";
 
 export class App {
-
-    set userData(value: UserData) {
-        this._userData = value;
-    }
-    get config(): AppConfig {
-        return this._config;
-    }
-
-    set config(value: AppConfig) {
-        this._config = value;
-    }
 
     private static instance: App | undefined = undefined;
 
@@ -44,24 +38,6 @@ export class App {
         this._config = config;
     }
 
-    public set sessionID(value: string) {
-        window.localStorage.setItem("session-id", value);
-        this._sessionID = value;
-    }
-
-    public getUserData(): UserData | undefined {
-        return this._userData;
-    }
-
-    public getSessionID(): string | undefined {
-        return this._sessionID;
-    }
-
-    public shouldBeLoggedIn(): boolean {
-        return true;
-    }
-
-
     public shard<T extends Shard>(id: string, shard: T | undefined = undefined): T {
         if (!Array.from(this.shards.keys()).includes(id) && shard !== undefined) {
             this.shards.set(id, shard as T);
@@ -78,7 +54,7 @@ export class App {
         }
     }
 
-    public getSessionHistoryEntries(maxCount: number): Array<SessionHistoryEntry> {
+    public getSessionHistoryEntries(maxCount: number | undefined = undefined): Array<SessionHistoryEntry> {
         const she: string | null = window.localStorage.getItem("session-history-entries");
         if (she === null) {
             return [];
@@ -86,6 +62,12 @@ export class App {
             const sheObj: Array<SessionHistoryEntry> = JSON.parse(she);
             return sheObj.slice(0, maxCount);
         }
+    }
+
+    public addSessionHistoryEntry(entry: SessionHistoryEntry) {
+        const entries: Array<SessionHistoryEntry> = this.getSessionHistoryEntries();
+        entries.push(entry);
+        window.localStorage.setItem("session-history-entries", JSON.stringify(entries));
     }
 
     public registerAction(name: string, action: () => void) {
@@ -104,24 +86,158 @@ export class App {
         this.callAction("show-menu");
     }
 
-    public useConnector<T>(action: (connector: Environment.Connector) => T): T | undefined {
-        // Get or create default connector instance
-        const connector = Environment.Connector.useConnector(this.config.connectorConfig.id, () => new Environment.Connector(this.config.connectorConfig));
+    public login(config: {
+        initialLoginProcedure: "session" | "session-credentials" | "credentials"
+        sessionID?: string,
+        onCredentialsLoginUnknownUsername?: () => void,
+        onCredentialsLoginPasswordIncorrect?: () => void,
+        onSessionIDLoginSessionNotPresent?: () => void,
+        onLoginSuccess?: () => void,
+        onLoginProcessStarted?: () => void,
+        onLoginProcessEnded?: () => void
+        credentials?: Credentials
+    }) {
+        (config.onLoginProcessStarted)?.();
+        try {
+            switch (config.initialLoginProcedure) {
+                case "session":
+                    // Login by session-id
+                    if (config.sessionID !== undefined) {
+                        this.sessionLogin(config.sessionID, (data: SessionIDLoginResponsePacketData) => {
+                            console.log("received session-login response", data)
 
-        //
-        connector.registerSocketEventHandler(Environment.SocketEventTypes.ONOPEN, {
-            handle: ev => {
+                            switch (data.type) {
+                                case SessionIDCheckResultType.OK:
+                                    // Login was successful, app considered to be logged in
+                                    this.sessionID = config.sessionID as string;
 
-            },
-            stator: false,
-            usagesLeft: 1
-        });
+                                    // todo needed?
+                                    // this.addSessionHistoryEntry({
+                                    //     sessionID: config.sessionID as string,
+                                    //     profileData: data.profileData
+                                    // });
 
-        // If the connector isn't
+                                    console.log("login successfully by session id");
 
+                                    (config.onLoginSuccess)?.();
+                                    break;
+                                case SessionIDCheckResultType.NO_SESSION_PRESENT:
+                                    (config.onSessionIDLoginSessionNotPresent)?.();
+                                    break;
+                            }
+                            (config.onLoginProcessEnded)?.();
+                        });
+                    } else console.error("session-id cannot be undefined")
+                    break;
+                case "session-credentials":
+                    // Login by session-id, if it fails loading via credentials
 
-        return undefined;
+                    // todo move to right position in code
+                    (config.onLoginProcessEnded)?.();
+                    break;
+                case "credentials":
+                    // Login by credentials
+                    if (config.credentials !== undefined) {
+                        this.credentialsLogin(config.credentials as unknown as Credentials, (data: CredentialsLoginResponsePacketData) => {
+                            switch (data.type) {
+                                case CredentialsCheckResultType.OK:
+
+                                    console.log("cred login result: ", data)
+
+                                    // Login was successful, app considered to be logged in
+                                    this.sessionID = data.newSessionID;
+                                    this.addSessionHistoryEntry({
+                                        sessionID: data.newSessionID as string,
+                                        profileData: data.profileData
+                                    });
+                                    (config.onLoginSuccess)?.();
+                                    break;
+                                case CredentialsCheckResultType.UNKNOWN_USERNAME:
+                                    // Login failed, because username wasn't found
+                                    (config.onCredentialsLoginUnknownUsername)?.();
+                                    break;
+                                case CredentialsCheckResultType.INCORRECT_PASSWORD:
+                                    // Login failed, because password was incorrect
+                                    (config.onCredentialsLoginPasswordIncorrect)?.();
+                                    break;
+                            }
+                            (config.onLoginProcessEnded)?.();
+                        });
+                    }
+                    break;
+            }
+        } catch (e) {
+            console.error(e);
+        }
     }
 
+    private sessionLogin(sessionID: string, loginResponseCallback: (data: SessionIDLoginResponsePacketData) => void) {
+        this.callAction("login-process-started");
+        this.connector(connector1 => {
+            console.log("send session login")
+            connector1.call({
+                protocol: "login",
+                packetID: "SessionIDLoginPacketData",
+                data: {
+                    sessionID: sessionID
+                },
+                callback: {
+                    handle: (connector, packet) => {
+                        this.callAction("login-process-ended");
+                        console.log("received session login response packet")
+                        loginResponseCallback(packet.data as object as SessionIDLoginResponsePacketData)
+                    }
+                }
+            });
+        })
+    }
 
+    private credentialsLogin(credentials: Credentials, loginResponseCallback: (data: CredentialsLoginResponsePacketData) => void) {
+        this.callAction("login-process-started");
+        this.connector(connector1 => {
+            connector1.call({
+                protocol: "login",
+                packetID: "CredentialsLoginPacketData",
+                data: {
+                    credentials: credentials
+                },
+                callback: {
+                    handle: (connector, packet) => {
+                        this.callAction("login-process-ended");
+                        loginResponseCallback(packet.data as object as CredentialsLoginResponsePacketData)
+                    }
+                }
+            });
+        })
+    }
+
+    public connector(action: (connector: Environment.Connector) => void) {
+        action(Environment.Connector.useConnector("ton", () => {
+            return new Environment.Connector(this.config.connectorConfig).connect();
+        }));
+    }
+
+    set userData(value: UserData) {
+        this._userData = value;
+    }
+    get config(): AppConfig {
+        return this._config;
+    }
+
+    set config(value: AppConfig) {
+        this._config = value;
+    }
+
+    public set sessionID(value: string) {
+        window.localStorage.setItem("session-id", value);
+        this._sessionID = value;
+    }
+
+    public getUserData(): UserData | undefined {
+        return this._userData;
+    }
+
+    public getSessionID(): string | undefined {
+        return this._sessionID;
+    }
 }

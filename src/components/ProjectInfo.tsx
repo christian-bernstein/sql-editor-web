@@ -11,7 +11,8 @@ export type ProjectInfoProps = {
     rows: number,
     lastEdited: Date,
     title: string,
-    state: LoadState
+    state: LoadState,
+    projectID: string
 }
 
 export class ProjectInfo extends React.Component<ProjectInfoProps, any> {

@@ -7,6 +7,8 @@ import {Button} from "../../components/Button";
 import {ComponentStyle} from "../../ComponentStyle";
 import {ContinueAs} from "../../components/ContinueAs";
 import {v4} from "uuid";
+import {App} from "../../logic/App";
+import {SessionHistoryEntry} from "../../logic/SessionHistoryEntry";
 
 export type BoardingPageProps = {}
 
@@ -18,6 +20,17 @@ export class BoardingPage extends React.Component<BoardingPageProps, BoardingPag
         super(props);
     }
 
+    //<ContinueAs sessionHistoryEntry={{
+    //                                     sessionID: v4(),
+    //                                     profileData: {
+    //                                         id: v4(),
+    //                                         username: "root",
+    //                                         firstname: "root",
+    //                                         lastname: "root",
+    //                                         lastActive: new Date(),
+    //                                         userEntrySetupDate: new Date()
+    //                                     }
+    //                                 }}/>
     render() {
         return (
             <div className={"boarding-page"}>
@@ -39,16 +52,12 @@ export class BoardingPage extends React.Component<BoardingPageProps, BoardingPag
                         <form className={"boarding-form"}>
 
                             <ol className={"continue-as-list"}>
-                                <ContinueAs sessionHistoryEntry={{
-                                    sessionID: v4(),
-                                    userDisplayName: "root",
-                                    userAvatarURL: "https://deelay.me/2000/https://gravatar.com/avatar/root?s=400&d=identicon&r=x"
-                                }}/>
-                                <ContinueAs sessionHistoryEntry={{
-                                    sessionID: v4(),
-                                    userDisplayName: "Christian Bernstein",
-                                    userAvatarURL: "https://deelay.me/1000/https://gravatar.com/avatar/6b34fe24ac2ff8103f6fce1f0da2ef57?s=400&d=identicon&r=x"
-                                }}/>
+                                {
+                                    App.app().getSessionHistoryEntries().map((entry: SessionHistoryEntry) => <ContinueAs sessionHistoryEntry={{
+                                        sessionID: entry.sessionID,
+                                        profileData: entry.profileData
+                                    }}/>)
+                                }
                             </ol>
 
                             {/* Continue as button */}

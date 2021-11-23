@@ -1,5 +1,6 @@
+import {UserProfileData} from "./UserProfileData";
+
 export type SessionHistoryEntry = {
     sessionID: string,
-    userDisplayName: string,
-    userAvatarURL: string
+    profileData: UserProfileData
 }

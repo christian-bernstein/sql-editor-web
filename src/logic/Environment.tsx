@@ -208,6 +208,9 @@ export namespace Environment {
 
         public call(config: {protocol: string, packetID: string, data: any, callback: Handler}): Connector {
             const uuid: string = v4();
+
+            console.log("call id\n", uuid);
+
             const packet: string = JSON.stringify({
                 protocol: config.protocol,
                 timestamp: Date,
@@ -258,64 +261,69 @@ export namespace Environment {
         }
 
         public connect(reconnect: boolean = false): Connector {
-            if (this._socket?.readyState !== WebSocket.OPEN && this._socket?.readyState !== WebSocket.CONNECTING) {
-                this._socket = new WebSocket(this.config.address);
-                this._socket.onopen = ev => {
-                    // Reset variables
-                    this.connectionAttempts = 0;
-                    this._reconnectLock = false;
-                    // Fire 'open' event
-                    this.fireSocketEvent(SocketEventTypes.ONOPEN, ev)
-                };
-                this._socket.onclose = ev => {
-                    this.fireSocketEvent(SocketEventTypes.ONCLOSE, ev)
-                    if (this.connectionAttempts < this.config.maxConnectAttempts) {
-                        if (!this._reconnectLock){
-                            let timeout: number = 0;
-                            try {
-                                timeout = Math.max(this.config.connectionRetryDelayFunc(this.connectionAttempts), 0);
-                            } catch (e) {
-                                console.error(e);
+            try {
+                if (this._socket?.readyState !== WebSocket.OPEN && this._socket?.readyState !== WebSocket.CONNECTING) {
+                    this._socket = new WebSocket(this.config.address);
+                    this._socket.onopen = ev => {
+                        // Reset variables
+                        this.connectionAttempts = 0;
+                        this._reconnectLock = false;
+                        // Fire 'open' event
+                        this.fireSocketEvent(SocketEventTypes.ONOPEN, ev)
+                    };
+                    this._socket.onclose = ev => {
+                        this.fireSocketEvent(SocketEventTypes.ONCLOSE, ev)
+                        if (this.connectionAttempts < this.config.maxConnectAttempts) {
+                            if (!this._reconnectLock){
+                                let timeout: number = 0;
+                                try {
+                                    timeout = Math.max(this.config.connectionRetryDelayFunc(this.connectionAttempts), 0);
+                                } catch (e) {
+                                    console.error(e);
+                                }
+                                setTimeout(() => {
+                                    this.connect(true);
+                                }, timeout);
+                            } else {
+                                console.log("Cannot reopen socket, lock is active");
                             }
-                            setTimeout(() => {
-                                this.connect(true);
-                            }, timeout);
                         } else {
-                            console.log("Cannot reopen socket, lock is active");
+                            console.error("Socket was unable to connect");
+                            this.config.onConnectionFailed?.();
                         }
-                    } else {
-                        console.error("Socket was unable to connect");
-                        this.config.onConnectionFailed?.();
-                    }
-                };
-                this._socket.onmessage = ev => {
-                    const packet: Packet = JSON.parse(ev.data) as Packet;
-                    this.config.packetInterceptor(packet);
-                    if (packet.type === PacketType.RESPONSE) {
-                        // It's a return packet
-                        const callback: Handler | undefined = this._responseMap.get(packet.id);
-                        callback?.handle(this, packet);
-                    } else {
-                        // It's a singleton or request packet
-                        // Call base protocols
-                        this.baseProtocols.forEach((protocol: Protocol) => {
-                            this.handlePacketForProtocol({
-                                packet: packet,
-                                protocol: protocol,
-                                errorHandler: console.error
-                            });
-                        })
-                        // Call current protocol
-                        const protocol: Protocol | undefined = this._protocols.get(this.config.protocol);
-                        if (protocol !== undefined) {
-                            this.handlePacketForProtocol({
-                                packet: packet,
-                                protocol: protocol,
-                                errorHandler: console.error
-                            });
+                    };
+                    this._socket.onmessage = ev => {
+                        const packet: Packet = JSON.parse(ev.data) as Packet;
+                        this.config.packetInterceptor(packet);
+                        if (packet.type === PacketType.RESPONSE) {
+                            // It's a return packet
+                            const callback: Handler | undefined = this._responseMap.get(packet.id);
+                            callback?.handle(this, packet);
+                        } else {
+                            // It's a singleton or request packet
+                            // Call base protocols
+                            this.baseProtocols.forEach((protocol: Protocol) => {
+                                this.handlePacketForProtocol({
+                                    packet: packet,
+                                    protocol: protocol,
+                                    errorHandler: console.error
+                                });
+                            })
+                            // Call current protocol
+                            const protocol: Protocol | undefined = this._protocols.get(this.config.protocol);
+                            if (protocol !== undefined) {
+                                this.handlePacketForProtocol({
+                                    packet: packet,
+                                    protocol: protocol,
+                                    errorHandler: console.error
+                                });
+                            }
                         }
-                    }
-                };
+                    };
+                }
+            } catch (e) {
+                // todo info the client -> console / ui
+                // console.error(e);
             }
             this.connectionAttempts++;
             return this;

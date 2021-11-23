@@ -29,10 +29,12 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
     }
 
     private handleWrapperClick(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
-        event.preventDefault();
-        this.setState({
-            showMenu: false
-        });
+        if (this.state.showMenu) {
+            event.preventDefault();
+            this.setState({
+                showMenu: false
+            });
+        }
     }
 
     render() {

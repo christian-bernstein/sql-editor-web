@@ -10,6 +10,7 @@ import {ReactComponent as CreateIcon} from "../../assets/icons/ic-24/ic24-edit.s
 import {ProjectInfo} from "../../components/ProjectInfo";
 import {LoadState} from "../../logic/LoadState";
 import {App} from "../../logic/App";
+import {v4} from "uuid";
 
 export type DashboardPageProps = {
 
@@ -69,6 +70,8 @@ export default class DashboardPage extends React.Component<DashboardPageProps, D
                                         const arr: JSX.Element[] = [];
                                         arr.push(
                                             <ProjectInfo
+                                                key={v4()}
+                                                projectID={v4()}
                                                 contributorIDs={["christian"]}
                                                 state={LoadState.OFFLINE}
                                                 stator={false}
@@ -76,8 +79,12 @@ export default class DashboardPage extends React.Component<DashboardPageProps, D
                                                 rows={1023}
                                                 lastEdited={new Date()}
                                                 title={"Christian's great database"}
-                                            />,
+                                            />
+                                        );
+                                        arr.push(
                                             <ProjectInfo
+                                                key={v4()}
+                                                projectID={v4()}
                                                 contributorIDs={["christian"]}
                                                 state={LoadState.STOPPING}
                                                 stator={false}
@@ -90,6 +97,8 @@ export default class DashboardPage extends React.Component<DashboardPageProps, D
                                         for (let i = 0; i < 20; i++) {
                                             arr.push(
                                                 <ProjectInfo
+                                                    key={v4()}
+                                                    projectID={v4()}
                                                     contributorIDs={["christian"]}
                                                     state={LoadState.ONLINE}
                                                     stator={true}
