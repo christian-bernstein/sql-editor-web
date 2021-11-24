@@ -78,7 +78,7 @@ $header-primary: #fff;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "OperatorMono", monospace;
+  font-family: "JetBrains Mono", monospace;
   color: var(--header-secondary);
 }
 * ::-webkit-scrollbar {
@@ -185,8 +185,8 @@ body {
   background-color: var(--background-tertiary);
   display: grid;
   grid-auto-flow: row;
-  grid-gap: 5px;
-  grid-template-columns: repeat(12, 1fr);
+  grid-gap: 1em;
+  grid-template-columns: repeat(8, 1fr);
 }
 .lower .specials .special {
   column-span: 1 !important;
@@ -199,12 +199,12 @@ body {
   font-size: 12px;
 }
 .lower .specials .special:hover {
-  top: calc(var(--button-height) * (-1) * 0.2);
+  top: calc(var(--button-height) * -1 * 0.2);
   transform: matrix();
   box-shadow: none !important;
 }
 .lower .specials .special:active {
-  top: calc(var(--button-height) * (-1) * 0.5);
+  top: calc(var(--button-height) * -1 * 0.5);
 }
 .lower .button-active .container .container-slider {
   top: -100% !important;
@@ -219,6 +219,7 @@ body {
   border-radius: 5px;
   position: relative;
   top: 0;
+  transition: all 100ms ease-in-out;
   display: flex;
   justify-self: center;
   align-self: center;
@@ -238,7 +239,7 @@ body {
 }
 .lower .button .container .container-slider {
   width: 100%;
-  transition: all ease-out 200ms;
+  transition: all ease-out 500ms;
   top: 0;
   position: absolute;
 }
@@ -256,7 +257,7 @@ body {
   overflow: hidden;
   white-space: nowrap;
   color: #fff;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 900;
   text-transform: uppercase;
 }
@@ -265,17 +266,17 @@ body {
   overflow: hidden;
   white-space: nowrap;
   color: #fff;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 400;
   text-transform: uppercase;
 }
 .lower .button:hover {
-  top: calc(var(--button-height) * (-1) * 0.5);
+  top: calc(var(--button-height) * -1 * 0.5);
   transform: matrix();
   box-shadow: none !important;
 }
 .lower .button:active {
-  top: calc(var(--button-height) * (-1));
+  top: calc(var(--button-height) * -1);
 }
 .lower .button::after {
   transition: all 100ms ease-in-out;
@@ -299,7 +300,6 @@ body {
   box-shadow: inset 0 var(--button-height) #42d9ed !important;
 }
 .lower .action-primary.button-active {
-  box-shadow: inset 0 var(--button-height) #16cee6 !important;
   background-color: #42d9ed !important;
   box-shadow: 0 0 42px 0 #42d9ed;
 }
@@ -310,7 +310,6 @@ body {
   box-shadow: inset 0 var(--button-height) crimson !important;
 }
 .lower .action-secondary.button-active {
-  box-shadow: inset 0 var(--button-height) #ad102f !important;
   background-color: crimson !important;
   box-shadow: 0 0 42px 0 crimson;
 }
@@ -321,36 +320,22 @@ body {
   box-shadow: inset 0 var(--button-height) #292b2f !important;
 }
 .lower .action-tertiary.button-active {
-  box-shadow: inset 0 var(--button-height) #111214 !important;
   background-color: #292b2f !important;
 }
 .lower .action-special {
   box-shadow: inset 0 calc(var(--button-height) * 0.5) crimson !important;
 }
 .lower .action-special.button-active {
-  box-shadow: inset 0 calc(var(--button-height) * 0.5) #ad102f !important;
   background-color: crimson !important;
   box-shadow: 0 0 42px 0 crimson;
 }
 .lower .action-special.button-active::after {
   box-shadow: 0 0 42px 0 crimson;
 }
-.lower .action-yellow {
-  box-shadow: inset 0 calc(var(--button-height) * 0.5) #e09c42 !important;
-}
-.lower .action-yellow.button-active {
-  box-shadow: inset 0 calc(var(--button-height) * 0.5) #cd8322 !important;
-  background-color: #e09c42 !important;
-  box-shadow: 0 0 42px 0 #e09c42;
-}
-.lower .action-yellow.button-active::after {
-  box-shadow: 0 0 42px 0 #e09c42;
-}
 .lower .action-success {
   box-shadow: inset 0 calc(var(--button-height)) #3ba55c !important;
 }
 .lower .action-success.button-active {
-  box-shadow: inset 0 calc(var(--button-height)) #2e7f47 !important;
   background-color: #3ba55c !important;
   box-shadow: 0 0 42px 0 #3ba55c;
 }
@@ -407,7 +392,7 @@ body {
   height: 100%;
   z-index: 0;
   min-height: 100px;
-  width: calc(113px * 4);
+  width: 452px;
   opacity: 0.2;
   background-image: repeating-linear-gradient(45deg, transparent, transparent 40px, transparent 10px, #42d9ed 80px);
   animation: slide var(--speed) linear infinite;

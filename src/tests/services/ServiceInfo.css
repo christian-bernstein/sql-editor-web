@@ -1,0 +1,59 @@
+.service-container-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.service-container-header .icon {
+  margin-right: 11px;
+  height: 24px;
+  width: 24px;
+}
+.service-container-header .service-path {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.service-container-header .service-path :nth-last-child(1) {
+  margin-left: 5px;
+}
+
+.service-container-body {
+  transition: all ease-in-out 200ms;
+}
+.service-container-body .service-annotation-container .annotation-container-header {
+  font-weight: bold;
+  margin: 0 0 15px 0;
+}
+.service-container-body .service-annotation-container .annotation + .annotation {
+  margin-top: 5px;
+}
+.service-container-body .service-annotation-container + .service-annotation-container {
+  margin-top: 20px;
+}
+.service-container-body.collapsed {
+  height: 0;
+  opacity: 0;
+}
+.service-container-body.expanded {
+  height: 500px;
+  opacity: 100%;
+}
+
+.collapsible-btn {
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 20px;
+}
+.collapsible-btn svg {
+  transition: all ease-in-out 250ms;
+}
+.collapsible-btn.collapsed svg {
+  transform: rotate(180deg);
+}
+.collapsible-btn.expanded svg {
+  transform: rotate(0deg);
+}
+
+/*# sourceMappingURL=ServiceInfo.css.map */

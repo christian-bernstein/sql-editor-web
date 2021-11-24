@@ -2,10 +2,11 @@ import React from "react";
 import {SessionHistoryEntry} from "../logic/SessionHistoryEntry";
 import {ReactComponent as ArrowRight} from "../assets/icons/ic-20/ic20-arrow-right.svg";
 import {Img} from "react-image";
-import {PuffLoader} from "react-spinners";
+import {CircleLoader, ClipLoader, PropagateLoader, PuffLoader, RotateLoader} from "react-spinners";
 import "../styles/components/ContinueAs.scss";
 import {App} from "../logic/App";
 import {Redirect} from "react-router-dom";
+import Loader from "react-spinners/RotateLoader";
 
 export type ContinueAsProps = {
     sessionHistoryEntry: SessionHistoryEntry,
@@ -13,7 +14,8 @@ export type ContinueAsProps = {
 }
 
 export type ContinueAsState = {
-    redirect: boolean
+    redirect: boolean,
+    loginInProcess: boolean
 }
 
 export class ContinueAs extends React.Component<ContinueAsProps, ContinueAsState> {
@@ -21,7 +23,8 @@ export class ContinueAs extends React.Component<ContinueAsProps, ContinueAsState
     constructor(props: ContinueAsProps) {
         super(props);
         this.state = {
-            redirect: false
+            redirect: false,
+            loginInProcess: false
         };
     }
 
@@ -29,8 +32,15 @@ export class ContinueAs extends React.Component<ContinueAsProps, ContinueAsState
         App.app().login({
             initialLoginProcedure: "session",
             sessionID: this.props.sessionHistoryEntry.sessionID,
+            onLoginProcessStarted: () => {
+                this.setState({
+                    loginInProcess: true
+                });
+            },
             onLoginProcessEnded: () => {
-                console.log("ended")
+                this.setState({
+                    loginInProcess: false
+                });
             },
             onLoginSuccess: () => {
                 console.log("success")
@@ -52,7 +62,7 @@ export class ContinueAs extends React.Component<ContinueAsProps, ContinueAsState
                          loader={<div className={"avatar-loader"}><PuffLoader color={"#A9E5C3"} size={"10px"}/></div>}/>
                 </div>
                 <div className={"icon"}>
-                    <ArrowRight/>
+                    {this.state.loginInProcess ? <ClipLoader color={"#A9E5C3"} size={"10px"}/> : <ArrowRight/>}
                 </div>
             </div>
         );

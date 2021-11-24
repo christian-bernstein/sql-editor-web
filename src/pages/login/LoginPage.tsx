@@ -4,8 +4,6 @@ import {Credentials} from "./Credentials";
 import {CredentialsPreCheckResult} from "./CredentialsPreCheckResult";
 import {ICredentialsPreChecker} from "./ICredentialsPreChecker";
 import {Environment} from "../../logic/Environment";
-import {CredentialsLoginResponsePacketData} from "./CredentialsLoginResponsePacketData";
-import {CredentialsCheckResultType} from "./CredentialsCheckResultType";
 import ReactJson from 'react-json-view';
 import {Redirect} from "react-router-dom";
 import {BarLoader, BounceLoader, ClipLoader} from "react-spinners";
@@ -22,7 +20,6 @@ export type LoginPageState = {
     loginInProcess: boolean,
     currentCredentialsCheckResults: Array<CredentialsPreCheckResult>,
     sufficientCredentialsToLogin: boolean,
-    connector: Environment.Connector,
     redirect: boolean
 }
 
@@ -38,7 +35,6 @@ export class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
             loginInProcess: false,
             currentCredentialsCheckResults: new Array<CredentialsPreCheckResult>(),
             sufficientCredentialsToLogin: false,
-            connector: this.getConnector(),
             redirect: false
         };
     }
@@ -51,17 +47,6 @@ export class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
             newCredentials.password = val;
         }
         this.reevaluate(newCredentials);
-    }
-
-    private getConnector(): Environment.Connector {
-        return Environment.Connector.useConnector("login", () => new Environment.Connector({
-            protocol: "login",
-            address: "ws:192.168.2.102:80",
-            id: "login",
-            maxConnectAttempts: 50,
-            connectionRetryDelayFunc: (i => 0.1 * (i) ** 2 * 1e3 - 10 * 1e3),
-            packetInterceptor: () => {}
-        })).connect();
     }
 
     private reevaluate(newCredentials: Credentials | undefined) {

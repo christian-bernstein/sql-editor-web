@@ -8,6 +8,7 @@ import {Credentials} from "../pages/login/Credentials";
 import {CredentialsCheckResultType} from "../pages/login/CredentialsCheckResultType";
 import {SessionIDLoginResponsePacketData} from "../pages/login/SessionIDLoginResponsePacketData";
 import {SessionIDCheckResultType} from "../pages/login/SessionIDCheckResultType";
+import {ValidateSessionsPacketData} from "./ValidateSessionsPacketData";
 
 export class App {
 
@@ -59,15 +60,53 @@ export class App {
         if (she === null) {
             return [];
         } else {
-            const sheObj: Array<SessionHistoryEntry> = JSON.parse(she);
-            return sheObj.slice(0, maxCount);
+            try {
+                const sheObj: Array<SessionHistoryEntry> = JSON.parse(she);
+                return sheObj.slice(0, maxCount);
+            } catch (e) {
+                console.error(e);
+                // Local storage array invalid, reset it to a default value
+                window.localStorage.setItem("session-history-entries", JSON.stringify([]));
+                return [];
+            }
         }
     }
 
     public addSessionHistoryEntry(entry: SessionHistoryEntry) {
-        const entries: Array<SessionHistoryEntry> = this.getSessionHistoryEntries();
+        let entries: Array<SessionHistoryEntry> = this.getSessionHistoryEntries();
+        if (entries.filter(ent => ent.profileData.id === entry.profileData.id).length > 0) {
+            // There is at least one entry in the history log with the same id as the new entry
+            entries = entries.filter(ent => ent.profileData.id === entry.profileData.id)
+        }
         entries.push(entry);
         window.localStorage.setItem("session-history-entries", JSON.stringify(entries));
+    }
+
+    public removeInvalidSessionHistoryEntries(then: (() => void) | undefined = undefined) {
+        const mappedSessionUUIDs: Array<string> = this.getSessionHistoryEntries().map(entry => entry.sessionID);
+
+        this.connector(connector1 => {
+            connector1.call({
+                protocol: "login",
+                packetID: "ValidateSessionsPacketData",
+                data: {
+                    sessions: mappedSessionUUIDs
+                },
+                callback: {
+                    handle: (connector2, packet) => {
+                        const data = packet.data as ValidateSessionsPacketData;
+                        let sessionHistoryEntries: Array<SessionHistoryEntry> = this.getSessionHistoryEntries();
+                        sessionHistoryEntries = sessionHistoryEntries.filter(entry => (data.validationMap as any)[entry.sessionID]);
+                        console.log("invalidated session history entries: ", sessionHistoryEntries);
+                        window.localStorage.setItem("session-history-entries", JSON.stringify(sessionHistoryEntries));
+                        if (then !== undefined) {
+                            then();
+                        }
+                    }
+                }
+            });
+        })
+
     }
 
     public registerAction(name: string, action: () => void) {
@@ -110,12 +149,6 @@ export class App {
                                 case SessionIDCheckResultType.OK:
                                     // Login was successful, app considered to be logged in
                                     this.sessionID = config.sessionID as string;
-
-                                    // todo needed?
-                                    // this.addSessionHistoryEntry({
-                                    //     sessionID: config.sessionID as string,
-                                    //     profileData: data.profileData
-                                    // });
 
                                     console.log("login successfully by session id");
 
@@ -213,13 +246,21 @@ export class App {
 
     public connector(action: (connector: Environment.Connector) => void) {
         action(Environment.Connector.useConnector("ton", () => {
-            return new Environment.Connector(this.config.connectorConfig).connect();
+            return new Environment.Connector(this.config.connectorConfig).registerSocketEventHandler(Environment.SocketEventTypes.ONOPEN, {
+                stator: true,
+                usagesLeft: 10000,
+                handle: ev => {
+                    console.log("connection established");
+                    this.callAction("connection-established");
+                }
+            }).connect();
         }));
     }
 
     set userData(value: UserData) {
         this._userData = value;
     }
+
     get config(): AppConfig {
         return this._config;
     }

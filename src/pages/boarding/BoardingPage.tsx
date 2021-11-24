@@ -18,19 +18,18 @@ export class BoardingPage extends React.Component<BoardingPageProps, BoardingPag
 
     constructor(props: Readonly<BoardingPageProps> | BoardingPageProps) {
         super(props);
+        App.app().removeInvalidSessionHistoryEntries();
+        // After ton socket has connected, the cached sessions might/will change
+        // server-wise and need to be reloaded on the client.
+        App.app().registerAction("connection-established", () => {
+            App.app().removeInvalidSessionHistoryEntries(() => {
+                // After validation result sent by the server and recalculated on the client
+                // rerender the boarding page.
+                this.forceUpdate();
+            });
+        })
     }
 
-    //<ContinueAs sessionHistoryEntry={{
-    //                                     sessionID: v4(),
-    //                                     profileData: {
-    //                                         id: v4(),
-    //                                         username: "root",
-    //                                         firstname: "root",
-    //                                         lastname: "root",
-    //                                         lastActive: new Date(),
-    //                                         userEntrySetupDate: new Date()
-    //                                     }
-    //                                 }}/>
     render() {
         return (
             <div className={"boarding-page"}>
@@ -50,7 +49,6 @@ export class BoardingPage extends React.Component<BoardingPageProps, BoardingPag
                     </div>
                     <div className={"boarding"}>
                         <form className={"boarding-form"}>
-
                             <ol className={"continue-as-list"}>
                                 {
                                     App.app().getSessionHistoryEntries().map((entry: SessionHistoryEntry) => <ContinueAs sessionHistoryEntry={{
@@ -59,7 +57,6 @@ export class BoardingPage extends React.Component<BoardingPageProps, BoardingPag
                                     }}/>)
                                 }
                             </ol>
-
                             {/* Continue as button */}
                             <div className={"boarding-type"}>
                                 {/* boarding button */}
