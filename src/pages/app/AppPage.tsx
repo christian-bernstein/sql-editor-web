@@ -32,8 +32,8 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
         App.appOrCreate({
             connectorConfig: {
                 protocol: "login",
-                // address: "ws:192.168.2.102:80",
-                address: "ws:172.16.119.70:80",
+                address: "ws:192.168.2.102:80",
+                // address: "ws:172.16.119.70:80",
                 id: "ton",
                 maxConnectAttempts: 50,
                 connectionRetryDelayFunc: (i => 0.1 * (i) ** 2 * 1e3 - 10 * 1e3),

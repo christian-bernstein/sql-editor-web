@@ -132,6 +132,7 @@ export class App {
         onCredentialsLoginPasswordIncorrect?: () => void,
         onSessionIDLoginSessionNotPresent?: () => void,
         onLoginSuccess?: () => void,
+        onLoginFail?: () => void,
         onLoginProcessStarted?: () => void,
         onLoginProcessEnded?: () => void
         credentials?: Credentials
@@ -143,24 +144,23 @@ export class App {
                     // Login by session-id
                     if (config.sessionID !== undefined) {
                         this.sessionLogin(config.sessionID, (data: SessionIDLoginResponsePacketData) => {
-                            console.log("received session-login response", data)
-
                             switch (data.type) {
                                 case SessionIDCheckResultType.OK:
                                     // Login was successful, app considered to be logged in
                                     this.sessionID = config.sessionID as string;
-
-                                    console.log("login successfully by session id");
-
                                     (config.onLoginSuccess)?.();
                                     break;
                                 case SessionIDCheckResultType.NO_SESSION_PRESENT:
                                     (config.onSessionIDLoginSessionNotPresent)?.();
+                                    (config.onLoginFail)?.();
                                     break;
                             }
                             (config.onLoginProcessEnded)?.();
                         });
-                    } else console.error("session-id cannot be undefined")
+                    } else {
+                        console.error("session-id cannot be undefined");
+                        (config.onLoginFail)?.();
+                    }
                     break;
                 case "session-credentials":
                     // Login by session-id, if it fails loading via credentials
@@ -174,9 +174,6 @@ export class App {
                         this.credentialsLogin(config.credentials as unknown as Credentials, (data: CredentialsLoginResponsePacketData) => {
                             switch (data.type) {
                                 case CredentialsCheckResultType.OK:
-
-                                    console.log("cred login result: ", data)
-
                                     // Login was successful, app considered to be logged in
                                     this.sessionID = data.newSessionID;
                                     this.addSessionHistoryEntry({
@@ -188,14 +185,19 @@ export class App {
                                 case CredentialsCheckResultType.UNKNOWN_USERNAME:
                                     // Login failed, because username wasn't found
                                     (config.onCredentialsLoginUnknownUsername)?.();
+                                    (config.onLoginFail)?.();
                                     break;
                                 case CredentialsCheckResultType.INCORRECT_PASSWORD:
                                     // Login failed, because password was incorrect
                                     (config.onCredentialsLoginPasswordIncorrect)?.();
+                                    (config.onLoginFail)?.();
                                     break;
                             }
                             (config.onLoginProcessEnded)?.();
                         });
+                    } else {
+                        console.error("credentials cannot be undefined");
+                        (config.onLoginFail)?.();
                     }
                     break;
             }

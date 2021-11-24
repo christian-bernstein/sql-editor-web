@@ -1,12 +1,12 @@
 import React from "react";
 import {SessionHistoryEntry} from "../logic/SessionHistoryEntry";
 import {ReactComponent as ArrowRight} from "../assets/icons/ic-20/ic20-arrow-right.svg";
+import {ReactComponent as ErrorIcon} from "../assets/icons/ic-16/ic16-warning.svg";
 import {Img} from "react-image";
-import {CircleLoader, ClipLoader, PropagateLoader, PuffLoader, RotateLoader} from "react-spinners";
+import {BarLoader, PuffLoader} from "react-spinners";
 import "../styles/components/ContinueAs.scss";
 import {App} from "../logic/App";
 import {Redirect} from "react-router-dom";
-import Loader from "react-spinners/RotateLoader";
 
 export type ContinueAsProps = {
     sessionHistoryEntry: SessionHistoryEntry,
@@ -16,6 +16,7 @@ export type ContinueAsProps = {
 export type ContinueAsState = {
     redirect: boolean,
     loginInProcess: boolean
+    error: boolean
 }
 
 export class ContinueAs extends React.Component<ContinueAsProps, ContinueAsState> {
@@ -24,31 +25,48 @@ export class ContinueAs extends React.Component<ContinueAsProps, ContinueAsState
         super(props);
         this.state = {
             redirect: false,
-            loginInProcess: false
+            loginInProcess: false,
+            error: false
         };
     }
 
     private onContinueClicked(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
-        App.app().login({
-            initialLoginProcedure: "session",
-            sessionID: this.props.sessionHistoryEntry.sessionID,
-            onLoginProcessStarted: () => {
-                this.setState({
-                    loginInProcess: true
-                });
-            },
-            onLoginProcessEnded: () => {
-                this.setState({
-                    loginInProcess: false
-                });
-            },
-            onLoginSuccess: () => {
-                console.log("success")
-                this.setState({
-                    redirect: true
-                });
-            }
+        if (!this.state.loginInProcess) {
+            App.app().login({
+                initialLoginProcedure: "session",
+                sessionID: this.props.sessionHistoryEntry.sessionID,
+                onLoginProcessStarted: () => {
+                    this.setState({
+                        loginInProcess: true
+                    });
+                },
+                onLoginProcessEnded: () => {
+                    this.setState({
+                        loginInProcess: false
+                    });
+                },
+                onLoginSuccess: () => {
+                    this.setState({
+                        redirect: true
+                    });
+                },
+                onLoginFail: () => {
+                    this.displayErrorBadge();
+                }
+            });
+        }
+    }
+
+    private displayErrorBadge() {
+        this.setState({
+            // redirect: true
+            error: true
         });
+        setTimeout(() => {
+            this.setState({
+                error: false
+            });
+        }, 6000);
     }
 
     private renderContinueAs(): JSX.Element {
@@ -62,7 +80,25 @@ export class ContinueAs extends React.Component<ContinueAsProps, ContinueAsState
                          loader={<div className={"avatar-loader"}><PuffLoader color={"#A9E5C3"} size={"10px"}/></div>}/>
                 </div>
                 <div className={"icon"}>
-                    {this.state.loginInProcess ? <ClipLoader color={"#A9E5C3"} size={"10px"}/> : <ArrowRight/>}
+                    {(() => {
+                        if (this.state.loginInProcess) {
+                            // Display loading animation
+                            return <BarLoader color={"#A9E5C3"} width={"50px"}/>;
+                        } else {
+                            if (this.state.error) {
+                                // Display error badge
+                                return (
+                                    <div className={"session-history-login-error"}>
+                                        <ErrorIcon/>
+                                        <p className={"session-history-login-error-text"}>error</p>
+                                    </div>
+                                );
+                            } else {
+                                // Display default states
+                                return <ArrowRight/>;
+                            }
+                        }
+                    })()}
                 </div>
             </div>
         );

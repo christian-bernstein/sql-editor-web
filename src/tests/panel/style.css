@@ -199,12 +199,12 @@ body {
   font-size: 12px;
 }
 .lower .specials .special:hover {
-  top: calc(var(--button-height) * -1 * 0.2);
+  top: calc(var(--button-height) * (-1) * 0.2);
   transform: matrix();
   box-shadow: none !important;
 }
 .lower .specials .special:active {
-  top: calc(var(--button-height) * -1 * 0.5);
+  top: calc(var(--button-height) * (-1) * 0.5);
 }
 .lower .button-active .container .container-slider {
   top: -100% !important;
@@ -271,12 +271,12 @@ body {
   text-transform: uppercase;
 }
 .lower .button:hover {
-  top: calc(var(--button-height) * -1 * 0.5);
+  top: calc(var(--button-height) * (-1) * 0.5);
   transform: matrix();
   box-shadow: none !important;
 }
 .lower .button:active {
-  top: calc(var(--button-height) * -1);
+  top: calc(var(--button-height) * (-1));
 }
 .lower .button::after {
   transition: all 100ms ease-in-out;
@@ -392,7 +392,7 @@ body {
   height: 100%;
   z-index: 0;
   min-height: 100px;
-  width: 452px;
+  width: calc(113px * 4);
   opacity: 0.2;
   background-image: repeating-linear-gradient(45deg, transparent, transparent 40px, transparent 10px, #42d9ed 80px);
   animation: slide var(--speed) linear infinite;
