@@ -3,10 +3,9 @@ import React, {ChangeEvent} from "react";
 import {Credentials} from "./Credentials";
 import {CredentialsPreCheckResult} from "./CredentialsPreCheckResult";
 import {ICredentialsPreChecker} from "./ICredentialsPreChecker";
-import {Environment} from "../../logic/Environment";
-import ReactJson from 'react-json-view';
+import {ReactComponent as BackIcon} from "../../assets/icons/ic-20/ic20-chevron-left.svg";
 import {Redirect} from "react-router-dom";
-import {BarLoader, BounceLoader, ClipLoader} from "react-spinners";
+import {BarLoader} from "react-spinners";
 import {css} from "@emotion/react";
 import {App} from "../../logic/App";
 
@@ -181,46 +180,55 @@ export class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
 
     private renderLogin(): JSX.Element {
         return (
-            <form className={"login"}>
-                <label htmlFor={"username"}>Username</label>
-                <input id={"username"}
-                       type={"username"}
-                       autoComplete={"current-username"}
-                       onChange={(ev: ChangeEvent<HTMLInputElement>) => {
-                           this.updateCredentials("user", ev.currentTarget.value);
-                       }}
-                       value={this.state.credentials.username}/>
-                <label htmlFor={"password"}>Password</label>
-                <input id={"password"}
-                       type={"password"}
-                       autoComplete={"current-password"}
-                       onChange={(ev: ChangeEvent<HTMLInputElement>) => {
-                           this.updateCredentials("pass", ev.currentTarget.value);
-                       }}
-                       value={this.state.credentials.password}/>
-                <button
-                    className={["login-btn", this.state.sufficientCredentialsToLogin ? "active" : "inactive"].join(" ")}
-                    onClick={(ev) => {
-                        ev.preventDefault();
-                        this.login();
-                    }}
-                >
-                    {
-                        (() => {
-                            if (this.state.loginInProcess) {
-                                const override = css`
+            <div className={"login-page"}>
+                <div className={"login-page-foreground"}>
+                    <div className={"l-p-f-header"}>
+                        <BackIcon/>
+                        <h3 className={"page-name"}>Boarding</h3>
+                    </div>
+                </div>
+
+
+                <form className={"login"}>
+                    <label htmlFor={"username"}>Username</label>
+                    <input id={"username"}
+                           type={"username"}
+                           autoComplete={"current-username"}
+                           onChange={(ev: ChangeEvent<HTMLInputElement>) => {
+                               this.updateCredentials("user", ev.currentTarget.value);
+                           }}
+                           value={this.state.credentials.username}/>
+                    <label htmlFor={"password"}>Password</label>
+                    <input id={"password"}
+                           type={"password"}
+                           autoComplete={"current-password"}
+                           onChange={(ev: ChangeEvent<HTMLInputElement>) => {
+                               this.updateCredentials("pass", ev.currentTarget.value);
+                           }}
+                           value={this.state.credentials.password}/>
+                    <button
+                        className={["login-btn", this.state.sufficientCredentialsToLogin ? "active" : "inactive"].join(" ")}
+                        onClick={(ev) => {
+                            ev.preventDefault();
+                            this.login();
+                        }}
+                    >
+                        {
+                            (() => {
+                                if (this.state.loginInProcess) {
+                                    const override = css`
                                   display: block;
                                   margin: 0 auto;
                                 `;
-                                return <BarLoader color={"white"} css={override} loading={true} />
-                            } else {
-                                return "Login";
-                            }
-                        })()
-                    }
-                </button>
-            </form>
-
+                                    return <BarLoader color={"white"} css={override} loading={true} />
+                                } else {
+                                    return "Login";
+                                }
+                            })()
+                        }
+                    </button>
+                </form>
+            </div>
         );
     }
 
@@ -233,15 +241,11 @@ export class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
             return <Redirect push to={location}/>
         }
         // Display the default login form
+        // <div className={"state-display"}>
+        //     <ReactJson src={this.state} theme={"grayscale"} displayDataTypes={false} enableClipboard={false} collapsed={true}/>
+        // </div>
         return (
-            <div className={"login-page"}>
-                <div className={"state-display"}>
-                    <ReactJson src={this.state} theme={"grayscale"} displayDataTypes={false} enableClipboard={false} collapsed={true}/>
-                </div>
-                {
-                    this.renderLogin()
-                }
-            </div>
+            this.renderLogin()
         );
     }
 }

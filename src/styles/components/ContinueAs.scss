@@ -92,29 +92,5 @@
     svg {
       fill: $primary-color;
     }
-
-    .session-history-login-error {
-      margin: 0 !important;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      text-align: right;
-      gap: 3px;
-      border-radius: 5px;
-      padding: 2px .5em;
-      color: $error-color;
-      border: 1px solid $error-color;
-      background-color: transparentize($error-color, .9);
-
-      svg path {
-        fill: $error-color;
-      }
-
-      .session-history-login-error-text {
-        margin: 0 !important;
-        font-size: 11px;
-        font-weight: lighter;
-      }
-    }
   }
 }

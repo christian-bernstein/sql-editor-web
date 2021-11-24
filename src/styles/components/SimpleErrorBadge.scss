@@ -1,0 +1,25 @@
+@import "../../themes";
+
+.simple-error-badge {
+  margin: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  text-align: right;
+  gap: 3px;
+  border-radius: 5px;
+  padding: 2px .5em;
+  color: $error-color;
+  border: 1px solid $error-color;
+  background-color: transparentize($error-color, .9);
+
+  svg path {
+    fill: $error-color;
+  }
+
+  .simple-error-badge-text {
+    margin: 0;
+    font-size: 11px;
+    font-weight: lighter;
+  }
+}

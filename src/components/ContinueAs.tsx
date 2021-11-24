@@ -1,12 +1,12 @@
 import React from "react";
 import {SessionHistoryEntry} from "../logic/SessionHistoryEntry";
 import {ReactComponent as ArrowRight} from "../assets/icons/ic-20/ic20-arrow-right.svg";
-import {ReactComponent as ErrorIcon} from "../assets/icons/ic-16/ic16-warning.svg";
 import {Img} from "react-image";
 import {BarLoader, PuffLoader} from "react-spinners";
 import "../styles/components/ContinueAs.scss";
 import {App} from "../logic/App";
 import {Redirect} from "react-router-dom";
+import {SimpleErrorBadge} from "./SimpleErrorBadge";
 
 export type ContinueAsProps = {
     sessionHistoryEntry: SessionHistoryEntry,
@@ -88,10 +88,7 @@ export class ContinueAs extends React.Component<ContinueAsProps, ContinueAsState
                             if (this.state.error) {
                                 // Display error badge
                                 return (
-                                    <div className={"session-history-login-error"}>
-                                        <ErrorIcon/>
-                                        <p className={"session-history-login-error-text"}>error</p>
-                                    </div>
+                                    <SimpleErrorBadge/>
                                 );
                             } else {
                                 // Display default states

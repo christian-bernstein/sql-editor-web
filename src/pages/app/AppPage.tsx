@@ -58,7 +58,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                         <Route path={"/boarding"} render={() => <BoardingPage/>}/>
                         <Route path={"/login"} render={() => <LoginPage/>}/>
                         <Route path={"/dashboard"} render={() => <DashboardPage/>}/>
-                        <Route path={"/"} render={() => <Redirect push to={"/boarding"}/>}/>
+                        <Route path={"/"} render={() => <Redirect push to={"/login"}/>}/>
                     </MenuPage>
                 </BrowserRouter>
             </div>

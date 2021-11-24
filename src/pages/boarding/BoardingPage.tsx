@@ -6,7 +6,6 @@ import "../../styles/pages/BoardingPage.scss";
 import {Button} from "../../components/Button";
 import {ComponentStyle} from "../../ComponentStyle";
 import {ContinueAs} from "../../components/ContinueAs";
-import {v4} from "uuid";
 import {App} from "../../logic/App";
 import {SessionHistoryEntry} from "../../logic/SessionHistoryEntry";
 
