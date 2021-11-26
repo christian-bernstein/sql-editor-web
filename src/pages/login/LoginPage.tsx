@@ -8,6 +8,7 @@ import {Redirect} from "react-router-dom";
 import {BarLoader} from "react-spinners";
 import {css} from "@emotion/react";
 import {App} from "../../logic/App";
+import {Input} from "../../components/Input";
 
 export type LoginPageProps = {
     calledFromWhere?: string
@@ -19,7 +20,8 @@ export type LoginPageState = {
     loginInProcess: boolean,
     currentCredentialsCheckResults: Array<CredentialsPreCheckResult>,
     sufficientCredentialsToLogin: boolean,
-    redirect: boolean
+    redirect: boolean,
+    redirectLocation?: string
 }
 
 export class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
@@ -34,8 +36,16 @@ export class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
             loginInProcess: false,
             currentCredentialsCheckResults: new Array<CredentialsPreCheckResult>(),
             sufficientCredentialsToLogin: false,
-            redirect: false
+            redirect: false,
+            redirectLocation: undefined
         };
+    }
+
+    private clickReturnToBoarding(event: React.MouseEvent<SVGSVGElement, MouseEvent>) {
+        this.setState({
+            redirect: true,
+            redirectLocation: "/boarding"
+        });
     }
 
     private updateCredentials(source: "user" | "pass", val: string) {
@@ -113,7 +123,8 @@ export class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
                 },
                 onLoginSuccess: () => {
                     this.setState({
-                        redirect: true
+                        redirect: true,
+                        redirectLocation: "/dashboard"
                     });
                 }
             });
@@ -178,67 +189,74 @@ export class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
         }
     }
 
+    private renderRedirect(): JSX.Element {
+        let location = undefined;
+        if (this.props.calledFromWhere !== undefined) {
+            location = this.props.calledFromWhere as string;
+        } else if (this.state.redirectLocation !== undefined) {
+            location = this.state.redirectLocation as string;
+        }
+        if (location === undefined) {
+            return <></>;
+        } else return <Redirect to={location as string}/>;
+    }
+
     private renderLogin(): JSX.Element {
         return (
             <div className={"login-page"}>
                 <div className={"login-page-foreground"}>
                     <div className={"l-p-f-header"}>
-                        <BackIcon/>
-                        <h3 className={"page-name"}>Boarding</h3>
+                        <BackIcon onClick={event => this.clickReturnToBoarding(event)}/>
+                        <h3 className={"page-name"}>Login</h3>
                     </div>
-                </div>
 
+                    <form className={"login"}>
 
-                <form className={"login"}>
-                    <label htmlFor={"username"}>Username</label>
-                    <input id={"username"}
-                           type={"username"}
-                           autoComplete={"current-username"}
-                           onChange={(ev: ChangeEvent<HTMLInputElement>) => {
-                               this.updateCredentials("user", ev.currentTarget.value);
-                           }}
-                           value={this.state.credentials.username}/>
-                    <label htmlFor={"password"}>Password</label>
-                    <input id={"password"}
-                           type={"password"}
-                           autoComplete={"current-password"}
-                           onChange={(ev: ChangeEvent<HTMLInputElement>) => {
-                               this.updateCredentials("pass", ev.currentTarget.value);
-                           }}
-                           value={this.state.credentials.password}/>
-                    <button
-                        className={["login-btn", this.state.sufficientCredentialsToLogin ? "active" : "inactive"].join(" ")}
-                        onClick={(ev) => {
-                            ev.preventDefault();
-                            this.login();
-                        }}
-                    >
-                        {
-                            (() => {
-                                if (this.state.loginInProcess) {
-                                    const override = css`
+                        <Input label={"Username"}
+                               onChange={(ev: ChangeEvent<HTMLInputElement>) => {
+                                   this.updateCredentials("user", ev.currentTarget.value);
+                               }}
+                        />
+
+                        <Input label={"Password"}
+                               onChange={(ev: ChangeEvent<HTMLInputElement>) => {
+                                   this.updateCredentials("pass", ev.currentTarget.value);
+                               }}
+                        />
+
+                        <button
+                            className={["login-btn", this.state.sufficientCredentialsToLogin ? "active" : "inactive"].join(" ")}
+                            onClick={(ev) => {
+                                ev.preventDefault();
+                                this.login();
+                            }}
+                        >
+                            {
+                                (() => {
+                                    if (this.state.loginInProcess) {
+                                        const override = css`
                                   display: block;
                                   margin: 0 auto;
                                 `;
-                                    return <BarLoader color={"white"} css={override} loading={true} />
-                                } else {
-                                    return "Login";
-                                }
-                            })()
-                        }
-                    </button>
-                </form>
+                                        return <BarLoader color={"white"} css={override} loading={true} />
+                                    } else {
+                                        return "Login";
+                                    }
+                                })()
+                            }
+                        </button>
+                    </form>
+                </div>
             </div>
         );
     }
 
     render() {
-        // After completing the login, the user should automatically be  redirected to another page.
+        // After completing the login, the user should automatically be redirected to another page.
         // The login page should only be a small prompt, so afterwards, the user should return to the page,
         // thy originated from.
         if (this.state.redirect) {
-            const location = this.props.calledFromWhere === undefined ? "/dashboard" : this.props.calledFromWhere;
-            return <Redirect push to={location}/>
+            return this.renderRedirect();
         }
         // Display the default login form
         // <div className={"state-display"}>
