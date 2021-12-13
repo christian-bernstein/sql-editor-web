@@ -4,7 +4,6 @@ import "../styles/components/ChartWidget.scss";
 export type ChartWidgetProps = {
     title: string,
     value: string,
-
 }
 
 export class ChartWidget extends React.Component<ChartWidgetProps, any> {

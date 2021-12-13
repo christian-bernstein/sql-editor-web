@@ -11,6 +11,7 @@ import {ProjectInfo} from "../../components/ProjectInfo";
 import {LoadState} from "../../logic/LoadState";
 import {App} from "../../logic/App";
 import {v4} from "uuid";
+import {ProjectInfoData} from "../../logic/ProjectInfoData";
 
 export type DashboardPageProps = {
 
@@ -38,8 +39,14 @@ export default class DashboardPage extends React.Component<DashboardPageProps, D
         // }))
     }
 
+    // noinspection JSMethodCanBeStatic
     private menuIconClickHandle(event: React.MouseEvent<SVGSVGElement, MouseEvent>) {
         App.app().openMenu();
+    }
+
+    // noinspection JSMethodCanBeStatic
+    private onProjectSelect(data: ProjectInfoData) {
+        console.log("hey: " + data)
     }
 
     render() {
@@ -81,44 +88,18 @@ export default class DashboardPage extends React.Component<DashboardPageProps, D
                                 {
                                     (() => {
                                         const arr: JSX.Element[] = [];
-                                        arr.push(
-                                            <ProjectInfo
-                                                key={v4()}
-                                                projectID={v4()}
-                                                contributorIDs={["christian"]}
-                                                state={LoadState.OFFLINE}
-                                                stator={false}
-                                                edits={10}
-                                                rows={1023}
-                                                lastEdited={new Date()}
-                                                title={"Christian's great database"}
-                                            />
-                                        );
-                                        arr.push(
-                                            <ProjectInfo
-                                                key={v4()}
-                                                projectID={v4()}
-                                                contributorIDs={["christian"]}
-                                                state={LoadState.STOPPING}
-                                                stator={false}
-                                                edits={10}
-                                                rows={1023}
-                                                lastEdited={new Date()}
-                                                title={"Christian's great database"}
-                                            />
-                                        );
                                         for (let i = 0; i < 20; i++) {
                                             arr.push(
                                                 <ProjectInfo
-                                                    key={v4()}
-                                                    projectID={v4()}
-                                                    contributorIDs={["christian"]}
-                                                    state={LoadState.ONLINE}
-                                                    stator={true}
-                                                    edits={10}
-                                                    rows={1023}
-                                                    lastEdited={new Date()}
-                                                    title={"SQL lesson 21"}
+                                                    onSelect={data => this.onProjectSelect(data)}
+                                                    data={{
+                                                        id: v4(),
+                                                        state: LoadState.ONLINE,
+                                                        stator: true,
+                                                        edits: 10,
+                                                        lastEdited: new Date(),
+                                                        title: "SQL lesson 21"
+                                                    }}
                                                 />
                                             );
                                         }

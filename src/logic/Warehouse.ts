@@ -7,5 +7,4 @@ export class Warehouse {
     public subscribe<T>(key: string, listener: (val: T) => void) {
 
     }
-
 }
