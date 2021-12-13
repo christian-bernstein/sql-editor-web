@@ -4,7 +4,7 @@ export type ProjectInfoData = {
     title: string,
     state: LoadState,
     stator: boolean,
-    contributorIDs: Array<string>,
+    // contributorIDs: Array<string>,
     lastEdited: Date,
     rows: number,
     edits: number

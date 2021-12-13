@@ -18,12 +18,24 @@ export type DashboardPageProps = {
 
 export type DashboardPageState = {
 
+    _a: string
 }
 
 export default class DashboardPage extends React.Component<DashboardPageProps, DashboardPageState> {
 
     constructor(props: DashboardPageProps) {
         super(props);
+        this.state = {
+            _a: "none"
+        };
+    }
+
+    componentDidMount() {
+        // JSON.stringify(App.app().serverFlow("hello-world").then(value => {
+        //     this.setState({
+        //         _a: JSON.stringify(value)
+        //     });
+        // }))
     }
 
     private menuIconClickHandle(event: React.MouseEvent<SVGSVGElement, MouseEvent>) {
@@ -56,6 +68,7 @@ export default class DashboardPage extends React.Component<DashboardPageProps, D
                     <p>Hello,</p>
                     <h2 className={"name"}>Christian Bernstein</h2>
                     <pre>{window.localStorage.getItem("session-id")}</pre>
+                    <pre>{this.state._a}</pre>
                 </div>
 
                 {/* Content */}

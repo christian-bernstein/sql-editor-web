@@ -32,7 +32,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
         App.appOrCreate({
             connectorConfig: {
                 protocol: "login",
-                address: "ws:192.168.2.102:80",
+                address: "ws:192.168.2.100:80",
                 // address: "ws:172.16.119.70:80",
                 id: "ton",
                 maxConnectAttempts: 50,
@@ -50,6 +50,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
         } else return undefined;
     }
 
+
     render() {
         return (
             <div className={"app"}>
@@ -58,7 +59,8 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                         <Route path={"/boarding"} render={() => <BoardingPage/>}/>
                         <Route path={"/login"} render={() => <LoginPage/>}/>
                         <Route path={"/dashboard"} render={() => <DashboardPage/>}/>
-                        <Route path={"/"} render={() => <Redirect push to={"/login"}/>}/>
+                        {/* todo add configurable default page link */}
+                        <Route path={"/"} render={() => <Redirect push to={"/boarding"}/>}/>
                     </MenuPage>
                 </BrowserRouter>
             </div>

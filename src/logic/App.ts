@@ -9,6 +9,8 @@ import {CredentialsCheckResultType} from "../pages/login/CredentialsCheckResultT
 import {SessionIDLoginResponsePacketData} from "../pages/login/SessionIDLoginResponsePacketData";
 import {SessionIDCheckResultType} from "../pages/login/SessionIDCheckResultType";
 import {ValidateSessionsPacketData} from "./ValidateSessionsPacketData";
+import {FlowAccessPoint} from "./FlowAccessPoint";
+import {LoginCallConfig} from "./LoginCallConfig";
 
 export class App {
 
@@ -24,6 +26,8 @@ export class App {
     public static app: () => App = () => {
         return App.instance as App;
     };
+
+    private readonly flowAccessPoint: FlowAccessPoint = new FlowAccessPoint(this);
 
     private shards: Map<String, Shard> = new Map<String, Shard>();
 
@@ -105,8 +109,7 @@ export class App {
                     }
                 }
             });
-        })
-
+        });
     }
 
     public registerAction(name: string, action: () => void) {
@@ -125,18 +128,7 @@ export class App {
         this.callAction("show-menu");
     }
 
-    public login(config: {
-        initialLoginProcedure: "session" | "session-credentials" | "credentials"
-        sessionID?: string,
-        onCredentialsLoginUnknownUsername?: () => void,
-        onCredentialsLoginPasswordIncorrect?: () => void,
-        onSessionIDLoginSessionNotPresent?: () => void,
-        onLoginSuccess?: () => void,
-        onLoginFail?: () => void,
-        onLoginProcessStarted?: () => void,
-        onLoginProcessEnded?: () => void
-        credentials?: Credentials
-    }) {
+    public login(config: LoginCallConfig) {
         (config.onLoginProcessStarted)?.();
         try {
             switch (config.initialLoginProcedure) {
@@ -220,7 +212,7 @@ export class App {
                     handle: (connector, packet) => {
                         this.callAction("login-process-ended");
                         console.log("received session login response packet")
-                        loginResponseCallback(packet.data as object as SessionIDLoginResponsePacketData)
+                        loginResponseCallback(packet.data as object as SessionIDLoginResponsePacketData);
                     }
                 }
             });
@@ -239,7 +231,7 @@ export class App {
                 callback: {
                     handle: (connector, packet) => {
                         this.callAction("login-process-ended");
-                        loginResponseCallback(packet.data as object as CredentialsLoginResponsePacketData)
+                        loginResponseCallback(packet.data as object as CredentialsLoginResponsePacketData);
                     }
                 }
             });
@@ -282,5 +274,9 @@ export class App {
 
     public getSessionID(): string | undefined {
         return this._sessionID;
+    }
+
+    public flow(): FlowAccessPoint {
+        return this.flowAccessPoint;
     }
 }
