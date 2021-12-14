@@ -1,9 +1,10 @@
-import {TaskSpecific} from "./TaskSpecific";
 import {Attributed} from "./Attributed";
+import {TaskPiece} from "./TaskPiece";
 
-export type TaskInformation = TaskSpecific & Attributed<any> & {
+export type TaskInformation = Attributed<any> & {
+    id: string,
     title: string,
     description: string,
-    currentPosition: number
+    pieces: Array<TaskPiece>,
     renderer: string
 }
