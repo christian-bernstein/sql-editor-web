@@ -1,7 +1,11 @@
-.debug-border {
-  border: 1px solid orangered;
-}
+@import "themes";
 
-.debug-bg {
-  background-color: darkorange;
+@mixin border {
+  transition: all 100ms linear;
+
+  &:hover {
+    filter: brightness(120%);
+    border: 1px solid $primary-color !important;
+    box-shadow: 0 0 0 4px $border-primary-shadow;
+  }
 }

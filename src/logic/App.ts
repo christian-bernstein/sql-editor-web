@@ -11,8 +11,11 @@ import {SessionIDCheckResultType} from "../pages/login/SessionIDCheckResultType"
 import {ValidateSessionsPacketData} from "./ValidateSessionsPacketData";
 import {FlowAccessPoint} from "./FlowAccessPoint";
 import {LoginCallConfig} from "./LoginCallConfig";
+import {Themeable} from "../Themeable";
+import {ProgressTrackerManager} from "./ProgressTrackerManager";
 
 export class App {
+
 
     private static instance: App | undefined = undefined;
 
@@ -28,6 +31,10 @@ export class App {
     };
 
     private readonly flowAccessPoint: FlowAccessPoint = new FlowAccessPoint(this);
+
+    private readonly themes: Map<string, Themeable.Theme> = new Map<string, Themeable.Theme>();
+
+    private readonly _progressTrackerManager: ProgressTrackerManager = new ProgressTrackerManager(this);
 
     private shards: Map<String, Shard> = new Map<String, Shard>();
 
@@ -88,7 +95,6 @@ export class App {
 
     public removeInvalidSessionHistoryEntries(then: (() => void) | undefined = undefined) {
         const mappedSessionUUIDs: Array<string> = this.getSessionHistoryEntries().map(entry => entry.sessionID);
-
         this.connector(connector1 => {
             connector1.call({
                 protocol: "login",
@@ -126,6 +132,10 @@ export class App {
 
     public openMenu() {
         this.callAction("show-menu");
+    }
+
+    public getDefaultTheme(): Themeable.Theme {
+        return this.themes.get("default") as Themeable.Theme;
     }
 
     public login(config: LoginCallConfig) {
@@ -198,6 +208,19 @@ export class App {
         }
     }
 
+    public connector(action: (connector: Environment.Connector) => void) {
+        action(Environment.Connector.useConnector("ton", () => {
+            return new Environment.Connector(this.config.connectorConfig).registerSocketEventHandler(Environment.SocketEventTypes.ONOPEN, {
+                stator: true,
+                usagesLeft: 10000,
+                handle: ev => {
+                    console.log("connection established");
+                    this.callAction("connection-established");
+                }
+            }).connect();
+        }));
+    }
+
     private sessionLogin(sessionID: string, loginResponseCallback: (data: SessionIDLoginResponsePacketData) => void) {
         this.callAction("login-process-started");
         this.connector(connector1 => {
@@ -238,19 +261,6 @@ export class App {
         })
     }
 
-    public connector(action: (connector: Environment.Connector) => void) {
-        action(Environment.Connector.useConnector("ton", () => {
-            return new Environment.Connector(this.config.connectorConfig).registerSocketEventHandler(Environment.SocketEventTypes.ONOPEN, {
-                stator: true,
-                usagesLeft: 10000,
-                handle: ev => {
-                    console.log("connection established");
-                    this.callAction("connection-established");
-                }
-            }).connect();
-        }));
-    }
-
     set userData(value: UserData) {
         this._userData = value;
     }
@@ -263,6 +273,10 @@ export class App {
         this._config = value;
     }
 
+    get progressTrackerManager(): ProgressTrackerManager {
+        return this._progressTrackerManager;
+    }
+    
     public set sessionID(value: string) {
         window.localStorage.setItem("session-id", value);
         this._sessionID = value;

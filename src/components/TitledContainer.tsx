@@ -1,8 +1,7 @@
 import React from "react";
 import "../styles/components/TitledContainer.scss";
-import {Themeable} from "../Themeable";
 
-export type TitledContainerProps = Themeable & {
+export type TitledContainerProps = {
     header: JSX.Element,
     body: JSX.Element
 }

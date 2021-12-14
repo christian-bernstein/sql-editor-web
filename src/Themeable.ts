@@ -1,4 +1,9 @@
-// todo implement Themeable type
-export type Themeable = {
+export namespace Themeable {
+    export type Theme = {
 
+    }
+
+    export const defaultTheme: Theme = {
+
+    }
 }

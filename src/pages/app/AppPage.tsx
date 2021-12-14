@@ -9,6 +9,7 @@ import DashboardPage from "../dashboard/DashboardPage";
 import MenuPage from "../menu/MenuPage";
 import {App} from "../../logic/App";
 import {Environment} from "../../logic/Environment";
+import {Themeable} from "../../Themeable";
 
 export type AppPageProps = {
 }
@@ -30,6 +31,8 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
         };
 
         App.appOrCreate({
+            defaultAppRoute: "/boarding",
+            themes: new Map<string, Themeable.Theme>([["default", Themeable.defaultTheme]]),
             connectorConfig: {
                 protocol: "login",
                 address: "ws:192.168.2.100:80",
@@ -50,17 +53,15 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
         } else return undefined;
     }
 
-
     render() {
         return (
             <div className={"app"}>
                 <BrowserRouter>
                     <MenuPage showMenuInitially={false}>
+                        <Route path={"/"} render={() => <Redirect push to={App.app().config.defaultAppRoute}/>}/>
                         <Route path={"/boarding"} render={() => <BoardingPage/>}/>
                         <Route path={"/login"} render={() => <LoginPage/>}/>
                         <Route path={"/dashboard"} render={() => <DashboardPage/>}/>
-                        {/* todo add configurable default page link */}
-                        <Route path={"/"} render={() => <Redirect push to={"/boarding"}/>}/>
                     </MenuPage>
                 </BrowserRouter>
             </div>
