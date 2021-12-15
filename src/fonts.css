@@ -21,5 +21,10 @@
   font-weight: normal;
   font-style: italic;
 }
+@font-face {
+  font-family: "OperatorMono";
+  src: url("./assets/fonts/operatormono/OperatorMono-Light.otf") format("opentype");
+  font-weight: 350;
+}
 
 /*# sourceMappingURL=fonts.css.map */

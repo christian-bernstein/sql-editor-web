@@ -17,10 +17,10 @@ export class ProgressTrackerManager {
 
         if (!this.bridges.has(taskID)) {
             this.bridges.set(taskID, new Map<string, IProgressTrackerBridge>([[trackerID, bridge]]));
-            bridge.onMount?.run();
+            bridge.onMount?.();
         } else {
             this.bridges.get(taskID)?.set(trackerID, bridge);
-            bridge.onMount?.run();
+            bridge.onMount?.();
         }
         return trackerID;
     }
@@ -29,7 +29,7 @@ export class ProgressTrackerManager {
         if (this.bridges.has(taskID)) {
             const taskSpecificBridges: Map<string, IProgressTrackerBridge> = this.bridges.get(taskID) as Map<string, IProgressTrackerBridge>;
             if (taskSpecificBridges.has(trackerID)) {
-                taskSpecificBridges.get(trackerID)?.onUnmount?.run();
+                taskSpecificBridges.get(trackerID)?.onUnmount?.();
                 taskSpecificBridges.delete(trackerID);
                 if (taskSpecificBridges.size === 0) {
                     this.bridges.delete(taskID);

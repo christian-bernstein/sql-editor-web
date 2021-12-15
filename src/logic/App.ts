@@ -16,7 +16,6 @@ import {ProgressTrackerManager} from "./ProgressTrackerManager";
 
 export class App {
 
-
     private static instance: App | undefined = undefined;
 
     public static appOrCreate: (config: AppConfig) => App = (config: AppConfig) => {
@@ -32,9 +31,11 @@ export class App {
 
     private readonly flowAccessPoint: FlowAccessPoint = new FlowAccessPoint(this);
 
-    private readonly themes: Map<string, Themeable.Theme> = new Map<string, Themeable.Theme>();
+    private readonly themes: Map<string, Themeable.Theme>;
 
     private readonly _progressTrackerManager: ProgressTrackerManager = new ProgressTrackerManager(this);
+
+    private globalTheme: string;
 
     private shards: Map<String, Shard> = new Map<String, Shard>();
 
@@ -48,6 +49,8 @@ export class App {
 
     constructor(config: AppConfig) {
         this._config = config;
+        this.globalTheme = config.defaultTheme;
+        this.themes = config.themes;
     }
 
     public shard<T extends Shard>(id: string, shard: T | undefined = undefined): T {
@@ -221,6 +224,10 @@ export class App {
         }));
     }
 
+    public getGlobalTheme(): Themeable.Theme {
+        return this.themes.get(this.globalTheme) as Themeable.Theme;
+    }
+
     private sessionLogin(sessionID: string, loginResponseCallback: (data: SessionIDLoginResponsePacketData) => void) {
         this.callAction("login-process-started");
         this.connector(connector1 => {
@@ -276,7 +283,7 @@ export class App {
     get progressTrackerManager(): ProgressTrackerManager {
         return this._progressTrackerManager;
     }
-    
+
     public set sessionID(value: string) {
         window.localStorage.setItem("session-id", value);
         this._sessionID = value;

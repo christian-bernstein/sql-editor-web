@@ -10,6 +10,8 @@ import MenuPage from "../menu/MenuPage";
 import {App} from "../../logic/App";
 import {Environment} from "../../logic/Environment";
 import {Themeable} from "../../Themeable";
+import {ChartPage} from "../../tests/task/ChartPage";
+import {AppConfig} from "../../logic/AppConfig";
 
 export type AppPageProps = {
 }
@@ -31,8 +33,11 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
         };
 
         App.appOrCreate({
+            debugMode: true,
             defaultAppRoute: "/boarding",
-            themes: new Map<string, Themeable.Theme>([["default", Themeable.defaultTheme]]),
+            defaultDebugAppRoute: "/chart",
+            themes: new Map<string, Themeable.Theme>([["dark-green", Themeable.defaultTheme]]),
+            defaultTheme: "dark-green",
             connectorConfig: {
                 protocol: "login",
                 address: "ws:192.168.2.100:80",
@@ -58,13 +63,27 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
             <div className={"app"}>
                 <BrowserRouter>
                     <MenuPage showMenuInitially={false}>
-                        <Route path={"/"} render={() => <Redirect push to={App.app().config.defaultAppRoute}/>}/>
-                        <Route path={"/boarding"} render={() => <BoardingPage/>}/>
-                        <Route path={"/login"} render={() => <LoginPage/>}/>
-                        <Route path={"/dashboard"} render={() => <DashboardPage/>}/>
+                        {this.getRouts()}
                     </MenuPage>
                 </BrowserRouter>
             </div>
         );
+    }
+
+    private getRouts(): JSX.Element[] {
+        const config: AppConfig = App.app().config;
+        const routs: JSX.Element[] = [];
+        routs.push(
+            <Route path={"/"} render={() => <Redirect push to={config.debugMode ? config.defaultDebugAppRoute : config.defaultAppRoute}/>}/>,
+            <Route path={"/boarding"} render={() => <BoardingPage/>}/>,
+            <Route path={"/login"} render={() => <LoginPage/>}/>,
+            <Route path={"/dashboard"} render={() => <DashboardPage/>}/>
+        );
+        if (config.debugMode) {
+            routs.push(
+                <Route path={"/chart"} render={() => <ChartPage/>}/>
+            )
+        }
+        return routs;
     }
 }
