@@ -12,6 +12,7 @@ import {Environment} from "../../logic/Environment";
 import {Themeable} from "../../Themeable";
 import {ChartPage} from "../../tests/task/ChartPage";
 import {AppConfig} from "../../logic/AppConfig";
+import {ControlPanelComponent} from "../../tests/panel/ControlPanel";
 
 export type AppPageProps = {
 }
@@ -33,6 +34,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
         };
 
         App.appOrCreate({
+            appTitle: "SQL Editor",
             debugMode: true,
             defaultAppRoute: "/boarding",
             defaultDebugAppRoute: "/chart",
@@ -74,14 +76,18 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
         const config: AppConfig = App.app().config;
         const routs: JSX.Element[] = [];
         routs.push(
-            <Route path={"/"} render={() => <Redirect push to={config.debugMode ? config.defaultDebugAppRoute : config.defaultAppRoute}/>}/>,
+            <Route exact path={"/"} render={() => <Redirect push to={config.debugMode ? config.defaultDebugAppRoute : config.defaultAppRoute}/>}/>,
             <Route path={"/boarding"} render={() => <BoardingPage/>}/>,
             <Route path={"/login"} render={() => <LoginPage/>}/>,
             <Route path={"/dashboard"} render={() => <DashboardPage/>}/>
         );
         if (config.debugMode) {
             routs.push(
-                <Route path={"/chart"} render={() => <ChartPage/>}/>
+                <Route path={"/chart"} render={() => <ChartPage/>}/>,
+                <Route path={"/panel"} render={() => <ControlPanelComponent
+                    address={"ws:192.168.2.100:30001"}
+                    connectorID={"panel"}
+                />}/>,
             )
         }
         return routs;

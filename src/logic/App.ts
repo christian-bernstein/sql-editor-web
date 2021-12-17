@@ -51,6 +51,7 @@ export class App {
         this._config = config;
         this.globalTheme = config.defaultTheme;
         this.themes = config.themes;
+        this.init();
     }
 
     public shard<T extends Shard>(id: string, shard: T | undefined = undefined): T {
@@ -226,6 +227,10 @@ export class App {
 
     public getGlobalTheme(): Themeable.Theme {
         return this.themes.get(this.globalTheme) as Themeable.Theme;
+    }
+
+    private init() {
+        document.title = this.config.appTitle;
     }
 
     private sessionLogin(sessionID: string, loginResponseCallback: (data: SessionIDLoginResponsePacketData) => void) {

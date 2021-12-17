@@ -73,6 +73,22 @@ $button-action-secondary: crimson;
 $button-action-primary: rgb(66, 217, 237);
 $button-action-success: rgb(59, 165, 92);
 
+// Customized theme 3
+$background-primary: #36393f;
+$background-secondary: #2f3136;
+
+$background-secondary-alt: #292b2f;
+// $background-secondary-alt: #171717;
+
+$background-tertiary: rgb(32, 34, 37);
+// $background-tertiary: #171717;
+
+$button-primary: $background-secondary-alt;
+$button-action-secondary: rgb(228, 52, 125);
+$button-action-secondary: #A9E5C3;
+$button-action-primary: #71D99E;
+$button-action-success: rgb(59, 165, 92);
+
 // SQL-Editor theme
 // $button-primary: $background-secondary-alt;
 // $button-action-primary: #238636;
@@ -156,7 +172,8 @@ $header-secondary: #000;
 $header-primary: #fff;
 */
 :root {
-    --background-tertiary: rgb(32, 34, 37);
+    // --background-tertiary: rgb(32, 34, 37);
+    // --background-tertiary: $background-tertiary;
     --header-primary: #fff;
     --header-secondary: #000;
     --button-height: -0.35em;
@@ -282,7 +299,7 @@ body {
     .specials {
         border-radius: 1em;
         padding: 0.6em 2em;
-        background-color: var(--background-tertiary);
+        background-color: $background-tertiary;
         display: grid;
         grid-auto-flow: row;
         grid-gap: 1em;
@@ -453,6 +470,8 @@ body {
     }
 
     .button-layout-container {
+        // box-shadow: 0 0 0 2px $background-primary;
+        border-radius: 1em;
         height: 100%;
         display: grid;
         grid-gap: 0.5rem;
@@ -470,7 +489,7 @@ body {
             transform-style: preserve-3d;
             border-radius: 1em;
             padding: 2em;
-            background-color: var(--background-tertiary);
+            background-color: $background-tertiary;
             display: grid;
             grid-template-columns: repeat(8, 1fr);
             grid-template-rows: repeat(3, 1fr);

@@ -4,8 +4,6 @@ import "./style.scss";
 import "./spinners.scss";
 import "./Chart.scss";
 import "./Keyboard.scss";
-import {Utils} from "../../logic/Utils";
-import {ReactComponent as FullscreenIcon} from "../../assets/icons/ic-16/ic16-refresh.svg";
 
 export enum KeyPressType {
     PRESS = ("PRESS"),
@@ -135,6 +133,7 @@ export class Widget {
         if (autoRender) {
             this.rerenderHook.run();
         }
+
         return this;
     }
 

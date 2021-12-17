@@ -68,7 +68,6 @@ $header-secondary: #000;
 $header-primary: #fff;
 */
 :root {
-  --background-tertiary: rgb(32, 34, 37);
   --header-primary: #fff;
   --header-secondary: #000;
   --button-height: -0.35em;
@@ -182,7 +181,7 @@ body {
 .lower .specials {
   border-radius: 1em;
   padding: 0.6em 2em;
-  background-color: var(--background-tertiary);
+  background-color: #202225;
   display: grid;
   grid-auto-flow: row;
   grid-gap: 1em;
@@ -297,24 +296,24 @@ body {
   visibility: hidden;
 }
 .lower .action-primary {
-  box-shadow: inset 0 var(--button-height) #42d9ed !important;
+  box-shadow: inset 0 var(--button-height) #71D99E !important;
 }
 .lower .action-primary.button-active {
-  background-color: #42d9ed !important;
-  box-shadow: 0 0 42px 0 #42d9ed;
+  background-color: #71D99E !important;
+  box-shadow: 0 0 42px 0 #71D99E;
 }
 .lower .action-primary.button-active::after {
-  box-shadow: 0 0 42px 0 #42d9ed;
+  box-shadow: 0 0 42px 0 #71D99E;
 }
 .lower .action-secondary {
-  box-shadow: inset 0 var(--button-height) crimson !important;
+  box-shadow: inset 0 var(--button-height) #A9E5C3 !important;
 }
 .lower .action-secondary.button-active {
-  background-color: crimson !important;
-  box-shadow: 0 0 42px 0 crimson;
+  background-color: #A9E5C3 !important;
+  box-shadow: 0 0 42px 0 #A9E5C3;
 }
 .lower .action-secondary.button-active::after {
-  box-shadow: 0 0 42px 0 crimson;
+  box-shadow: 0 0 42px 0 #A9E5C3;
 }
 .lower .action-tertiary {
   box-shadow: inset 0 var(--button-height) #292b2f !important;
@@ -323,14 +322,14 @@ body {
   background-color: #292b2f !important;
 }
 .lower .action-special {
-  box-shadow: inset 0 calc(var(--button-height) * 0.5) crimson !important;
+  box-shadow: inset 0 calc(var(--button-height) * 0.5) #A9E5C3 !important;
 }
 .lower .action-special.button-active {
-  background-color: crimson !important;
-  box-shadow: 0 0 42px 0 crimson;
+  background-color: #A9E5C3 !important;
+  box-shadow: 0 0 42px 0 #A9E5C3;
 }
 .lower .action-special.button-active::after {
-  box-shadow: 0 0 42px 0 crimson;
+  box-shadow: 0 0 42px 0 #A9E5C3;
 }
 .lower .action-success {
   box-shadow: inset 0 calc(var(--button-height)) #3ba55c !important;
@@ -347,6 +346,7 @@ body {
   width: 100%;
 }
 .lower .button-layout-container {
+  border-radius: 1em;
   height: 100%;
   display: grid;
   grid-gap: 0.5rem;
@@ -363,7 +363,7 @@ body {
   transform-style: preserve-3d;
   border-radius: 1em;
   padding: 2em;
-  background-color: var(--background-tertiary);
+  background-color: #202225;
   display: grid;
   grid-template-columns: repeat(8, 1fr);
   grid-template-rows: repeat(3, 1fr);
@@ -394,7 +394,7 @@ body {
   min-height: 100px;
   width: calc(113px * 4);
   opacity: 0.2;
-  background-image: repeating-linear-gradient(45deg, transparent, transparent 40px, transparent 10px, #42d9ed 80px);
+  background-image: repeating-linear-gradient(45deg, transparent, transparent 40px, transparent 10px, #71D99E 80px);
   animation: slide var(--speed) linear infinite;
   will-change: background-position;
 }

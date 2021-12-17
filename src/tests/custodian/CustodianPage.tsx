@@ -38,6 +38,7 @@ export class CustodianPage extends React.Component<CustodianPageProps, Custodian
 export function initApp() {
     // noinspection DuplicatedCode
     App.appOrCreate({
+        appTitle: "Mutam",
         debugMode: true,
         defaultAppRoute: "select",
         defaultDebugAppRoute: "/chart",
@@ -57,7 +58,6 @@ export function initApp() {
 }
 
 export function createCustodianPage(): JSX.Element {
-    // noinspection SpellCheckingInspection
     return <CustodianPage
         appTitle={"Mutam"}
         specialLinks={{
