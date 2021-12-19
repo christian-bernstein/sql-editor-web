@@ -10,7 +10,7 @@ export namespace Utils {
 
     export function format(format: string, ...replacements: string[]): string {
         return format.replace(/{(\d+)}/g, function(match, number) {
-            return typeof replacements[number] != 'undefined'
+            return typeof replacements[number] !== 'undefined'
                 ? replacements[number]
                 : match
                 ;
@@ -25,7 +25,7 @@ export namespace Utils {
         if (fullscreen === undefined) {
             if (!document.fullscreenElement) {
                 document.documentElement.requestFullscreen().then(() => {
-                    if (onEffect != undefined) {
+                    if (onEffect !== undefined) {
                         onEffect();
                     }
                 });

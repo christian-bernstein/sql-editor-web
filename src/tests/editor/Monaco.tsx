@@ -16,7 +16,8 @@ import {ReactComponent as UpIcon} from "../../assets/icons/ic-20/ic20-arrow-up.s
 import {ReactComponent as ThemeIcon} from "../../assets/icons/ic-20/ic20-brightness-auto.svg";
 
 export type MonacoState = {
-    theme: string
+    theme: string,
+    completerInitCompleted: boolean
 }
 
 export class Monaco extends React.Component<any, MonacoState> {
@@ -26,7 +27,8 @@ export class Monaco extends React.Component<any, MonacoState> {
     constructor(props: any) {
         super(props);
         this.state = {
-            theme: "vs-dark"
+            theme: "vs-dark",
+            completerInitCompleted: false
         };
     }
 
@@ -127,36 +129,43 @@ export class Monaco extends React.Component<any, MonacoState> {
                             }));
                         })();
 
-                        monaco.languages.registerCompletionItemProvider('sql', {
-                            provideCompletionItems: (model, position, context, token) => {
-                                const word = model.getWordUntilPosition(position);
-                                const range = {
-                                    startLineNumber: position.lineNumber,
-                                    endLineNumber: position.lineNumber,
-                                    startColumn: word.startColumn,
-                                    endColumn: word.endColumn
-                                };
-                                return {
-                                    suggestions: [
-                                        {
-                                            label: 'select_all',
-                                            kind: monaco.languages.CompletionItemKind.Function,
-                                            documentation: 'The Lodash library exported as Node.js modules.',
-                                            insertText: 'select * from ${1:};',
-                                            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                                            range: range
-                                        },{
-                                            label: 'select_sum',
-                                            kind: monaco.languages.CompletionItemKind.Function,
-                                            documentation: 'The Lodash library exported as Node.js modules.',
-                                            insertText: 'select sum(${1:column_name})\n from ${2:table_name}\n where ${3:condition};',
-                                            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                                            range: range
-                                        },
-                                    ]
+                        if (!this.state.completerInitCompleted) {
+                            monaco.languages.registerCompletionItemProvider('sql', {
+                                provideCompletionItems: (model, position, context, token) => {
+                                    const word = model.getWordUntilPosition(position);
+                                    const range = {
+                                        startLineNumber: position.lineNumber,
+                                        endLineNumber: position.lineNumber,
+                                        startColumn: word.startColumn,
+                                        endColumn: word.endColumn
+                                    };
+                                    return {
+                                        suggestions: [
+                                            {
+                                                label: 'select_all',
+                                                kind: monaco.languages.CompletionItemKind.Function,
+                                                documentation: 'The Lodash library exported as Node.js modules.',
+                                                insertText: 'select * from ${1:};',
+                                                insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                                                range: range
+                                            },{
+                                                label: 'select_sum',
+                                                kind: monaco.languages.CompletionItemKind.Function,
+                                                documentation: 'The Lodash library exported as Node.js modules.',
+                                                insertText: 'select sum(${1:column_name})\n from ${2:table_name}\n where ${3:condition};',
+                                                insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                                                range: range
+                                            },
+                                        ]
+                                    }
                                 }
-                            }
-                        });
+                            });
+                            this.setState({
+                                completerInitCompleted: true
+                            });
+                        }
+
+
 
                         document.documentElement.addEventListener("click", ev => {
                             editor.focus();

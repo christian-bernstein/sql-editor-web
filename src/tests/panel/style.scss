@@ -181,7 +181,7 @@ $header-primary: #fff;
 
 * {
     // todo reactivate, but not as global
-    // @include no-scrollbar(true);
+    @include no-scrollbar(true);
     // margin: 0;
     // padding: 0;
     box-sizing: border-box;

@@ -19,12 +19,14 @@ export type AppPageProps = {
 }
 
 export type AppPageState = {
-    showMenu: boolean
+    showMenu: boolean,
+    currentSpecialPage?: string,
+    paramSupplier?: () => any
 }
 
 export class AppPage extends React.Component<AppPageProps, AppPageState> {
 
-    private readonly specialPageRenderers: Map<string, () => JSX.Element> = new Map<string, () => JSX.Element>([
+    private readonly specialPageRenderers: Map<string, (params: any) => JSX.Element> = new Map<string, (params: any) => JSX.Element>([
         [DefaultSpecialPages.BOARDING, () => <></>]
     ]);
 
@@ -33,43 +35,46 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
         this.state = {
             showMenu: false
         };
-
-        App.appOrCreate({
-            appTitle: "SQL Editor",
-            debugMode: true,
-            defaultAppRoute: "/boarding",
-            defaultDebugAppRoute: "/chart",
-            themes: new Map<string, Themeable.Theme>([["dark-green", Themeable.defaultTheme]]),
-            defaultTheme: "dark-green",
-            connectorConfig: {
-                protocol: "login",
-                address: "ws:192.168.2.100:80",
-                // address: "ws:172.16.119.70:80",
-                id: "ton",
-                maxConnectAttempts: 50,
-                connectionRetryDelayFunc: (i => 0.1 * (i) ** 2 * 1e3 - 10 * 1e3),
-                packetInterceptor: (packet: Environment.Packet) => {
-                    console.log(packet);
-                }
-            }
-        });
+        this.init();
     }
 
-    public renderSpecialPage(id: string): JSX.Element | undefined {
-        if (this.specialPageRenderers.has(id)) {
-            return (this.specialPageRenderers.get(id) as () => JSX.Element)();
-        } else return undefined;
+    public activateSpecialPage(id: string, paramSupplier: () => any): AppPage {
+        this.setState({
+            currentSpecialPage: id,
+            paramSupplier: paramSupplier
+        });
+        return this;
+    }
+
+    public deactivateSpecialPage(): AppPage {
+        this.setState({
+            currentSpecialPage: undefined,
+            paramSupplier: undefined
+        });
+        return this;
+    }
+
+    public renderSpecialPage(): JSX.Element {
+        const page: string = this.state.currentSpecialPage as string;
+        const paramSupplier: () => any = this.state.paramSupplier as () => any;
+        return this.specialPageRenderers.get(page)?.(paramSupplier()) as JSX.Element;
     }
 
     render() {
         return (
             <div className={"app"}>
-                <BrowserRouter>
-                    <MenuPage showMenuInitially={false}>
-                        {this.getRouts()}
-                    </MenuPage>
-                </BrowserRouter>
+                {this.state.currentSpecialPage !== undefined? this.renderSpecialPage() : this.renderDefaultPage()}
             </div>
+        );
+    }
+
+    private renderDefaultPage(): JSX.Element {
+        return (
+            <BrowserRouter>
+                <MenuPage showMenuInitially={false}>
+                    {this.getRouts()}
+                </MenuPage>
+            </BrowserRouter>
         );
     }
 
@@ -93,5 +98,27 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
             )
         }
         return routs;
+    }
+
+    private init() {
+        App.appOrCreate({
+            appTitle: "SQL Editor",
+            debugMode: true,
+            defaultAppRoute: "/boarding",
+            defaultDebugAppRoute: "/chart",
+            themes: new Map<string, Themeable.Theme>([["dark-green", Themeable.defaultTheme]]),
+            defaultTheme: "dark-green",
+            rootRerenderHook: (callback) => this.forceUpdate(callback),
+            connectorConfig: {
+                protocol: "login",
+                address: "ws:192.168.2.100:80",
+                id: "ton",
+                maxConnectAttempts: 50,
+                connectionRetryDelayFunc: (i => 0.1 * (i) ** 2 * 1e3 - 10 * 1e3),
+                packetInterceptor: (packet: Environment.Packet) => {
+                    console.log(packet);
+                }
+            }
+        });
     }
 }

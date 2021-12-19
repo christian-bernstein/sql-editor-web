@@ -233,6 +233,10 @@ export class App {
         return this.themes.get(this.globalTheme) as Themeable.Theme;
     }
 
+    public rerenderGlobally() {
+        this.config.rootRerenderHook?.();
+    }
+
     private init() {
         document.title = this.config.appTitle;
     }
