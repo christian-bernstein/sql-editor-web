@@ -180,14 +180,15 @@ $header-primary: #fff;
 }
 
 * {
-    @include no-scrollbar(true);
-    margin: 0;
-    padding: 0;
+    // todo reactivate, but not as global
+    // @include no-scrollbar(true);
+    // margin: 0;
+    // padding: 0;
     box-sizing: border-box;
-    // font-family: "Poppins", sans-serif;
-    // todo define as a style variable
-    font-family: "JetBrains Mono", monospace;
-    color: var(--header-secondary);
+    // // font-family: "Poppins", sans-serif;
+    // // todo define as a style variable
+    // font-family: "JetBrains Mono", monospace;
+    // color: var(--header-secondary);
 }
 
 body {

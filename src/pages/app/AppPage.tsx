@@ -13,6 +13,7 @@ import {Themeable} from "../../Themeable";
 import {ChartPage} from "../../tests/task/ChartPage";
 import {AppConfig} from "../../logic/AppConfig";
 import {ControlPanelComponent} from "../../tests/panel/ControlPanel";
+import {Monaco} from "../../tests/editor/Monaco";
 
 export type AppPageProps = {
 }
@@ -84,6 +85,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
         if (config.debugMode) {
             routs.push(
                 <Route path={"/chart"} render={() => <ChartPage/>}/>,
+                <Route path={"/monaco"} render={() => <Monaco/>}/>,
                 <Route path={"/panel"} render={() => <ControlPanelComponent
                     address={"ws:192.168.2.100:30001"}
                     connectorID={"panel"}

@@ -18,6 +18,7 @@ export namespace Themeable {
         primaryHighlightColor: Color,
         errorColor: Color,
         warnColor: Color,
+        borderPrimaryColor: Color,
         borderColorSecondaryColor: Color,
         borderPrimaryShadowColor: Color
     }
@@ -59,6 +60,7 @@ export namespace Themeable {
         primaryHighlightColor: Color.ofHex("#A9E5C3"),
         errorColor: Color.ofHex("#D93240"),
         warnColor: Color.ofHex("#FBBE63"),
+        borderPrimaryColor: Color.ofHex("#3E3E3E"),
         borderColorSecondaryColor: Color.ofHex("#FBBE63"),
         borderPrimaryShadowColor: Color.ofHex("#71D99E", .13)
     }

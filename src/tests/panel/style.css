@@ -74,17 +74,7 @@ $header-primary: #fff;
 }
 
 * {
-  margin: 0;
-  padding: 0;
   box-sizing: border-box;
-  font-family: "JetBrains Mono", monospace;
-  color: var(--header-secondary);
-}
-* ::-webkit-scrollbar {
-  display: none;
-}
-* * ::-webkit-scrollbar {
-  display: none;
 }
 
 body {

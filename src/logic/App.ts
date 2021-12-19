@@ -14,6 +14,10 @@ import {LoginCallConfig} from "./LoginCallConfig";
 import {Themeable} from "../Themeable";
 import {ProgressTrackerManager} from "./ProgressTrackerManager";
 
+export function app(): App {
+    return App.app();
+}
+
 export class App {
 
     private static instance: App | undefined = undefined;
