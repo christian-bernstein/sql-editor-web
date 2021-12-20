@@ -14,6 +14,8 @@ import {ChartPage} from "../../tests/task/ChartPage";
 import {AppConfig} from "../../logic/AppConfig";
 import {ControlPanelComponent} from "../../tests/panel/ControlPanel";
 import {Monaco} from "../../tests/editor/Monaco";
+import {SelectAppConfigPage} from "../../debug/pages/selectAppConfig/SelectAppConfigPage";
+import {AppConfigSelectionData, AppConfigSelectorProps} from "../../debug/components/AppConfigSelector";
 
 export type AppPageProps = {
 }
@@ -27,7 +29,12 @@ export type AppPageState = {
 export class AppPage extends React.Component<AppPageProps, AppPageState> {
 
     private readonly specialPageRenderers: Map<string, (params: any) => JSX.Element> = new Map<string, (params: any) => JSX.Element>([
-        [DefaultSpecialPages.BOARDING, () => <></>]
+        [DefaultSpecialPages.BOARDING, () => <></>],
+        [DefaultSpecialPages.SELECT_APP_CONFIG, (params) => <SelectAppConfigPage onSelection={data => {
+            this.init(data.config);
+            this.deactivateSpecialPage();
+            console.log("lol");
+        }} configs={params as AppConfigSelectionData[]}/>],
     ]);
 
     constructor(props: AppPageProps) {
@@ -35,7 +42,54 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
         this.state = {
             showMenu: false
         };
-        this.init();
+    }
+
+    componentDidMount() {
+        this.activateSpecialPage(DefaultSpecialPages.SELECT_APP_CONFIG, () => [{
+            title: "DESKTOP-1D80A0M",
+            description: "",
+            config: {
+                appTitle: "SQL Editor (DESKTOP-1D80A0M)",
+                debugMode: true,
+                defaultAppRoute: "/boarding",
+                defaultDebugAppRoute: "/chart",
+                themes: new Map<string, Themeable.Theme>([["dark-green", Themeable.defaultTheme]]),
+                defaultTheme: "dark-green",
+                rootRerenderHook: (callback) => this.forceUpdate(callback),
+                connectorConfig: {
+                    protocol: "login",
+                    address: "ws:192.168.2.100:80",
+                    id: "ton",
+                    maxConnectAttempts: 50,
+                    connectionRetryDelayFunc: (i => 0.1 * (i) ** 2 * 1e3 - 10 * 1e3),
+                    packetInterceptor: (packet: Environment.Packet) => {
+                        console.log(packet);
+                    }
+                }
+            } as AppConfig,
+        }, {
+            title: "Central Server (release)",
+            description: "Current release server, wrapped in a **reactor** server3.cwies.de",
+            config: {
+                appTitle: "SQL Editor",
+                debugMode: true,
+                defaultAppRoute: "/boarding",
+                defaultDebugAppRoute: "/chart",
+                themes: new Map<string, Themeable.Theme>([["dark-green", Themeable.defaultTheme]]),
+                defaultTheme: "dark-green",
+                rootRerenderHook: (callback) => this.forceUpdate(callback),
+                connectorConfig: {
+                    protocol: "login",
+                    address: "ws:192.168.2.100:80",
+                    id: "ton",
+                    maxConnectAttempts: 50,
+                    connectionRetryDelayFunc: (i => 0.1 * (i) ** 2 * 1e3 - 10 * 1e3),
+                    packetInterceptor: (packet: Environment.Packet) => {
+                        console.log(packet);
+                    }
+                }
+            } as AppConfig,
+        }] as AppConfigSelectionData[]);
     }
 
     public activateSpecialPage(id: string, paramSupplier: () => any): AppPage {
@@ -69,13 +123,15 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
     }
 
     private renderDefaultPage(): JSX.Element {
-        return (
-            <BrowserRouter>
-                <MenuPage showMenuInitially={false}>
-                    {this.getRouts()}
-                </MenuPage>
-            </BrowserRouter>
-        );
+        if (App.isInitiated()) {
+            return (
+                <BrowserRouter>
+                    <MenuPage showMenuInitially={false}>
+                        {this.getRouts()}
+                    </MenuPage>
+                </BrowserRouter>
+            );
+        } else return <>App not initiated</>;
     }
 
     private getRouts(): JSX.Element[] {
@@ -100,8 +156,8 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
         return routs;
     }
 
-    private init() {
-        App.appOrCreate({
+    private init(config?: AppConfig) {
+        App.appOrCreate(config ? config : {
             appTitle: "SQL Editor",
             debugMode: true,
             defaultAppRoute: "/boarding",

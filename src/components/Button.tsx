@@ -1,34 +1,57 @@
-import React, {CSSProperties, MouseEventHandler} from "react";
-import "../styles/components/Button.scss";
-import {ComponentStyle} from "../ComponentStyle";
+import React, {CSSProperties} from "react";
+import {getMeaningfulColors, MeaningfulColors, Themeable} from "../Themeable";
+import {utilizeGlobalTheme} from "../logic/App";
+import styled from "styled-components";
+import {ObjectVisualMeaning} from "../logic/ObjectVisualMeaning";
+import {getOr} from "../logic/Utils";
+import {Color} from "../Color";
 
 export type ButtonProps = {
-    onClick?: MouseEventHandler<HTMLButtonElement>,
-    style?: CSSProperties;
-    internalStyling?: boolean;
-    theme?: ComponentStyle;
+    style?: CSSProperties,
+    visualMeaning?: ObjectVisualMeaning,
+    opaque?: boolean,
+    opaqueValue?: number,
+    onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void,
+    shrinkOnClick?: boolean
 }
 
-export type ButtonState = {
-    theme: ComponentStyle
-}
-
-export class Button extends React.Component<ButtonProps, ButtonState>{
+export class Button extends React.Component<ButtonProps, any> {
 
     constructor(props: ButtonProps) {
         super(props);
-        this.state = {
-            theme: props.theme === undefined ? ComponentStyle.DEFAULT : this.props.theme as ComponentStyle
-        }
     }
 
     render() {
+        const theme: Themeable.Theme = utilizeGlobalTheme();
+        const meaningfulColors: MeaningfulColors = getMeaningfulColors(getOr(this.props.visualMeaning, ObjectVisualMeaning.UI_NO_HIGHLIGHT), theme);
+        const bgColor: Color = this.props.opaque ? meaningfulColors.main.withAlpha(getOr(this.props.opaqueValue, .1)): meaningfulColors.main;
+
+        const Button = styled.button`
+          border-radius: ${theme.radii.defaultObjectRadius.css()};
+          background-color: ${bgColor.css()};
+          border: 1px solid ${meaningfulColors.lighter.css()};
+          padding: ${theme.paddings.defaultButtonPadding.css()};
+          color: ${theme.colors.fontPrimaryColor.css()};
+          
+          display: flex;
+          align-content: center;
+          justify-content: center;
+          cursor: pointer;
+          transition: all ${theme.transitions.mainTime.css()};
+          
+          &:hover {
+            filter: brightness(1.2);
+          }
+
+          &:active {
+            transform: ${this.props.shrinkOnClick ? "scale(.99)" : "scale(1)"};
+          }
+        `;
+
         return (
-            <button onClick={this.props.onClick}
-                    className={["button", this.props.internalStyling ? ["internally-styled", this.state.theme].join(" ") : ""].join(" ")}
-                    style={this.props.style}>
+            <Button onClick={event => getOr(this.props.onClick, () => {})(event)} style={getOr(this.props.style, {} as CSSProperties)}>
                 {this.props.children}
-            </button>
+            </Button>
         );
     }
 }

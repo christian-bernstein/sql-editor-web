@@ -1,15 +1,22 @@
 import React from "react";
-import {CSSProperties} from "styled-components";
-import {Themeable} from "../Themeable";
-import {App} from "../logic/App";
+import styled, {CSSProperties} from "styled-components";
+import {getMeaningfulColors, MeaningfulColors, Themeable} from "../Themeable";
+import {utilizeGlobalTheme} from "../logic/App";
 import {createMargin, Margin, setMarginToCSSProperties} from "../logic/Margin";
-import {getOr, Utils} from "../logic/Utils";
+import {getOr} from "../logic/Utils";
 import {DimensionalMeasured} from "../logic/DimensionalMeasured";
+import {ObjectVisualMeaning} from "../logic/ObjectVisualMeaning";
+import ReactMarkdown from 'react-markdown'
 
 export type TextProps = {
+    text: string,
     type?: TextType,
     margin?: Margin,
-    fontSize?: DimensionalMeasured
+    fontSize?: DimensionalMeasured,
+    visualMeaning?: ObjectVisualMeaning,
+    enableLeftAppendix?: boolean,
+    leftAppendix?: JSX.Element,
+    coloredIcon?: boolean
 }
 
 export enum TextType {
@@ -25,7 +32,7 @@ const textTypeToThemeMapping: Map<TextType, (theme: Themeable.Theme) => CSSPrope
 ]);
 
 export const Text: React.FC<TextProps> = props => {
-    const theme: Themeable.Theme = App.app().getGlobalTheme();
+    const theme: Themeable.Theme = utilizeGlobalTheme();
     const type: TextType = props.type === undefined ? TextType.secondaryDescription : props.type;
     const margin: Margin = getOr(props.margin, createMargin(0, 0, 0, 0));
     let style: CSSProperties = textTypeToThemeMapping.get(type)?.(theme) as CSSProperties;
@@ -37,9 +44,24 @@ export const Text: React.FC<TextProps> = props => {
         };
     }
 
+    const meaningfulColors: MeaningfulColors = getMeaningfulColors(getOr(props.visualMeaning, ObjectVisualMeaning.UI_NO_HIGHLIGHT), theme);
+    const Wrapper = styled.p`
+      display: flex;
+      align-items: center;
+      gap: ${theme.paddings.defaultTextIconPadding.css()};
+      svg path {
+        fill: ${(props.coloredIcon ? meaningfulColors.iconColored : meaningfulColors.icon).css()};
+      }
+      p {
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+    `;
+
     return(
-        <p style={style}>
-            {props.children}
-        </p>
+        <Wrapper style={style}>
+            {props.enableLeftAppendix ? props.leftAppendix : <></>}
+            <ReactMarkdown children={props.text}/>
+        </Wrapper>
     )
 }

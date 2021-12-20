@@ -30,6 +30,21 @@ export class Color implements IToCSSConvertable {
         }
     }
 
+    public copy(): Color {
+        return new Color(
+            this.r,
+            this.g,
+            this.b,
+            this.alpha
+        );
+    }
+
+    public withAlpha(a: number): Color {
+        const color = this.copy();
+        color.alpha = a;
+        return color;
+    }
+
     get b(): number {
         return this._b;
     }

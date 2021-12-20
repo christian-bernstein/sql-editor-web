@@ -3,7 +3,7 @@ import {Link} from "react-router-dom";
 import {ReactComponent as Logo} from "../../assets/logo.svg";
 import {ReactComponent as Wave} from "../../assets/waves/wave-2.svg";
 import "../../styles/pages/BoardingPage.scss";
-import {Button} from "../../components/Button";
+import {_Button} from "../../components/_Button";
 import {ComponentStyle} from "../../ComponentStyle";
 import {ContinueAs} from "../../components/ContinueAs";
 import {App} from "../../logic/App";
@@ -60,12 +60,12 @@ export class BoardingPage extends React.Component<BoardingPageProps, BoardingPag
                             <div className={"boarding-type"}>
                                 {/* boarding button */}
                                 <Link to={"/login"}>
-                                    <Button onClick={() => {}} internalStyling={true} theme={ComponentStyle.DEFAULT}>Log in</Button>
+                                    <_Button onClick={() => {}} internalStyling={true} theme={ComponentStyle.DEFAULT}>Log in</_Button>
                                 </Link>
                                 <span className={"separator"}>/</span>
                                 {/* Sign-Up button */}
                                 <Link to={"/register"}>
-                                    <Button onClick={() => {}} internalStyling={true} theme={ComponentStyle.PRIMARY}>Sign up</Button>
+                                    <_Button onClick={() => {}} internalStyling={true} theme={ComponentStyle.PRIMARY}>Sign up</_Button>
                                 </Link>
                             </div>
                         </form>

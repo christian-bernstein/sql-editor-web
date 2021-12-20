@@ -14,8 +14,16 @@ import {LoginCallConfig} from "./LoginCallConfig";
 import {Themeable} from "../Themeable";
 import {ProgressTrackerManager} from "./ProgressTrackerManager";
 
-export function app(): App {
+export function utilizeApp(): App {
     return App.app();
+}
+
+export function utilizeGlobalTheme(): Themeable.Theme {
+    if (App.isInitiated()) {
+        return App.app().getGlobalTheme();
+    } else {
+        return Themeable.defaultTheme;
+    }
 }
 
 export class App {
@@ -33,6 +41,10 @@ export class App {
         return App.instance as App;
     };
 
+    public static isInitiated(): boolean {
+        return App.instance !== undefined && App.app().initiated;
+    }
+
     private readonly flowAccessPoint: FlowAccessPoint = new FlowAccessPoint(this);
 
     private readonly themes: Map<string, Themeable.Theme>;
@@ -48,6 +60,8 @@ export class App {
     private _sessionID?: string;
 
     private _userData: UserData | undefined;
+
+    private _initiated: boolean = false;
 
     private actions: Map<String, Array<() => void>> = new Map<String, Array<() => void>>();
 
@@ -238,7 +252,8 @@ export class App {
     }
 
     private init() {
-        document.title = this.config.appTitle;
+        document.title = this.config.appTitle + (this.config.debugMode ? " (Debug mode)" : "");
+        this._initiated = true;
     }
 
     private sessionLogin(sessionID: string, loginResponseCallback: (data: SessionIDLoginResponsePacketData) => void) {
@@ -308,6 +323,10 @@ export class App {
 
     public getSessionID(): string | undefined {
         return this._sessionID;
+    }
+
+    get initiated(): boolean {
+        return this._initiated;
     }
 
     public flow(): FlowAccessPoint {

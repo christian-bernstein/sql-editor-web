@@ -2,7 +2,7 @@ import React from "react";
 import Editor, {useMonaco} from "@monaco-editor/react";
 import styled from "styled-components";
 import {Themeable} from "../../Themeable";
-import {app, App} from "../../logic/App";
+import {utilizeApp, App} from "../../logic/App";
 import {PositionDeltaMoveParams} from "./PositionDeltaMoveParams";
 import {v4} from "uuid";
 import {Button} from "./Button";
@@ -37,7 +37,7 @@ export class Monaco extends React.Component<any, MonacoState> {
     }
 
     render() {
-        const theme: Themeable.Theme = app().getGlobalTheme();
+        const theme: Themeable.Theme = utilizeApp().getGlobalTheme();
         const Page = styled.div`
           background-color: ${theme.colors.backgroundColor.css()};
           height: 100%;

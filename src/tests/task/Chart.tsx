@@ -215,37 +215,23 @@ export class Chart extends React.Component<ChartProps, ChartState> {
 
         return (
             <Box highlight={true}>
-                <Text margin={createMargin(0, 0, 4, 0)} type={TextType.smallHeader}>Starting SQL-Editor session</Text>
-                <Text type={TextType.secondaryDescription} margin={createMargin(0, 0, 20, 0)}>10.11.2021, 18:31</Text>
+                <Text margin={createMargin(0, 0, 4, 0)} type={TextType.smallHeader} text={"Starting SQL-Editor session"}/>
+                <Text type={TextType.secondaryDescription} margin={createMargin(0, 0, 20, 0)} text={"10.11.2021, 18:31"}/>
 
                 <Element className={"completed"}>
                     <div className={"anchor"}/>
                     <div className={"title"}>
-                        <Text type={TextType.smallHeader}>Staring server</Text>
-                        <Text type={TextType.secondaryDescription} fontSize={DimensionalMeasured.of(12, Dimension.px)}>19:46:32</Text>
+                        <Text type={TextType.smallHeader} text={"Staring server"}/>
+                        <Text type={TextType.secondaryDescription} fontSize={DimensionalMeasured.of(12, Dimension.px)} text={"19:46:32"}/>
                     </div>
                     <div className={"line"}>
                         <div className={"slider"}/>
                     </div>
                     <div className={"description"}>
-                        <Text type={TextType.secondaryDescription} margin={createMargin(2, 0, 0, 0)}/>
-
+                        <Text type={TextType.secondaryDescription} margin={createMargin(2, 0, 0, 0)} text={""}/>
                     </div>
                 </Element>
 
-                <Element className={"completed"}>
-                    <div className={"anchor"}/>
-                    <div className={"title"}>
-                        <Text type={TextType.smallHeader}>Load template data archive</Text>
-                        <Text type={TextType.secondaryDescription} fontSize={DimensionalMeasured.of(12, Dimension.px)}>19:46:32</Text>
-                    </div>
-                    <div className={"line"}>
-                        <div className={"slider"}/>
-                    </div>
-                    <div className={"description"}>
-                        <Text type={TextType.secondaryDescription} margin={createMargin(2, 0, 0, 0)}/>
-                    </div>
-                </Element>
 
                 <Element className={(() => {
                     if (this.state.i === 0) {
@@ -256,33 +242,30 @@ export class Chart extends React.Component<ChartProps, ChartState> {
                         return "completed";
                     }
                 })()}>
-                    <div className={"anchor"}>
-                        <PlayIcon/>
-                    </div>
+                    <div className={"anchor"}/>
                     <div className={"title"}>
-                        <Text type={TextType.smallHeader}>Transferring 1943322 rows</Text>
-                        <Text type={TextType.secondaryDescription} fontSize={DimensionalMeasured.of(12, Dimension.px)}>19:46:32</Text>
+                        <Text type={TextType.smallHeader} text={"Staring server"}/>
+                        <Text type={TextType.secondaryDescription} fontSize={DimensionalMeasured.of(12, Dimension.px)} text={"19:46:32"}/>
                     </div>
                     <div className={"line"}>
                         <div className={"slider"}/>
                     </div>
                     <div className={"description"}>
-                        <Text type={TextType.secondaryDescription} margin={createMargin(2, 0, 0, 0)}>2/6 blobs processed</Text>
-
+                        <Text type={TextType.secondaryDescription} margin={createMargin(2, 0, 0, 0)} text={""}/>
                     </div>
                 </Element>
 
                 <Element className={"deactivated"}>
                     <div className={"anchor"}/>
                     <div className={"title"}>
-                        <Text type={TextType.smallHeader}>Freeing resources</Text>
-                        <Text type={TextType.secondaryDescription} fontSize={DimensionalMeasured.of(12, Dimension.px)}>19:46:32</Text>
+                        <Text type={TextType.smallHeader} text={"Staring server"}/>
+                        <Text type={TextType.secondaryDescription} fontSize={DimensionalMeasured.of(12, Dimension.px)} text={"19:46:32"}/>
                     </div>
                     <div className={"line"}>
                         <div className={"slider"}/>
                     </div>
                     <div className={"description"}>
-                        <Text type={TextType.secondaryDescription} margin={createMargin(2, 0, 0, 0)}/>
+                        <Text type={TextType.secondaryDescription} margin={createMargin(2, 0, 0, 0)} text={""}/>
                     </div>
                 </Element>
             </Box>
@@ -306,7 +289,7 @@ export class ChartPiece extends React.Component<ChartPieceProps, ChartPieceState
             data: props.initialData
         };
     }
-    
+
     setState<K extends keyof ChartPieceState>(state: ((prevState: Readonly<ChartPieceState>, props: Readonly<ChartPieceProps>) => (Pick<ChartPieceState, K> | ChartPieceState | null)) | Pick<ChartPieceState, K> | ChartPieceState | null, callback?: () => void) {
         super.setState(state, callback);
     }
@@ -317,14 +300,14 @@ export class ChartPiece extends React.Component<ChartPieceProps, ChartPieceState
             <Element className={"deactivated"}>
                 <div className={"anchor"}/>
                 <div className={"title"}>
-                    <Text type={TextType.smallHeader}>Freeing resources</Text>
-                    <Text type={TextType.secondaryDescription} fontSize={DimensionalMeasured.of(12, Dimension.px)}>19:46:32</Text>
+                    <Text type={TextType.smallHeader} text={"Staring server"}/>
+                    <Text type={TextType.secondaryDescription} fontSize={DimensionalMeasured.of(12, Dimension.px)} text={"19:46:32"}/>
                 </div>
                 <div className={"line"}>
                     <div className={"slider"}/>
                 </div>
                 <div className={"description"}>
-                    <Text type={TextType.secondaryDescription} margin={createMargin(2, 0, 0, 0)}/>
+                    <Text type={TextType.secondaryDescription} margin={createMargin(2, 0, 0, 0)} text={""}/>
                 </div>
             </Element>
         );

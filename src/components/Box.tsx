@@ -1,11 +1,27 @@
 import React from "react";
 import styled from "styled-components";
-import {Themeable} from "../Themeable";
-import {App} from "../logic/App";
+import {getMeaningfulColors, MeaningfulColors, Themeable} from "../Themeable";
+import {App, utilizeGlobalTheme} from "../logic/App";
+import {DimensionalMeasured} from "../logic/DimensionalMeasured";
+import {OverflowBehaviour} from "../logic/OverflowBehaviour";
+import {getOr} from "../logic/Utils";
+import {ObjectVisualMeaning} from "../logic/ObjectVisualMeaning";
+import {Color} from "../Color";
 
 export type BoxProps = {
     highlight?: boolean
-    classNames?: string[]
+    classNames?: string[],
+    width?: DimensionalMeasured,
+    overflowXBehaviour?: OverflowBehaviour,
+    overflowYBehaviour?: OverflowBehaviour,
+
+    visualMeaning?: ObjectVisualMeaning,
+    opaque?: boolean,
+    opaqueValue?: number,
+
+    onClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
+    gapX?: DimensionalMeasured,
+    gapY?: DimensionalMeasured,
 }
 
 export class Box extends React.Component<BoxProps, any> {
@@ -15,13 +31,23 @@ export class Box extends React.Component<BoxProps, any> {
     }
 
     render() {
-        const theme: Themeable.Theme = App.app().getGlobalTheme();
-        const Box = styled.div`
-          background-color: ${theme.colors.backgroundHighlightColor.css()};
-          border-radius: ${theme.radii.defaultObjectRadius.css()};
-          border: 1px solid #30363D;
-          padding: ${theme.paddings.defaultObjectPadding.css()};
+        const theme: Themeable.Theme = utilizeGlobalTheme();
+        const meaningfulColors: MeaningfulColors = getMeaningfulColors(getOr(this.props.visualMeaning, ObjectVisualMeaning.UI_NO_HIGHLIGHT), theme);
+        const bgColor: Color = this.props.opaque ? meaningfulColors.main.withAlpha(getOr(this.props.opaqueValue, .1)): meaningfulColors.main;
 
+        const Box = styled.div`
+          background-color: ${bgColor.css()};
+          border-radius: ${theme.radii.defaultObjectRadius.css()};
+          border: 1px solid ${meaningfulColors.lighter.css()};
+          padding: ${theme.paddings.defaultObjectPadding.css()};
+          width: ${getOr(this.props.width?.css(), "auto")};
+          overflow-x: ${getOr<OverflowBehaviour>(this.props.overflowXBehaviour, OverflowBehaviour.VISIBLE)};
+          overflow-y: ${getOr<OverflowBehaviour>(this.props.overflowYBehaviour, OverflowBehaviour.VISIBLE)};
+          
+          display: flex;
+          flex-direction: column;
+          gap: ${getOr(this.props.gapY?.css(), "0")} ${getOr(this.props.gapX?.css(), "0")};
+          
           &.highlight:hover {
             filter: brightness(${theme.hovers.hoverLightFilter.css()});
             border: 1px solid ${theme.colors.primaryHighlightColor.css()} !important;
@@ -31,7 +57,7 @@ export class Box extends React.Component<BoxProps, any> {
         const classNames: string[] = this.props.classNames === undefined ? [] : this.props.classNames;
         const highlight: boolean = this.props.highlight === undefined ? false : this.props.highlight;
         return (
-            <Box className={[...classNames, "box", highlight ? "highlight" : ""].join(" ").trim()}>
+            <Box onClick={event => getOr(this.props.onClick, () => {})(event)} className={[...classNames, "box", highlight ? "highlight" : ""].join(" ").trim()}>
                 {this.props.children}
             </Box>
         );

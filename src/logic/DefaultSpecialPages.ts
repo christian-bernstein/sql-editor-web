@@ -1,3 +1,4 @@
 export enum DefaultSpecialPages {
-    BOARDING = "boarding"
+    BOARDING = "boarding",
+    SELECT_APP_CONFIG = "select_app_config"
 }

@@ -1,7 +1,58 @@
 import {Color} from "./Color";
-import {DimensionalMeasured} from "./logic/DimensionalMeasured";
+import {dimension, DimensionalMeasured} from "./logic/DimensionalMeasured";
 import {Dimension} from "./logic/Dimension";
 import {CSSProperties} from "react";
+import {ObjectVisualMeaning} from "./logic/ObjectVisualMeaning";
+import {time, TimeMeasured} from "./logic/TimeMeasured";
+import {TimeUnit} from "./logic/TimeUnit";
+
+export function getMeaningfulColors(meaning: ObjectVisualMeaning, theme: Themeable.Theme): MeaningfulColors {
+    switch (meaning) {
+        case ObjectVisualMeaning.SUCCESS:
+            return {
+                main: theme.colors.primaryColor,
+                lighter: theme.colors.primaryHighlightColor,
+                iconColored: theme.colors.primaryHighlightColor,
+                icon: theme.colors.iconColor
+            };
+        case ObjectVisualMeaning.INFO:
+            return {
+                main: theme.colors.primaryColor,
+                lighter: theme.colors.primaryHighlightColor,
+                iconColored: theme.colors.primaryHighlightColor,
+                icon: theme.colors.iconColor
+            };
+        case ObjectVisualMeaning.WARNING:
+            return {
+                main: theme.colors.warnColor,
+                lighter: theme.colors.warnHighlightColor,
+                iconColored: theme.colors.warnHighlightColor,
+                icon: theme.colors.iconColor
+            };
+        case ObjectVisualMeaning.ERROR:
+            return {
+                main: theme.colors.errorColor,
+                lighter: theme.colors.errorHighlightColor,
+                iconColored: theme.colors.errorHighlightColor,
+                icon: theme.colors.iconColor
+            };
+        case ObjectVisualMeaning.UI_NO_HIGHLIGHT:
+            return {
+                main: theme.colors.backgroundHighlightColor,
+                // todo choose more consistent way
+                lighter: theme.colors.borderPrimaryColor,
+                iconColored: theme.colors.borderPrimaryColor,
+                icon: theme.colors.iconColor
+            };
+    }
+}
+
+export type MeaningfulColors = {
+    main: Color,
+    lighter: Color,
+    icon: Color,
+    iconColored: Color
+}
 
 export namespace Themeable {
 
@@ -17,7 +68,9 @@ export namespace Themeable {
         primaryColor: Color,
         primaryHighlightColor: Color,
         errorColor: Color,
+        errorHighlightColor: Color,
         warnColor: Color,
+        warnHighlightColor: Color,
         borderPrimaryColor: Color,
         borderColorSecondaryColor: Color,
         borderPrimaryShadowColor: Color
@@ -32,10 +85,15 @@ export namespace Themeable {
             smallTextVerticalMargin: DimensionalMeasured
         },
         paddings: {
-            defaultObjectPadding: DimensionalMeasured
+            defaultObjectPadding: DimensionalMeasured,
+            defaultButtonPadding: DimensionalMeasured,
+            defaultTextIconPadding: DimensionalMeasured,
         },
         hovers: {
             hoverLightFilter: DimensionalMeasured
+        },
+        transitions: {
+            mainTime: TimeMeasured
         },
         texts: {
             fontFamily: string,
@@ -59,8 +117,10 @@ export namespace Themeable {
         primaryColor: Color.ofHex("#71D99E"),
         primaryHighlightColor: Color.ofHex("#A9E5C3"),
         errorColor: Color.ofHex("#D93240"),
+        errorHighlightColor: Color.ofHex("#e55561"),
         warnColor: Color.ofHex("#FBBE63"),
-        borderPrimaryColor: Color.ofHex("#3E3E3E"),
+        warnHighlightColor: Color.ofHex("#ffd387"),
+        borderPrimaryColor: Color.ofHex("#30363D"),
         borderColorSecondaryColor: Color.ofHex("#FBBE63"),
         borderPrimaryShadowColor: Color.ofHex("#71D99E", .13)
     }
@@ -74,10 +134,15 @@ export namespace Themeable {
             smallTextVerticalMargin: DimensionalMeasured.of(3, Dimension.px)
         },
         paddings: {
-            defaultObjectPadding: DimensionalMeasured.of(16, Dimension.px)
+            defaultObjectPadding: DimensionalMeasured.of(16, Dimension.px),
+            defaultButtonPadding: DimensionalMeasured.of(8, Dimension.px),
+            defaultTextIconPadding: dimension(4, Dimension.px)
         },
         hovers: {
             hoverLightFilter: DimensionalMeasured.of(120, Dimension.percentage)
+        },
+        transitions: {
+            mainTime: time(100, TimeUnit.ms)
         },
         texts: {
             // todo implement global font family
@@ -120,7 +185,6 @@ export namespace Themeable {
                     color: `${defaultThemePallet.fontSecondaryColor.css()}`
                 }
             }
-        }
-
+        },
     }
 }
