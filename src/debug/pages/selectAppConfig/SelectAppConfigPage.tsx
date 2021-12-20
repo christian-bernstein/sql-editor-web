@@ -33,7 +33,7 @@ export class SelectAppConfigPage extends React.Component<SelectAppConfigPageProp
         `;
         return (
             <Page>
-                <Text type={TextType.smallHeader} margin={createMargin(0, 0, 18, 0, Dimension.px)} text={"Select app profile.."}/>
+                <Text type={TextType.smallHeader} margin={createMargin(0, 0, 18, 0, Dimension.px)} text={"Select app profile…"}/>
                 <Wrapper>
                     {this.props.configs.map(config => {
                         return (

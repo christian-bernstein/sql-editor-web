@@ -47,7 +47,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
     componentDidMount() {
         this.activateSpecialPage(DefaultSpecialPages.SELECT_APP_CONFIG, () => [{
             title: "DESKTOP-1D80A0M",
-            description: "",
+            description: "Personal debug environment. Connect to a local ton server instance in debug mode.",
             config: {
                 appTitle: "SQL Editor (DESKTOP-1D80A0M)",
                 debugMode: true,
@@ -69,7 +69,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
             } as AppConfig,
         }, {
             title: "Central Server (release)",
-            description: "Current release server, wrapped in a **bernie-sql-editor-reactor**-instance. Reactor instance controllable via Pterodactyl panel available at **cwies.de** [here](https://espen.codes/)",
+            description: "Current release server, wrapped in a **bernie-sql-editor-reactor**-instance. Reactor instance controllable via Pterodactyl panel available at [**pterodactyl.cwies.de**](https://pterodactyl.cwies.de/).",
             config: {
                 appTitle: "SQL Editor",
                 debugMode: true,
