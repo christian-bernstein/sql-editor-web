@@ -32,7 +32,7 @@ export class AppConfigSelector extends React.Component<AppConfigSelectorProps, a
                       type={TextType.smallHeader}
                       text={this.props.data.title}
                 />
-                <Text type={TextType.secondaryDescription} text={this.props.data.description}/>
+                <Text type={TextType.secondaryDescription} visualMeaning={ObjectVisualMeaning.INFO} text={this.props.data.description}/>
                 <ObjectJSONDisplay object={this.props.data.config}/>
                 <Button opaque={true}
                         shrinkOnClick={true}

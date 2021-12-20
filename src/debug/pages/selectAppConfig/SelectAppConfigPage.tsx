@@ -2,7 +2,11 @@ import React from "react";
 import styled from "styled-components";
 import {Themeable} from "../../../Themeable";
 import {utilizeGlobalTheme} from "../../../logic/App";
-import {AppConfigSelectionData, AppConfigSelector, AppConfigSelectorProps} from "../../components/AppConfigSelector";
+import {AppConfigSelectionData, AppConfigSelector} from "../../components/AppConfigSelector";
+import {Page} from "../../../components/Page";
+import {Text, TextType} from "../../../components/Text";
+import {createMargin} from "../../../logic/Margin";
+import {Dimension} from "../../../logic/Dimension";
 
 export type SelectAppConfigPageProps = {
     configs: AppConfigSelectionData[],
@@ -17,7 +21,7 @@ export class SelectAppConfigPage extends React.Component<SelectAppConfigPageProp
 
     render() {
         const theme: Themeable.Theme = utilizeGlobalTheme();
-        const Page = styled.div`
+        const Wrapper = styled.div`
           background-color: ${theme.colors.backgroundColor.css()};
           display: flex;
           flex-direction: column;
@@ -25,20 +29,23 @@ export class SelectAppConfigPage extends React.Component<SelectAppConfigPageProp
           height: 100%;
           width: 100%;
           overflow-y: scroll;
-          padding: ${theme.paddings.defaultObjectPadding.css()};
           gap: ${theme.paddings.defaultObjectPadding.css()};
         `;
         return (
             <Page>
-                {this.props.configs.map(config => {
-                    return (
-                        <AppConfigSelector
-                            data={config}
-                            onSelection={data => this.props.onSelection(data)}
-                        />
-                    )
-                })}
+                <Text type={TextType.smallHeader} margin={createMargin(0, 0, 18, 0, Dimension.px)} text={"Select app profile.."}/>
+                <Wrapper>
+                    {this.props.configs.map(config => {
+                        return (
+                            <AppConfigSelector
+                                data={config}
+                                onSelection={data => this.props.onSelection(data)}
+                            />
+                        )
+                    })}
+                </Wrapper>
             </Page>
+
         );
     }
 }

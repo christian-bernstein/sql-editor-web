@@ -49,12 +49,18 @@ export const Text: React.FC<TextProps> = props => {
       display: flex;
       align-items: center;
       gap: ${theme.paddings.defaultTextIconPadding.css()};
+      
       svg path {
         fill: ${(props.coloredIcon ? meaningfulColors.iconColored : meaningfulColors.icon).css()};
       }
+      
       p {
         margin-top: 0;
         margin-bottom: 0;
+      }
+      
+      a {
+        color: ${meaningfulColors.lighter.css()} !important;
       }
     `;
 

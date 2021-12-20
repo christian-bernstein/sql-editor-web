@@ -15,7 +15,7 @@ import {AppConfig} from "../../logic/AppConfig";
 import {ControlPanelComponent} from "../../tests/panel/ControlPanel";
 import {Monaco} from "../../tests/editor/Monaco";
 import {SelectAppConfigPage} from "../../debug/pages/selectAppConfig/SelectAppConfigPage";
-import {AppConfigSelectionData, AppConfigSelectorProps} from "../../debug/components/AppConfigSelector";
+import {AppConfigSelectionData} from "../../debug/components/AppConfigSelector";
 
 export type AppPageProps = {
 }
@@ -69,7 +69,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
             } as AppConfig,
         }, {
             title: "Central Server (release)",
-            description: "Current release server, wrapped in a **reactor** server3.cwies.de",
+            description: "Current release server, wrapped in a **bernie-sql-editor-reactor**-instance. Reactor instance controllable via Pterodactyl panel available at **cwies.de** [here](https://espen.codes/)",
             config: {
                 appTitle: "SQL Editor",
                 debugMode: true,
@@ -177,4 +177,5 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
             }
         });
     }
+
 }
