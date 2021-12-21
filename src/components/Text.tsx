@@ -7,6 +7,7 @@ import {getOr} from "../logic/Utils";
 import {DimensionalMeasured} from "../logic/DimensionalMeasured";
 import {ObjectVisualMeaning} from "../logic/ObjectVisualMeaning";
 import ReactMarkdown from 'react-markdown'
+import {Link} from "./Link";
 
 export type TextProps = {
     text: string,
@@ -58,16 +59,14 @@ export const Text: React.FC<TextProps> = props => {
         margin-top: 0;
         margin-bottom: 0;
       }
-      
-      a {
-        color: ${meaningfulColors.lighter.css()} !important;
-      }
     `;
 
     return(
         <Wrapper style={style}>
             {props.enableLeftAppendix ? props.leftAppendix : <></>}
-            <ReactMarkdown children={props.text}/>
+            <ReactMarkdown children={props.text} components={{
+                a: (mdProps, context) => <Link visualMeaning={props.visualMeaning} href={getOr<string>(mdProps.href, "")}>{mdProps.children}</Link>
+            }}/>
         </Wrapper>
     )
 }
