@@ -18,6 +18,7 @@ export type BoxProps = {
     visualMeaning?: ObjectVisualMeaning,
     opaque?: boolean,
     opaqueValue?: number,
+    noPadding?: boolean
 
     onClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
     gapX?: DimensionalMeasured,
@@ -39,7 +40,7 @@ export class Box extends React.Component<BoxProps, any> {
           background-color: ${bgColor.css()};
           border-radius: ${theme.radii.defaultObjectRadius.css()};
           border: 1px solid ${meaningfulColors.lighter.css()};
-          padding: ${theme.paddings.defaultObjectPadding.css()};
+          padding: ${this.props.noPadding ? "0" : theme.paddings.defaultObjectPadding.css()};
           width: ${getOr(this.props.width?.css(), "auto")};
           overflow-x: ${getOr<OverflowBehaviour>(this.props.overflowXBehaviour, OverflowBehaviour.VISIBLE)};
           overflow-y: ${getOr<OverflowBehaviour>(this.props.overflowYBehaviour, OverflowBehaviour.VISIBLE)};

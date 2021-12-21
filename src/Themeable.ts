@@ -93,7 +93,8 @@ export namespace Themeable {
             hoverLightFilter: DimensionalMeasured
         },
         transitions: {
-            mainTime: TimeMeasured
+            mainTime: TimeMeasured,
+            fastTime: TimeMeasured,
         },
         texts: {
             fontFamily: string,
@@ -142,7 +143,8 @@ export namespace Themeable {
             hoverLightFilter: DimensionalMeasured.of(120, Dimension.percentage)
         },
         transitions: {
-            mainTime: time(100, TimeUnit.ms)
+            mainTime: time(100, TimeUnit.ms),
+            fastTime: time(50, TimeUnit.ms)
         },
         texts: {
             // todo implement global font family
