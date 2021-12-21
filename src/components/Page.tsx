@@ -14,7 +14,9 @@ export class Page extends React.Component<PageProps, any>{
           padding: ${theme.paddings.defaultObjectPadding.css()};
           width: 100%;
           height: 100%;
-          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+          overflow-y: scroll;
           background-color: ${theme.colors.backgroundColor.css()};
         `;
         return (

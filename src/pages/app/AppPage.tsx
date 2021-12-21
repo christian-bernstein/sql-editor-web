@@ -16,6 +16,7 @@ import {ControlPanelComponent} from "../../tests/panel/ControlPanel";
 import {Monaco} from "../../tests/editor/Monaco";
 import {SelectAppConfigPage} from "../../debug/pages/selectAppConfig/SelectAppConfigPage";
 import {AppConfigSelectionData} from "../../debug/components/AppConfigSelector";
+import {RegexPage} from "../../tests/regex/RegexPage";
 
 export type AppPageProps = {
 }
@@ -33,7 +34,6 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
         [DefaultSpecialPages.SELECT_APP_CONFIG, (params) => <SelectAppConfigPage onSelection={data => {
             this.init(data.config);
             this.deactivateSpecialPage();
-            console.log("lol");
         }} configs={params as AppConfigSelectionData[]}/>],
     ]);
 
@@ -75,6 +75,28 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                 debugMode: true,
                 defaultAppRoute: "/boarding",
                 defaultDebugAppRoute: "/chart",
+                themes: new Map<string, Themeable.Theme>([["dark-green", Themeable.defaultTheme]]),
+                defaultTheme: "dark-green",
+                rootRerenderHook: (callback) => this.forceUpdate(callback),
+                connectorConfig: {
+                    protocol: "login",
+                    address: "ws:192.168.2.100:80",
+                    id: "ton",
+                    maxConnectAttempts: 50,
+                    connectionRetryDelayFunc: (i => 0.1 * (i) ** 2 * 1e3 - 10 * 1e3),
+                    packetInterceptor: (packet: Environment.Packet) => {
+                        console.log(packet);
+                    }
+                }
+            } as AppConfig,
+        }, {
+            title: "Regex viewer",
+            description: "Current release server, wrapped in a **bernie-sql-editor-reactor**-instance. Reactor instance controllable via Pterodactyl panel available at [**pterodactyl.cwies.de**](https://pterodactyl.cwies.de/).",
+            config: {
+                appTitle: "Regex Viewer",
+                debugMode: false,
+                defaultAppRoute: "/regex",
+                defaultDebugAppRoute: "/",
                 themes: new Map<string, Themeable.Theme>([["dark-green", Themeable.defaultTheme]]),
                 defaultTheme: "dark-green",
                 rootRerenderHook: (callback) => this.forceUpdate(callback),
@@ -147,6 +169,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
             routs.push(
                 <Route path={"/chart"} render={() => <ChartPage/>}/>,
                 <Route path={"/monaco"} render={() => <Monaco/>}/>,
+                <Route path={"/regex"} render={() => <RegexPage/>}/>,
                 <Route path={"/panel"} render={() => <ControlPanelComponent
                     address={"ws:192.168.2.100:30001"}
                     connectorID={"panel"}

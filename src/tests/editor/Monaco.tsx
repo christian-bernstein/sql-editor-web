@@ -131,7 +131,8 @@ export class Monaco extends React.Component<any, MonacoState> {
 
                         if (!this.state.completerInitCompleted) {
                             monaco.languages.registerCompletionItemProvider('sql', {
-                                provideCompletionItems: (model, position, context, token) => {
+                                // provideCompletionItems: (model, position, context, token) => {
+                                provideCompletionItems: (model: { getWordUntilPosition: (arg0: any) => any; }, position: { lineNumber: any; }, context: any, token: any) => {
                                     const word = model.getWordUntilPosition(position);
                                     const range = {
                                         startLineNumber: position.lineNumber,
