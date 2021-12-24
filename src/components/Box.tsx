@@ -18,7 +18,10 @@ export type BoxProps = {
     visualMeaning?: ObjectVisualMeaning,
     opaque?: boolean,
     opaqueValue?: number,
+
     noPadding?: boolean
+    paddingX?: DimensionalMeasured,
+    paddingY?: DimensionalMeasured,
 
     onClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
     gapX?: DimensionalMeasured,
@@ -40,7 +43,7 @@ export class Box extends React.Component<BoxProps, any> {
           background-color: ${bgColor.css()};
           border-radius: ${theme.radii.defaultObjectRadius.css()};
           border: 1px solid ${meaningfulColors.lighter.css()};
-          padding: ${this.props.noPadding ? "0" : theme.paddings.defaultObjectPadding.css()};
+          padding: ${this.props.noPadding ? "0" : (getOr(this.props.paddingY, theme.paddings.defaultObjectPadding).css() + " " + getOr(this.props.paddingX, theme.paddings.defaultObjectPadding).css())};
           width: ${getOr(this.props.width?.css(), "auto")};
           overflow-x: ${getOr<OverflowBehaviour>(this.props.overflowXBehaviour, OverflowBehaviour.VISIBLE)};
           overflow-y: ${getOr<OverflowBehaviour>(this.props.overflowYBehaviour, OverflowBehaviour.VISIBLE)};
@@ -48,6 +51,8 @@ export class Box extends React.Component<BoxProps, any> {
           display: flex;
           flex-direction: column;
           gap: ${getOr(this.props.gapY?.css(), "0")} ${getOr(this.props.gapX?.css(), "0")};
+          
+          
           
           &.highlight:hover {
             filter: brightness(${theme.hovers.hoverLightFilter.css()});

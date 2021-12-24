@@ -1,6 +1,5 @@
 import {Dimension} from "./Dimension";
 import {IToCSSConvertable} from "./IToCSSConvertable";
-import {TimeMeasured} from "./TimeMeasured";
 
 // noinspection SpellCheckingInspection
 export class DimensionalMeasured implements IToCSSConvertable {
@@ -39,6 +38,16 @@ export class DimensionalMeasured implements IToCSSConvertable {
         }
     }
 
+    public copy(): DimensionalMeasured {
+        return DimensionalMeasured.of(this._measurand, this._dimension);
+    }
+
+    public withPlus(delta: number): DimensionalMeasured {
+        const dm = this.copy();
+        dm.measurand = dm.measurand + delta;
+        return dm;
+    }
+
     public static of(measurand: number, dimension: Dimension): DimensionalMeasured {
         return new DimensionalMeasured(measurand, dimension);
     }
@@ -47,4 +56,9 @@ export class DimensionalMeasured implements IToCSSConvertable {
 // noinspection SpellCheckingInspection
 export function dimension(measurand: number, dimension: Dimension): DimensionalMeasured {
     return new DimensionalMeasured(measurand, dimension);
+}
+
+// noinspection SpellCheckingInspection
+export function px(measurand: number = 0): DimensionalMeasured {
+    return dimension(measurand, Dimension.px);
 }

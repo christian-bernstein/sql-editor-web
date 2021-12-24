@@ -1,5 +1,5 @@
 import {Color} from "./Color";
-import {dimension, DimensionalMeasured} from "./logic/DimensionalMeasured";
+import {dimension, DimensionalMeasured, px} from "./logic/DimensionalMeasured";
 import {Dimension} from "./logic/Dimension";
 import {CSSProperties} from "react";
 import {ObjectVisualMeaning} from "./logic/ObjectVisualMeaning";
@@ -13,28 +13,32 @@ export function getMeaningfulColors(meaning: ObjectVisualMeaning, theme: Themeab
                 main: theme.colors.primaryColor,
                 lighter: theme.colors.primaryHighlightColor,
                 iconColored: theme.colors.primaryHighlightColor,
-                icon: theme.colors.iconColor
+                icon: theme.colors.iconColor,
+                shadowColor: theme.colors.primaryHighlightColor.withAlpha(0.1)
             };
         case ObjectVisualMeaning.INFO:
             return {
                 main: theme.colors.primaryColor,
                 lighter: theme.colors.primaryHighlightColor,
                 iconColored: theme.colors.primaryHighlightColor,
-                icon: theme.colors.iconColor
+                icon: theme.colors.iconColor,
+                shadowColor: theme.colors.primaryHighlightColor.withAlpha(0.1)
             };
         case ObjectVisualMeaning.WARNING:
             return {
                 main: theme.colors.warnColor,
                 lighter: theme.colors.warnHighlightColor,
                 iconColored: theme.colors.warnHighlightColor,
-                icon: theme.colors.iconColor
+                icon: theme.colors.iconColor,
+                shadowColor: theme.colors.warnHighlightColor.withAlpha(0.1)
             };
         case ObjectVisualMeaning.ERROR:
             return {
                 main: theme.colors.errorColor,
                 lighter: theme.colors.errorHighlightColor,
                 iconColored: theme.colors.errorHighlightColor,
-                icon: theme.colors.iconColor
+                icon: theme.colors.iconColor,
+                shadowColor: theme.colors.errorHighlightColor.withAlpha(0.1)
             };
         case ObjectVisualMeaning.UI_NO_HIGHLIGHT:
             return {
@@ -42,7 +46,8 @@ export function getMeaningfulColors(meaning: ObjectVisualMeaning, theme: Themeab
                 // todo choose more consistent way
                 lighter: theme.colors.borderPrimaryColor,
                 iconColored: theme.colors.borderPrimaryColor,
-                icon: theme.colors.iconColor
+                icon: theme.colors.iconColor,
+                shadowColor: theme.colors.borderPrimaryColor.withAlpha(0.1)
             };
     }
 }
@@ -51,7 +56,8 @@ export type MeaningfulColors = {
     main: Color,
     lighter: Color,
     icon: Color,
-    iconColored: Color
+    iconColored: Color,
+    shadowColor: Color
 }
 
 export namespace Themeable {
@@ -89,6 +95,9 @@ export namespace Themeable {
             defaultButtonPadding: DimensionalMeasured,
             defaultTextIconPadding: DimensionalMeasured,
         },
+        gaps: {
+            defaultGab: DimensionalMeasured
+        },
         hovers: {
             hoverLightFilter: DimensionalMeasured
         },
@@ -100,6 +109,7 @@ export namespace Themeable {
             fontFamily: string,
             complete: {
                 boldSmallHeader: CSSProperties,
+                defaultText: CSSProperties,
                 boldSmallHeaderDeactivated: CSSProperties,
                 secondaryDescription: CSSProperties
             }
@@ -129,15 +139,18 @@ export namespace Themeable {
     export const defaultTheme: Theme = {
         colors: defaultThemePallet,
         radii: {
-            defaultObjectRadius: DimensionalMeasured.of(6, Dimension.px)
+            defaultObjectRadius: px(6)
         },
         margins: {
-            smallTextVerticalMargin: DimensionalMeasured.of(3, Dimension.px)
+            smallTextVerticalMargin: px(3)
         },
         paddings: {
-            defaultObjectPadding: DimensionalMeasured.of(16, Dimension.px),
-            defaultButtonPadding: DimensionalMeasured.of(8, Dimension.px),
-            defaultTextIconPadding: dimension(4, Dimension.px)
+            defaultObjectPadding: px(16),
+            defaultButtonPadding: px(8),
+            defaultTextIconPadding: px(4)
+        },
+        gaps: {
+            defaultGab: px(16)
         },
         hovers: {
             hoverLightFilter: DimensionalMeasured.of(120, Dimension.percentage)
@@ -156,6 +169,18 @@ export namespace Themeable {
                     fontStyle: "normal",
                     fontWeight: "bold",
                     fontSize: "16px",
+                    lineHeight: "19px",
+                    display: "flex",
+                    alignItems: "center",
+                    letterSpacing: "0.03em",
+                    color: `${defaultThemePallet.fontPrimaryColor.css()}`
+                },
+                defaultText: {
+                    margin: 0,
+                    fontFamily: "OperatorMono",
+                    fontStyle: "normal",
+                    fontWeight: 350,
+                    fontSize: "14px",
                     lineHeight: "19px",
                     display: "flex",
                     alignItems: "center",

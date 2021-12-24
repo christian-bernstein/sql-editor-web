@@ -14,7 +14,7 @@ import {ChartPage} from "../../tests/task/ChartPage";
 import {AppConfig} from "../../logic/AppConfig";
 import {ControlPanelComponent} from "../../tests/panel/ControlPanel";
 import {Monaco} from "../../tests/editor/Monaco";
-import {SelectAppConfigPage} from "../../debug/pages/selectAppConfig/SelectAppConfigPage";
+import {SelectAppConfigPageV2} from "../../debug/pages/selectAppConfig/SelectAppConfigPage";
 import {AppConfigSelectionData} from "../../debug/components/AppConfigSelector";
 import {RegexPage} from "../../tests/regex/RegexPage";
 
@@ -31,7 +31,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
 
     private readonly specialPageRenderers: Map<string, (params: any) => JSX.Element> = new Map<string, (params: any) => JSX.Element>([
         [DefaultSpecialPages.BOARDING, () => <></>],
-        [DefaultSpecialPages.SELECT_APP_CONFIG, (params) => <SelectAppConfigPage onSelection={data => {
+        [DefaultSpecialPages.SELECT_APP_CONFIG, (params) => <SelectAppConfigPageV2 onSelection={data => {
             this.init(data.config);
             this.deactivateSpecialPage();
         }} configs={params as AppConfigSelectionData[]}/>],
@@ -72,9 +72,9 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
             description: "Current release server, wrapped in a **bernie-sql-editor-reactor**-instance. Reactor instance controllable via Pterodactyl panel available at [**pterodactyl.cwies.de**](https://pterodactyl.cwies.de/).",
             config: {
                 appTitle: "SQL Editor",
-                debugMode: true,
+                debugMode: false,
                 defaultAppRoute: "/boarding",
-                defaultDebugAppRoute: "/chart",
+                defaultDebugAppRoute: "/",
                 themes: new Map<string, Themeable.Theme>([["dark-green", Themeable.defaultTheme]]),
                 defaultTheme: "dark-green",
                 rootRerenderHook: (callback) => this.forceUpdate(callback),
@@ -90,11 +90,11 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                 }
             } as AppConfig,
         }, {
-            title: "Regex viewer",
-            description: "Current release server, wrapped in a **bernie-sql-editor-reactor**-instance. Reactor instance controllable via Pterodactyl panel available at [**pterodactyl.cwies.de**](https://pterodactyl.cwies.de/).",
+            title: "Regex viewer asd",
+            description: "The regex viewer is a simple app that lets you write & check regular expressions with ease. As a side project, this hasn't much functionality. A more sophisticated regex tool available [**here**](https://regexr.com/). ",
             config: {
                 appTitle: "Regex Viewer",
-                debugMode: false,
+                debugMode: true,
                 defaultAppRoute: "/regex",
                 defaultDebugAppRoute: "/",
                 themes: new Map<string, Themeable.Theme>([["dark-green", Themeable.defaultTheme]]),
@@ -160,7 +160,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
         const config: AppConfig = App.app().config;
         const routs: JSX.Element[] = [];
         routs.push(
-            <Route exact path={"/"} render={() => <Redirect push to={config.debugMode ? config.defaultDebugAppRoute : config.defaultAppRoute}/>}/>,
+            <Route path={"/"} exact render={() => <Redirect push to={config.debugMode ? config.defaultDebugAppRoute : config.defaultAppRoute}/>}/>,
             <Route path={"/boarding"} render={() => <BoardingPage/>}/>,
             <Route path={"/login"} render={() => <LoginPage/>}/>,
             <Route path={"/dashboard"} render={() => <DashboardPage/>}/>

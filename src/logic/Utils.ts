@@ -6,6 +6,22 @@ export function getOr<T>(val: T | undefined, def: T) {
     }
 }
 
+export function array<T>(obj: T, n: number = 1): T[] {
+    const arr: T[] = [];
+    for (let i = 0; i < n; i++) {
+        arr.push(obj);
+    }
+    return arr;
+}
+
+export function arrayFactory<T>(objSuppl: (i: number) => T, n: number = 1): T[] {
+    const arr: T[] = [];
+    for (let i = 0; i < n; i++) {
+        arr.push(objSuppl(i));
+    }
+    return arr;
+}
+
 export namespace Utils {
 
     export function format(format: string, ...replacements: string[]): string {

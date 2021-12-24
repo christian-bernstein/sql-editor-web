@@ -5,11 +5,13 @@ import styled from "styled-components";
 import {FlexDirection} from "../logic/FlexDirection";
 import {getOr} from "../logic/Utils";
 import {DimensionalMeasured} from "../logic/DimensionalMeasured";
+import {Align} from "../logic/Align";
 
 export type FlexBoxProps = {
     flexDir?: FlexDirection,
     gap?: DimensionalMeasured,
-    style?: CSSProperties
+    style?: CSSProperties,
+    align?: Align,
 }
 
 export class FlexBox extends React.Component<FlexBoxProps, any> {
@@ -19,7 +21,8 @@ export class FlexBox extends React.Component<FlexBoxProps, any> {
         const Wrapper = styled.div`
           display: flex;
           flex-direction: ${getOr(this.props.flexDir, FlexDirection.COLUMN)};
-          gap: ${getOr(this.props.gap?.css(), "0")};
+          gap: ${getOr(this.props.gap?.css(), theme.gaps.defaultGab.css())};
+          align-items: ${this.props.align || Align.START};
         `;
         return (
             <Wrapper style={getOr(this.props.style, {})}>
@@ -27,5 +30,4 @@ export class FlexBox extends React.Component<FlexBoxProps, any> {
             </Wrapper>
         );
     }
-
 }

@@ -17,24 +17,27 @@ export type TextProps = {
     visualMeaning?: ObjectVisualMeaning,
     enableLeftAppendix?: boolean,
     leftAppendix?: JSX.Element,
-    coloredIcon?: boolean
+    coloredIcon?: boolean,
+    linkTooltip?: boolean
 }
 
 export enum TextType {
     smallHeader = "small-header",
+    defaultText = "default-text",
     secondaryDescription = "secondary-description",
     smallHeaderDeactivated = "small-header-deactivated"
 }
 
 const textTypeToThemeMapping: Map<TextType, (theme: Themeable.Theme) => CSSProperties> = new Map<TextType, (theme: Themeable.Theme) => CSSProperties>([
     [TextType.smallHeader, theme => theme.texts.complete.boldSmallHeader],
+    [TextType.defaultText, theme => theme.texts.complete.defaultText],
     [TextType.secondaryDescription, theme => theme.texts.complete.secondaryDescription],
     [TextType.smallHeaderDeactivated, theme => theme.texts.complete.boldSmallHeaderDeactivated],
 ]);
 
 export const Text: React.FC<TextProps> = props => {
     const theme: Themeable.Theme = utilizeGlobalTheme();
-    const type: TextType = props.type === undefined ? TextType.secondaryDescription : props.type;
+    const type: TextType = props.type === undefined ? TextType.defaultText : props.type;
     const margin: Margin = getOr(props.margin, createMargin(0, 0, 0, 0));
     let style: CSSProperties = textTypeToThemeMapping.get(type)?.(theme) as CSSProperties;
     style = setMarginToCSSProperties(margin, style);
@@ -46,7 +49,7 @@ export const Text: React.FC<TextProps> = props => {
     }
 
     const meaningfulColors: MeaningfulColors = getMeaningfulColors(getOr(props.visualMeaning, ObjectVisualMeaning.UI_NO_HIGHLIGHT), theme);
-    const Wrapper = styled.p`
+    const Wrapper = styled.div`
       display: flex;
       align-items: center;
       gap: ${theme.paddings.defaultTextIconPadding.css()};
@@ -59,13 +62,21 @@ export const Text: React.FC<TextProps> = props => {
         margin-top: 0;
         margin-bottom: 0;
       }
+      
+      .line-break {
+        white-space: pre-wrap;
+      }
     `;
 
     return(
         <Wrapper style={style}>
             {props.enableLeftAppendix ? props.leftAppendix : <></>}
-            <ReactMarkdown children={props.text} components={{
-                a: (mdProps, context) => <Link visualMeaning={props.visualMeaning} href={getOr<string>(mdProps.href, "")}>{mdProps.children}</Link>
+            <ReactMarkdown className={"line-break"} children={props.text} components={{
+                a: (mdProps, context) => {
+                    return (
+                        <Link showLinkIcon={false} visualMeaning={props.visualMeaning} href={getOr<string>(mdProps.href, "")}>{mdProps.children}</Link>
+                    );
+                }
             }}/>
         </Wrapper>
     )
