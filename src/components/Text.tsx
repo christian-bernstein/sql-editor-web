@@ -57,6 +57,7 @@ export const Text: React.FC<TextProps> = props => {
       display: flex;
       align-items: center;
       gap: ${theme.paddings.defaultTextIconPadding.css()};
+      // min-width: 100%;
       
       svg path {
         fill: ${(props.coloredIcon ? meaningfulColors.iconColored : meaningfulColors.icon).css()};

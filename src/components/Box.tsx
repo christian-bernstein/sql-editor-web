@@ -43,16 +43,14 @@ export class Box extends React.Component<BoxProps, any> {
           border: 1px solid ${meaningfulColors.lighter.css()};
           padding: ${this.props.noPadding ? "0" : (getOr(this.props.paddingY, theme.paddings.defaultObjectPadding).css() + " " + getOr(this.props.paddingX, theme.paddings.defaultObjectPadding).css())};
           width: ${getOr(this.props.width?.css(), "auto")};
+          // min-width: ${getOr(this.props.width?.css(), "auto")};
           height: ${getOr(this.props.height?.css(), "auto")};
-          
           overflow-x: ${getOr<OverflowBehaviour>(this.props.overflowXBehaviour, OverflowBehaviour.VISIBLE)};
           overflow-y: ${getOr<OverflowBehaviour>(this.props.overflowYBehaviour, OverflowBehaviour.VISIBLE)};
-          
           display: flex;
           flex-direction: column;
           gap: ${getOr(this.props.gapY?.css(), "0")} ${getOr(this.props.gapX?.css(), "0")};
-          
-          
+          min-height: 100% !important;
           
           &.highlight:hover {
             filter: brightness(${theme.hovers.hoverLightFilter.css()});

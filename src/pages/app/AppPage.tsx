@@ -135,7 +135,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                 protocol: "login",
                 address: "ws://192.168.2.100:80",
                 id: "ton",
-                maxConnectAttempts: 10,
+                maxConnectAttempts: 5,
                 connectionRetryDelayFunc: () => 0,
                 packetInterceptor: (packet: Environment.Packet) => {
                     console.log(packet);

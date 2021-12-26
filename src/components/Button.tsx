@@ -5,6 +5,7 @@ import styled from "styled-components";
 import {ObjectVisualMeaning} from "../logic/ObjectVisualMeaning";
 import {getOr} from "../logic/Utils";
 import {Color} from "../Color";
+import {DimensionalMeasured} from "../logic/DimensionalMeasured";
 
 export type ButtonProps = {
     style?: CSSProperties,
@@ -12,7 +13,8 @@ export type ButtonProps = {
     opaque?: boolean,
     opaqueValue?: number,
     onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void,
-    shrinkOnClick?: boolean
+    shrinkOnClick?: boolean,
+    width?: DimensionalMeasured
 }
 
 export class Button extends React.Component<ButtonProps, any> {
@@ -33,7 +35,7 @@ export class Button extends React.Component<ButtonProps, any> {
           padding: ${theme.paddings.defaultButtonPadding.css()};
           color: ${theme.colors.fontPrimaryColor.css()};
           font-family: ${theme.texts.fontFamily};
-          
+          width: ${getOr(this.props.width?.css(), "auto")};
           display: flex;
           align-content: center;
           justify-content: center;
@@ -42,6 +44,7 @@ export class Button extends React.Component<ButtonProps, any> {
           
           &:hover {
             filter: brightness(1.2);
+            box-shadow: 0 0 0 4px ${meaningfulColors.lighter.withAlpha(.13).css()};
           }
 
           &:active {

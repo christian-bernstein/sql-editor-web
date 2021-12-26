@@ -74,7 +74,7 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
         const getConnectingBox = () => (<InformationBox visualMeaning={ObjectVisualMeaning.WARNING} width={percent(100)}>
             <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} justifyContent={Justify.SPACE_BETWEEN} width={percent(100)}>
                 <Text text={`Connecting to\n ${config.address}`}/>
-                <FlexBox flexDir={FlexDirection.ROW}>
+                <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER}>
                     <Text text={`${connector.connectionAttempts} / ${config.maxConnectAttempts}`}/>
                     <BounceLoader color={getMeaningfulColors(ObjectVisualMeaning.WARNING, theme).lighter.css()} size={20}/>
                 </FlexBox>
@@ -112,6 +112,7 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
         });
     }
 
+    // BOX: height={percent(100)}
     render() {
         const theme: Themeable.Theme = utilizeGlobalTheme();
         return (
@@ -127,40 +128,44 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
                 </div>
                 <div className={["menu", this.state.showMenu ? "menu-showing" : ""].join(" ").trim()}
                      style={{
-                        paddingLeft: theme.paddings.defaultObjectPadding.css(),
-                        paddingRight: theme.paddings.defaultObjectPadding.css(),
+                         overflowY: "scroll",
+                         paddingLeft: theme.paddings.defaultObjectPadding.css(),
+                         paddingRight: theme.paddings.defaultObjectPadding.css()
                      }}>
-                    <Box height={percent(100)} overflowYBehaviour={OverflowBehaviour.SCROLL} gapY={theme.gaps.defaultGab}>
+                    <Box width={percent(100)}
+                         overflowYBehaviour={OverflowBehaviour.SCROLL}
+                         overflowXBehaviour={OverflowBehaviour.SCROLL}
+                         gapY={theme.gaps.defaultGab}>
                         {this.renderServerAvailabilityStatus()}
-
-                        <Button visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
-                                opaque={true}
-                                shrinkOnClick={true}
-                                onClick={() => App.app().rerenderGlobally()}>
-                            <Text text={"Rerender app"}/>
-                        </Button>
-
-                        <Button visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
-                                opaque={true}
-                                shrinkOnClick={true}
-                                onClick={() => Utils.reloadPage()}>
-                            <Text text={"Reload page"}/>
-                        </Button>
-
-                        <Button visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
-                                opaque={true}
-                                shrinkOnClick={true}
-                                onClick={() => {
-                                    Utils.toggleFullScreen(undefined, undefined);
-                                    this.updateUI();
-                                }}>
-                            <Text text={!document.fullscreen ? "Disable fullscreen" : "Enable fullscreen"}/>
-                        </Button>
-
+                        <FlexBox flexDir={FlexDirection.ROW} overflowXBehaviour={OverflowBehaviour.SCROLL}>
+                            <Button visualMeaning={ObjectVisualMeaning.INFO}
+                                    width={percent(100)}
+                                    opaque={true}
+                                    shrinkOnClick={true}
+                                    onClick={() => App.app().rerenderGlobally()}>
+                                <Text text={"Rerender"}/>
+                            </Button>
+                            <Button visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
+                                    width={percent(100)}
+                                    opaque={true}
+                                    shrinkOnClick={true}
+                                    onClick={() => Utils.reloadPage()}>
+                                <Text text={"Reload"}/>
+                            </Button>
+                            <Button visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
+                                    width={percent(100)}
+                                    opaque={true}
+                                    shrinkOnClick={true}
+                                    onClick={() => {
+                                        Utils.toggleFullScreen(undefined, undefined);
+                                        this.updateUI();
+                                    }}>
+                                <Text text={"Fullscreen"}/>
+                            </Button>
+                        </FlexBox>
                         <ObjectJSONDisplay object={App.app().config} title={"App config"}/>
-
                         <ObjectJSONDisplay object={App.app().logHistory} title={`Log history (*${App.app().logHistory.length} entries*)`} showControls/>
-                    </Box>
+                    </Box >
                 </div>
             </div>
         );
