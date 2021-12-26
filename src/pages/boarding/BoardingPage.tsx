@@ -12,13 +12,12 @@ import {FlexDirection} from "../../logic/FlexDirection";
 import {Align} from "../../logic/Align";
 import {Text, TextType} from "../../components/Text";
 import {FlexBox} from "../../components/FlexBox";
-import {InformationBox} from "../../components/InformationBox";
-import {ObjectVisualMeaning} from "../../logic/ObjectVisualMeaning";
-import {percent} from "../../logic/DimensionalMeasured";
 
-export type BoardingPageProps = {}
+export type BoardingPageProps = {
+}
 
-export type BoardingPageState = {}
+export type BoardingPageState = {
+}
 
 export class BoardingPage extends React.Component<BoardingPageProps, BoardingPageState> {
 

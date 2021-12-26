@@ -11,7 +11,7 @@ import {InformationBox} from "../../components/InformationBox";
 import {ObjectVisualMeaning} from "../../logic/ObjectVisualMeaning";
 import {Button} from "../../components/Button";
 import {Utils} from "../../logic/Utils";
-import {BounceLoader, ClipLoader, MoonLoader} from "react-spinners";
+import {BounceLoader} from "react-spinners";
 import {FlexBox} from "../../components/FlexBox";
 import {FlexDirection} from "../../logic/FlexDirection";
 import {Justify} from "../../logic/Justify";
@@ -38,6 +38,9 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
 
     // todo investigate bug!
     componentDidMount() {
+        this.setState({
+            showMenu: true
+        })
         App.app().registerAction("show-menu", () => {
             this.setState({
                 showMenu: true
@@ -62,21 +65,25 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
 
     // noinspection JSMethodCanBeStatic
     private renderServerAvailabilityStatus(): JSX.Element {
-        const state = App.app().getConnector().socket?.readyState;
+        const connector = App.app().getConnector();
+        const state = connector.socket?.readyState;
         const theme: Themeable.Theme = utilizeGlobalTheme();
         let mc: MeaningfulColors;
+        const config = connector.config;
+
+        const getConnectingBox = () => (<InformationBox visualMeaning={ObjectVisualMeaning.WARNING} width={percent(100)}>
+            <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} justifyContent={Justify.SPACE_BETWEEN} width={percent(100)}>
+                <Text text={`Connecting to\n ${config.address}`}/>
+                <FlexBox flexDir={FlexDirection.ROW}>
+                    <Text text={`${connector.connectionAttempts} / ${config.maxConnectAttempts}`}/>
+                    <BounceLoader color={getMeaningfulColors(ObjectVisualMeaning.WARNING, theme).lighter.css()} size={20}/>
+                </FlexBox>
+            </FlexBox>
+        </InformationBox>);
+
         switch (state) {
             case 0:
-                mc = getMeaningfulColors(ObjectVisualMeaning.WARNING, theme);
-                return (
-                <InformationBox visualMeaning={ObjectVisualMeaning.WARNING} width={percent(100)}>
-                    <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} justifyContent={Justify.SPACE_BETWEEN} width={percent(100)}>
-                        <Text text={"Connecting to server."}/>
-                        <BounceLoader color={mc.lighter.css()} size={20}/>
-                    </FlexBox>
-
-                </InformationBox>
-            );
+                return (getConnectingBox());
             case 1: return (
                 <InformationBox visualMeaning={ObjectVisualMeaning.SUCCESS} width={percent(100)}>
                     <Text text={"Socket connection online."}/>
@@ -87,11 +94,14 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
                     <Text text={"**WARN**: Socket connection closing."}/>
                 </InformationBox>
             );
-            case 3: return (
-                <InformationBox visualMeaning={ObjectVisualMeaning.ERROR} width={percent(100)}>
-                    <Text text={"**ERR**: Socket connection closed."}/>
-                </InformationBox>
-            );
+            case 3:
+                if (connector.connectionAttempts < connector.config.maxConnectAttempts) {
+                    return getConnectingBox();
+                } else return (
+                    <InformationBox visualMeaning={ObjectVisualMeaning.ERROR} width={percent(100)}>
+                        <Text text={"**ERR**: Socket connection closed."}/>
+                    </InformationBox>
+                );
             default: return (<>Error</>);
         }
     }

@@ -1,6 +1,7 @@
 import React, {Dispatch, SetStateAction} from "react";
 import {v4} from "uuid";
 import {ConnectorConfig} from "./ConnectorConfig";
+import {App} from "./App";
 
 export namespace Environment {
 
@@ -85,11 +86,17 @@ export namespace Environment {
     }
 
     export class Connector {
+        get connectionAttempts(): number {
+            return this._connectionAttempts;
+        }
+        get config(): ConnectorConfig {
+            return this._config;
+        }
 
         private static connectors: Array<Connector> = new Array<Environment.Connector>();
 
         public static useConnector(id: string, factory: () => Connector): Connector {
-            const filter: Array<Connector> = Connector.connectors.filter(value => value.config.id === id);
+            const filter: Array<Connector> = Connector.connectors.filter(value => value._config.id === id);
             if (filter.length === 0) {
                 // No connector found, create new one
                 const connector: Connector = factory();
@@ -132,14 +139,14 @@ export namespace Environment {
 
         private _currentProtocol: string;
 
-        private config: ConnectorConfig;
+        private _config: ConnectorConfig;
 
-        private connectionAttempts: number;
+        private _connectionAttempts: number;
 
         constructor(config: ConnectorConfig) {
-            this.config = config;
+            this._config = config;
             this._reconnectLock = false;
-            this.connectionAttempts = 0;
+            this._connectionAttempts = 0;
             this._currentProtocol = config.protocol;
             Connector.connectors.push(this);
         }
@@ -260,21 +267,23 @@ export namespace Environment {
         public connect(reconnect: boolean = false): Connector {
             try {
                 if (this._socket?.readyState !== WebSocket.OPEN && this._socket?.readyState !== WebSocket.CONNECTING) {
-                    this._socket = new WebSocket(this.config.address);
+                    this._socket = new WebSocket(this._config.address);
                     this._socket.onopen = ev => {
                         // Reset variables
-                        this.connectionAttempts = 0;
+                        this._connectionAttempts = 0;
                         this._reconnectLock = false;
                         // Fire 'open' event
-                        this.fireSocketEvent(SocketEventTypes.ONOPEN, ev)
+                        this.fireSocketEvent(SocketEventTypes.ONOPEN, ev);
+
+                        App.app().rerenderGlobally();
                     };
                     this._socket.onclose = ev => {
                         this.fireSocketEvent(SocketEventTypes.ONCLOSE, ev)
-                        if (this.connectionAttempts < this.config.maxConnectAttempts) {
+                        if (this._connectionAttempts < this._config.maxConnectAttempts) {
                             if (!this._reconnectLock){
                                 let timeout: number = 0;
                                 try {
-                                    timeout = Math.max(this.config.connectionRetryDelayFunc(this.connectionAttempts), 0);
+                                    timeout = Math.max(this._config.connectionRetryDelayFunc(this._connectionAttempts), 0);
                                 } catch (e) {
                                     console.error(e);
                                 }
@@ -286,12 +295,12 @@ export namespace Environment {
                             }
                         } else {
                             console.error("Socket was unable to connect");
-                            this.config.onConnectionFailed?.();
+                            this._config.onConnectionFailed?.();
                         }
                     };
                     this._socket.onmessage = ev => {
                         const packet: Packet = JSON.parse(ev.data) as Packet;
-                        this.config.packetInterceptor(packet);
+                        this._config.packetInterceptor(packet);
                         if (packet.type === PacketType.RESPONSE) {
                             // It's a return packet
                             const callback: Handler | undefined = this._responseMap.get(packet.id);
@@ -307,7 +316,7 @@ export namespace Environment {
                                 });
                             })
                             // Call current protocol
-                            const protocol: Protocol | undefined = this._protocols.get(this.config.protocol);
+                            const protocol: Protocol | undefined = this._protocols.get(this._config.protocol);
                             if (protocol !== undefined) {
                                 this.handlePacketForProtocol({
                                     packet: packet,
@@ -318,14 +327,16 @@ export namespace Environment {
                         }
                     };
                     this._socket.onerror = ev => {
-                        this.config.onConnectionFailed?.();
+                        this._config.onError?.();
                     }
+
+                    App.app().rerenderGlobally();
                 }
             } catch (e) {
                 // todo info the client -> console / ui
                 // console.error(e);
             }
-            this.connectionAttempts++;
+            this._connectionAttempts++;
             return this;
         }
 
@@ -363,11 +374,11 @@ export namespace Environment {
         }
 
         public registerProtocolPacketHandlerOnCurrentProtocol(packetID: string, handler: Handler): Connector {
-            return this.registerProtocolPacketHandler(this.config.protocol, packetID, handler);
+            return this.registerProtocolPacketHandler(this._config.protocol, packetID, handler);
         }
 
         public getCurrentProtocol(): Protocol {
-            return this.protocols.get(this.config.protocol) as Protocol;
+            return this.protocols.get(this._config.protocol) as Protocol;
         }
 
         get baseProtocols(): Array<Environment.Protocol> {

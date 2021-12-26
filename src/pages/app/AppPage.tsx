@@ -17,13 +17,6 @@ import {Monaco} from "../../tests/editor/Monaco";
 import {SelectAppConfigPageV2} from "../../debug/pages/selectAppConfig/SelectAppConfigPage";
 import {AppConfigSelectionData} from "../../debug/components/AppConfigSelector";
 import {RegexPage} from "../../tests/regex/RegexPage";
-import {Button} from "../../components/Button";
-import {ObjectVisualMeaning} from "../../logic/ObjectVisualMeaning";
-import {FlexBox} from "../../components/FlexBox";
-import {Justify} from "../../logic/Justify";
-import {FlexDirection} from "../../logic/FlexDirection";
-import {Text} from "../../components/Text";
-import {Align} from "../../logic/Align";
 
 export type AppPageProps = {
 }
@@ -142,8 +135,8 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                 protocol: "login",
                 address: "ws://192.168.2.100:80",
                 id: "ton",
-                maxConnectAttempts: 5,
-                connectionRetryDelayFunc: (i => 0.1 * (i) ** 2 * 1e3 - 10 * 1e3),
+                maxConnectAttempts: 10,
+                connectionRetryDelayFunc: () => 0,
                 packetInterceptor: (packet: Environment.Packet) => {
                     console.log(packet);
                 }

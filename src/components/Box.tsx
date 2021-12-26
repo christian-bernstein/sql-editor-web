@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import {getMeaningfulColors, MeaningfulColors, Themeable} from "../Themeable";
-import {App, utilizeGlobalTheme} from "../logic/App";
+import {utilizeGlobalTheme} from "../logic/App";
 import {DimensionalMeasured} from "../logic/DimensionalMeasured";
 import {OverflowBehaviour} from "../logic/OverflowBehaviour";
 import {getOr} from "../logic/Utils";
@@ -15,15 +15,12 @@ export type BoxProps = {
     height?: DimensionalMeasured,
     overflowXBehaviour?: OverflowBehaviour,
     overflowYBehaviour?: OverflowBehaviour,
-
     visualMeaning?: ObjectVisualMeaning,
     opaque?: boolean,
     opaqueValue?: number,
-
     noPadding?: boolean
     paddingX?: DimensionalMeasured,
     paddingY?: DimensionalMeasured,
-
     onClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
     gapX?: DimensionalMeasured,
     gapY?: DimensionalMeasured,

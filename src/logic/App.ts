@@ -51,11 +51,13 @@ export class App {
 
     private readonly _progressTrackerManager: ProgressTrackerManager = new ProgressTrackerManager(this);
 
-    private readonly _logHistory: any[][] = []
+    private readonly _logHistory: any[][] = [];
+
+    private readonly shards: Map<String, Shard> = new Map<String, Shard>();
+
+    private readonly actions: Map<String, Array<() => void>> = new Map<String, Array<() => void>>();
 
     private globalTheme: string;
-
-    private shards: Map<String, Shard> = new Map<String, Shard>();
 
     private _config: AppConfig;
 
@@ -64,8 +66,6 @@ export class App {
     private _userData: UserData | undefined;
 
     private _initiated: boolean = false;
-
-    private actions: Map<String, Array<() => void>> = new Map<String, Array<() => void>>();
 
     constructor(config: AppConfig) {
         this._config = config;
@@ -273,7 +273,6 @@ export class App {
     }
 
     public rerenderGlobally() {
-        console.log(`"rerender-hook: ${this.config.rootRerenderHook}`);
         this.config.rootRerenderHook?.();
     }
 

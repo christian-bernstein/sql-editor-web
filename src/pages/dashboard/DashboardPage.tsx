@@ -14,11 +14,9 @@ import {v4} from "uuid";
 import {ProjectInfoData} from "../../logic/ProjectInfoData";
 
 export type DashboardPageProps = {
-
 }
 
 export type DashboardPageState = {
-
     _a: string
 }
 
@@ -29,14 +27,6 @@ export default class DashboardPage extends React.Component<DashboardPageProps, D
         this.state = {
             _a: "none"
         };
-    }
-
-    componentDidMount() {
-        // JSON.stringify(App.app().serverFlow("hello-world").then(value => {
-        //     this.setState({
-        //         _a: JSON.stringify(value)
-        //     });
-        // }))
     }
 
     // noinspection JSMethodCanBeStatic
