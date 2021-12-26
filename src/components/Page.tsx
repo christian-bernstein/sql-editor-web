@@ -1,4 +1,4 @@
-import React from "react";
+import React, {CSSProperties} from "react";
 import {Themeable} from "../Themeable";
 import {utilizeGlobalTheme} from "../logic/App";
 import styled from "styled-components";
@@ -9,6 +9,7 @@ export type PageProps = {
     gapX?: DimensionalMeasured,
     gapY?: DimensionalMeasured,
     deactivateGap?: boolean,
+    style?: CSSProperties
 }
 
 export const PageV2: React.FC<PageProps> = React.memo(props => {
@@ -24,7 +25,7 @@ export const PageV2: React.FC<PageProps> = React.memo(props => {
           gap: ${getOr(props.deactivateGap, false) ? 0 : getOr(props.gapY?.css(), theme.gaps.defaultGab.css())} ${getOr(props.deactivateGap, false) ? 0 : getOr(props.gapX?.css(), theme.gaps.defaultGab.css())}
         `;
     return (
-        <Wrapper>
+        <Wrapper style={getOr(props.style, {})}>
             {props.children}
         </Wrapper>
     );

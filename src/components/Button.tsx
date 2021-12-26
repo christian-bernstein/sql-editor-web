@@ -32,6 +32,7 @@ export class Button extends React.Component<ButtonProps, any> {
           border: 1px solid ${meaningfulColors.lighter.css()};
           padding: ${theme.paddings.defaultButtonPadding.css()};
           color: ${theme.colors.fontPrimaryColor.css()};
+          font-family: ${theme.texts.fontFamily};
           
           display: flex;
           align-content: center;

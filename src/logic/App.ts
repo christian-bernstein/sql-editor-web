@@ -51,6 +51,8 @@ export class App {
 
     private readonly _progressTrackerManager: ProgressTrackerManager = new ProgressTrackerManager(this);
 
+    private readonly _logHistory: any[][] = []
+
     private globalTheme: string;
 
     private shards: Map<String, Shard> = new Map<String, Shard>();
@@ -138,6 +140,10 @@ export class App {
                 }
             });
         });
+    }
+
+    public checkServerAvailability(): boolean {
+        return false;
     }
 
     public registerAction(name: string, action: () => void) {
@@ -243,23 +249,66 @@ export class App {
         }));
     }
 
+    public getConnector(): Environment.Connector {
+        return Environment.Connector.useConnector("ton", () => {
+            return new Environment.Connector(this.config.connectorConfig).registerSocketEventHandler(Environment.SocketEventTypes.ONOPEN, {
+                stator: true,
+                usagesLeft: 10000,
+                handle: ev => {
+                    console.log("connection established");
+                    this.callAction("connection-established");
+                }
+            }).registerSocketEventHandler(Environment.SocketEventTypes.ONCLOSE, {
+                stator: true,
+                usagesLeft: 10000,
+                handle: ev => {
+                    this.rerenderGlobally();
+                }
+            }).connect();
+        })
+    }
+
     public getGlobalTheme(): Themeable.Theme {
         return this.themes.get(this.globalTheme) as Themeable.Theme;
     }
 
     public rerenderGlobally() {
+        console.log(`"rerender-hook: ${this.config.rootRerenderHook}`);
         this.config.rootRerenderHook?.();
     }
 
     private init() {
         document.title = this.config.appTitle + (this.config.debugMode ? " (Debug mode)" : "");
         this._initiated = true;
+
+        // Create the console interception
+        this.initLogInterceptor();
+    }
+
+    private addLogInterceptor(methodName: "log" | "info" | "warn" | "error") {
+        const stream: { (message?: any, ...optionalParams: any[]): void; (...data: any[]): void; (...data: any[]): void } = console[methodName];
+        console[methodName] = (...data: any[]) => {
+            this.logHistory.push([methodName, ...data]);
+
+            // Delete oldest log entry if needed
+            if (this.logHistory.length > this.config.logSaveSize) {
+                this.logHistory.shift();
+            }
+
+            // Print to standard log
+            stream(...data);
+        }
+    }
+
+    private initLogInterceptor() {
+        ["log", "info", "warn", "error"].forEach(method => {
+            this.addLogInterceptor(method as "log" | "info" | "warn" | "error");
+        });
     }
 
     private sessionLogin(sessionID: string, loginResponseCallback: (data: SessionIDLoginResponsePacketData) => void) {
         this.callAction("login-process-started");
         this.connector(connector1 => {
-            console.log("send session login")
             connector1.call({
                 protocol: "login",
                 packetID: "SessionIDLoginPacketData",
@@ -269,7 +318,6 @@ export class App {
                 callback: {
                     handle: (connector, packet) => {
                         this.callAction("login-process-ended");
-                        console.log("received session login response packet")
                         loginResponseCallback(packet.data as object as SessionIDLoginResponsePacketData);
                     }
                 }
@@ -327,6 +375,10 @@ export class App {
 
     get initiated(): boolean {
         return this._initiated;
+    }
+
+    get logHistory(): any[][] {
+        return this._logHistory;
     }
 
     public flow(): FlowAccessPoint {

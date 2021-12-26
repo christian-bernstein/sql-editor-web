@@ -10,9 +10,9 @@
   align-items: center;
 
   .menu {
-    height: 100%;
+    // height: 100%;
     overflow: hidden;
-    transform: scale(.85);
+    height: 85%;
     width: 80%;
     visibility: hidden;
 
@@ -37,7 +37,8 @@
       transform: scale(.85);
       transform-origin: left;
       // border-radius: 49px;
-      border-radius: 27px;
+      // border-radius: 27px;
+      border-radius: 6px;
       box-shadow:
               0 0 0 1px $border-color-secondary;
               // 0 0 45px 10px rgba(10, 10, 10, .5)

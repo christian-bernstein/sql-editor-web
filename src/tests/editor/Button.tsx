@@ -1,6 +1,6 @@
 import React from "react";
 import {Themeable} from "../../Themeable";
-import {utilizeApp} from "../../logic/App";
+import {utilizeApp, utilizeGlobalTheme} from "../../logic/App";
 import styled from "styled-components";
 
 export type ButtonProps = {
@@ -16,7 +16,7 @@ export class Button extends React.Component<ButtonProps, any> {
     }
 
     render() {
-        const theme: Themeable.Theme = utilizeApp().getGlobalTheme();
+        const theme: Themeable.Theme = utilizeGlobalTheme();
         const Button = styled.button`
           display: flex;
           justify-content: center;

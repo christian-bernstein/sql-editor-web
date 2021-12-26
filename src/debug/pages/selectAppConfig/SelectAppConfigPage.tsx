@@ -12,6 +12,8 @@ import {v4} from "uuid";
 import _ from "lodash";
 import {Icon} from "../../../components/Icon";
 import {ReactComponent as FilterIcon} from "../../../assets/icons/ic-24/ic24-filter.svg";
+import {ProfilePicture} from "../../../components/ProfilePicture";
+
 
 
 export type SelectAppConfigPageProps = {
@@ -98,6 +100,7 @@ export const SelectAppConfigPageV2: React.FC<SelectAppConfigPageProps> = props =
                 <Text type={TextType.smallHeader} text={"Select app profile…"}/>
                 <Text type={TextType.secondaryDescription}
                       text={"Starting the **App** instance with a selected app config"}/>
+                <ProfilePicture name={"chris"}/>
             </FlexBox>
 
             <Input opaque
@@ -112,78 +115,3 @@ export const SelectAppConfigPageV2: React.FC<SelectAppConfigPageProps> = props =
         </div>
     );
 }
-
-// export class SelectAppConfigPage extends React.Component<SelectAppConfigPageProps, SelectAppConfigPageState> {
-//
-//     constructor(props: SelectAppConfigPageProps) {
-//         super(props);
-//         this.state = {
-//             filter: undefined
-//         };
-//     }
-//
-//     private handleFilterChange(newFilter: string) {
-//         this.forceUpdate(() => {
-//             console.log("forced update")
-//         });
-//         setTimeout(() => {
-//             console.log("change!")
-//             this.setState({
-//                 filter: (newFilter === "") ? undefined : newFilter.toLocaleLowerCase()
-//             });
-//         }, 1000);
-//     }
-//
-//     private getConfigs(): AppConfigSelectionData[] {
-//         if (this.state.filter !== "" || this.state.filter !== undefined) {
-//             return this.props.configs.filter(config => config.title.toLocaleLowerCase().match(this.state.filter as string));
-//         } else {
-//             return this.props.configs;
-//         }
-//     }
-//
-//
-//
-//     render() {
-//         const theme: Themeable.Theme = utilizeGlobalTheme();
-//         const Wrapper = styled.div`
-//           background-color: ${theme.colors.backgroundColor.css()};
-//           display: flex;
-//           flex-direction: column;
-//           align-items: center;
-//           height: 100%;
-//           width: 100%;
-//           overflow-y: scroll;
-//           gap: ${theme.paddings.defaultObjectPadding.css()};
-//         `;
-//         return (
-//             <Page>
-//                 <FlexBox gap={dimension(5, Dimension.px)}>
-//                     <Text type={TextType.smallHeader} text={"Select app profile…"}/>
-//                     <Text type={TextType.secondaryDescription}
-//                           text={"Starting the **App** instance with a selected app config"}/>
-//                 </FlexBox>
-//
-//                 <Input id={"search-input"}
-//                        autoFocus
-//                        value={getOr(this.state.filter, "")}
-//                        opaque
-//                        label={"App config title"}
-//                        onChange={ev => this.handleFilterChange(ev.target.value)
-//                 }/>
-//
-//                 <Wrapper>
-//                     {this.getConfigs().map(config => {
-//                         return (
-//                             <AppConfigSelector
-//                                 key={v4()}
-//                                 data={config}
-//                                 onSelection={data => this.props.onSelection(data)}
-//                             />
-//                         )
-//                     })}
-//                 </Wrapper>
-//             </Page>
-//         );
-//     }
-// }

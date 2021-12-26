@@ -1,7 +1,7 @@
 import React from "react";
 import "../../styles/pages/AppPage.scss";
 import "../../utils.scss";
-import {BrowserRouter, Route, Redirect} from "react-router-dom";
+import {BrowserRouter, Redirect, Route} from "react-router-dom";
 import {DefaultSpecialPages} from "../../logic/DefaultSpecialPages";
 import {BoardingPage} from "../boarding/BoardingPage";
 import {LoginPage} from "../login/LoginPage";
@@ -17,6 +17,13 @@ import {Monaco} from "../../tests/editor/Monaco";
 import {SelectAppConfigPageV2} from "../../debug/pages/selectAppConfig/SelectAppConfigPage";
 import {AppConfigSelectionData} from "../../debug/components/AppConfigSelector";
 import {RegexPage} from "../../tests/regex/RegexPage";
+import {Button} from "../../components/Button";
+import {ObjectVisualMeaning} from "../../logic/ObjectVisualMeaning";
+import {FlexBox} from "../../components/FlexBox";
+import {Justify} from "../../logic/Justify";
+import {FlexDirection} from "../../logic/FlexDirection";
+import {Text} from "../../components/Text";
+import {Align} from "../../logic/Align";
 
 export type AppPageProps = {
 }
@@ -24,8 +31,11 @@ export type AppPageProps = {
 export type AppPageState = {
     showMenu: boolean,
     currentSpecialPage?: string,
-    paramSupplier?: () => any
+    paramSupplier?: () => any,
+    updateSlave: number
 }
+
+let hook: () => void;
 
 export class AppPage extends React.Component<AppPageProps, AppPageState> {
 
@@ -40,78 +50,16 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
     constructor(props: AppPageProps) {
         super(props);
         this.state = {
-            showMenu: false
+            showMenu: false,
+            updateSlave: 0
         };
+        this.init();
     }
 
     componentDidMount() {
-        this.activateSpecialPage(DefaultSpecialPages.SELECT_APP_CONFIG, () => [{
-            title: "DESKTOP-1D80A0M",
-            description: "Personal debug environment. Connect to a local ton server instance in debug mode.",
-            config: {
-                appTitle: "SQL Editor (DESKTOP-1D80A0M)",
-                debugMode: true,
-                defaultAppRoute: "/boarding",
-                defaultDebugAppRoute: "/chart",
-                themes: new Map<string, Themeable.Theme>([["dark-green", Themeable.defaultTheme]]),
-                defaultTheme: "dark-green",
-                rootRerenderHook: (callback) => this.forceUpdate(callback),
-                connectorConfig: {
-                    protocol: "login",
-                    address: "ws:192.168.2.100:80",
-                    id: "ton",
-                    maxConnectAttempts: 50,
-                    connectionRetryDelayFunc: (i => 0.1 * (i) ** 2 * 1e3 - 10 * 1e3),
-                    packetInterceptor: (packet: Environment.Packet) => {
-                        console.log(packet);
-                    }
-                }
-            } as AppConfig,
-        }, {
-            title: "Central Server (release)",
-            description: "Current release server, wrapped in a **bernie-sql-editor-reactor**-instance. Reactor instance controllable via Pterodactyl panel available at [**pterodactyl.cwies.de**](https://pterodactyl.cwies.de/).",
-            config: {
-                appTitle: "SQL Editor",
-                debugMode: false,
-                defaultAppRoute: "/boarding",
-                defaultDebugAppRoute: "/",
-                themes: new Map<string, Themeable.Theme>([["dark-green", Themeable.defaultTheme]]),
-                defaultTheme: "dark-green",
-                rootRerenderHook: (callback) => this.forceUpdate(callback),
-                connectorConfig: {
-                    protocol: "login",
-                    address: "ws:192.168.2.100:80",
-                    id: "ton",
-                    maxConnectAttempts: 50,
-                    connectionRetryDelayFunc: (i => 0.1 * (i) ** 2 * 1e3 - 10 * 1e3),
-                    packetInterceptor: (packet: Environment.Packet) => {
-                        console.log(packet);
-                    }
-                }
-            } as AppConfig,
-        }, {
-            title: "Regex viewer asd",
-            description: "The regex viewer is a simple app that lets you write & check regular expressions with ease. As a side project, this hasn't much functionality. A more sophisticated regex tool available [**here**](https://regexr.com/). ",
-            config: {
-                appTitle: "Regex Viewer",
-                debugMode: true,
-                defaultAppRoute: "/regex",
-                defaultDebugAppRoute: "/",
-                themes: new Map<string, Themeable.Theme>([["dark-green", Themeable.defaultTheme]]),
-                defaultTheme: "dark-green",
-                rootRerenderHook: (callback) => this.forceUpdate(callback),
-                connectorConfig: {
-                    protocol: "login",
-                    address: "ws:192.168.2.100:80",
-                    id: "ton",
-                    maxConnectAttempts: 50,
-                    connectionRetryDelayFunc: (i => 0.1 * (i) ** 2 * 1e3 - 10 * 1e3),
-                    packetInterceptor: (packet: Environment.Packet) => {
-                        console.log(packet);
-                    }
-                }
-            } as AppConfig,
-        }] as AppConfigSelectionData[]);
+        hook = () => this.setState({
+            updateSlave: this.state.updateSlave + 1
+        });
     }
 
     public activateSpecialPage(id: string, paramSupplier: () => any): AppPage {
@@ -136,10 +84,14 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
         return this.specialPageRenderers.get(page)?.(paramSupplier()) as JSX.Element;
     }
 
+    public rerender() {
+        hook();
+    }
+
     render() {
         return (
             <div className={"app"}>
-                {this.state.currentSpecialPage !== undefined? this.renderSpecialPage() : this.renderDefaultPage()}
+                {this.state.currentSpecialPage !== undefined ? this.renderSpecialPage() : this.renderDefaultPage()}
             </div>
         );
     }
@@ -158,23 +110,19 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
 
     private getRouts(): JSX.Element[] {
         const config: AppConfig = App.app().config;
-        const routs: JSX.Element[] = [];
-        routs.push(
+        const routs: JSX.Element[] = [
             <Route path={"/"} exact render={() => <Redirect push to={config.debugMode ? config.defaultDebugAppRoute : config.defaultAppRoute}/>}/>,
             <Route path={"/boarding"} render={() => <BoardingPage/>}/>,
             <Route path={"/login"} render={() => <LoginPage/>}/>,
             <Route path={"/dashboard"} render={() => <DashboardPage/>}/>
-        );
+        ];
         if (config.debugMode) {
             routs.push(
                 <Route path={"/chart"} render={() => <ChartPage/>}/>,
                 <Route path={"/monaco"} render={() => <Monaco/>}/>,
                 <Route path={"/regex"} render={() => <RegexPage/>}/>,
-                <Route path={"/panel"} render={() => <ControlPanelComponent
-                    address={"ws:192.168.2.100:30001"}
-                    connectorID={"panel"}
-                />}/>,
-            )
+                <Route path={"/panel"} render={() => <ControlPanelComponent address={"ws:192.168.2.100:30001"} connectorID={"panel"}/>}/>
+            );
         }
         return routs;
     }
@@ -182,17 +130,19 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
     private init(config?: AppConfig) {
         App.appOrCreate(config ? config : {
             appTitle: "SQL Editor",
-            debugMode: true,
+            debugMode: false,
             defaultAppRoute: "/boarding",
             defaultDebugAppRoute: "/chart",
             themes: new Map<string, Themeable.Theme>([["dark-green", Themeable.defaultTheme]]),
             defaultTheme: "dark-green",
-            rootRerenderHook: (callback) => this.forceUpdate(callback),
+            rootRerenderHook: (callback) => this.rerender.bind(this)(),
+            logInterceptors: [],
+            logSaveSize: 1000,
             connectorConfig: {
                 protocol: "login",
-                address: "ws:192.168.2.100:80",
+                address: "ws://192.168.2.100:80",
                 id: "ton",
-                maxConnectAttempts: 50,
+                maxConnectAttempts: 5,
                 connectionRetryDelayFunc: (i => 0.1 * (i) ** 2 * 1e3 - 10 * 1e3),
                 packetInterceptor: (packet: Environment.Packet) => {
                     console.log(packet);
@@ -200,5 +150,4 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
             }
         });
     }
-
 }

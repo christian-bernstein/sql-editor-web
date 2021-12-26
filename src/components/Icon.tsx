@@ -10,7 +10,9 @@ import {getOr} from "../logic/Utils";
 export type IconProps = {
     colored?: boolean,
     icon: JSX.Element,
-    size?: DimensionalMeasured
+    size?: DimensionalMeasured,
+    hoverAnimation?: boolean,
+    onClick?: () => void
 } & WithVisualMeaning
 
 export const Icon: React.FC<IconProps> = React.memo(props => {
@@ -21,6 +23,7 @@ export const Icon: React.FC<IconProps> = React.memo(props => {
       display: flex;
       align-items: center;
       justify-content: center;
+      cursor: pointer;
       
       svg {
         width: ${(props.size || px(20)).css()};
@@ -30,11 +33,15 @@ export const Icon: React.FC<IconProps> = React.memo(props => {
           fill: ${(props.colored ? meaningfulColors.iconColored : meaningfulColors.icon).css()};
         }
       }
-    
+      
+      &:hover {
+        border-radius: 50%;
+        filter: brightness(1.1);
+      }
     `;
 
     return (
-        <Wrapper>
+        <Wrapper onClick={() => props.onClick?.()}>
             {props.icon}
         </Wrapper>
     );

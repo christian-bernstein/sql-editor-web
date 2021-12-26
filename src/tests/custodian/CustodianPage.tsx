@@ -34,16 +34,19 @@ export class CustodianPage extends React.Component<CustodianPageProps, Custodian
     }
 }
 
-
 export function initApp() {
     // noinspection DuplicatedCode
     App.appOrCreate({
         appTitle: "Mutam",
         debugMode: true,
         defaultAppRoute: "select",
+        logInterceptors: [],
+        // todo implement
+        rootRerenderHook: () => {},
         defaultDebugAppRoute: "/chart",
         themes: new Map<string, Themeable.Theme>([["dark-green", Themeable.defaultTheme]]),
         defaultTheme: "dark-green",
+        logSaveSize: 250,
         connectorConfig: {
             protocol: "login",
             address: "ws:192.168.2.100:80",

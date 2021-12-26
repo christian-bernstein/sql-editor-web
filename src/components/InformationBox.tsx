@@ -10,16 +10,18 @@ import {ReactComponent as SuccessIcon} from "../assets/icons/ic-20/ic20-check.sv
 import {Icon} from "./Icon";
 import {Align} from "../logic/Align";
 import {getOr} from "../logic/Utils";
+import {DimensionalMeasured} from "../logic/DimensionalMeasured";
 
 export type InformationBoxProps = {
-    visualMeaning?: ObjectVisualMeaning
+    visualMeaning?: ObjectVisualMeaning,
+    width?: DimensionalMeasured
 }
 
 export const InformationBox: React.FC<InformationBoxProps> = props => {
     const vm: ObjectVisualMeaning = getOr(props.visualMeaning, ObjectVisualMeaning.UI_NO_HIGHLIGHT);
 
     return(
-        <Box visualMeaning={vm} opaque>
+        <Box visualMeaning={vm} opaque width={props.width}>
             <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER}>
                 <Icon visualMeaning={vm} colored icon={getMeaningfulIcon(vm)}/>
                 {props.children}

@@ -3,12 +3,17 @@ import React, {ChangeEvent} from "react";
 import {Credentials} from "./Credentials";
 import {CredentialsPreCheckResult} from "./CredentialsPreCheckResult";
 import {ICredentialsPreChecker} from "./ICredentialsPreChecker";
-import {ReactComponent as BackIcon} from "../../assets/icons/ic-20/ic20-chevron-left.svg";
+import {ReactComponent as BackIcon} from "../../assets/icons/ic-20/ic20-arrow-left.svg";
+import {ReactComponent as AppLogo} from "../../assets/logo.svg";
 import {Redirect} from "react-router-dom";
 import {BarLoader} from "react-spinners";
 import {css} from "@emotion/react";
 import {App} from "../../logic/App";
 import {Input} from "../../components/Input";
+import {FlexBox} from "../../components/FlexBox";
+import {FlexDirection} from "../../logic/FlexDirection";
+import {Align} from "../../logic/Align";
+import {Text, TextType} from "../../components/Text";
 
 export type LoginPageProps = {
     calledFromWhere?: string
@@ -126,66 +131,11 @@ export class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
                         redirect: true,
                         redirectLocation: "/dashboard"
                     });
+                },
+                onLoginFail: () => {
+                    console.log("login failed!!")
                 }
             });
-
-            // const credentialsLoginProcedure = (loginResponseCallback: (data: CredentialsLoginResponsePacketData) => void) => {
-            //     this.setState({
-            //         loginInProcess: true
-            //     });
-            //     this.state.connector.call({
-            //         protocol: "login",
-            //         packetID: "CredentialsLoginPacketData",
-            //         data: {
-            //             credentials: this.state.credentials
-            //         },
-            //         callback: {
-            //             handle: (connector, packet) => {
-            //                 this.setState({
-            //                     loginInProcess: false
-            //                 });
-            //                 loginResponseCallback(packet.data as object as CredentialsLoginResponsePacketData)
-            //             }
-            //         }
-            //     });
-            // }
-            //
-            // if (this.state.sessionID === undefined) {
-            //     // No session state available to try session login, need credentials login procedure
-            //     credentialsLoginProcedure(data => {
-            //         console.log(data)
-            //         if (data.type === CredentialsCheckResultType.OK) {
-            //
-            //             App.appOrCreate({
-            //                 connectorConfig: {
-            //                     protocol: "login",
-            //                     address: "wss:192.168.2.102:80",
-            //                     id: "login",
-            //                     maxConnectAttempts: 50,
-            //                     connectionRetryDelayFunc: (i => 0.1 * (i) ** 2 * 1e3 - 10 * 1e3),
-            //                     packetInterceptor: () => {}
-            //                 }
-            //             }).sessionID = data.newSessionID;
-            //             // Set user login state to 'logged in'
-            //             this.setState({
-            //                 sessionID: data.newSessionID,
-            //                 redirect: true
-            //             });
-            //         } else if (data.type === CredentialsCheckResultType.UNKNOWN_USERNAME) {
-            //             // The provided credentials were wrong, highlight the input fields
-            //             // The username doesn't correlate to an account stored on the current server instance
-            //
-            //
-            //         } else if (data.type === CredentialsCheckResultType.INCORRECT_PASSWORD) {
-            //             // The provided credentials were wrong, highlight the input fields
-            //             // The password doesn't correlate to the password stored on the current server instance
-            //
-            //
-            //         }
-            //     });
-            // } else {
-            //     // Try to login via sessionID
-            // }
         }
     }
 
@@ -201,6 +151,7 @@ export class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
         } else return <Redirect to={location as string}/>;
     }
 
+    // <ObjectJSONDisplay object={App.app().config.connectorConfig}/>
     private renderLogin(): JSX.Element {
         return (
             <div className={"login-page"}>
@@ -210,15 +161,27 @@ export class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
                         <h3 className={"page-name"}>Login</h3>
                     </div>
 
-                    <form className={"login"}>
+                    <FlexBox flexDir={FlexDirection.COLUMN} align={Align.CENTER}>
+                        <AppLogo/>
+                        <Text text={"SQL-Editor"} type={TextType.largeHeader}/>
+                        <Text text={"Learn SQL in our interactive\neditor and create powerful projects"}
+                              type={TextType.secondaryDescription}
+                              align={Align.CENTER}
+                        />
+                    </FlexBox>
 
+                    <form className={"login"}>
                         <Input label={"Username"}
+                               opaque
+                               key={"username-input"}
                                onChange={(ev: ChangeEvent<HTMLInputElement>) => {
                                    this.updateCredentials("user", ev.currentTarget.value);
                                }}
                         />
 
                         <Input label={"Password"}
+                               opaque
+                               key={"password-input"}
                                onChange={(ev: ChangeEvent<HTMLInputElement>) => {
                                    this.updateCredentials("pass", ev.currentTarget.value);
                                }}

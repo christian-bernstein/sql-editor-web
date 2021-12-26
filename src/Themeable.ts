@@ -108,6 +108,7 @@ export namespace Themeable {
         texts: {
             fontFamily: string,
             complete: {
+                boldLargeHeader: CSSProperties,
                 boldSmallHeader: CSSProperties,
                 defaultText: CSSProperties,
                 boldSmallHeaderDeactivated: CSSProperties,
@@ -163,6 +164,14 @@ export namespace Themeable {
             // todo implement global font family
             fontFamily: "Operator Mono",
             complete: {
+                boldLargeHeader: {
+                    fontFamily: "OperatorMono",
+                    fontStyle: "normal",
+                    fontWeight: "bold",
+                    fontSize: px(40).css(),
+                    lineHeight: px(50).css(),
+                    display: "flex"
+                },
                 boldSmallHeader: {
                     margin: 0,
                     fontFamily: "OperatorMono",

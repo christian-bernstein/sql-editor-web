@@ -8,6 +8,8 @@ export type AppConfig = {
     defaultAppRoute: string,
     defaultDebugAppRoute: string,
     connectorConfig: ConnectorConfig,
-    themes: Map<string, Themeable.Theme>
-    defaultTheme: string
+    themes: Map<string, Themeable.Theme>,
+    defaultTheme: string,
+    logInterceptors?: ((...data: any[]) => void)[]
+    logSaveSize: number
 }

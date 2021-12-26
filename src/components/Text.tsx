@@ -8,6 +8,7 @@ import {DimensionalMeasured} from "../logic/DimensionalMeasured";
 import {ObjectVisualMeaning} from "../logic/ObjectVisualMeaning";
 import ReactMarkdown from 'react-markdown'
 import {Link} from "./Link";
+import {Align} from "../logic/Align";
 
 export type TextProps = {
     text: string,
@@ -18,18 +19,21 @@ export type TextProps = {
     enableLeftAppendix?: boolean,
     leftAppendix?: JSX.Element,
     coloredIcon?: boolean,
-    linkTooltip?: boolean
+    linkTooltip?: boolean,
+    align?: Align
 }
 
 export enum TextType {
     smallHeader = "small-header",
+    largeHeader = "large-header",
     defaultText = "default-text",
     secondaryDescription = "secondary-description",
-    smallHeaderDeactivated = "small-header-deactivated"
+    smallHeaderDeactivated = "small-header-deactivated",
 }
 
 const textTypeToThemeMapping: Map<TextType, (theme: Themeable.Theme) => CSSProperties> = new Map<TextType, (theme: Themeable.Theme) => CSSProperties>([
     [TextType.smallHeader, theme => theme.texts.complete.boldSmallHeader],
+    [TextType.largeHeader, theme => theme.texts.complete.boldLargeHeader],
     [TextType.defaultText, theme => theme.texts.complete.defaultText],
     [TextType.secondaryDescription, theme => theme.texts.complete.secondaryDescription],
     [TextType.smallHeaderDeactivated, theme => theme.texts.complete.boldSmallHeaderDeactivated],
@@ -63,15 +67,16 @@ export const Text: React.FC<TextProps> = props => {
         margin-bottom: 0;
       }
       
-      .line-break {
+      .md {
         white-space: pre-wrap;
+        text-align: ${getOr(props.align, Align.START)};
       }
     `;
 
     return(
         <Wrapper style={style}>
             {props.enableLeftAppendix ? props.leftAppendix : <></>}
-            <ReactMarkdown className={"line-break"} children={props.text} components={{
+            <ReactMarkdown className={"md"} children={props.text} components={{
                 a: (mdProps, context) => {
                     return (
                         <Link showLinkIcon={false} visualMeaning={props.visualMeaning} href={getOr<string>(mdProps.href, "")}>{mdProps.children}</Link>

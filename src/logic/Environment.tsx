@@ -208,9 +208,6 @@ export namespace Environment {
 
         public call(config: {protocol: string, packetID: string, data: any, callback: Handler}): Connector {
             const uuid: string = v4();
-
-            console.log("call id\n", uuid);
-
             const packet: string = JSON.stringify({
                 protocol: config.protocol,
                 timestamp: Date,
@@ -320,6 +317,9 @@ export namespace Environment {
                             }
                         }
                     };
+                    this._socket.onerror = ev => {
+                        this.config.onConnectionFailed?.();
+                    }
                 }
             } catch (e) {
                 // todo info the client -> console / ui

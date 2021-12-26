@@ -13,6 +13,8 @@ function getConfigs(fil: string): AppConfigSelectionData[] {
             title: String(i),
             description: "",
             config: {
+                logSaveSize: 1000,
+                logInterceptors: [],
                 appTitle: "",
                 debugMode: false,
                 defaultAppRoute: "",
