@@ -12,6 +12,8 @@ import {LoadState} from "../../logic/LoadState";
 import {App} from "../../logic/App";
 import {v4} from "uuid";
 import {ProjectInfoData} from "../../logic/ProjectInfoData";
+import {FlexBox} from "../../components/FlexBox";
+import {PageV2} from "../../components/Page";
 
 export type DashboardPageProps = {
 }
@@ -36,81 +38,88 @@ export default class DashboardPage extends React.Component<DashboardPageProps, D
 
     // noinspection JSMethodCanBeStatic
     private onProjectSelect(data: ProjectInfoData) {
-        console.log("hey: " + data)
     }
 
     render() {
         return (
-            <div className={"dashboard-page"}>
-                {/* header */}
-                <div className={"dashboard-header"}>
-                    <div className={"left-icons"}>
-                        <MenuIcon onClick={event => this.menuIconClickHandle(event)}/>
-                    </div>
-                    <div className={"right-icons"}>
-                        <BadgedWrapper badgeFlowDirection={"right"} badge={<Badge background={Color.ofHex("71D99E")}>20</Badge>} showBadgeInitially={true}>
-                            <InboxIcon/>
-                        </BadgedWrapper>
-                        <BadgedWrapper badgeFlowDirection={"right"} badge={<Badge background={Color.ofHex("71D99E")}>4</Badge>} showBadgeInitially={false}>
-                            <FilterIcon/>
-                        </BadgedWrapper>
-                        <BadgedWrapper badgeFlowDirection={"right"} badge={<Badge background={Color.ofHex("71D99E")}>1</Badge>} showBadgeInitially={false}>
-                            <CreateIcon/>
-                        </BadgedWrapper>
-                    </div>
-                </div>
-
-                {/* title */}
-                <div className={"dashboard-title"}>
-                    <p>Hello,</p>
-                    <h2 className={"name"}>Christian Bernstein</h2>
-                    <pre>{window.localStorage.getItem("session-id")}</pre>
-                    <pre>{this.state._a}</pre>
-                </div>
-
-                {/* Content */}
-                <div className={"dashboard-content"}>
-                    {/* project view */}
-                    <div className={"project-view"}>
-                        <div className={"project-view-header"}>
-                            <h2>SQL Projects</h2>
-                            <div className={"projects"}>
-                                {
-                                    (() => {
-                                        const arr: JSX.Element[] = [];
-                                        for (let i = 0; i < 20; i++) {
-                                            arr.push(
-                                                <ProjectInfo
-                                                    onSelect={data => this.onProjectSelect(data)}
-                                                    data={{
-                                                        id: v4(),
-                                                        state: LoadState.ONLINE,
-                                                        stator: true,
-                                                        edits: 10,
-                                                        lastEdited: new Date(),
-                                                        title: "SQL lesson 21"
-                                                    }}
-                                                />
-                                            );
-                                        }
-                                        return arr;
-                                    })()
-                                }
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* template view
-                    <div className={"template-view"}>
-                        <div className={"template-view-header"}>
-                            <h2>SQL Templates</h2>
-                            <div className={"templates"}>
-
-                            </div>
-                        </div>
-                    </div>*/}
-                </div>
-            </div>
+            <PageV2>
+                <FlexBox>
+                    <ProjectInfo
+                        onSelect={data => this.onProjectSelect(data)}
+                        data={{
+                            id: v4(),
+                            state: LoadState.ONLINE,
+                            stator: true,
+                            edits: 10,
+                            lastEdited: new Date(),
+                            title: "SQL lesson 21"
+                        }}
+                    />
+                    <ProjectInfo
+                        onSelect={data => this.onProjectSelect(data)}
+                        data={{
+                            id: v4(),
+                            state: LoadState.ONLINE,
+                            stator: true,
+                            edits: 10,
+                            lastEdited: new Date(),
+                            title: "SQL lesson 21"
+                        }}
+                    />
+                    <ProjectInfo
+                        onSelect={data => this.onProjectSelect(data)}
+                        data={{
+                            id: v4(),
+                            state: LoadState.ONLINE,
+                            stator: true,
+                            edits: 10,
+                            lastEdited: new Date(),
+                            title: "SQL lesson 21"
+                        }}
+                    />
+                </FlexBox>
+            </PageV2>
+            //<div className={"dashboard-page"}>
+            //    {/* header */}
+            //    <div className={"dashboard-header"}>
+            //        <div className={"left-icons"}>
+            //            <MenuIcon onClick={event => this.menuIconClickHandle(event)}/>
+            //        </div>
+            //        <div className={"right-icons"}>
+            //            <BadgedWrapper badgeFlowDirection={"right"} badge={<Badge background={Color.ofHex("71D99E")}>20</Badge>} showBadgeInitially={true}>
+            //                <InboxIcon/>
+            //            </BadgedWrapper>
+            //            <BadgedWrapper badgeFlowDirection={"right"} badge={<Badge background={Color.ofHex("71D99E")}>4</Badge>} showBadgeInitially={false}>
+            //                <FilterIcon/>
+            //            </BadgedWrapper>
+            //            <BadgedWrapper badgeFlowDirection={"right"} badge={<Badge background={Color.ofHex("71D99E")}>1</Badge>} showBadgeInitially={false}>
+            //                <CreateIcon/>
+            //            </BadgedWrapper>
+            //        </div>
+            //    </div>
+//
+            //    {/* title */}
+            //    <div className={"dashboard-title"}>
+            //        <p>Hello,</p>
+            //        <h2 className={"name"}>Christian Bernstein</h2>
+            //        <pre>{window.localStorage.getItem("session-id")}</pre>
+            //        <pre>{this.state._a}</pre>
+            //    </div>
+//
+            //    <FlexBox>
+            //        <ProjectInfo
+            //            onSelect={data => this.onProjectSelect(data)}
+            //            data={{
+            //                id: v4(),
+            //                state: LoadState.ONLINE,
+            //                stator: true,
+            //                edits: 10,
+            //                lastEdited: new Date(),
+            //                title: "SQL lesson 21"
+            //            }}
+            //        />
+            //    </FlexBox>
+            //</div>
         );
     }
 }

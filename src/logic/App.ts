@@ -287,7 +287,7 @@ export class App {
     private addLogInterceptor(methodName: "log" | "info" | "warn" | "error") {
         const stream: { (message?: any, ...optionalParams: any[]): void; (...data: any[]): void; (...data: any[]): void } = console[methodName];
         console[methodName] = (...data: any[]) => {
-            this.logHistory.push([methodName, ...data]);
+            this.logHistory.push([methodName.toUpperCase(), ...data]);
 
             // Delete oldest log entry if needed
             if (this.logHistory.length > this.config.logSaveSize) {

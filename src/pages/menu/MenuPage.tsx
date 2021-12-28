@@ -38,9 +38,6 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
 
     // todo investigate bug!
     componentDidMount() {
-        this.setState({
-            showMenu: true
-        })
         App.app().registerAction("show-menu", () => {
             this.setState({
                 showMenu: true
@@ -162,6 +159,9 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
                                     }}>
                                 <Text text={"Fullscreen"}/>
                             </Button>
+                        </FlexBox>
+                        <FlexBox flexDir={FlexDirection.ROW}>
+
                         </FlexBox>
                         <ObjectJSONDisplay object={App.app().config} title={"App config"}/>
                         <ObjectJSONDisplay object={App.app().logHistory} title={`Log history (*${App.app().logHistory.length} entries*)`} showControls/>

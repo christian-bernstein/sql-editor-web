@@ -35,7 +35,6 @@ export class ObjectJSONDisplay extends React.Component<ObjectJSONDisplayProps, O
     }
 
     private toggleCollapse(collapse?: boolean) {
-        console.log("toggle collapse")
         this.setState({
             collapsed: getOr(collapse, !this.state.collapsed)
         });

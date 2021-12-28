@@ -28,9 +28,11 @@ export type AppPageState = {
     updateSlave: number
 }
 
-let hook: () => void;
+let hook: undefined | (() => void);
 
 export class AppPage extends React.Component<AppPageProps, AppPageState> {
+
+    private mounted: boolean = false;
 
     private readonly specialPageRenderers: Map<string, (params: any) => JSX.Element> = new Map<string, (params: any) => JSX.Element>([
         [DefaultSpecialPages.BOARDING, () => <></>],
@@ -53,6 +55,12 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
         hook = () => this.setState({
             updateSlave: this.state.updateSlave + 1
         });
+        this.mounted = true;
+    }
+
+    componentWillUnmount() {
+        this.mounted = false;
+        hook = undefined;
     }
 
     public activateSpecialPage(id: string, paramSupplier: () => any): AppPage {
@@ -78,7 +86,11 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
     }
 
     public rerender() {
-        hook();
+        if (this.mounted) {
+            if (hook) {
+                hook();
+            } else console.error("Trying to rerender globally, but hook is undefined");
+        } else console.error("Trying to rerender globally, but app-page isn't mounted");
     }
 
     render() {
@@ -138,7 +150,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                 maxConnectAttempts: 5,
                 connectionRetryDelayFunc: () => 0,
                 packetInterceptor: (packet: Environment.Packet) => {
-                    console.log(packet);
+                    console.log("received packet from server", packet);
                 }
             }
         });

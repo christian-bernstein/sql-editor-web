@@ -274,7 +274,6 @@ export namespace Environment {
                         this._reconnectLock = false;
                         // Fire 'open' event
                         this.fireSocketEvent(SocketEventTypes.ONOPEN, ev);
-
                         App.app().rerenderGlobally();
                     };
                     this._socket.onclose = ev => {
@@ -329,7 +328,6 @@ export namespace Environment {
                     this._socket.onerror = ev => {
                         this._config.onError?.();
                     }
-
                     App.app().rerenderGlobally();
                 }
             } catch (e) {

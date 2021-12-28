@@ -24,6 +24,7 @@ export type BoxProps = {
     onClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
     gapX?: DimensionalMeasured,
     gapY?: DimensionalMeasured,
+    color?: Color
 }
 
 export class Box extends React.Component<BoxProps, any> {
@@ -35,7 +36,8 @@ export class Box extends React.Component<BoxProps, any> {
     render() {
         const theme: Themeable.Theme = utilizeGlobalTheme();
         const meaningfulColors: MeaningfulColors = getMeaningfulColors(getOr(this.props.visualMeaning, ObjectVisualMeaning.UI_NO_HIGHLIGHT), theme);
-        const bgColor: Color = this.props.opaque ? meaningfulColors.main.withAlpha(getOr(this.props.opaqueValue, .1)): meaningfulColors.main;
+        const col: Color = this.props.color ? this.props.color : meaningfulColors.main;
+        const bgColor: Color = this.props.opaque ? col.withAlpha(getOr(this.props.opaqueValue, .1)) : col;
 
         const Box = styled.div`
           background-color: ${bgColor.css()};
@@ -50,7 +52,7 @@ export class Box extends React.Component<BoxProps, any> {
           display: flex;
           flex-direction: column;
           gap: ${getOr(this.props.gapY?.css(), "0")} ${getOr(this.props.gapX?.css(), "0")};
-          min-height: 100% !important;
+          // min-height: 100% !important;
           
           &.highlight:hover {
             filter: brightness(${theme.hovers.hoverLightFilter.css()});
