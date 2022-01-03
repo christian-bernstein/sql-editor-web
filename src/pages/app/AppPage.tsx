@@ -17,6 +17,10 @@ import {Monaco} from "../../tests/editor/Monaco";
 import {SelectAppConfigPageV2} from "../../debug/pages/selectAppConfig/SelectAppConfigPage";
 import {AppConfigSelectionData} from "../../debug/components/AppConfigSelector";
 import {RegexPage} from "../../tests/regex/RegexPage";
+import {CommandPallet} from "../../components/CommandPallet";
+import {Button} from "../../components/Button";
+import {DebugEditor} from "../editor/debug/DebugEditor";
+import {DBSessionCacheShard} from "../../shards/DBSessionCacheShard";
 
 export type AppPageProps = {
 }
@@ -25,10 +29,13 @@ export type AppPageState = {
     showMenu: boolean,
     currentSpecialPage?: string,
     paramSupplier?: () => any,
-    updateSlave: number
+    updateSlave: number,
+    showCommandPallet: boolean
 }
 
 let hook: undefined | (() => void);
+
+let instance: AppPage | undefined = undefined;
 
 export class AppPage extends React.Component<AppPageProps, AppPageState> {
 
@@ -46,7 +53,8 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
         super(props);
         this.state = {
             showMenu: false,
-            updateSlave: 0
+            updateSlave: 0,
+            showCommandPallet: false
         };
         this.init();
     }
@@ -56,11 +64,16 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
             updateSlave: this.state.updateSlave + 1
         });
         this.mounted = true;
+
+        console.log("app page mounted")
     }
 
     componentWillUnmount() {
+        console.log("app page will unmount")
+
         this.mounted = false;
         hook = undefined;
+        instance = undefined;
     }
 
     public activateSpecialPage(id: string, paramSupplier: () => any): AppPage {
@@ -96,6 +109,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
     render() {
         return (
             <div className={"app"}>
+                <CommandPallet isOpen={this.state.showCommandPallet}/>
                 {this.state.currentSpecialPage !== undefined ? this.renderSpecialPage() : this.renderDefaultPage()}
             </div>
         );
@@ -124,6 +138,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
         if (config.debugMode) {
             routs.push(
                 <Route path={"/chart"} render={() => <ChartPage/>}/>,
+                <Route path={"/d-editor"} component={() => <DebugEditor/>}/>,
                 <Route path={"/monaco"} render={() => <Monaco/>}/>,
                 <Route path={"/regex"} render={() => <RegexPage/>}/>,
                 <Route path={"/panel"} render={() => <ControlPanelComponent address={"ws:192.168.2.100:30001"} connectorID={"panel"}/>}/>
@@ -133,11 +148,12 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
     }
 
     private init(config?: AppConfig) {
+        instance = this;
         App.appOrCreate(config ? config : {
             appTitle: "SQL Editor",
-            debugMode: false,
+            debugMode: true,
             defaultAppRoute: "/boarding",
-            defaultDebugAppRoute: "/chart",
+            defaultDebugAppRoute: "/boarding",
             themes: new Map<string, Themeable.Theme>([["dark-green", Themeable.defaultTheme]]),
             defaultTheme: "dark-green",
             rootRerenderHook: (callback) => this.rerender.bind(this)(),
@@ -145,7 +161,8 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
             logSaveSize: 1000,
             connectorConfig: {
                 protocol: "login",
-                address: "ws://192.168.2.100:80",
+                // address: "ws://192.168.2.100:80",
+                address: "ws://192.168.178.39:80",
                 id: "ton",
                 maxConnectAttempts: 5,
                 connectionRetryDelayFunc: () => 0,
@@ -153,6 +170,49 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                     console.log("received packet from server", packet);
                 }
             }
+        }, app => {
+            app.shard("db-session-cache", new DBSessionCacheShard());
+
+            // Opens the command pallet
+            app.registerAction("open-command-pallet", () => {
+                if (instance) {
+                    if (instance.mounted) {
+                        instance.setState({
+                            showCommandPallet: true
+                        });
+                    } else console.error("Can't execute open-command-pallet, because component not mounted.");
+                }
+            });
+
+            // CLoses the command pallet
+            app.registerAction("close-command-pallet", () => {
+                if (instance) {
+                    if (instance.mounted) {
+                        instance.setState({
+                            showCommandPallet: false
+                        });
+                    } else console.error("Can't execute close-command-pallet, because component not mounted.");
+                }
+            });
+
+            // Open the command pallet when ctrl + k is pressed
+            document.addEventListener("keydown", ev => {
+                if (ev.ctrlKey && ev.key === "k") {
+                    ev.preventDefault();
+                    app.callAction("open-command-pallet");
+                }
+            });
+
+
+            // Open the menu when ctrl + m is pressed
+            document.addEventListener("keydown", ev => {
+                if (instance) {
+                    if (ev.ctrlKey && ev.key === "m") {
+                        ev.preventDefault();
+                        app.callAction("toggle-menu");
+                    }
+                }
+            });
         });
     }
 }

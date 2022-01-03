@@ -24,6 +24,20 @@ export const Icon: React.FC<IconProps> = React.memo(props => {
       align-items: center;
       justify-content: center;
       cursor: pointer;
+      position: relative;
+      
+      // todo implement icon highlight circle box
+      // &:after {
+      //   content: '';
+      //   position: absolute;
+      //   left: 0;
+      //   top: 0;
+      //   width: 20px;
+      //   border: 1px solid crimson;
+      //   height: 20px;
+      //   border-radius: 50%;
+      //   transform: translateX(0) translateY(0);
+      // }
       
       svg {
         width: ${(props.size || px(20)).css()};

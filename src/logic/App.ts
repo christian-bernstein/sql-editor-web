@@ -13,6 +13,7 @@ import {FlowAccessPoint} from "./FlowAccessPoint";
 import {LoginCallConfig} from "./LoginCallConfig";
 import {Themeable} from "../Themeable";
 import {ProgressTrackerManager} from "./ProgressTrackerManager";
+import Modal from "react-modal";
 
 export function utilizeApp(): App {
     return App.app();
@@ -30,9 +31,10 @@ export class App {
 
     private static instance: App | undefined = undefined;
 
-    public static appOrCreate: (config: AppConfig) => App = (config: AppConfig) => {
+    public static appOrCreate: (config: AppConfig, onCreate?: (app: App) => void) => App = (config: AppConfig, onCreate: ((app: App) => void) | undefined) => {
         if (App.instance === undefined) {
             App.instance = new App(config);
+            onCreate?.(App.instance);
         }
         return App.instance;
     };
@@ -282,6 +284,9 @@ export class App {
 
         // Create the console interception
         this.initLogInterceptor();
+
+        // Set the modals attachment element
+        Modal.setAppElement("#root");
     }
 
     private addLogInterceptor(methodName: "log" | "info" | "warn" | "error") {

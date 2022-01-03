@@ -40,6 +40,7 @@
     "react-is": "^16.8.6",
     "react-json-view": "^1.21.3",
     "react-markdown": "^7.1.1",
+    "react-modal": "^3.14.4",
     "react-router-dom": "^5.2.0",
     "react-router-page-transition": "^3.1.0",
     "react-router-page-transition-v2": "^2.0.0",
@@ -79,6 +80,7 @@
     ]
   },
   "devDependencies": {
-    "@types/lodash.debounce": "^4.0.6"
+    "@types/lodash.debounce": "^4.0.6",
+    "@types/react-modal": "^3.13.1"
   }
 }

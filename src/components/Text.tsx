@@ -19,8 +19,11 @@ export type TextProps = {
     enableLeftAppendix?: boolean,
     leftAppendix?: JSX.Element,
     coloredIcon?: boolean,
+    coloredText?: boolean,
     linkTooltip?: boolean,
-    align?: Align
+    align?: Align,
+    uppercase?: boolean,
+    onClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
 }
 
 export enum TextType {
@@ -57,6 +60,9 @@ export const Text: React.FC<TextProps> = props => {
       display: flex;
       align-items: center;
       gap: ${theme.paddings.defaultTextIconPadding.css()};
+      
+      color: ${props.coloredText ? meaningfulColors.lighter.css() : theme.colors.fontPrimaryColor.css()} !important;
+      
       // min-width: 100%;
       
       svg path {
@@ -69,13 +75,15 @@ export const Text: React.FC<TextProps> = props => {
       }
       
       .md {
-        white-space: pre-wrap;
+        // white-space: pre-wrap;
         text-align: ${getOr(props.align, Align.START)};
+        // todo check if working
+        text-transform: ${props.uppercase ? "uppercase" : "auto"};
       }
     `;
 
     return(
-        <Wrapper style={style}>
+        <Wrapper style={style} onClick={event => getOr(props.onClick, () => {})(event)}>
             {props.enableLeftAppendix ? props.leftAppendix : <></>}
             <ReactMarkdown className={"md"} children={props.text} components={{
                 a: (mdProps, context) => {

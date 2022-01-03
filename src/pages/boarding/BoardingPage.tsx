@@ -12,6 +12,7 @@ import {FlexDirection} from "../../logic/FlexDirection";
 import {Align} from "../../logic/Align";
 import {Text, TextType} from "../../components/Text";
 import {FlexBox} from "../../components/FlexBox";
+import {ObjectVisualMeaning} from "../../logic/ObjectVisualMeaning";
 
 export type BoardingPageProps = {
 }
@@ -33,6 +34,10 @@ export class BoardingPage extends React.Component<BoardingPageProps, BoardingPag
                 this.forceUpdate();
             });
         })
+    }
+
+    private clearSessionHistory() {
+        console.log("clearing session history")
     }
 
     render() {
@@ -60,7 +65,8 @@ export class BoardingPage extends React.Component<BoardingPageProps, BoardingPag
                         <form className={"boarding-form"}>
                             <ol className={"continue-as-list"}>
                                 {
-                                    App.app().getSessionHistoryEntries().map((entry: SessionHistoryEntry) => <ContinueAs sessionHistoryEntry={{
+                                    // todo set real key
+                                    App.app().getSessionHistoryEntries().map((entry: SessionHistoryEntry) => <ContinueAs key={""} sessionHistoryEntry={{
                                         sessionID: entry.sessionID,
                                         profileData: entry.profileData
                                     }}/>)

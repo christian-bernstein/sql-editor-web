@@ -79,7 +79,8 @@ export namespace Themeable {
         warnHighlightColor: Color,
         borderPrimaryColor: Color,
         borderColorSecondaryColor: Color,
-        borderPrimaryShadowColor: Color
+        borderPrimaryShadowColor: Color,
+        backdropColor: Color
     }
 
     export type Theme = {
@@ -134,7 +135,8 @@ export namespace Themeable {
         warnHighlightColor: Color.ofHex("#ffd387"),
         borderPrimaryColor: Color.ofHex("#30363D"),
         borderColorSecondaryColor: Color.ofHex("#FBBE63"),
-        borderPrimaryShadowColor: Color.ofHex("#71D99E", .13)
+        borderPrimaryShadowColor: Color.ofHex("#71D99E", .13),
+        backdropColor: Color.ofHex("#171717", .8)
     }
 
     export const defaultTheme: Theme = {

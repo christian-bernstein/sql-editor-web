@@ -1,12 +1,5 @@
 import React from "react";
 import "../../styles/pages/DashboardPage.scss";
-import {BadgedWrapper} from "../../components/BadgedWrapper";
-import {Badge} from "../../components/Badge";
-import {Color} from "../../Color";
-import {ReactComponent as InboxIcon} from "../../assets/icons/ic-24/ic24-inbox.svg";
-import {ReactComponent as MenuIcon} from "../../assets/icons/ic-24/ic24-menu.svg";
-import {ReactComponent as FilterIcon} from "../../assets/icons/ic-24/ic24-filter.svg";
-import {ReactComponent as CreateIcon} from "../../assets/icons/ic-24/ic24-edit.svg";
 import {ProjectInfo} from "../../components/ProjectInfo";
 import {LoadState} from "../../logic/LoadState";
 import {App} from "../../logic/App";
@@ -14,70 +7,73 @@ import {v4} from "uuid";
 import {ProjectInfoData} from "../../logic/ProjectInfoData";
 import {FlexBox} from "../../components/FlexBox";
 import {PageV2} from "../../components/Page";
+import {Text, TextType} from "../../components/Text";
+import {Align} from "../../logic/Align";
+import {Justify} from "../../logic/Justify";
+import {LiteGrid} from "../../components/LiteGrid";
+import {ReactComponent as MenuIcon} from "../../assets/icons/ic-20/ic20-menu.svg";
+import {Icon} from "../../components/Icon";
+import {array, arrayFactory} from "../../logic/Utils";
+import {PosInCenter} from "../../components/PosInCenter";
+import {em, px} from "../../logic/DimensionalMeasured";
+import {DBSessionCacheShard} from "../../shards/DBSessionCacheShard";
+import {Redirect} from "react-router-dom";
 
 export type DashboardPageProps = {
 }
 
 export type DashboardPageState = {
-    _a: string
+    redirectToEditor: boolean
 }
 
-export default class DashboardPage extends React.Component<DashboardPageProps, DashboardPageState> {
+export default class DashboardPage extends React.PureComponent<DashboardPageProps, DashboardPageState> {
 
     constructor(props: DashboardPageProps) {
         super(props);
         this.state = {
-            _a: "none"
+            redirectToEditor: false
         };
     }
 
     // noinspection JSMethodCanBeStatic
-    private menuIconClickHandle(event: React.MouseEvent<SVGSVGElement, MouseEvent>) {
-        App.app().openMenu();
-    }
-
-    // noinspection JSMethodCanBeStatic
     private onProjectSelect(data: ProjectInfoData) {
+        App.app().shard<DBSessionCacheShard>("db-session-cache").currentInfoData = data;
+        this.setState({
+            redirectToEditor: true
+        });
     }
 
-    render() {
+    private renderPage(): JSX.Element {
         return (
             <PageV2>
-                <FlexBox>
-                    <ProjectInfo
-                        onSelect={data => this.onProjectSelect(data)}
-                        data={{
-                            id: v4(),
-                            state: LoadState.ONLINE,
-                            stator: true,
-                            edits: 10,
-                            lastEdited: new Date(),
-                            title: "SQL lesson 21"
-                        }}
-                    />
-                    <ProjectInfo
-                        onSelect={data => this.onProjectSelect(data)}
-                        data={{
-                            id: v4(),
-                            state: LoadState.ONLINE,
-                            stator: true,
-                            edits: 10,
-                            lastEdited: new Date(),
-                            title: "SQL lesson 21"
-                        }}
-                    />
-                    <ProjectInfo
-                        onSelect={data => this.onProjectSelect(data)}
-                        data={{
-                            id: v4(),
-                            state: LoadState.ONLINE,
-                            stator: true,
-                            edits: 10,
-                            lastEdited: new Date(),
-                            title: "SQL lesson 21"
-                        }}
-                    />
-                </FlexBox>
+                <LiteGrid columns={3}>
+                    <FlexBox align={Align.START} justifyContent={Justify.CENTER}>
+                        <Icon icon={<MenuIcon/>} onClick={() => App.app().openMenu()}/>
+                    </FlexBox>
+                    <FlexBox align={Align.CENTER} justifyContent={Justify.CENTER}>
+                        <Text uppercase align={Align.CENTER} type={TextType.smallHeader} text={"Dashboard"} />
+                    </FlexBox>
+                </LiteGrid>
+                <PosInCenter>
+                    <Text uppercase align={Align.CENTER} type={TextType.secondaryDescription} text={"*Select a project*"} />
+                </PosInCenter>
+                <LiteGrid responsive minResponsiveWidth={px(300)} gap={em(1)}>
+                    {
+                        // todo set key the right way
+                        arrayFactory(() => <ProjectInfo
+                            key={v4()}
+                            onSelect={data => this.onProjectSelect(data)}
+                            data={{
+                                id: v4(),
+                                state: LoadState.ONLINE,
+                                stator: true,
+                                edits: 10,
+                                lastEdited: new Date(),
+                                title: "SQL lesson 21"
+                            }}
+                        />, 3)
+                    }
+                </LiteGrid>
             </PageV2>
             //<div className={"dashboard-page"}>
             //    {/* header */}
@@ -121,5 +117,16 @@ export default class DashboardPage extends React.Component<DashboardPageProps, D
             //    </FlexBox>
             //</div>
         );
+    }
+
+    render() {
+        if (this.state.redirectToEditor) {
+            console.log("redirect to d-editor")
+            return (
+                <Redirect to={"/d-editor"} push/>
+            );
+        } else {
+            return this.renderPage();
+        }
     }
 }

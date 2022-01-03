@@ -27,36 +27,11 @@ export class ProjectInfo extends React.Component<ProjectInfoProps, any> {
         super(props);
     }
 
-    private onClick(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+    private onClick(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
         if (this.props.onSelect !== undefined) {
             this.props.onSelect(this.props.data);
         }
     }
-
-    /*
-     <div className={"project-info"} onClick={event => this.onClick(event)}>
-     <div className={"project-header"}>
-     <div className={[
-                        "project-badge",
-                        this.props.data.state === LoadState.STOPPING ? "error" : "",
-                        this.props.data.state === LoadState.STARTING ? "warn" : "",
-                        this.props.data.state === LoadState.ONLINE ? "online" : "",
-                        this.props.data.state === LoadState.OFFLINE ? "offline" : "",
-                    ].join(" ").trim()}>
-     {this.props.data.stator ? <ChainIcon/> : <></>}
-     </div>
-     <div className={"project-contributors"}>
-
-     </div>
-     </div>
-     <h3 className={"project-title"}>{this.props.data.title}</h3>
-     <div className={"project-charts"}>
-     <ChartWidget title={"Rows"} value={"200"}/>
-    <ChartWidget title={"Edits"} value={"24"}/>
-    <ChartWidget title={"Last edited"} value={"32min"}/>
-    </div>
-    </div>
-     */
 
     render() {
         const theme: Themeable.Theme = utilizeGlobalTheme();
@@ -79,7 +54,7 @@ export class ProjectInfo extends React.Component<ProjectInfoProps, any> {
                     <AreaChartComponent/>
                 </ChartGrid>
 
-                <Button visualMeaning={ObjectVisualMeaning.INFO} opaque={true}>
+                <Button visualMeaning={ObjectVisualMeaning.INFO} opaque={true} onClick={event => this.onClick(event)}>
                     <FlexBox flexDir={FlexDirection.ROW} gap={px(10)}>
                         <Text text={"Load"}/>
                         <Icon icon={<LoadIcon/>}/>

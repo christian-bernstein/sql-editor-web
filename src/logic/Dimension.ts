@@ -5,4 +5,5 @@ export enum Dimension {
     percentage = "%",
     vw = "vw",
     vh = "vh",
+    fr = "fr"
 }

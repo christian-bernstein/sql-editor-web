@@ -26,6 +26,8 @@ export type MenuPageState = {
     updateSlave: number
 }
 
+let instance: MenuPage | undefined = undefined;
+
 export default class MenuPage extends React.Component<MenuPageProps, MenuPageState> {
 
     constructor(props: MenuPageProps) {
@@ -34,15 +36,38 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
             showMenu: (this.props.showMenuInitially) ? this.props.showMenuInitially : false,
             updateSlave: 0
         };
+        instance = this;
     }
 
     // todo investigate bug!
     componentDidMount() {
         App.app().registerAction("show-menu", () => {
-            this.setState({
-                showMenu: true
-            });
+            if (instance) {
+                instance.setState({
+                    showMenu: true
+                });
+            }
         });
+
+        App.app().registerAction("hide-menu", () => {
+            if (instance) {
+                instance.setState({
+                    showMenu: false
+                });
+            }
+        });
+
+        App.app().registerAction("toggle-menu", () => {
+            if (instance) {
+                instance.setState({
+                    showMenu: !instance.state.showMenu
+                });
+            }
+        });
+    }
+
+    componentWillUnmount() {
+        instance = undefined;
     }
 
     private handleWrapperClick(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
@@ -158,6 +183,15 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
                                         this.updateUI();
                                     }}>
                                 <Text text={"Fullscreen"}/>
+                            </Button>
+                            <Button visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
+                                    width={percent(100)}
+                                    opaque={true}
+                                    shrinkOnClick={true}
+                                    onClick={() => {
+                                        App.app().callAction("open-command-pallet");
+                                    }}>
+                                <Text text={"CMD"}/>
                             </Button>
                         </FlexBox>
                         <FlexBox flexDir={FlexDirection.ROW}>

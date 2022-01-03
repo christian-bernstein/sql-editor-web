@@ -18,7 +18,8 @@ import {getOr} from "../logic/Utils";
 export type ObjectJSONDisplayProps = {
     object: any,
     title?: string
-    showControls?: boolean
+    showControls?: boolean,
+    pure?: boolean
 }
 
 export type ObjectJSONDisplayState = {
@@ -64,13 +65,17 @@ export class ObjectJSONDisplay extends React.Component<ObjectJSONDisplayProps, O
     render() {
         const theme: Themeable.Theme = utilizeGlobalTheme();
         return (
-            <Box overflowXBehaviour={OverflowBehaviour.SCROLL} width={DimensionalMeasured.of(100, Dimension.percentage)} gapX={DimensionalMeasured.of(10, Dimension.px)} gapY={DimensionalMeasured.of(10, Dimension.px)}>
-                <FlexBox flexDir={FlexDirection.ROW} justifyContent={Justify.SPACE_BETWEEN}>
-                    {this.renderTitle()}
-                    {this.renderControls()}
-                </FlexBox>
+            <Box overflowXBehaviour={OverflowBehaviour.SCROLL} width={DimensionalMeasured.of(100, Dimension.percentage)}
+                 gapX={DimensionalMeasured.of(10, Dimension.px)} gapY={DimensionalMeasured.of(10, Dimension.px)}>
+                {getOr(this.props.pure, true) ? <></> :
+                    <FlexBox flexDir={FlexDirection.ROW} justifyContent={Justify.SPACE_BETWEEN}>
+                        {this.renderTitle()}
+                        {this.renderControls()}
+                    </FlexBox>}
                 <div style={{width: "100%", overflowX: "scroll"}}>
-                    <ReactJson collapsed={this.state.collapsed} displayDataTypes={false} src={this.props.object} enableClipboard={false} displayObjectSize={false} theme={"grayscale"} iconStyle={"square"} style={{
+                    <ReactJson collapsed={this.state.collapsed} displayDataTypes={false} src={this.props.object}
+                               enableClipboard={false} displayObjectSize={false} theme={"grayscale"}
+                               iconStyle={"square"} style={{
                         width: "100%",
                         backgroundColor: theme.colors.backgroundHighlightColor.css()
                     }}/>

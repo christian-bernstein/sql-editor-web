@@ -67,3 +67,13 @@ export function px(measurand: number = 0): DimensionalMeasured {
 export function percent(measurand: number = 0): DimensionalMeasured {
     return dimension(measurand, Dimension.percentage);
 }
+
+// noinspection SpellCheckingInspection
+export function em(measurand: number = 0): DimensionalMeasured {
+    return dimension(measurand, Dimension.em);
+}
+
+// noinspection SpellCheckingInspection
+export function fr(measurand: number = 0): DimensionalMeasured {
+    return dimension(measurand, Dimension.fr);
+}
