@@ -40,6 +40,9 @@ export class Box extends React.Component<BoxProps, any> {
         const bgColor: Color = this.props.opaque ? col.withAlpha(getOr(this.props.opaqueValue, .1)) : col;
 
         const Box = styled.div`
+          box-sizing: border-box;
+          // todo check if this causes issues along the board
+          
           background-color: ${bgColor.css()};
           border-radius: ${theme.radii.defaultObjectRadius.css()};
           border: 1px solid ${meaningfulColors.lighter.css()};

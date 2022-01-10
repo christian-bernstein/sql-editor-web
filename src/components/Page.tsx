@@ -9,13 +9,15 @@ export type PageProps = {
     gapX?: DimensionalMeasured,
     gapY?: DimensionalMeasured,
     deactivateGap?: boolean,
-    style?: CSSProperties
+    style?: CSSProperties,
+    classnames?: string[],
+    deactivatePadding?: boolean
 }
 
 export const PageV2: React.FC<PageProps> = React.memo(props => {
     const theme: Themeable.Theme = utilizeGlobalTheme();
     const Wrapper = styled.div`
-          padding: ${theme.paddings.defaultObjectPadding.css()};
+          padding: ${props.deactivatePadding ? 0 : theme.paddings.defaultObjectPadding.css()};
           width: 100%;
           height: 100%;
           display: flex;
@@ -25,7 +27,7 @@ export const PageV2: React.FC<PageProps> = React.memo(props => {
           gap: ${getOr(props.deactivateGap, false) ? 0 : getOr(props.gapY?.css(), theme.gaps.defaultGab.css())} ${getOr(props.deactivateGap, false) ? 0 : getOr(props.gapX?.css(), theme.gaps.defaultGab.css())}
         `;
     return (
-        <Wrapper style={getOr(props.style, {})}>
+        <Wrapper style={getOr(props.style, {})} className={getOr(props.classnames?.join(" "), "")}>
             {props.children}
         </Wrapper>
     );
@@ -46,7 +48,7 @@ export class Page extends React.Component<PageProps, any>{
           gap: ${getOr(this.props.deactivateGap, false) ? 0 : getOr(this.props.gapY?.css(), theme.gaps.defaultGab.css())} ${getOr(this.props.deactivateGap, false) ? 0 : getOr(this.props.gapX?.css(), theme.gaps.defaultGab.css())}
         `;
         return (
-            <Wrapper>
+            <Wrapper className={getOr(this.props.classnames?.join(" "), "")}>
                 {this.props.children}
             </Wrapper>
         );
