@@ -148,6 +148,7 @@ export const RegexPageFC: React.FC = props => {
                             <Text text={`Regular expression: '${state.regex}'`} type={TextType.secondaryDescription} fontSize={px(12)}/>
                             <Editor>
                                 <ReactCodeMirror value={state.regex}
+                                                 autoFocus={true}
                                                  placeholder={"([A-Z])\\w+"}
                                                  onChange={value => debouncedOnChange(value, "regex")}
                                                  key={"cm-regex-input"}
