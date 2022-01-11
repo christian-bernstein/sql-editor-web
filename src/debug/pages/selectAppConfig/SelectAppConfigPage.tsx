@@ -29,6 +29,7 @@ function getConfigs(configs: AppConfigSelectionData[], filter: string): AppConfi
     return configs.filter(config => config.title.toLocaleLowerCase().match(filter));
 }
 
+// <ProfilePicture name={"chris"}/>
 export const SelectAppConfigPageV2: React.FC<SelectAppConfigPageProps> = props => {
     const [state, setState] = useState<SelectAppConfigPageState>({
         filter: undefined
@@ -100,7 +101,6 @@ export const SelectAppConfigPageV2: React.FC<SelectAppConfigPageProps> = props =
                 <Text type={TextType.smallHeader} text={"Select app profile…"}/>
                 <Text type={TextType.secondaryDescription}
                       text={"Starting the **App** instance with a selected app config"}/>
-                <ProfilePicture name={"chris"}/>
             </FlexBox>
 
             <Input opaque

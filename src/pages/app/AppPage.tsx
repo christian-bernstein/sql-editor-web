@@ -21,6 +21,7 @@ import {CommandPallet} from "../../components/CommandPallet";
 import {Button} from "../../components/Button";
 import {DebugEditor} from "../editor/debug/DebugEditor";
 import {DBSessionCacheShard} from "../../shards/DBSessionCacheShard";
+import {arrayFactory} from "../../logic/Utils";
 
 export type AppPageProps = {
 }
@@ -64,6 +65,33 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
             updateSlave: this.state.updateSlave + 1
         });
         this.mounted = true;
+
+        this.activateSpecialPage(DefaultSpecialPages.SELECT_APP_CONFIG, () => arrayFactory<AppConfigSelectionData>(i => {
+            return {
+                title: String(i),
+                description: "",
+                config: {
+                    logSaveSize: 1000,
+                    logInterceptors: [],
+                    appTitle: "",
+                    debugMode: false,
+                    defaultAppRoute: "",
+                    rootRerenderHook: () => {},
+                    themes: new Map<string, Themeable.Theme>(),
+                    defaultTheme: "",
+                    defaultDebugAppRoute: "",
+                    connectorConfig: {
+                        protocol: "",
+                        id: "",
+                        packetInterceptor: () => {},
+                        maxConnectAttempts: 0,
+                        address: "",
+                        connectionRetryDelayFunc: () => 1,
+                        onConnectionFailed: () => {}
+                    }
+                }
+            };
+        }, 10));
 
         console.log("app page mounted")
     }
@@ -137,6 +165,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
         ];
         if (config.debugMode) {
             routs.push(
+                <Route path={"/regex"} component={() => <RegexPageFC/>}/>,
                 <Route path={"/chart"} render={() => <ChartPage/>}/>,
                 <Route path={"/d-editor"} component={() => <DebugEditor/>}/>,
                 <Route path={"/monaco"} render={() => <Monaco/>}/>,

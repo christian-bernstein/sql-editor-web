@@ -17,6 +17,7 @@ export type FlexBoxProps = {
     justifyContent?: Justify,
     width?: DimensionalMeasured,
     overflowXBehaviour?: OverflowBehaviour
+    classnames?: string[]
 }
 
 export class FlexBox extends React.Component<FlexBoxProps, any> {
@@ -34,7 +35,7 @@ export class FlexBox extends React.Component<FlexBoxProps, any> {
           // overflow-y: visible;
         `;
         return (
-            <Wrapper style={getOr(this.props.style, {})}>
+            <Wrapper style={getOr(this.props.style, {})} className={getOr(this.props.classnames?.join(" "), "")}>
                 {this.props.children}
             </Wrapper>
         );

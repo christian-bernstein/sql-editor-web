@@ -1,6 +1,6 @@
 import React, {useMemo, useRef, useState} from "react";
 import {Text, TextType} from "../../components/Text";
-import ReactCodeMirror from "@uiw/react-codemirror";
+import ReactCodeMirror, {ReactCodeMirrorProps, ReactCodeMirrorRef, useCodeMirror} from "@uiw/react-codemirror";
 import styled from "styled-components";
 import {Themeable} from "../../Themeable";
 import {utilizeGlobalTheme} from "../../logic/App";
@@ -10,12 +10,17 @@ import {FlexDirection} from "../../logic/FlexDirection";
 import {em, percent, px} from "../../logic/DimensionalMeasured";
 import {Box} from "../../components/Box";
 import {javascript} from "@codemirror/lang-javascript";
-
 import "codemirror/lib/codemirror.css";
 import "codemirror/theme/blackboard.css";
 import "codemirror/mode/jsx/jsx.js";
 import Highlight from "react-highlighter";
 import _ from "lodash";
+import {Button} from "../../components/Button";
+import {Icon} from "../../components/Icon";
+import {ReactComponent as EnterIcon} from "../../assets/icons/ic-20/ic20-arrow-right.svg";
+import {ObjectVisualMeaning} from "../../logic/ObjectVisualMeaning";
+import {UnControlled} from "react-codemirror2";
+import CodeMirror from 'react-codemirror2';
 
 export type RegexPageState = {
     regex: string,
@@ -46,6 +51,7 @@ const Wrapper = styled.div`
     .reg-match {
       color: ${theme.colors.fontPrimaryColor.css()};
       background-color: ${theme.colors.primaryHighlightColor.withAlpha(.5).css()};
+      border: .5px solid ${theme.colors.primaryHighlightColor.css()};
     }
   }
 `;
@@ -53,6 +59,7 @@ const Wrapper = styled.div`
 const Editor = styled.div`
   max-width: 100%;
   width: 100%;
+  min-height: 37px;
   box-sizing: border-box;
   display: flex;
   justify-content: center;
@@ -72,11 +79,34 @@ const Editor = styled.div`
   .cm {
     width: 100% !important;
     box-sizing: border-box;
+    
+    .cm-placeholder {
+      color: #888 !important;
+    }
+    
+    .cm-line {
+      // color: #e06c75 !important;
+      color: ${theme.colors.primaryHighlightColor.css()};
+      
+      span, pre {
+        color: ${theme.colors.primaryHighlightColor.css()};
+      }
+    }
   }
 `;
 
+export const getRegExp: (regex: string) => [exp: RegExp, expValid: boolean] = regex => {
+    let exp: RegExp = new RegExp("");
+    let expValid: boolean = true;
+    try {
+        exp = new RegExp(regex);
+    } catch (e) {
+        expValid = false;
+    }
+    return [exp, expValid];
+}
+
 export const RegexPageFC: React.FC = props => {
-    console.log("rerender")
 
     const [state, setState] = useState<RegexPageState>(() => {
         return {
@@ -101,47 +131,43 @@ export const RegexPageFC: React.FC = props => {
         });
     }, 300), []);
 
+    const [exp, expValid] = getRegExp(state.regex);
+
+
+    const mirror = useMemo(() => useCodeMirror({}), []);
+
+
     const Highlight = require('react-highlighter');
 
-    let exp: RegExp = new RegExp("");
-    let expValid: boolean = true;
-    try {
-        exp = new RegExp(state.regex);
-    } catch (e) {
-        expValid = false;
-    }
-
-    const ref = useRef<HTMLInputElement>(null);
-
-    // <input key={"asd"} onChange={event => debouncedOnChange(event.target.value, "search")}/>
     return (
         <Wrapper key={"regex-editor"}>
             <div className={"container"}>
-
                 <FlexBox width={percent(90)}>
                     <Text text={"Regex viewer"} type={TextType.smallHeader}/>
                 </FlexBox>
-
                 <PosInCenter>
-                    <FlexBox flexDir={FlexDirection.COLUMN} width={percent(70)}>
+                    <FlexBox flexDir={FlexDirection.COLUMN} width={percent(100)}>
                         <Box width={percent(100)} gapY={em(.5)}>
                             <Text text={"Search string"} type={TextType.smallHeaderDeactivated}/>
-                            <Highlight key={"search-highlight"}
-                                       matchClass={"reg-match"}
-                                       search={expValid ? exp : "."}>{state.search}</Highlight>
+                            <Highlight key={"search-highlight"} matchClass={"reg-match"} search={expValid ? exp : "."}>{state.search}</Highlight>
+                            <FlexBox flexDir={FlexDirection.ROW} classnames={[""]}>
+                                <Editor>
+                                    <ReactCodeMirror value={state.search}
+                                                     placeholder={"The quick brown fox jumps over the lazy dog."}
+                                                     onChange={value => debouncedOnChange(value, "search")}
+                                                     className={"cm"}
+                                                     theme={"dark"}
+                                                     extensions={[javascript({
+                                                         typescript: true
+                                                     })]}
+                                    />
+                                </Editor>
+                                <Button visualMeaning={ObjectVisualMeaning.SUCCESS} opaque={true} onClick={event => {
 
-                            <Editor>
-                                <ReactCodeMirror value={state.search}
-                                                 placeholder={"The quick brown fox jumps over the lazy dog."}
-                                                 onChange={value => debouncedOnChange(value, "search")}
-                                                 key={"cm-search-input"}
-                                                 className={"cm"}
-                                                 theme={"dark"}
-                                                 extensions={[javascript({
-                                                     typescript: true
-                                                 })]}
-                                />
-                            </Editor>
+                                }}>
+                                    <Icon visualMeaning={ObjectVisualMeaning.SUCCESS} colored={true} icon={<EnterIcon/>}/>
+                                </Button>
+                            </FlexBox>
                         </Box>
                         <Box width={percent(100)} gapY={em(.5)}>
                             <Text text={"Enter expression"} type={TextType.smallHeaderDeactivated}/>
@@ -151,7 +177,6 @@ export const RegexPageFC: React.FC = props => {
                                                  autoFocus={true}
                                                  placeholder={"([A-Z])\\w+"}
                                                  onChange={value => debouncedOnChange(value, "regex")}
-                                                 key={"cm-regex-input"}
                                                  className={"cm"}
                                                  theme={"dark"}
                                                  extensions={[javascript({
