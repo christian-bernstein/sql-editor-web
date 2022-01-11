@@ -2,6 +2,7 @@
   "name": "sql-editor-web",
   "version": "0.1.0",
   "private": true,
+  "homepage": "regex/",
   "dependencies": {
     "@codemirror/lang-javascript": "^0.19.4",
     "@codemirror/language": "^0.19.7",
