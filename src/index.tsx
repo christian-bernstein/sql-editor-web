@@ -4,13 +4,15 @@ import './index.scss';
 import './fonts.scss'
 import reportWebVitals from './reportWebVitals';
 import {AppPage} from "./pages/app/AppPage";
-import {RegexPage} from "./tests/regex/RegexPage";
+import {RegexPageFC} from "./tests/regex/RegexPage";
 
 // <AppPage/>
+// <RegexPageFC/>
+// <React.StrictMode>
+//     <RegexPageFC/>
+// </React.StrictMode>
 ReactDOM.render(
-    <React.StrictMode>
-        <RegexPage/>
-    </React.StrictMode>,
+    <RegexPageFC/>,
     document.getElementById('root')
 );
 
