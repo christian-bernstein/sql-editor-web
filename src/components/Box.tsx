@@ -24,7 +24,8 @@ export type BoxProps = {
     onClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
     gapX?: DimensionalMeasured,
     gapY?: DimensionalMeasured,
-    color?: Color
+    color?: Color,
+    hideScrollbar?: boolean
 }
 
 export class Box extends React.Component<BoxProps, any> {
@@ -43,6 +44,7 @@ export class Box extends React.Component<BoxProps, any> {
           box-sizing: border-box;
           // todo check if this causes issues along the board
           
+          // position: relative;
           background-color: ${bgColor.css()};
           border-radius: ${theme.radii.defaultObjectRadius.css()};
           border: 1px solid ${meaningfulColors.lighter.css()};
@@ -56,6 +58,10 @@ export class Box extends React.Component<BoxProps, any> {
           flex-direction: column;
           gap: ${getOr(this.props.gapY?.css(), "0")} ${getOr(this.props.gapX?.css(), "0")};
           // min-height: 100% !important;
+
+          &::-webkit-scrollbar {
+            display: ${getOr(this.props.hideScrollbar, true) ? "none" : "block"};
+          }
           
           &.highlight:hover {
             filter: brightness(${theme.hovers.hoverLightFilter.css()});

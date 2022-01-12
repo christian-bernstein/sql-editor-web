@@ -16,7 +16,6 @@ import {ControlPanelComponent} from "../../tests/panel/ControlPanel";
 import {Monaco} from "../../tests/editor/Monaco";
 import {SelectAppConfigPageV2} from "../../debug/pages/selectAppConfig/SelectAppConfigPage";
 import {AppConfigSelectionData} from "../../debug/components/AppConfigSelector";
-import {RegexPageFC} from "../../tests/regex/RegexPage";
 import {CommandPallet} from "../../components/CommandPallet";
 import {Button} from "../../components/Button";
 import {DebugEditor} from "../editor/debug/DebugEditor";
@@ -165,11 +164,9 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
         ];
         if (config.debugMode) {
             routs.push(
-                <Route path={"/regex"} component={() => <RegexPageFC/>}/>,
                 <Route path={"/chart"} render={() => <ChartPage/>}/>,
                 <Route path={"/d-editor"} component={() => <DebugEditor/>}/>,
                 <Route path={"/monaco"} render={() => <Monaco/>}/>,
-                <Route path={"/regex"} render={() => <RegexPageFC/>}/>,
                 <Route path={"/panel"} render={() => <ControlPanelComponent address={"ws:192.168.2.100:30001"} connectorID={"panel"}/>}/>
             );
         }

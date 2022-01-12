@@ -4,7 +4,8 @@ import {getOr} from "../logic/Utils";
 
 export type PosInCenterProps = {
     style?: CSSProperties
-    fullHeight?: boolean
+    fullHeight?: boolean,
+    classnames?: string[]
 }
 
 export const PosInCenter: React.FC<PosInCenterProps> = React.memo(props => {
@@ -16,7 +17,7 @@ export const PosInCenter: React.FC<PosInCenterProps> = React.memo(props => {
       align-items: center;
     `;
     return (
-        <Wrapper style={getOr(props.style, {})}>
+        <Wrapper style={getOr(props.style, {})} className={getOr(props.classnames?.join(" "), "")}>
             {props.children}
         </Wrapper>
     );

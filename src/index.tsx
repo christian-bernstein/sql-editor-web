@@ -4,7 +4,7 @@ import './index.scss';
 import './fonts.scss'
 import reportWebVitals from './reportWebVitals';
 import {AppPage} from "./pages/app/AppPage";
-import {RegexPageFC} from "./tests/regex/RegexPage";
+import {RegexPage} from "./tests/regex/RegexPage";
 
 // <AppPage/>
 // <RegexPageFC/>
@@ -12,7 +12,7 @@ import {RegexPageFC} from "./tests/regex/RegexPage";
 //     <RegexPageFC/>
 // </React.StrictMode>
 ReactDOM.render(
-    <RegexPageFC/>,
+    <RegexPage/>,
     document.getElementById('root')
 );
 
