@@ -17,7 +17,7 @@ import Highlight from "react-highlighter";
 import {Icon} from "../../components/Icon";
 import {ObjectVisualMeaning} from "../../logic/ObjectVisualMeaning";
 import {v4} from "uuid";
-import {getOr} from "../../logic/Utils";
+import {getOr, Utils} from "../../logic/Utils";
 import {ReactComponent as SuccessIcon} from "../../assets/icons/ic-16/ic16-check.svg";
 import {ReactComponent as ErrorIcon} from "../../assets/icons/ic-16/ic16-close.svg";
 import {LiteGrid} from "../../components/LiteGrid";
@@ -406,6 +406,11 @@ export class RegexPage extends React.PureComponent {
     public static staticRenderCheatsheet: boolean = false;
 
     private readonly controller: RenderController = new RenderController();
+
+    constructor() {
+        super({});
+        document.title = "Regex viewer"
+    }
 
     private searchChangeHandler(value: string, type: ("regex" | "search")) {
         RegexPage.downstreamHook?.(value, type);
