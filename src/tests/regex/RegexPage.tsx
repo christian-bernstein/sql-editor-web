@@ -106,6 +106,11 @@ export const getRegExp: (regex: string) => [exp: RegExp, expValid: boolean] = re
     return [exp, expValid];
 }
 
+let publicState: RegexPageState = {
+    regex: "",
+    search: ""
+}
+
 export const RegexPageFC: React.FC = props => {
 
     const [state, setState] = useState<RegexPageState>(() => {
@@ -133,10 +138,6 @@ export const RegexPageFC: React.FC = props => {
 
     const [exp, expValid] = getRegExp(state.regex);
 
-
-    const mirror = useMemo(() => useCodeMirror({}), []);
-
-
     const Highlight = require('react-highlighter');
 
     return (
@@ -147,9 +148,28 @@ export const RegexPageFC: React.FC = props => {
                 </FlexBox>
                 <PosInCenter>
                     <FlexBox flexDir={FlexDirection.COLUMN} width={percent(100)}>
+
+                        <ReactCodeMirror placeholder={"([A-Z])\\w+"}
+                                         value={publicState.search}
+                                         key={"mirror"}
+                                         onChange={value => {
+                                             publicState = {
+                                                 regex: publicState.regex,
+                                                 search: value
+                                             }
+                                         }}
+                                         className={"cm"}
+                                         theme={"dark"}
+                                         extensions={[javascript({
+                                             typescript: true
+                                         })]}
+                        />
+
                         <Box width={percent(100)} gapY={em(.5)}>
                             <Text text={"Search string"} type={TextType.smallHeaderDeactivated}/>
-                            <Highlight key={"search-highlight"} matchClass={"reg-match"} search={expValid ? exp : "."}>{state.search}</Highlight>
+                            <Highlight key={"search-highlight"} matchClass={"reg-match"} search={expValid ? exp : "."}>
+                                {state.search}
+                            </Highlight>
                             <FlexBox flexDir={FlexDirection.ROW} classnames={[""]}>
                                 <Editor>
                                     <ReactCodeMirror value={state.search}
@@ -191,30 +211,3 @@ export const RegexPageFC: React.FC = props => {
         </Wrapper>
     );
 }
-
-
-// <CodeMirror
-//     key={"cm"}
-//     onBeforeChange={(editor, data, value, next) => {
-//         // debouncedOnChange(value, "search");
-//         console.log("new val: " + value)
-//         // debouncedOnChange(value, "search")
-//         if (value !== state.search) {
-//             setState({
-//                 regex: state.regex,
-//                 search: value
-//             });
-//             // debouncedOnChange(value, "search")
-//         }
-//         next();
-//     }}
-//     className={"cm"}
-//     options={{
-//             autofocus: false,
-//         height: "10px",
-//         placeholder: 'asd',
-//         mode: 'jsx',
-//         theme: 'blackboard',
-//         lineNumbers: true,
-//     }}
-// />
