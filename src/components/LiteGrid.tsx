@@ -10,7 +10,7 @@ export type GridProps = {
     gap?: DimensionalMeasured,
     height?: DimensionalMeasured,
     responsive?: boolean,
-    minResponsiveWidth?: DimensionalMeasured
+    minResponsiveWidth?: DimensionalMeasured,
 }
 
 export class LiteGrid extends React.Component<GridProps, any> {

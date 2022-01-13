@@ -9,7 +9,6 @@ import {PosInCenter} from "../../components/PosInCenter";
 import {FlexDirection} from "../../logic/FlexDirection";
 import {em, percent, px} from "../../logic/DimensionalMeasured";
 import {Box} from "../../components/Box";
-import {javascript} from "@codemirror/lang-javascript";
 import "codemirror/lib/codemirror.css";
 import "codemirror/theme/blackboard.css";
 import "codemirror/mode/jsx/jsx.js";
@@ -17,46 +16,94 @@ import Highlight from "react-highlighter";
 import {Icon} from "../../components/Icon";
 import {ObjectVisualMeaning} from "../../logic/ObjectVisualMeaning";
 import {v4} from "uuid";
-import {getOr, Utils} from "../../logic/Utils";
+import {getOr} from "../../logic/Utils";
 import {ReactComponent as SuccessIcon} from "../../assets/icons/ic-16/ic16-check.svg";
 import {ReactComponent as ErrorIcon} from "../../assets/icons/ic-16/ic16-close.svg";
+import {ReactComponent as AddIcon} from "../../assets/icons/ic-16/ic16-plus.svg";
 import {LiteGrid} from "../../components/LiteGrid";
 import {OverflowBehaviour} from "../../logic/OverflowBehaviour";
-import {Switch} from "@mui/material";
 import {Justify} from "../../logic/Justify";
 import {Align} from "../../logic/Align";
+import _ from "lodash";
+import {Button} from "../../components/Button";
 
-/** Function that count occurrences of a substring in a string;
- * @param {String} string               The string
- * @param {String} subString            The sub string to search for
- * @param {Boolean} [allowOverlapping]  Optional. (Default:false)
- *
- * @author Vitim.us https://gist.github.com/victornpb/7736865
- * @see Unit Test https://jsfiddle.net/Victornpb/5axuh96u/
- * @see https://stackoverflow.com/a/7924240/938822
- */
-function occurrences(string: string, subString: string, allowOverlapping: boolean) {
-    string += "";
-    subString += "";
-    if (subString.length <= 0) return (string.length + 1);
-
-    let n = 0,
-        pos = 0,
-        step = allowOverlapping ? 1 : subString.length;
-
-    while (true) {
-        pos = string.indexOf(subString, pos);
-        if (pos >= 0) {
-            ++n;
-            pos += step;
-        } else break;
-    }
-    return n;
+export const getLocalStoreValue: (type: "regex" | "search", def?: string) => string = (type, def) =>  {
+    const item = window.localStorage.getItem(type);
+    if (item === null) {
+        return getOr(def, "");
+    } else return item;
 }
 
-export type RegexPageState = {
-    regex: string,
-    search: string
+export const getRegExp: (regex: string) => [exp: RegExp, expValid: boolean] = regex => {
+    let exp: RegExp = new RegExp("");
+    let expValid: boolean = true;
+    try {
+        exp = new RegExp(regex);
+    } catch (e) {
+        expValid = false;
+    }
+
+    return [exp, expValid];
+}
+
+const cheatsheet: CheatsheetData = {
+    categories: [
+        {
+            title: "Character classes",
+            entries: [
+                {
+                    regex: ".",
+                    description: "any character except newline"
+                },
+                {
+                    regex: "\\w \\d \\s",
+                    description: "word, digit, whitespace"
+                },
+                {
+                    regex: "\\W \\D \\S",
+                    description: "not word, digit, whitespace"
+                },
+                {
+                    regex: "[abc]",
+                    description: "any of a, b or c"
+                },
+                {
+                    regex: "[^abc]",
+                    description: "not a, b or c"
+                },
+                {
+                    regex: "[a-g] [0-5]",
+                    description: "character between a & g / character between 0 & 5"
+                },
+            ]
+        },
+        {
+            title: "Anchors",
+            entries: [
+                {
+                    regex: "^abc$",
+                    description: "start / end of the string"
+                },
+                {
+                    regex: "\\b \\B",
+                    description: "word, not-word boundary"
+                },
+            ]
+        },
+        {
+            title: "Escaped characters",
+            entries: [
+                {
+                    regex: "\\. \\* \\\\",
+                    description: "escaped special characters"
+                },
+                {
+                    regex: "\\t \\n \\r",
+                    description: "\ttab, linefeed, carriage return"
+                },
+            ]
+        }
+    ]
 }
 
 const theme: Themeable.Theme = utilizeGlobalTheme();
@@ -136,16 +183,9 @@ const Editor = styled.div`
   }
 `;
 
-export const getRegExp: (regex: string) => [exp: RegExp, expValid: boolean] = regex => {
-    let exp: RegExp = new RegExp("");
-    let expValid: boolean = true;
-    try {
-        exp = new RegExp(regex);
-    } catch (e) {
-        expValid = false;
-    }
-
-    return [exp, expValid];
+export type RegexPageState = {
+    regex: string,
+    search: string
 }
 
 export class RenderController {
@@ -233,45 +273,109 @@ export class RenderExecutor extends React.Component<RenderExecutorProps> {
     }
 }
 
-export class RegExpHighlighter extends React.PureComponent<{ componentDidMountRelay: (downstreamHook: (value: string, type: "regex" | "search") => void) => void }, any> {
+export type Test = {
+    id: string,
+    test: string
+}
 
-    public static staticRegex: string = "";
+export const TestDisplay: React.FC<{ test: Test, index?: number }> = props => {
+    const [exp, expValid] = getRegExp(RegExpHighlighter.staticRegex);
+    return (
+        <Box visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} opaque={true}>
+            <FlexBox width={percent(100)} flexDir={FlexDirection.ROW} align={Align.CENTER} justifyContent={Justify.SPACE_BETWEEN}>
+                <FlexBox gap={px(0)}>
+                    <Text text={`Test ${props.index}`}/>
 
-    public static staticSearch: string = "";
+                    <Highlight matchClass={"reg-match"} search={exp}>
+                        {props.test.test}
+                    </Highlight>
 
-    componentDidMount() {
-        this.props.componentDidMountRelay((value, type) => {
-            switch (type) {
-                case "regex": {
-                    RegExpHighlighter.staticRegex = value;
-                    break;
-                }
-                case "search": {
-                    RegExpHighlighter.staticSearch = value;
-                    break;
-                }
+                </FlexBox>
+                <Icon icon={<ErrorIcon/>} onClick={() => {
+                    RegExpHighlighter.removeTest(props.test.id);
+                }}/>
+            </FlexBox>
+        </Box>
+    );
+}
+
+export class RegExpHighlighter extends React.Component {
+
+    public static readonly staticTests: Test[] = RegExpHighlighter.loadTests();
+
+    public static staticRegex: string = getLocalStoreValue("regex", "");
+
+    public static staticSearch: string = getLocalStoreValue("search", "");
+
+    private static loadTests(): Test[] {
+        const json = window.localStorage.getItem("tests");
+        if (json === null) return [];
+        try {
+            return JSON.parse(json);
+        } catch (e) {
+            console.error(e);
+            return [];
+        }
+    }
+
+    private static saveTests() {
+        try {
+            const json = JSON.stringify(RegExpHighlighter.staticTests);
+            window.localStorage.setItem("tests", json);
+        } catch (e) {
+            console.error(e);
+            // todo error handling..
+        }
+    }
+
+    public static addTest(test: Test, rerender: boolean = true) {
+        this.staticTests.push(test);
+        if (rerender) {
+            RegexPage.controller.rerender("*", "tests")
+        }
+        this.saveTests();
+    }
+
+    public static removeTest(id: string, rerender: boolean = true) {
+        const index = this.staticTests.findIndex(value => value.id === id);
+        if (index > -1) {
+            this.staticTests.splice(index, 1);
+            if (rerender) {
+                RegexPage.controller.rerender("*", "tests")
             }
-            this.forceUpdate();
-        })
+            this.saveTests();
+        }
     }
 
     render() {
         const [exp, expValid] = getRegExp(RegExpHighlighter.staticRegex);
-        // expValid ? exp : "."
         return (
-            <Highlight matchClass={"reg-match"} search={expValid ? exp : "."}>
-                {RegExpHighlighter.staticSearch}
-            </Highlight>
+            <>
+                <Text text={String(new Date())} type={TextType.secondaryDescription} fontSize={px(12)}/>
+                {
+                    RegExpHighlighter.staticTests.map((value, index) => {
+                        return (
+                            <TestDisplay test={value} index={index} key={"test-" + index}/>
+                        );
+                    })
+                }
+                <Highlight matchClass={"reg-match"} search={exp}>
+                    {RegExpHighlighter.staticSearch}
+                </Highlight>
+            </>
         );
     }
 }
 
 export type CodeEditorProps = {
+    value?: string,
     upstreamHook: (value: string) => void,
     placeholder?: string | HTMLElement,
     classnames?: string[],
     theme?: "dark" | "light" | Extension,
-    extensions?: Extension[]
+    extensions?: Extension[],
+    debounce?: boolean,
+    debounceMS?: number
 }
 
 export class CodeEditor extends React.PureComponent<CodeEditorProps, any> {
@@ -282,15 +386,27 @@ export class CodeEditor extends React.PureComponent<CodeEditorProps, any> {
         super(props);
     }
 
-    private valueChangeHandler = (value: string) => {
+    private _valueChangeHandler(value: string) {
         CodeEditor.staticState = value;
         this.props.upstreamHook.call(this, value);
+    }
+
+    private debouncedValueChangeHandler = _.debounce((value: string) => {
+        this._valueChangeHandler(value);
+    }, getOr(this.props.debounceMS, 50));
+
+    private valueChangeHandler = (value: string) => {
+        if (this.props.debounce) {
+            this.debouncedValueChangeHandler(value);
+        } else {
+            this._valueChangeHandler(value);
+        }
     }
 
     render() {
         return (
             <Editor>
-                <ReactCodeMirror value={""}
+                <ReactCodeMirror value={this.props.value}
                                  placeholder={this.props.placeholder}
                                  onChange={this.valueChangeHandler}
                                  className={getOr(this.props.classnames?.join(" "), "")}
@@ -310,66 +426,6 @@ export type CheatsheetData = {
             description: string
         }[]
     }[]
-}
-
-const cheatsheet: CheatsheetData = {
-    categories: [
-        {
-            title: "Character classes",
-            entries: [
-                {
-                    regex: ".",
-                    description: "any character except newline"
-                },
-                {
-                    regex: "\\w \\d \\s",
-                    description: "word, digit, whitespace"
-                },
-                {
-                    regex: "\\W \\D \\S",
-                    description: "not word, digit, whitespace"
-                },
-                {
-                    regex: "[abc]",
-                    description: "any of a, b or c"
-                },
-                {
-                    regex: "[^abc]",
-                    description: "not a, b or c"
-                },
-                {
-                    regex: "[a-g] [0-5]",
-                    description: "character between a & g / character between 0 & 5"
-                },
-            ]
-        },
-        {
-            title: "Anchors",
-            entries: [
-                {
-                    regex: "^abc$",
-                    description: "start / end of the string"
-                },
-                {
-                    regex: "\\b \\B",
-                    description: "word, not-word boundary"
-                },
-            ]
-        },
-        {
-            title: "Escaped characters",
-            entries: [
-                {
-                    regex: "\\. \\* \\\\",
-                    description: "escaped special characters"
-                },
-                {
-                    regex: "\\t \\n \\r",
-                    description: "\ttab, linefeed, carriage return"
-                },
-            ]
-        }
-    ]
 }
 
 export const Cheatsheet: React.FC<CheatsheetData> = React.memo(props => {
@@ -401,20 +457,36 @@ export const Cheatsheet: React.FC<CheatsheetData> = React.memo(props => {
 
 export class RegexPage extends React.PureComponent {
 
+    public static readonly controller: RenderController = new RenderController();
+
     public static downstreamHook: ((value: string, type: ("regex" | "search")) => void) | undefined = undefined;
 
     public static staticRenderCheatsheet: boolean = false;
 
-    private readonly controller: RenderController = new RenderController();
+    public static updateLocalStore = _.debounce((value: string, type: ("regex" | "search")) => {
+        window.localStorage.setItem(type, value);
+    }, 1000);
 
     constructor() {
         super({});
         document.title = "Regex viewer"
     }
 
+    // noinspection JSMethodCanBeStatic
     private searchChangeHandler(value: string, type: ("regex" | "search")) {
-        RegexPage.downstreamHook?.(value, type);
-        this.controller.rerender(type);
+        switch (type) {
+            case "regex": {
+                RegExpHighlighter.staticRegex = value;
+                break;
+            }
+            case "search": {
+                console.log("change static search")
+                RegExpHighlighter.staticSearch = value;
+                break;
+            }
+        }
+        RegexPage.controller.rerender("*", "tests", type);
+        RegexPage.updateLocalStore(value, type);
     }
 
     render() {
@@ -434,12 +506,16 @@ export class RegexPage extends React.PureComponent {
                     </FlexBox>
                     <PosInCenter classnames={["editor-view"]}>
                         <LiteGrid columns={2}
-                                  style={{overflowY: "scroll"}}
                                   gap={theme.gaps.defaultGab}
-                                  height={percent(100)}
+                                  // height={percent(100)}
                                   responsive={true}
-                                  minResponsiveWidth={px(200)}>
-
+                                  minResponsiveWidth={px(200)}
+                                  style={{
+                                      boxSizing: "border-box",
+                                      maxWidth: "100%",
+                                      resize: "horizontal",
+                                      overflow: "auto"
+                                  }}>
                             {/*<RenderExecutor
                                 id={v4()}
                                 renderChildren={RegexPage.staticRenderCheatsheet}
@@ -455,22 +531,38 @@ export class RegexPage extends React.PureComponent {
                                 <FlexBox flexDir={FlexDirection.COLUMN} width={percent(100)}>
                                     <Box width={percent(100)} gapY={em(.5)}>
                                         <Text text={"Search string"} type={TextType.smallHeaderDeactivated}/>
-                                        <RegExpHighlighter
-                                            componentDidMountRelay={downstreamHook => RegexPage.downstreamHook = downstreamHook}/>
+
+                                        <RenderExecutor
+                                            id={v4()}
+                                            upstreamOnComponentUnmountHandler={id => RegexPage.controller.unregister(id)}
+                                            channels={["*", "regex", "search", "tests"]}
+                                            componentDidMountRelay={bridge => RegexPage.controller.register(bridge)}
+                                            componentFactory={() => (
+                                                <RegExpHighlighter/>
+                                            )}
+                                        />
+
                                         <FlexBox flexDir={FlexDirection.ROW} classnames={[""]}>
                                             <CodeEditor
+                                                value={RegExpHighlighter.staticSearch}
                                                 upstreamHook={value => this.searchChangeHandler(value, "search")}
                                                 theme={"dark"}
+                                                debounce={true}
                                                 classnames={["cm"]}
                                                 placeholder={"The quick brown fox jumps over the lazy dog."}
-                                                extensions={[javascript({
-                                                    typescript: true
-                                                })]}
                                             />
-                                            {/*<Button visualMeaning={ObjectVisualMeaning.SUCCESS} opaque={true}>
-                                            <Icon visualMeaning={ObjectVisualMeaning.SUCCESS} colored={true}
-                                                  icon={<EnterIcon/>}/>
-                                        </Button>*/}
+                                            <Button visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} opaque={true} onClick={() => {
+                                                if (RegExpHighlighter.staticSearch.length !== 0) {
+                                                    RegExpHighlighter.addTest({
+                                                        id: v4(),
+                                                        test: RegExpHighlighter.staticSearch
+                                                    });
+                                                }
+                                            }}>
+                                                <Icon visualMeaning={ObjectVisualMeaning.SUCCESS} colored={false}
+                                                      icon={<AddIcon/>}
+                                                />
+                                            </Button>
                                         </FlexBox>
                                     </Box>
                                     <Box width={percent(100)} gapY={em(.5)}>
@@ -478,15 +570,28 @@ export class RegexPage extends React.PureComponent {
 
                                         <RenderExecutor
                                             id={v4()}
-                                            upstreamOnComponentUnmountHandler={id => this.controller.unregister(id)}
+                                            upstreamOnComponentUnmountHandler={id => RegexPage.controller.unregister(id)}
                                             channels={["*", "regex", "search"]}
-                                            componentDidMountRelay={bridge => this.controller.register(bridge)}
+                                            componentDidMountRelay={bridge => RegexPage.controller.register(bridge)}
                                             componentFactory={() => {
                                                 const [exp, expValid] = getRegExp(RegExpHighlighter.staticRegex);
                                                 const match: RegExpMatchArray | null = exp.exec(RegExpHighlighter.staticSearch);
                                                 const exact: boolean = match !== null && match.length === 1 && match[0].length === RegExpHighlighter.staticSearch.length;
                                                 return (
                                                     <LiteGrid responsive={true} minResponsiveWidth={em(8)}>
+                                                        <Text text={`Valid`}
+                                                              type={TextType.secondaryDescription}
+                                                              fontSize={px(12)}
+                                                              enableLeftAppendix={true}
+                                                              leftAppendix={expValid ?
+                                                                  <Icon colored={true}
+                                                                        visualMeaning={ObjectVisualMeaning.SUCCESS}
+                                                                        icon={<SuccessIcon/>}/> :
+                                                                  <Icon colored={true}
+                                                                        visualMeaning={ObjectVisualMeaning.ERROR}
+                                                                        icon={<ErrorIcon/>}/>
+                                                              }
+                                                        />
                                                         <Text text={`Exact match`}
                                                               type={TextType.secondaryDescription}
                                                               fontSize={px(12)}
@@ -500,6 +605,7 @@ export class RegexPage extends React.PureComponent {
                                                                         icon={<ErrorIcon/>}/>
                                                               }
                                                         />
+
                                                         {/*<Text text={`Match count: ${match ? match?.length : "NaN"}`}
                                                       type={TextType.secondaryDescription}
                                                       fontSize={px(12)}
@@ -510,13 +616,13 @@ export class RegexPage extends React.PureComponent {
                                         />
 
                                         <CodeEditor
+                                            value={RegExpHighlighter.staticRegex}
                                             upstreamHook={value => this.searchChangeHandler(value, "regex")}
                                             theme={"dark"}
+                                            debounce={true}
+                                            debounceMS={150}
                                             classnames={["cm"]}
                                             placeholder={"([A-Z])\\w+"}
-                                            extensions={[javascript({
-                                                typescript: true
-                                            })]}
                                         />
                                     </Box>
                                 </FlexBox>
@@ -528,16 +634,3 @@ export class RegexPage extends React.PureComponent {
         );
     }
 }
-
-// <RenderExecutor
-//     id={v4()}
-//     upstreamOnComponentUnmountHandler={id => this.controller.unregister(id)}
-//     channels={["*", "regex"]}
-//     componentDidMountRelay={bridge => this.controller.register(bridge)}
-//     componentFactory={() => (
-//         <Text text={`Regular expression: '${RegExpHighlighter.staticRegex}'`}
-//               type={TextType.secondaryDescription}
-//               fontSize={px(12)}
-//         />
-//     )}
-// />
