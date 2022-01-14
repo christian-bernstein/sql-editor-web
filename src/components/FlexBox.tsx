@@ -16,6 +16,7 @@ export type FlexBoxProps = {
     align?: Align,
     justifyContent?: Justify,
     width?: DimensionalMeasured,
+    height?: DimensionalMeasured,
     overflowXBehaviour?: OverflowBehaviour
     classnames?: string[]
 }
@@ -31,6 +32,7 @@ export class FlexBox extends React.Component<FlexBoxProps, any> {
           align-items: ${this.props.align || Align.START};
           justify-content: ${getOr(this.props.justifyContent, Justify.FLEX_START)};
           width: ${getOr(this.props.width?.css(), "auto")};
+          height: ${getOr(this.props.height?.css(), "auto")};
           overflow-x: ${getOr<OverflowBehaviour>(this.props.overflowXBehaviour, OverflowBehaviour.VISIBLE)};
           // overflow-y: visible;
         `;

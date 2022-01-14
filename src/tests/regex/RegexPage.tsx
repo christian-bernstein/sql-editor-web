@@ -551,7 +551,7 @@ export class RegexPage extends React.PureComponent {
                                                 classnames={["cm"]}
                                                 placeholder={"The quick brown fox jumps over the lazy dog."}
                                             />
-                                            <Button visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} opaque={true} onClick={() => {
+                                            <Button visualMeaning={ObjectVisualMeaning.INFO} opaque={true} onClick={() => {
                                                 if (RegExpHighlighter.staticSearch.length !== 0) {
                                                     RegExpHighlighter.addTest({
                                                         id: v4(),
@@ -559,7 +559,7 @@ export class RegexPage extends React.PureComponent {
                                                     });
                                                 }
                                             }}>
-                                                <Icon visualMeaning={ObjectVisualMeaning.SUCCESS} colored={false}
+                                                <Icon visualMeaning={ObjectVisualMeaning.INFO} colored={true}
                                                       icon={<AddIcon/>}
                                                 />
                                             </Button>

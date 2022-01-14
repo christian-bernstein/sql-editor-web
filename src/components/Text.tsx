@@ -9,6 +9,7 @@ import {ObjectVisualMeaning} from "../logic/ObjectVisualMeaning";
 import ReactMarkdown from 'react-markdown'
 import {Link} from "./Link";
 import {Align} from "../logic/Align";
+import {Cursor} from "../logic/style/Cursor";
 
 export type TextProps = {
     text: string,
@@ -21,9 +22,11 @@ export type TextProps = {
     coloredIcon?: boolean,
     coloredText?: boolean,
     linkTooltip?: boolean,
+    highlight?: boolean,
     align?: Align,
     uppercase?: boolean,
-    onClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
+    onClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void,
+    cursor?: Cursor
 }
 
 export enum TextType {
@@ -60,8 +63,13 @@ export const Text: React.FC<TextProps> = props => {
       display: flex;
       align-items: center;
       gap: ${theme.paddings.defaultTextIconPadding.css()};
-      
+      cursor: ${getOr(props.cursor, Cursor.default)};
       color: ${props.coloredText ? meaningfulColors.lighter.css() : theme.colors.fontPrimaryColor.css()} !important;
+      transition: all ${theme.transitions.fastTime.css()};
+      
+      &:hover {
+        color: ${props.highlight ? meaningfulColors.main.css() : "auto"} !important;
+      }
       
       // min-width: 100%;
       
@@ -75,14 +83,16 @@ export const Text: React.FC<TextProps> = props => {
       }
       
       .md {
-        // white-space: pre-wrap;
+        white-space: pre-wrap;
+        // todo was comment, why? & does it make errors?
+        
         text-align: ${getOr(props.align, Align.START)};
         // todo check if working
         text-transform: ${props.uppercase ? "uppercase" : "auto"};
       }
     `;
 
-    return(
+    return (
         <Wrapper style={style} onClick={event => getOr(props.onClick, () => {})(event)}>
             {props.enableLeftAppendix ? props.leftAppendix : <></>}
             <ReactMarkdown className={"md"} children={props.text} components={{

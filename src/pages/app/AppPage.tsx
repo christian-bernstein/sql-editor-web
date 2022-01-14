@@ -65,32 +65,32 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
         });
         this.mounted = true;
 
-        this.activateSpecialPage(DefaultSpecialPages.SELECT_APP_CONFIG, () => arrayFactory<AppConfigSelectionData>(i => {
-            return {
-                title: String(i),
-                description: "",
-                config: {
-                    logSaveSize: 1000,
-                    logInterceptors: [],
-                    appTitle: "",
-                    debugMode: false,
-                    defaultAppRoute: "",
-                    rootRerenderHook: () => {},
-                    themes: new Map<string, Themeable.Theme>(),
-                    defaultTheme: "",
-                    defaultDebugAppRoute: "",
-                    connectorConfig: {
-                        protocol: "",
-                        id: "",
-                        packetInterceptor: () => {},
-                        maxConnectAttempts: 0,
-                        address: "",
-                        connectionRetryDelayFunc: () => 1,
-                        onConnectionFailed: () => {}
-                    }
-                }
-            };
-        }, 10));
+        // this.activateSpecialPage(DefaultSpecialPages.SELECT_APP_CONFIG, () => arrayFactory<AppConfigSelectionData>(i => {
+        //     return {
+        //         title: String(i),
+        //         description: "",
+        //         config: {
+        //             logSaveSize: 1000,
+        //             logInterceptors: [],
+        //             appTitle: "",
+        //             debugMode: false,
+        //             defaultAppRoute: "",
+        //             rootRerenderHook: () => {},
+        //             themes: new Map<string, Themeable.Theme>(),
+        //             defaultTheme: "",
+        //             defaultDebugAppRoute: "",
+        //             connectorConfig: {
+        //                 protocol: "",
+        //                 id: "",
+        //                 packetInterceptor: () => {},
+        //                 maxConnectAttempts: 0,
+        //                 address: "",
+        //                 connectionRetryDelayFunc: () => 1,
+        //                 onConnectionFailed: () => {}
+        //             }
+        //         }
+        //     };
+        // }, 10));
 
         console.log("app page mounted")
     }
@@ -188,7 +188,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
             connectorConfig: {
                 protocol: "login",
                 // address: "ws://192.168.2.100:80",
-                address: "ws://192.168.178.39:80",
+                address: "ws://localhost:80",
                 id: "ton",
                 maxConnectAttempts: 5,
                 connectionRetryDelayFunc: () => 0,

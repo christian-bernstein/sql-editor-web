@@ -6,21 +6,86 @@ import {Align} from "../../../logic/Align";
 import {Justify} from "../../../logic/Justify";
 import {Icon} from "../../../components/Icon";
 import {ReactComponent as MenuIcon} from "../../../assets/icons/ic-20/ic20-menu.svg";
+import {ReactComponent as ErrorIcon} from "../../../assets/icons/ic-20/ic20-alert.svg";
+import {ReactComponent as RedirectIcon} from "../../../assets/icons/ic-20/ic20-arrow-right.svg";
 import {App} from "../../../logic/App";
 import {Text, TextType} from "../../../components/Text";
 import {DBSessionCacheShard} from "../../../shards/DBSessionCacheShard";
-import {ObjectJSONDisplay} from "../../../components/ObjectJSONDisplay";
 import {Input} from "../../../components/Input";
 import {percent} from "../../../logic/DimensionalMeasured";
 import {Box} from "../../../components/Box";
+import {ObjectVisualMeaning} from "../../../logic/ObjectVisualMeaning";
+import {Cursor} from "../../../logic/style/Cursor";
+import {RedirectController} from "../../../components/RedirectController";
+import {ProjectInfoData} from "../../../logic/ProjectInfoData";
+import {PosInCenter} from "../../../components/PosInCenter";
+import {FlexDirection} from "../../../logic/FlexDirection";
 
-export class DebugEditor extends React.Component<any, any> {
+export type DebugEditorProps = {
+}
 
-    render() {
+export type DebugEditorState = {
+    redirect: boolean,
+    to: string
+}
+
+export class DebugEditor extends React.Component<DebugEditorProps, DebugEditorState> {
+
+    constructor(props: DebugEditorProps) {
+        super(props);
+        this.state = {
+            redirect: false,
+            to: "/"
+        }
+    }
+
+    private redirect(to: string) {
+        this.setState({
+            to: to,
+            redirect: true
+        });
+    }
+
+    private closeSession() {
+        this.redirect("/dashboard")
+    }
+
+    // noinspection JSMethodCanBeStatic
+    private renderSessionUndefinedErrorPage() {
         return (
             <PageV2>
-                <LiteGrid rows={2} height={percent(100)}>
-                    <FlexBox>
+                <PosInCenter fullHeight={true}>
+                    <Box visualMeaning={ObjectVisualMeaning.ERROR} opaque={true}>
+                        <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} justifyContent={Justify.CENTER}>
+                            <Icon icon={<ErrorIcon/>} visualMeaning={ObjectVisualMeaning.ERROR} colored={true}/>
+                            <FlexBox>
+                                <Text text={"Error while rendering dashboard"} type={TextType.smallHeader}/>
+                                {/* todo change link */}
+                                <Text text={"Session data is undefined, but shouldn't be undefined\nThis error can be caused by reloading the editor page. Its not a bug, but a yet un-implemented feature.\nIf you still think, this might be an error, contact the project administrator [here](mailto:name@email.com)"}/>
+                                <Text text={"**Goto dashboard**"}
+                                      type={TextType.secondaryDescription} visualMeaning={ObjectVisualMeaning.ERROR}
+                                      uppercase={true}
+                                      cursor={Cursor.pointer}
+                                      coloredText={true}
+                                      highlight={true}
+                                      enableLeftAppendix={true}
+                                      onClick={() => this.redirect("/dashboard")}
+                                      leftAppendix={<Icon icon={<RedirectIcon/>} visualMeaning={ObjectVisualMeaning.ERROR} colored={true}/>}
+                                />
+                            </FlexBox>
+                        </FlexBox>
+                    </Box>
+                </PosInCenter>
+            </PageV2>
+        );
+    }
+
+    // <ObjectJSONDisplay pure={false} title={"DB session info data"} showControls={true} object={App.app().shard<DBSessionCacheShard>("db-session-cache").currentInfoData}/>
+    private renderEditor(session: ProjectInfoData) {
+        return (
+            <PageV2>
+                <FlexBox height={percent(100)} flexDir={FlexDirection.COLUMN} justifyContent={Justify.SPACE_BETWEEN}>
+                    <FlexBox width={percent(100)}>
                         <LiteGrid columns={3}>
                             <FlexBox align={Align.START} justifyContent={Justify.CENTER}>
                                 <Icon icon={<MenuIcon/>} onClick={() => App.app().openMenu()}/>
@@ -28,20 +93,43 @@ export class DebugEditor extends React.Component<any, any> {
                             <FlexBox align={Align.CENTER} justifyContent={Justify.CENTER}>
                                 <Text uppercase align={Align.CENTER} type={TextType.smallHeader} text={"Debug Editor"} />
                             </FlexBox>
+                            <FlexBox align={Align.END} justifyContent={Justify.CENTER}>
+                                <Text
+                                    highlight={true}
+                                    text={"Close editor"}
+                                    uppercase={true}
+                                    visualMeaning={ObjectVisualMeaning.INFO}
+                                    coloredText={true}
+                                    cursor={Cursor.pointer}
+                                    onClick={() => this.closeSession()}
+                                />
+                            </FlexBox>
                         </LiteGrid>
-                        <ObjectJSONDisplay pure={false} title={"DB session info data"} object={App.app().shard<DBSessionCacheShard>("db-session-cache").currentInfoData}/>
+                        <Text text={session.title} type={TextType.smallHeader}/>
                     </FlexBox>
 
-
-
-                    <FlexBox justifyContent={Justify.FLEX_END}>
+                    <FlexBox width={percent(100)} justifyContent={Justify.FLEX_END}>
                         <Box width={percent(100)} height={percent(100)}>
                             <Text text={"DB edit history"}/>
                         </Box>
+
                         <Input label={"SQL"}/>
                     </FlexBox>
-                </LiteGrid>
+                </FlexBox>
+
+
             </PageV2>
+        );
+    }
+
+    render() {
+        const session: ProjectInfoData | undefined = App.app().shard<DBSessionCacheShard>("db-session-cache").currentInfoData;
+        return (
+            <RedirectController redirect={this.state.redirect} data={{
+                to: this.state.to
+            }}>
+                {session === undefined ? this.renderSessionUndefinedErrorPage() : this.renderEditor(session)}
+            </RedirectController>
         );
     }
 }

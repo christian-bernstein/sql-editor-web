@@ -12,7 +12,7 @@ import {RegexPage} from "./tests/regex/RegexPage";
 //     <RegexPageFC/>
 // </React.StrictMode>
 ReactDOM.render(
-    <RegexPage/>,
+    <AppPage/>,
     document.getElementById('root')
 );
 
