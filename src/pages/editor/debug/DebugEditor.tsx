@@ -11,7 +11,6 @@ import {ReactComponent as RedirectIcon} from "../../../assets/icons/ic-20/ic20-a
 import {App} from "../../../logic/App";
 import {Text, TextType} from "../../../components/Text";
 import {DBSessionCacheShard} from "../../../shards/DBSessionCacheShard";
-import {Input} from "../../../components/Input";
 import {percent} from "../../../logic/DimensionalMeasured";
 import {Box} from "../../../components/Box";
 import {ObjectVisualMeaning} from "../../../logic/ObjectVisualMeaning";
@@ -20,6 +19,12 @@ import {RedirectController} from "../../../components/RedirectController";
 import {ProjectInfoData} from "../../../logic/ProjectInfoData";
 import {PosInCenter} from "../../../components/PosInCenter";
 import {FlexDirection} from "../../../logic/FlexDirection";
+import {CodeEditor} from "../../../components/CodeEditor";
+import {cs} from "../../../logic/state/State";
+import {RenderController, RenderExecutor} from "../../../tests/regex/RegexPage";
+import {v4} from "uuid";
+import {sql} from "@codemirror/lang-sql";
+import {OverflowBehaviour} from "../../../logic/OverflowBehaviour";
 
 export type DebugEditorProps = {
 }
@@ -29,14 +34,27 @@ export type DebugEditorState = {
     to: string
 }
 
+export type DebugEditorLocalState = {
+    command: string
+}
+
 export class DebugEditor extends React.Component<DebugEditorProps, DebugEditorState> {
+
+    private readonly local = cs<DebugEditorLocalState>({
+        command: ""
+    });
+
+    private readonly controller = new RenderController();
 
     constructor(props: DebugEditorProps) {
         super(props);
         this.state = {
             redirect: false,
             to: "/"
-        }
+        };
+        this.local.on(state => {
+            this.controller.rerender("*");
+        });
     }
 
     private redirect(to: string) {
@@ -80,7 +98,6 @@ export class DebugEditor extends React.Component<DebugEditorProps, DebugEditorSt
         );
     }
 
-    // <ObjectJSONDisplay pure={false} title={"DB session info data"} showControls={true} object={App.app().shard<DBSessionCacheShard>("db-session-cache").currentInfoData}/>
     private renderEditor(session: ProjectInfoData) {
         return (
             <PageV2>
@@ -108,16 +125,32 @@ export class DebugEditor extends React.Component<DebugEditorProps, DebugEditorSt
                         <Text text={session.title} type={TextType.smallHeader}/>
                     </FlexBox>
 
-                    <FlexBox width={percent(100)} justifyContent={Justify.FLEX_END}>
-                        <Box width={percent(100)} height={percent(100)}>
-                            <Text text={"DB edit history"}/>
-                        </Box>
+                    <FlexBox width={percent(100)} height={percent(90)} overflowYBehaviour={OverflowBehaviour.SCROLL} justifyContent={Justify.FLEX_END}>
 
-                        <Input label={"SQL"}/>
+                        <RenderExecutor
+                            id={v4()}
+                            channels={["*", "command"]}
+                            componentDidMountRelay={bridge => this.controller.register(bridge)}
+                            componentFactory={() => (
+                                <Text text={this.local.state.command}/>
+                            )}
+                        />
+
+                        <CodeEditor
+                            theme={"dark"}
+                            classnames={["cm"]}
+                            debounce={true}
+                            value={this.local.state.command} placeholder={"select * from Users"}
+                            extensions={[
+                                sql()
+                            ]}
+                            upstreamHook={value => this.local.setState({
+                                command: value
+                            })}
+                        />
+
                     </FlexBox>
                 </FlexBox>
-
-
             </PageV2>
         );
     }

@@ -5,6 +5,7 @@
   "homepage": "regex/",
   "dependencies": {
     "@codemirror/lang-javascript": "^0.19.4",
+    "@codemirror/lang-sql": "^0.19.4",
     "@codemirror/language": "^0.19.7",
     "@dhaiwat10/react-link-preview": "^1.12.2",
     "@emotion/react": "^11.4.1",
