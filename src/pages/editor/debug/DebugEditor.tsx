@@ -8,7 +8,7 @@ import {Icon} from "../../../components/Icon";
 import {ReactComponent as MenuIcon} from "../../../assets/icons/ic-20/ic20-menu.svg";
 import {ReactComponent as ErrorIcon} from "../../../assets/icons/ic-20/ic20-alert.svg";
 import {ReactComponent as RedirectIcon} from "../../../assets/icons/ic-20/ic20-arrow-right.svg";
-import {App} from "../../../logic/App";
+import {App, utilizeGlobalTheme} from "../../../logic/App";
 import {Text, TextType} from "../../../components/Text";
 import {DBSessionCacheShard} from "../../../shards/DBSessionCacheShard";
 import {percent} from "../../../logic/DimensionalMeasured";
@@ -25,6 +25,8 @@ import {RenderController, RenderExecutor} from "../../../tests/regex/RegexPage";
 import {v4} from "uuid";
 import {sql} from "@codemirror/lang-sql";
 import {OverflowBehaviour} from "../../../logic/OverflowBehaviour";
+import {Task} from "../../../components/Task";
+import {Themeable} from "../../../Themeable";
 
 export type DebugEditorProps = {
 }
@@ -99,6 +101,7 @@ export class DebugEditor extends React.Component<DebugEditorProps, DebugEditorSt
     }
 
     private renderEditor(session: ProjectInfoData) {
+        const theme: Themeable.Theme = utilizeGlobalTheme();
         return (
             <PageV2>
                 <FlexBox height={percent(100)} flexDir={FlexDirection.COLUMN} justifyContent={Justify.SPACE_BETWEEN}>
@@ -126,6 +129,13 @@ export class DebugEditor extends React.Component<DebugEditorProps, DebugEditorSt
                     </FlexBox>
 
                     <FlexBox width={percent(100)} height={percent(90)} overflowYBehaviour={OverflowBehaviour.SCROLL} justifyContent={Justify.FLEX_END}>
+
+                        <Box width={percent(100)} gapY={theme.gaps.defaultGab}>
+                            <Text text={"Edits"}/>
+
+                            <Task task={{
+                            }}/>
+                        </Box>
 
                         <RenderExecutor
                             id={v4()}
