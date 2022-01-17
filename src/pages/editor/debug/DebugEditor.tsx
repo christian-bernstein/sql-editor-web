@@ -27,6 +27,8 @@ import {sql} from "@codemirror/lang-sql";
 import {OverflowBehaviour} from "../../../logic/OverflowBehaviour";
 import {Task} from "../../../components/Task";
 import {Themeable} from "../../../Themeable";
+import {SessionCommand} from "../../../logic/data/SessionCommand";
+import {getOr} from "../../../logic/Utils";
 
 export type DebugEditorProps = {
 }
@@ -37,13 +39,15 @@ export type DebugEditorState = {
 }
 
 export type DebugEditorLocalState = {
-    command: string
+    command: string,
+    processingCommand: boolean
 }
 
 export class DebugEditor extends React.Component<DebugEditorProps, DebugEditorState> {
 
     private readonly local = cs<DebugEditorLocalState>({
-        command: ""
+        command: "",
+        processingCommand: false
     });
 
     private readonly controller = new RenderController();
@@ -54,8 +58,8 @@ export class DebugEditor extends React.Component<DebugEditorProps, DebugEditorSt
             redirect: false,
             to: "/"
         };
-        this.local.on(state => {
-            this.controller.rerender("*");
+        this.local.on((state, value) => {
+            this.controller.rerender(...getOr(value.get("channels"), ["*"]));
         });
     }
 
@@ -68,6 +72,38 @@ export class DebugEditor extends React.Component<DebugEditorProps, DebugEditorSt
 
     private closeSession() {
         this.redirect("/dashboard")
+    }
+
+    private sendCommand(type: string) {
+        // todo set working state to true
+        this.local.setState({
+            processingCommand: true
+        }, new Map([["channels", ["processing-command"]]]));
+
+        App.app().connector(connector => {
+
+            connector.call({
+                // todo check protocol name
+                protocol: "main",
+                // todo create java counterpart & check packet id name
+                packetID: "SessionCommandPacket",
+                data: {
+                    type: type,
+                    raw: this.local.state.command,
+                    attributes: new Map<string, string>()
+                } as SessionCommand,
+                callback: {
+                    handle: (connector1, packet) => {
+                        // todo cast packet to useful d-type
+
+                        // todo set local working state to false
+                        this.local.setState({
+                            processingCommand: false
+                        }, new Map([["channels", ["processing-command"]]]));
+                    }
+                }
+            });
+        });
     }
 
     // noinspection JSMethodCanBeStatic
