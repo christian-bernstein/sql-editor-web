@@ -19,11 +19,11 @@ export function utilizeApp(): App {
     return App.app();
 }
 
-export function utilizeGlobalTheme(): Themeable.Theme {
+export function utilizeGlobalTheme(defTheme: Themeable.Theme = Themeable.defaultTheme): Themeable.Theme {
     if (App.isInitiated()) {
         return App.app().getGlobalTheme();
     } else {
-        return Themeable.defaultTheme;
+        return defTheme;
     }
 }
 

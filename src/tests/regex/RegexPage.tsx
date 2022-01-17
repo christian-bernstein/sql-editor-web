@@ -26,6 +26,7 @@ import {Justify} from "../../logic/Justify";
 import {Align} from "../../logic/Align";
 import _ from "lodash";
 import {Button} from "../../components/Button";
+import {Cursor} from "../../logic/style/Cursor";
 
 export const getLocalStoreValue: (type: "regex" | "search", def?: string) => string = (type, def) =>  {
     const item = window.localStorage.getItem(type);
@@ -106,7 +107,7 @@ const cheatsheet: CheatsheetData = {
     ]
 }
 
-const theme: Themeable.Theme = utilizeGlobalTheme();
+const theme: Themeable.Theme = utilizeGlobalTheme(Themeable.defaultTheme);
 
 const Wrapper = styled.div`
   position: relative;
@@ -153,14 +154,14 @@ const Editor = styled.div`
   justify-content: center;
   align-items: center;
   border-radius: ${theme.radii.defaultObjectRadius.css()};
-    // background-color: ${theme.colors.backgroundHighlightColor.css()};
+  background-color: ${theme.colors.backgroundHighlightInputColor.css()};
   border: 1px solid ${theme.colors.borderPrimaryColor.css()};
-  background-color: #282c34;
+  // background-color: #282c34;
   overflow-x: hidden;
 
   .CodeMirror-gutters, .CodeMirror {
-      // background-color: ${theme.colors.backgroundColor.css()} !important;
-    background-color: #282c34;
+    background-color: ${theme.colors.backgroundHighlightInputColor.css()} !important;
+    // background-color: #282c34;
     height: auto !important;
   }
 
@@ -174,10 +175,12 @@ const Editor = styled.div`
 
     .cm-line {
       // color: #e06c75 !important;
-      color: ${theme.colors.primaryHighlightColor.css()};
+      // color: ${theme.colors.primaryHighlightColor.css()};
+      color: ${theme.colors.fontPrimaryColor.css()};
 
       span, pre {
-        color: ${theme.colors.primaryHighlightColor.css()};
+        // color: ${theme.colors.primaryHighlightColor.css()};
+        color: ${theme.colors.fontPrimaryColor.css()};
       }
     }
   }
@@ -301,7 +304,7 @@ export const TestDisplay: React.FC<{ test: Test, index?: number }> = props => {
 
 export class RegExpHighlighter extends React.Component {
 
-    public static readonly staticTests: Test[] = RegExpHighlighter.loadTests();
+    public static staticTests: Test[] = RegExpHighlighter.loadTests();
 
     public static staticRegex: string = getLocalStoreValue("regex", "");
 
@@ -316,6 +319,10 @@ export class RegExpHighlighter extends React.Component {
             console.error(e);
             return [];
         }
+    }
+
+    public static testCount(): number {
+        return this.staticTests.length;
     }
 
     private static saveTests() {
@@ -347,11 +354,18 @@ export class RegExpHighlighter extends React.Component {
         }
     }
 
+    public static clearTests(rerender: boolean = true) {
+        this.staticTests = [];
+        if (rerender) {
+            RegexPage.controller.rerender("*", "tests")
+        }
+        this.saveTests();
+    }
+
     render() {
         const [exp, expValid] = getRegExp(RegExpHighlighter.staticRegex);
         return (
             <>
-                <Text text={String(new Date())} type={TextType.secondaryDescription} fontSize={px(12)}/>
                 {
                     RegExpHighlighter.staticTests.map((value, index) => {
                         return (
@@ -495,6 +509,8 @@ export class RegexPage extends React.PureComponent {
                 <div className={"container"}>
                     <FlexBox align={Align.START} width={percent(100)} flexDir={FlexDirection.ROW} justifyContent={Justify.SPACE_BETWEEN}>
                         <Text text={"Regex viewer"} type={TextType.smallHeader}/>
+                        <Text text={"[Cheatsheet](https://regexr.com/)"} type={TextType.secondaryDescription} fontSize={px(12)}/>
+
                         {/*<FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER}>
                             <Text text={"Cheatsheet"}/>
                             <Switch color={"default"} onChange={(event, checked) => {
@@ -531,6 +547,23 @@ export class RegexPage extends React.PureComponent {
                                 <FlexBox flexDir={FlexDirection.COLUMN} width={percent(100)}>
                                     <Box width={percent(100)} gapY={em(.5)}>
                                         <Text text={"Search string"} type={TextType.smallHeaderDeactivated}/>
+                                        <Text text={"Enter search string. Create a test by clicking the plus-icon. Each line will be parsed as an individual test."} type={TextType.secondaryDescription} fontSize={px(12)}/>
+
+                                        <RenderExecutor channels={["*", "tests"]} componentFactory={() => RegExpHighlighter.testCount() > 0 ? (
+                                            <Text
+                                                text={"**Clear all**"}
+                                                uppercase={true}
+                                                coloredText={true}
+                                                cursor={Cursor.pointer}
+                                                visualMeaning={ObjectVisualMeaning.INFO}
+                                                type={TextType.secondaryDescription}
+                                                fontSize={px(12)}
+                                                onClick={() => RegExpHighlighter.clearTests()}
+                                            />
+                                        ) : (
+                                            <></>
+                                        )} id={v4()} componentDidMountRelay={bridge => RegexPage.controller.register(bridge)}/>
+
 
                                         <RenderExecutor
                                             id={v4()}
@@ -546,17 +579,23 @@ export class RegexPage extends React.PureComponent {
                                             <CodeEditor
                                                 value={RegExpHighlighter.staticSearch}
                                                 upstreamHook={value => this.searchChangeHandler(value, "search")}
-                                                theme={"dark"}
+                                                theme={theme.mode}
                                                 debounce={true}
+                                                debounceMS={300}
                                                 classnames={["cm"]}
                                                 placeholder={"The quick brown fox jumps over the lazy dog."}
                                             />
                                             <Button visualMeaning={ObjectVisualMeaning.INFO} opaque={true} onClick={() => {
                                                 if (RegExpHighlighter.staticSearch.length !== 0) {
-                                                    RegExpHighlighter.addTest({
-                                                        id: v4(),
-                                                        test: RegExpHighlighter.staticSearch
-                                                    });
+                                                    const tests: string[] = RegExpHighlighter.staticSearch.split(new RegExp("[;(\\n)]"));
+                                                    tests.forEach(test => {
+                                                        if (test.length > 0) {
+                                                            RegExpHighlighter.addTest({
+                                                                id: v4(),
+                                                                test: test
+                                                            });
+                                                        }
+                                                    })
                                                 }
                                             }}>
                                                 <Icon visualMeaning={ObjectVisualMeaning.INFO} colored={true}
@@ -618,7 +657,7 @@ export class RegexPage extends React.PureComponent {
                                         <CodeEditor
                                             value={RegExpHighlighter.staticRegex}
                                             upstreamHook={value => this.searchChangeHandler(value, "regex")}
-                                            theme={"dark"}
+                                            theme={theme.mode}
                                             debounce={true}
                                             debounceMS={150}
                                             classnames={["cm"]}

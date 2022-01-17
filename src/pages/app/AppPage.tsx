@@ -21,6 +21,7 @@ import {Button} from "../../components/Button";
 import {DebugEditor} from "../editor/debug/DebugEditor";
 import {DBSessionCacheShard} from "../../shards/DBSessionCacheShard";
 import {arrayFactory} from "../../logic/Utils";
+import {RegexPage} from "../../tests/regex/RegexPage";
 
 export type AppPageProps = {
 }
@@ -165,6 +166,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
         if (config.debugMode) {
             routs.push(
                 <Route path={"/chart"} render={() => <ChartPage/>}/>,
+                <Route path={"/regex"} render={() => <RegexPage/>}/>,
                 <Route path={"/d-editor"} component={() => <DebugEditor/>}/>,
                 <Route path={"/monaco"} render={() => <Monaco/>}/>,
                 <Route path={"/panel"} render={() => <ControlPanelComponent address={"ws:192.168.2.100:30001"} connectorID={"panel"}/>}/>
@@ -180,11 +182,14 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
             debugMode: true,
             defaultAppRoute: "/boarding",
             defaultDebugAppRoute: "/boarding",
-            themes: new Map<string, Themeable.Theme>([["dark-green", Themeable.defaultTheme]]),
-            defaultTheme: "dark-green",
             rootRerenderHook: (callback) => this.rerender.bind(this)(),
             logInterceptors: [],
             logSaveSize: 1000,
+            defaultTheme: "dark-green",
+            themes: new Map<string, Themeable.Theme>([
+                ["dark-green", Themeable.defaultTheme],
+                ["light-green", Themeable.lightTheme]
+            ]),
             connectorConfig: {
                 protocol: "login",
                 // address: "ws://192.168.2.100:80",

@@ -65,6 +65,7 @@ export namespace Themeable {
     export type ColorPallet = {
         backgroundColor: Color,
         backgroundHighlightColor: Color,
+        backgroundHighlightInputColor: Color,
         backgroundDeactivatedColor: Color,
         iconColor: Color,
         fontPrimaryColor: Color,
@@ -85,6 +86,7 @@ export namespace Themeable {
 
     export type Theme = {
         colors: ColorPallet,
+        mode: "dark" | "light",
         radii: {
             defaultObjectRadius: DimensionalMeasured
         },
@@ -121,6 +123,7 @@ export namespace Themeable {
     export const defaultThemePallet: ColorPallet = {
         backgroundColor: Color.ofHex("#171717"),
         backgroundHighlightColor: Color.ofHex("#222429"),
+        backgroundHighlightInputColor: Color.ofHex("#282c34"),
         backgroundDeactivatedColor: Color.ofHex("#434750"),
         iconColor: Color.ofHex("#FFFFFF"),
         fontPrimaryColor: Color.ofHex("#FFFFFF"),
@@ -139,8 +142,119 @@ export namespace Themeable {
         backdropColor: Color.ofHex("#171717", .8)
     }
 
+    export const lightThemePallet: ColorPallet = {
+        backgroundColor: Color.ofHex("#ffffff"),
+        backgroundHighlightColor: Color.ofHex("#eaeaea"),
+        backgroundHighlightInputColor: Color.ofHex("#ffffff"),
+        backgroundDeactivatedColor: Color.ofHex("#e8e8e8"),
+        iconColor: Color.ofHex("#000000"),
+        fontPrimaryColor: Color.ofHex("#000000"),
+        fontPrimaryInvertedColor: Color.ofHex("#ffffff"),
+        fontSecondaryColor: Color.ofHex("#C6C6C6"),
+        fontDeactivatedColor: Color.ofHex("#4F4F4F"),
+        primaryColor: Color.ofHex("#71D99E"),
+        primaryHighlightColor: Color.ofHex("#A9E5C3"),
+        errorColor: Color.ofHex("#D93240"),
+        errorHighlightColor: Color.ofHex("#e55561"),
+        warnColor: Color.ofHex("#FBBE63"),
+        warnHighlightColor: Color.ofHex("#ffd387"),
+        borderPrimaryColor: Color.ofHex("#c4c4c4"),
+        borderColorSecondaryColor: Color.ofHex("#FBBE63"),
+        borderPrimaryShadowColor: Color.ofHex("#71D99E", .13),
+        backdropColor: Color.ofHex("#171717", .8)
+    }
+
     export const defaultTheme: Theme = {
         colors: defaultThemePallet,
+        mode: "dark",
+        radii: {
+            defaultObjectRadius: px(6)
+        },
+        margins: {
+            smallTextVerticalMargin: px(3)
+        },
+        paddings: {
+            defaultObjectPadding: px(16),
+            defaultButtonPadding: px(8),
+            defaultTextIconPadding: px(4)
+        },
+        gaps: {
+            defaultGab: px(16)
+        },
+        hovers: {
+            hoverLightFilter: DimensionalMeasured.of(120, Dimension.percentage)
+        },
+        transitions: {
+            mainTime: time(100, TimeUnit.ms),
+            fastTime: time(50, TimeUnit.ms)
+        },
+        texts: {
+            // todo implement global font family
+            fontFamily: "Operator Mono",
+            complete: {
+                boldLargeHeader: {
+                    fontFamily: "OperatorMono",
+                    fontStyle: "normal",
+                    fontWeight: "bold",
+                    fontSize: px(40).css(),
+                    lineHeight: px(50).css(),
+                    display: "flex"
+                },
+                boldSmallHeader: {
+                    margin: 0,
+                    fontFamily: "OperatorMono",
+                    fontStyle: "normal",
+                    fontWeight: "bold",
+                    fontSize: "16px",
+                    lineHeight: "19px",
+                    display: "flex",
+                    alignItems: "center",
+                    letterSpacing: "0.03em",
+                    color: `${defaultThemePallet.fontPrimaryColor.css()}`
+                },
+                defaultText: {
+                    margin: 0,
+                    fontFamily: "OperatorMono",
+                    fontStyle: "normal",
+                    fontWeight: 350,
+                    fontSize: "14px",
+                    lineHeight: "19px",
+                    display: "flex",
+                    alignItems: "center",
+                    letterSpacing: "0.03em",
+                    color: `${defaultThemePallet.fontPrimaryColor.css()}`
+                },
+                boldSmallHeaderDeactivated: {
+                    margin: 0,
+                    fontFamily: "OperatorMono",
+                    fontStyle: "normal",
+                    fontWeight: "bold",
+                    fontSize: "16px",
+                    lineHeight: "19px",
+                    display: "flex",
+                    alignItems: "center",
+                    letterSpacing: "0.03em",
+                    color: `${defaultThemePallet.fontDeactivatedColor.css()}`
+                },
+                secondaryDescription: {
+                    margin: 0,
+                    fontFamily: "OperatorMono",
+                    fontStyle: "normal",
+                    fontWeight: 350,
+                    fontSize: "14px",
+                    lineHeight: "17px",
+                    display: "flex",
+                    alignItems: "center",
+                    letterSpacing: "0.03em",
+                    color: `${defaultThemePallet.fontSecondaryColor.css()}`
+                }
+            }
+        },
+    }
+
+    export const lightTheme: Theme = {
+        colors: lightThemePallet,
+        mode: "light",
         radii: {
             defaultObjectRadius: px(6)
         },
