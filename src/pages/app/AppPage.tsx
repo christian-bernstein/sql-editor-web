@@ -178,10 +178,11 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
     private init(config?: AppConfig) {
         instance = this;
         App.appOrCreate(config ? config : {
-            appTitle: "SQL Editor",
+            // appTitle: "SQL Editor",
+            appTitle: "Regex Viewer",
             debugMode: true,
             defaultAppRoute: "/boarding",
-            defaultDebugAppRoute: "/boarding",
+            defaultDebugAppRoute: "/regex",
             rootRerenderHook: (callback) => this.rerender.bind(this)(),
             logInterceptors: [],
             logSaveSize: 1000,
@@ -195,7 +196,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                 // address: "ws://192.168.2.100:80",
                 address: "ws://localhost:80",
                 id: "ton",
-                maxConnectAttempts: 5,
+                maxConnectAttempts: 1,
                 connectionRetryDelayFunc: () => 0,
                 packetInterceptor: (packet: Environment.Packet) => {
                     console.log("received packet from server", packet);

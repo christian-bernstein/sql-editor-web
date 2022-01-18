@@ -194,6 +194,30 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
                                 <Text text={"CMD"}/>
                             </Button>
                         </FlexBox>
+
+                        <FlexBox flexDir={FlexDirection.ROW} overflowXBehaviour={OverflowBehaviour.SCROLL}>
+                            <Button visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
+                                    width={percent(100)}
+                                    opaque={true}
+                                    shrinkOnClick={true}
+                                    onClick={() => {
+                                        App.app().setGlobalTheme("light-green");
+                                        App.app().rerenderGlobally();
+                                    }}>
+                                <Text text={"Light-Theme"}/>
+                            </Button>
+                            <Button visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
+                                    width={percent(100)}
+                                    opaque={true}
+                                    shrinkOnClick={true}
+                                    onClick={() => {
+                                        App.app().setGlobalTheme("dark-green");
+                                        App.app().rerenderGlobally();
+                                    }}>
+                                <Text text={"Dark-Theme"}/>
+                            </Button>
+                        </FlexBox>
+
                         <FlexBox flexDir={FlexDirection.ROW}>
 
                         </FlexBox>

@@ -274,6 +274,11 @@ export class App {
         return this.themes.get(this.globalTheme) as Themeable.Theme;
     }
 
+    // todo add rerender feature
+    public setGlobalTheme(theme: string) {
+        this.globalTheme = theme;
+    }
+
     public rerenderGlobally() {
         this.config.rootRerenderHook?.();
     }

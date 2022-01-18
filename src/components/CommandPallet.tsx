@@ -8,12 +8,26 @@ import {Input} from "./Input";
 import {FlexBox} from "./FlexBox";
 import {FlexDirection} from "../logic/FlexDirection";
 import {Separator} from "./Separator";
+import {CodeEditor} from "./CodeEditor";
+import {RegExpHighlighter} from "../tests/regex/RegexPage";
+import {cs} from "../logic/state/State";
+import {DebugEditorLocalState} from "../pages/editor/debug/DebugEditor";
 
 export type CommandPalletProps = {
     isOpen: boolean
 }
 
+export type CommandPalletLocalState = {
+    search: string,
+    placeholder: string,
+}
+
 export class CommandPallet extends React.Component<CommandPalletProps, any> {
+
+    private readonly local = cs<CommandPalletLocalState>({
+        search: "",
+        placeholder: "Search of jump to..."
+    });
 
     render() {
         const theme: Themeable.Theme = utilizeGlobalTheme();
@@ -35,7 +49,17 @@ export class CommandPallet extends React.Component<CommandPalletProps, any> {
                 }
             }}>
                 <FlexBox flexDir={FlexDirection.COLUMN}>
-                    <Input label={"Command"} autoFocus={true}/>
+                    <CodeEditor
+                        value={this.local.state.search}
+                        upstreamHook={value => {
+
+                        }}
+                        theme={theme.mode}
+                        debounce={true}
+                        debounceMS={300}
+                        classnames={["cm"]}
+                        placeholder={this.local.state.placeholder}
+                    />
                     <Separator/>
                     <Text text={"Hey, I'm the modal you always looked for!"}/>
                 </FlexBox>

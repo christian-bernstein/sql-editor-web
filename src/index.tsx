@@ -9,7 +9,7 @@ import {RegexPage} from "./tests/regex/RegexPage";
 // <AppPage/>
 // <RegexPageFC/>
 // <React.StrictMode>
-//     <RegexPageFC/>
+//     <RegexPage/>
 // </React.StrictMode>
 ReactDOM.render(
     <AppPage/>,

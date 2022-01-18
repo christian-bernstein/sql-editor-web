@@ -95,6 +95,8 @@ export class CodeEditor extends React.PureComponent<CodeEditorProps, any> {
         return (
             <Editor>
                 <ReactCodeMirror value={this.props.value}
+                                 indentWithTab={true}
+                                 spellCheck={false}
                                  placeholder={this.props.placeholder}
                                  onChange={this.valueChangeHandler}
                                  className={getOr(this.props.classnames?.join(" "), "")}
