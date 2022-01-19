@@ -143,6 +143,8 @@ export class CodeEditor extends React.PureComponent<CodeEditorProps, any> {
     }
 }
 
+
+// todo use within local state
 export type RegexPageState = {
     regex: string,
     search: string
@@ -156,6 +158,12 @@ export class RegexPage extends React.PureComponent {
 
     public static staticRenderCheatsheet: boolean = false;
 
+    /**
+     * Function to update the localstorage.
+     * For performance reasons at max one update every second, using debounce technique.
+     * Debounce: Function gets first executed if last call was one second earlier.
+     * Calls within the one second delay will be dropped.
+     */
     public static updateLocalStore = _.debounce((value: string, type: ("regex" | "search")) => {
         window.localStorage.setItem(type, value);
     }, 1000);
@@ -184,43 +192,41 @@ export class RegexPage extends React.PureComponent {
 
     render() {
         const theme: Themeable.Theme = utilizeGlobalTheme(Themeable.defaultTheme);
-
         const Wrapper = styled.div`
-  position: relative;
-  color: ${theme.colors.fontPrimaryColor.css()};
-  box-sizing: border-box;
-  width: 100%;
-  max-width: 100%;
-  height: 100vh;
-  max-height: 100vh;
-  overflow: hidden;
-  padding: ${theme.paddings.defaultObjectPadding.css()};
-  background-color: ${theme.colors.backgroundColor.css()};
-
-  .container {
-    position: relative;
-    box-sizing: border-box;
-    width: 100%;
-    height: 100%;
-    max-width: 100%;
-    display: grid;
-    grid-template-rows: 10% 90%;
-    overflow: hidden;
-
-    .editor-view {
-      position: relative;
-      max-height: 100%;
-      height: 100%;
-    }
-
-    .reg-match {
-      color: ${theme.colors.fontPrimaryColor.css()};
-      background-color: ${theme.colors.primaryHighlightColor.withAlpha(.5).css()};
-      border: .5px solid ${theme.colors.primaryHighlightColor.css()};
-    }
-  }
-`;
-
+          position: relative;
+          color: ${theme.colors.fontPrimaryColor.css()};
+          box-sizing: border-box;
+          width: 100%;
+          max-width: 100%;
+          height: 100vh;
+          max-height: 100vh;
+          overflow: hidden;
+          padding: ${theme.paddings.defaultObjectPadding.css()};
+          background-color: ${theme.colors.backgroundColor.css()};
+        
+          .container {
+            position: relative;
+            box-sizing: border-box;
+            width: 100%;
+            height: 100%;
+            max-width: 100%;
+            display: grid;
+            grid-template-rows: 10% 90%;
+            overflow: hidden;
+        
+            .editor-view {
+              position: relative;
+              max-height: 100%;
+              height: 100%;
+            }
+        
+            .reg-match {
+              color: ${theme.colors.fontPrimaryColor.css()};
+              background-color: ${theme.colors.primaryHighlightColor.withAlpha(.5).css()};
+              border: .5px solid ${theme.colors.primaryHighlightColor.css()};
+            }
+          }
+        `;
 
         return (
             <Wrapper key={"regex-editor"}>
@@ -282,7 +288,6 @@ export class RegexPage extends React.PureComponent {
                                         ) : (
                                             <></>
                                         )} id={v4()} componentDidMountRelay={bridge => RegexPage.controller.register(bridge)}/>
-
 
                                         <RenderExecutor
                                             id={v4()}
@@ -363,11 +368,6 @@ export class RegexPage extends React.PureComponent {
                                                                         icon={<ErrorIcon/>}/>
                                                               }
                                                         />
-
-                                                        {/*<Text text={`Match count: ${match ? match?.length : "NaN"}`}
-                                                      type={TextType.secondaryDescription}
-                                                      fontSize={px(12)}
-                                                />*/}
                                                     </LiteGrid>
                                                 );
                                             }}
