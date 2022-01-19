@@ -28,6 +28,10 @@ import _ from "lodash";
 import {Button} from "../../components/Button";
 import {Cursor} from "../../logic/style/Cursor";
 import {FormControlLabel, Switch} from "@mui/material";
+import {RegExpHighlighter} from "./RegExpHighlighter";
+import {RenderController} from "./RenderController";
+import {RenderExecutor} from "./RenderExecutor";
+import {RenderBridge} from "./renderBridge";
 
 export const getLocalStoreValue: (type: "regex" | "search", def?: string) => string = (type, def) =>  {
     const item = window.localStorage.getItem(type);
@@ -47,56 +51,6 @@ export const getRegExp: (regex: string) => [exp: RegExp, expValid: boolean] = re
 
     return [exp, expValid];
 }
-
-const ThemeSwitch = styled(Switch)(({ theme }) => ({
-    width: 62,
-    height: 34,
-    padding: 7,
-    '& .MuiSwitch-switchBase': {
-        margin: 1,
-        padding: 0,
-        transform: 'translateX(6px)',
-        '&.Mui-checked': {
-            color: '#fff',
-            transform: 'translateX(22px)',
-            '& .MuiSwitch-thumb:before': {
-                backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 20 20"><path fill="${encodeURIComponent(
-                    '#fff',
-                )}" d="M4.2 2.5l-.7 1.8-1.8.7 1.8.7.7 1.8.6-1.8L6.7 5l-1.9-.7-.6-1.8zm15 8.3a6.7 6.7 0 11-6.6-6.6 5.8 5.8 0 006.6 6.6z"/></svg>')`,
-            },
-            '& + .MuiSwitch-track': {
-                opacity: 1,
-                // backgroundColor: theme.palette.mode === 'dark' ? '#8796A5' : '#aab4be',
-                backgroundColor: '#8796A5'
-            },
-        },
-    },
-    '& .MuiSwitch-thumb': {
-        // backgroundColor: theme.palette.mode === 'dark' ? '#003892' : '#001e3c',
-        backgroundColor: '#003892',
-        width: 32,
-        height: 32,
-        '&:before': {
-            content: "''",
-            position: 'absolute',
-            width: '100%',
-            height: '100%',
-            left: 0,
-            top: 0,
-            backgroundRepeat: 'no-repeat',
-            backgroundPosition: 'center',
-            backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 20 20"><path fill="${encodeURIComponent(
-                '#fff',
-            )}" d="M9.305 1.667V3.75h1.389V1.667h-1.39zm-4.707 1.95l-.982.982L5.09 6.072l.982-.982-1.473-1.473zm10.802 0L13.927 5.09l.982.982 1.473-1.473-.982-.982zM10 5.139a4.872 4.872 0 00-4.862 4.86A4.872 4.872 0 0010 14.862 4.872 4.872 0 0014.86 10 4.872 4.872 0 0010 5.139zm0 1.389A3.462 3.462 0 0113.471 10a3.462 3.462 0 01-3.473 3.472A3.462 3.462 0 016.527 10 3.462 3.462 0 0110 6.528zM1.665 9.305v1.39h2.083v-1.39H1.666zm14.583 0v1.39h2.084v-1.39h-2.084zM5.09 13.928L3.616 15.4l.982.982 1.473-1.473-.982-.982zm9.82 0l-.982.982 1.473 1.473.982-.982-1.473-1.473zM9.305 16.25v2.083h1.389V16.25h-1.39z"/></svg>')`,
-        },
-    },
-    '& .MuiSwitch-track': {
-        opacity: 1,
-        // backgroundColor: theme.palette.mode === 'dark' ? '#8796A5' : '#aab4be',
-        backgroundColor: '#8796A5',
-        borderRadius: 20 / 2,
-    },
-}));
 
 const cheatsheet: CheatsheetData = {
     categories: [
@@ -163,194 +117,10 @@ export type RegexPageState = {
     search: string
 }
 
-export class RenderController {
-
-    private readonly executors: Map<string, RenderBridge> = new Map<string, RenderBridge>();
-
-    public register(bridge: RenderBridge) {
-
-        console.log(this.executors)
-
-        this.executors.set(bridge.id, bridge);
-    }
-
-    public unregister(id: string) {
-        this.executors.delete(id);
-    }
-
-    public rerender(...channels: string[]) {
-        Array.from(this.executors.values()).filter(value => {
-            let b: boolean = false;
-            for (let channel of value.channels) {
-                if (channels.includes(channel)) {
-                    b = true;
-                }
-            }
-            return b;
-        }).forEach(value => {
-            try {
-                value.rerenderHook();
-            } catch (e) {
-                console.error(e);
-            }
-        })
-    }
-}
-
-export type RenderBridge = {
-    rerenderHook: () => void,
-    channels: string[],
-    id: string
-}
-
-export type RenderExecutorProps = {
-    renderChildren?: boolean,
-    componentFactory: () => JSX.Element,
-    channels?: string[],
-    upstreamOnComponentUnmountHandler?: (id: string) => void,
-    id: string
-    componentDidMountRelay: (bridge: RenderBridge) => void;
-}
-
-export class RenderExecutor extends React.Component<RenderExecutorProps> {
-
-    componentDidMount() {
-        this.props.componentDidMountRelay({
-            rerenderHook: () => {
-                this.forceUpdate();
-            },
-            channels: getOr(this.props.channels, []),
-            id: this.props.id
-        })
-    }
-
-    componentWillUnmount() {
-        this.props.upstreamOnComponentUnmountHandler?.(this.props.id);
-    }
-
-    render() {
-        return (
-            <>
-                {this.props.componentFactory()}
-                {this.props.children}
-            </>
-        );
-        // todo investigate bug
-        // console.log("rerender")
-        // if (getOr(this.props.renderChildren, false)) {
-        //     return (
-        //         <>
-        //             {this.props.componentFactory()}
-        //             {this.props.children}
-        //         </>
-        //     )
-        // } else return <>{String(getOr(this.props.renderChildren, false))}</>;
-    }
-}
 
 export type Test = {
     id: string,
     test: string
-}
-
-export const TestDisplay: React.FC<{ test: Test, index?: number }> = props => {
-    const [exp, expValid] = getRegExp(RegExpHighlighter.staticRegex);
-    return (
-        <Box visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} opaque={true}>
-            <FlexBox width={percent(100)} flexDir={FlexDirection.ROW} align={Align.CENTER} justifyContent={Justify.SPACE_BETWEEN}>
-                <FlexBox gap={px(0)}>
-                    <Text text={`Test ${props.index}`}/>
-
-                    <Highlight matchClass={"reg-match"} search={exp}>
-                        {props.test.test}
-                    </Highlight>
-
-                </FlexBox>
-                <Icon icon={<ErrorIcon/>} onClick={() => {
-                    RegExpHighlighter.removeTest(props.test.id);
-                }}/>
-            </FlexBox>
-        </Box>
-    );
-}
-
-export class RegExpHighlighter extends React.Component {
-
-    public static staticTests: Test[] = RegExpHighlighter.loadTests();
-
-    public static staticRegex: string = getLocalStoreValue("regex", "");
-
-    public static staticSearch: string = getLocalStoreValue("search", "");
-
-    private static loadTests(): Test[] {
-        const json = window.localStorage.getItem("tests");
-        if (json === null) return [];
-        try {
-            return JSON.parse(json);
-        } catch (e) {
-            console.error(e);
-            return [];
-        }
-    }
-
-    public static testCount(): number {
-        return this.staticTests.length;
-    }
-
-    private static saveTests() {
-        try {
-            const json = JSON.stringify(RegExpHighlighter.staticTests);
-            window.localStorage.setItem("tests", json);
-        } catch (e) {
-            console.error(e);
-            // todo error handling..
-        }
-    }
-
-    public static addTest(test: Test, rerender: boolean = true) {
-        this.staticTests.push(test);
-        if (rerender) {
-            RegexPage.controller.rerender("*", "tests")
-        }
-        this.saveTests();
-    }
-
-    public static removeTest(id: string, rerender: boolean = true) {
-        const index = this.staticTests.findIndex(value => value.id === id);
-        if (index > -1) {
-            this.staticTests.splice(index, 1);
-            if (rerender) {
-                RegexPage.controller.rerender("*", "tests")
-            }
-            this.saveTests();
-        }
-    }
-
-    public static clearTests(rerender: boolean = true) {
-        this.staticTests = [];
-        if (rerender) {
-            RegexPage.controller.rerender("*", "tests")
-        }
-        this.saveTests();
-    }
-
-    render() {
-        const [exp, expValid] = getRegExp(RegExpHighlighter.staticRegex);
-        return (
-            <>
-                {
-                    RegExpHighlighter.staticTests.map((value, index) => {
-                        return (
-                            <TestDisplay test={value} index={index} key={"test-" + index}/>
-                        );
-                    })
-                }
-                <Highlight matchClass={"reg-match"} search={exp}>
-                    {RegExpHighlighter.staticSearch}
-                </Highlight>
-            </>
-        );
-    }
 }
 
 export type CodeEditorProps = {

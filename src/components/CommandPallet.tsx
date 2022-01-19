@@ -9,7 +9,6 @@ import {FlexBox} from "./FlexBox";
 import {FlexDirection} from "../logic/FlexDirection";
 import {Separator} from "./Separator";
 import {CodeEditor} from "./CodeEditor";
-import {RegExpHighlighter} from "../tests/regex/RegexPage";
 import {cs} from "../logic/state/State";
 import {DebugEditorLocalState} from "../pages/editor/debug/DebugEditor";
 

@@ -21,7 +21,6 @@ import {PosInCenter} from "../../../components/PosInCenter";
 import {FlexDirection} from "../../../logic/FlexDirection";
 import {CodeEditor} from "../../../components/CodeEditor";
 import {cs} from "../../../logic/state/State";
-import {RenderController, RenderExecutor} from "../../../tests/regex/RegexPage";
 import {v4} from "uuid";
 import {sql} from "@codemirror/lang-sql";
 import {OverflowBehaviour} from "../../../logic/OverflowBehaviour";
@@ -29,6 +28,8 @@ import {Task} from "../../../components/Task";
 import {Themeable} from "../../../Themeable";
 import {SessionCommand} from "../../../logic/data/SessionCommand";
 import {getOr} from "../../../logic/Utils";
+import {RenderController} from "../../../tests/regex/RenderController";
+import {RenderExecutor} from "../../../tests/regex/RenderExecutor";
 
 export type DebugEditorProps = {
 }
