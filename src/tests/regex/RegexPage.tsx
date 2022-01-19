@@ -12,7 +12,6 @@ import {Box} from "../../components/Box";
 import "codemirror/lib/codemirror.css";
 import "codemirror/theme/blackboard.css";
 import "codemirror/mode/jsx/jsx.js";
-import Highlight from "react-highlighter";
 import {Icon} from "../../components/Icon";
 import {ObjectVisualMeaning} from "../../logic/ObjectVisualMeaning";
 import {v4} from "uuid";
@@ -21,17 +20,14 @@ import {ReactComponent as SuccessIcon} from "../../assets/icons/ic-16/ic16-check
 import {ReactComponent as ErrorIcon} from "../../assets/icons/ic-16/ic16-close.svg";
 import {ReactComponent as AddIcon} from "../../assets/icons/ic-16/ic16-plus.svg";
 import {LiteGrid} from "../../components/LiteGrid";
-import {OverflowBehaviour} from "../../logic/OverflowBehaviour";
 import {Justify} from "../../logic/Justify";
 import {Align} from "../../logic/Align";
 import _ from "lodash";
 import {Button} from "../../components/Button";
 import {Cursor} from "../../logic/style/Cursor";
-import {FormControlLabel, Switch} from "@mui/material";
 import {RegExpHighlighter} from "./RegExpHighlighter";
 import {RenderController} from "./RenderController";
 import {RenderExecutor} from "./RenderExecutor";
-import {RenderBridge} from "./renderBridge";
 
 export const getLocalStoreValue: (type: "regex" | "search", def?: string) => string = (type, def) =>  {
     const item = window.localStorage.getItem(type);
@@ -50,77 +46,6 @@ export const getRegExp: (regex: string) => [exp: RegExp, expValid: boolean] = re
     }
 
     return [exp, expValid];
-}
-
-const cheatsheet: CheatsheetData = {
-    categories: [
-        {
-            title: "Character classes",
-            entries: [
-                {
-                    regex: ".",
-                    description: "any character except newline"
-                },
-                {
-                    regex: "\\w \\d \\s",
-                    description: "word, digit, whitespace"
-                },
-                {
-                    regex: "\\W \\D \\S",
-                    description: "not word, digit, whitespace"
-                },
-                {
-                    regex: "[abc]",
-                    description: "any of a, b or c"
-                },
-                {
-                    regex: "[^abc]",
-                    description: "not a, b or c"
-                },
-                {
-                    regex: "[a-g] [0-5]",
-                    description: "character between a & g / character between 0 & 5"
-                },
-            ]
-        },
-        {
-            title: "Anchors",
-            entries: [
-                {
-                    regex: "^abc$",
-                    description: "start / end of the string"
-                },
-                {
-                    regex: "\\b \\B",
-                    description: "word, not-word boundary"
-                },
-            ]
-        },
-        {
-            title: "Escaped characters",
-            entries: [
-                {
-                    regex: "\\. \\* \\\\",
-                    description: "escaped special characters"
-                },
-                {
-                    regex: "\\t \\n \\r",
-                    description: "\ttab, linefeed, carriage return"
-                },
-            ]
-        }
-    ]
-}
-
-export type RegexPageState = {
-    regex: string,
-    search: string
-}
-
-
-export type Test = {
-    id: string,
-    test: string
 }
 
 export type CodeEditorProps = {
@@ -218,44 +143,10 @@ export class CodeEditor extends React.PureComponent<CodeEditorProps, any> {
     }
 }
 
-export type CheatsheetData = {
-    categories: {
-        title: string
-        entries: {
-            regex: string,
-            description: string
-        }[]
-    }[]
+export type RegexPageState = {
+    regex: string,
+    search: string
 }
-
-export const Cheatsheet: React.FC<CheatsheetData> = React.memo(props => {
-
-    const theme: Themeable.Theme = utilizeGlobalTheme(Themeable.defaultTheme);
-
-    return (
-        <Box gapY={theme.paddings.defaultObjectPadding} overflowYBehaviour={OverflowBehaviour.SCROLL}>{
-            props.categories.map(value => {
-                return (
-                    <>
-                        <Text text={value.title} type={TextType.smallHeader}/>
-                        {
-                            value.entries.map(entry => {
-                                return (
-                                    <Box>
-                                        <LiteGrid columns={2} responsive={true} minResponsiveWidth={px(400)}>
-                                            <Text text={entry.regex} coloredText={true} visualMeaning={ObjectVisualMeaning.INFO}/>
-                                            <Text text={entry.description}/>
-                                        </LiteGrid>
-                                    </Box>
-                                );
-                            })
-                        }
-                    </>
-                );
-            })
-        }</Box>
-    );
-});
 
 export class RegexPage extends React.PureComponent {
 

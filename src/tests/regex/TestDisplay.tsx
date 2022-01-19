@@ -11,7 +11,8 @@ import {Text} from "../../components/Text";
 import Highlight from "react-highlighter";
 import {Icon} from "../../components/Icon";
 import {ReactComponent as ErrorIcon} from "../../assets/icons/ic-16/ic16-close.svg";
-import {getRegExp, Test} from "./RegexPage";
+import {getRegExp} from "./RegexPage";
+import {Test} from "./Test";
 
 export const TestDisplay: React.FC<{ test: Test, index?: number }> = props => {
     const [exp, expValid] = getRegExp(RegExpHighlighter.staticRegex);

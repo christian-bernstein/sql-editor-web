@@ -1,7 +1,8 @@
 import React from "react";
 import Highlight from "react-highlighter";
-import {getLocalStoreValue, getRegExp, RegexPage, Test} from "./RegexPage";
+import {getLocalStoreValue, getRegExp, RegexPage} from "./RegexPage";
 import {TestDisplay} from "./TestDisplay";
+import {Test} from "./Test";
 
 export class RegExpHighlighter extends React.Component {
 
