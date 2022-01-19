@@ -182,7 +182,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
             appTitle: "Regex Viewer",
             debugMode: true,
             defaultAppRoute: "/boarding",
-            defaultDebugAppRoute: "/regex",
+            defaultDebugAppRoute: "/boarding",
             rootRerenderHook: (callback) => this.rerender.bind(this)(),
             logInterceptors: [],
             logSaveSize: 1000,

@@ -29,13 +29,6 @@ import {RegExpHighlighter} from "./RegExpHighlighter";
 import {RenderController} from "./RenderController";
 import {RenderExecutor} from "./RenderExecutor";
 
-export const getLocalStoreValue: (type: "regex" | "search", def?: string) => string = (type, def) =>  {
-    const item = window.localStorage.getItem(type);
-    if (item === null) {
-        return getOr(def, "");
-    } else return item;
-}
-
 export const getRegExp: (regex: string) => [exp: RegExp, expValid: boolean] = regex => {
     let exp: RegExp = new RegExp("");
     let expValid: boolean = true;

@@ -5,6 +5,7 @@ import {getOr} from "../logic/Utils";
 import styled from "styled-components";
 import {Themeable} from "../Themeable";
 import {utilizeGlobalTheme} from "../logic/App";
+import {DimensionalMeasured} from "../logic/DimensionalMeasured";
 
 export type CodeEditorProps = {
     value?: string,
@@ -14,7 +15,8 @@ export type CodeEditorProps = {
     theme?: "dark" | "light" | Extension,
     extensions?: Extension[],
     debounce?: boolean,
-    debounceMS?: number
+    debounceMS?: number,
+    width?: DimensionalMeasured
 }
 
 export class CodeEditor extends React.PureComponent<CodeEditorProps, any> {
@@ -46,7 +48,7 @@ export class CodeEditor extends React.PureComponent<CodeEditorProps, any> {
         const theme: Themeable.Theme = utilizeGlobalTheme();
         const Editor = styled.div`
           max-width: 100%;
-          width: 100%;
+          width: ${getOr(this.props.width?.css(), "100%")};
           min-height: 37px;
           box-sizing: border-box;
           display: flex;

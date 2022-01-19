@@ -8,6 +8,8 @@ import {Icon} from "../../../components/Icon";
 import {ReactComponent as MenuIcon} from "../../../assets/icons/ic-20/ic20-menu.svg";
 import {ReactComponent as ErrorIcon} from "../../../assets/icons/ic-20/ic20-alert.svg";
 import {ReactComponent as RedirectIcon} from "../../../assets/icons/ic-20/ic20-arrow-right.svg";
+import {ReactComponent as PushIcon} from "../../../assets/icons/ic-20/ic20-upload.svg";
+import {ReactComponent as PullIcon} from "../../../assets/icons/ic-20/ic20-download.svg";
 import {App, utilizeGlobalTheme} from "../../../logic/App";
 import {Text, TextType} from "../../../components/Text";
 import {DBSessionCacheShard} from "../../../shards/DBSessionCacheShard";
@@ -30,6 +32,11 @@ import {SessionCommand} from "../../../logic/data/SessionCommand";
 import {getOr} from "../../../logic/Utils";
 import {RenderController} from "../../../tests/regex/RenderController";
 import {RenderExecutor} from "../../../tests/regex/RenderExecutor";
+import {Button} from "../../../components/Button";
+import {LoadState} from "../../../logic/LoadState";
+import {CircularProgress} from "@mui/material";
+import {Assembly} from "../../../logic/Assembly";
+import {SessionCommandType} from "../../../logic/data/SessionCommandType";
 
 export type DebugEditorProps = {
 }
@@ -41,17 +48,21 @@ export type DebugEditorState = {
 
 export type DebugEditorLocalState = {
     command: string,
-    processingCommand: boolean
+    processPushCommand: boolean,
+    processPullCommand: boolean,
 }
 
 export class DebugEditor extends React.Component<DebugEditorProps, DebugEditorState> {
 
     private readonly local = cs<DebugEditorLocalState>({
         command: "",
-        processingCommand: false
+        processPullCommand: false,
+        processPushCommand: false
     });
 
     private readonly controller = new RenderController();
+
+    private readonly assembly: Assembly;
 
     constructor(props: DebugEditorProps) {
         super(props);
@@ -60,8 +71,48 @@ export class DebugEditor extends React.Component<DebugEditorProps, DebugEditorSt
             to: "/"
         };
         this.local.on((state, value) => {
+            console.log("rerender")
             this.controller.rerender(...getOr(value.get("channels"), ["*"]));
         });
+
+        this.assembly = new Assembly().assembly("push-pull-button", (theme, props1) => {
+            const localState = this.local.state;
+            const working: boolean = localState.processPushCommand || localState.processPullCommand;
+
+            return (
+                <>
+                    <Button visualMeaning={working ? ObjectVisualMeaning.UI_NO_HIGHLIGHT : ObjectVisualMeaning.INFO} opaque={true} onClick={() => this.sendCommand(SessionCommandType.PUSH)}>{
+                        localState.processPushCommand ? (
+                            <CircularProgress variant={"indeterminate"} size={20} sx={{
+                                color: theme.colors.primaryHighlightColor.css()
+                            }}/>
+                        ) : (
+                            <Icon visualMeaning={working ? ObjectVisualMeaning.UI_NO_HIGHLIGHT : ObjectVisualMeaning.INFO} colored={true} icon={<PushIcon/>}/>
+                        )
+                    }</Button>
+                    <Button visualMeaning={working ? ObjectVisualMeaning.UI_NO_HIGHLIGHT : ObjectVisualMeaning.INFO} opaque={true} onClick={() => this.sendCommand(SessionCommandType.PULL)}>{
+                        localState.processPullCommand ? (
+                            <CircularProgress variant={"indeterminate"} size={20} sx={{
+                                color: theme.colors.primaryHighlightColor.css()
+                            }}/>
+                        ) : (
+                            <Icon visualMeaning={working ? ObjectVisualMeaning.UI_NO_HIGHLIGHT : ObjectVisualMeaning.INFO} colored={true} icon={<PullIcon/>}/>
+                        )
+                    }</Button>
+                </>
+            )
+        });
+
+        if (App.app().config.debugMode) {
+            App.app().shard<DBSessionCacheShard>("db-session-cache").currentInfoData = {
+                id: v4(),
+                title: "Debug session",
+                edits: 256,
+                stator: false,
+                lastEdited: new Date(),
+                state: LoadState.ONLINE
+            }
+        }
     }
 
     private redirect(to: string) {
@@ -75,23 +126,34 @@ export class DebugEditor extends React.Component<DebugEditorProps, DebugEditorSt
         this.redirect("/dashboard")
     }
 
-    private sendCommand(type: string) {
+    private sendCommand(type: SessionCommandType) {
         // todo set working state to true
-        this.local.setState({
-            processingCommand: true
-        }, new Map([["channels", ["processing-command"]]]));
+
+        switch (type) {
+            case SessionCommandType.PULL:
+                this.local.setState({
+                    processPullCommand: true
+                }, new Map([["channels", ["push-pull"]]]));
+                break;
+            case SessionCommandType.PUSH:
+                this.local.setState({
+                    processPushCommand: true
+                }, new Map([["channels", ["*", "push-pull"]]]));
+                break;
+        }
 
         App.app().connector(connector => {
-
             connector.call({
                 // todo check protocol name
                 protocol: "main",
                 // todo create java counterpart & check packet id name
-                packetID: "SessionCommandPacket",
+                packetID: "SessionCommandPacketData",
                 data: {
                     type: type,
                     raw: this.local.state.command,
-                    attributes: new Map<string, string>()
+                    attributes: new Map<string, string>(),
+                    dbID: App.app().shard<DBSessionCacheShard>("db-session-cache").currentInfoData?.id
+
                 } as SessionCommand,
                 callback: {
                     handle: (connector1, packet) => {
@@ -99,12 +161,27 @@ export class DebugEditor extends React.Component<DebugEditorProps, DebugEditorSt
 
                         // todo set local working state to false
                         this.local.setState({
-                            processingCommand: false
-                        }, new Map([["channels", ["processing-command"]]]));
+                            processPushCommand: false
+                        }, new Map([["channels", ["*", "push-pull"]]]));
                     }
                 }
             });
         });
+
+        setTimeout(() => {
+            switch (type) {
+                case SessionCommandType.PULL:
+                    this.local.setState({
+                        processPullCommand: false
+                    }, new Map([["channels", ["*", "push-pull"]]]));
+                    break;
+                case SessionCommandType.PUSH:
+                    this.local.setState({
+                        processPushCommand: false
+                    }, new Map([["channels", ["*", "push-pull"]]]));
+                    break;
+            }
+        }, 5000);
     }
 
     // noinspection JSMethodCanBeStatic
@@ -166,12 +243,9 @@ export class DebugEditor extends React.Component<DebugEditorProps, DebugEditorSt
                     </FlexBox>
 
                     <FlexBox width={percent(100)} height={percent(90)} overflowYBehaviour={OverflowBehaviour.SCROLL} justifyContent={Justify.FLEX_END}>
-
                         <Box width={percent(100)} gapY={theme.gaps.defaultGab}>
                             <Text text={"Edits"}/>
-
-                            <Task task={{
-                            }}/>
+                            <Task task={{}}/>
                         </Box>
 
                         <RenderExecutor
@@ -183,19 +257,31 @@ export class DebugEditor extends React.Component<DebugEditorProps, DebugEditorSt
                             )}
                         />
 
-                        <CodeEditor
-                            theme={"dark"}
-                            classnames={["cm"]}
-                            debounce={true}
-                            value={this.local.state.command} placeholder={"select * from Users"}
-                            extensions={[
-                                sql()
-                            ]}
-                            upstreamHook={value => this.local.setState({
-                                command: value
-                            })}
-                        />
+                        <FlexBox flexDir={FlexDirection.ROW} width={percent(100)}>
+                            <CodeEditor
+                                width={percent(100)}
+                                theme={"dark"}
+                                classnames={["cm"]}
+                                debounce={true}
+                                value={this.local.state.command} placeholder={"select * from Users"}
+                                extensions={[
+                                    sql()
+                                ]}
+                                upstreamHook={value => this.local.setState({
+                                    command: value
+                                })}
+                            />
 
+                            <RenderExecutor
+                                id={v4()}
+                                componentDidMountRelay={bridge => this.controller.register(bridge)}
+                                channels={["*", "push-pull"]}
+                                componentFactory={() => this.assembly.render({
+                                    component: "push-pull-button",
+                                    param: ""
+                                })}
+                            />
+                        </FlexBox>
                     </FlexBox>
                 </FlexBox>
             </PageV2>

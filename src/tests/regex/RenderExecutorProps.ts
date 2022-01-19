@@ -1,4 +1,4 @@
-import {RenderBridge} from "./renderBridge";
+import {RenderBridge} from "./RenderBridge";
 
 export type RenderExecutorProps = {
     renderChildren?: boolean,

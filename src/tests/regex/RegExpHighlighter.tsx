@@ -1,8 +1,16 @@
 import React from "react";
 import Highlight from "react-highlighter";
-import {getLocalStoreValue, getRegExp, RegexPage} from "./RegexPage";
+import {getRegExp, RegexPage} from "./RegexPage";
 import {TestDisplay} from "./TestDisplay";
 import {Test} from "./Test";
+import {getOr} from "../../logic/Utils";
+
+export const getLocalStoreValue: (type: "regex" | "search", def?: string) => string = (type, def) =>  {
+    const item = window.localStorage.getItem(type);
+    if (item === null) {
+        return getOr(def, "");
+    } else return item;
+}
 
 export class RegExpHighlighter extends React.Component {
 

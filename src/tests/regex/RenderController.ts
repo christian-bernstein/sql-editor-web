@@ -1,4 +1,4 @@
-import {RenderBridge} from "./renderBridge";
+import {RenderBridge} from "./RenderBridge";
 
 export class RenderController {
 
