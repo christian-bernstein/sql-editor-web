@@ -78,7 +78,6 @@ export class DebugEditor extends React.Component<DebugEditorProps, DebugEditorSt
         this.assembly = new Assembly().assembly("push-pull-button", (theme, props1) => {
             const localState = this.local.state;
             const working: boolean = localState.processPushCommand || localState.processPullCommand;
-
             return (
                 <>
                     <Button visualMeaning={working ? ObjectVisualMeaning.UI_NO_HIGHLIGHT : ObjectVisualMeaning.INFO} opaque={true} onClick={() => this.sendCommand(SessionCommandType.PUSH)}>{
@@ -106,6 +105,7 @@ export class DebugEditor extends React.Component<DebugEditorProps, DebugEditorSt
         if (App.app().config.debugMode) {
             App.app().shard<DBSessionCacheShard>("db-session-cache").currentInfoData = {
                 id: v4(),
+                creatorUserID: v4(),
                 title: "Debug session",
                 edits: 256,
                 stator: false,
@@ -286,6 +286,10 @@ export class DebugEditor extends React.Component<DebugEditorProps, DebugEditorSt
                 </FlexBox>
             </PageV2>
         );
+    }
+
+    componentDidMount() {
+        App.app().triggerLoginIfNotLoggedIn({});
     }
 
     render() {

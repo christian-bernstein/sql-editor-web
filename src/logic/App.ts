@@ -393,4 +393,46 @@ export class App {
     public flow(): FlowAccessPoint {
         return this.flowAccessPoint;
     }
+
+    /**
+     * If a single session is present, that one is used for automated login.
+     * If multiple sessions are present, the user has to select a session, he wants to resume.
+     * If no user session is present, the login page will be activated, with its automated redirection set to the calling location
+     */
+    public triggerLoginIfNotLoggedIn(config: {
+        processFinished?: () => void,
+        processSuccessful?: () => void
+    }) {
+
+        // todo only if not logged in
+
+        const entries = this.getSessionHistoryEntries();
+        if (entries.length > 1) {
+            // multiple session entries are present
+            console.error("more than one session present");
+
+        } else if (entries.length === 1) {
+            // a single session entry is present
+            console.error("one session present");
+            this.login({
+                initialLoginProcedure: "session",
+                sessionID: entries[0].sessionID,
+                onLoginProcessEnded: () => {
+                    config.processFinished?.();
+                },
+                onLoginSuccess: () => {
+                    // todo investigate why login success function isn't called
+                    console.log("internal login success function call")
+                    config.processSuccessful?.();
+                },
+                onLoginFail: () => {
+                    // the automated login procedure didn't work, the user needs to login manually
+                    // todo implement (not mvp-feature)
+                }
+            });
+        } else {
+            // no session entry is present, trigger the full login page
+            console.error("no sessions present");
+        }
+    }
 }

@@ -2,7 +2,7 @@ import React from "react";
 import "../../styles/pages/DashboardPage.scss";
 import {ProjectInfo} from "../../components/ProjectInfo";
 import {LoadState} from "../../logic/LoadState";
-import {App} from "../../logic/App";
+import {App, utilizeGlobalTheme} from "../../logic/App";
 import {v4} from "uuid";
 import {ProjectInfoData} from "../../logic/ProjectInfoData";
 import {FlexBox} from "../../components/FlexBox";
@@ -13,17 +13,23 @@ import {Justify} from "../../logic/Justify";
 import {LiteGrid} from "../../components/LiteGrid";
 import {ReactComponent as MenuIcon} from "../../assets/icons/ic-20/ic20-menu.svg";
 import {Icon} from "../../components/Icon";
-import {array, arrayFactory} from "../../logic/Utils";
+import {arrayFactory} from "../../logic/Utils";
 import {PosInCenter} from "../../components/PosInCenter";
 import {em, px} from "../../logic/DimensionalMeasured";
 import {DBSessionCacheShard} from "../../shards/DBSessionCacheShard";
 import {Redirect} from "react-router-dom";
+import {ListProjectResponsePacketData} from "../../packets/in/ListProjectResponsePacketData";
+import {Themeable} from "../../Themeable";
+import {FlexDirection} from "../../logic/FlexDirection";
+import {CircularProgress} from "@mui/material";
 
 export type DashboardPageProps = {
 }
 
 export type DashboardPageState = {
-    redirectToEditor: boolean
+    redirectToEditor: boolean,
+    loading: boolean,
+    projects: ProjectInfoData[]
 }
 
 export default class DashboardPage extends React.PureComponent<DashboardPageProps, DashboardPageState> {
@@ -31,7 +37,9 @@ export default class DashboardPage extends React.PureComponent<DashboardPageProp
     constructor(props: DashboardPageProps) {
         super(props);
         this.state = {
-            redirectToEditor: false
+            redirectToEditor: false,
+            loading: false,
+            projects: []
         };
     }
 
@@ -43,7 +51,43 @@ export default class DashboardPage extends React.PureComponent<DashboardPageProp
         });
     }
 
+    private loadProjects() {
+        this.setState({
+            loading: true
+        });
+        App.app().getConnector().call({
+            protocol: "main",
+            packetID: "ListProjectPacketData",
+            data: {},
+            callback: {
+                handle: (connector, packet) => {
+                    const lpr: ListProjectResponsePacketData = packet.data;
+                    this.setState({
+                        projects: lpr.projects
+                    }, () => {
+                        this.setState({
+                            loading: false
+                        });
+                    });
+                }
+            }
+        });
+    }
+
+    componentDidMount() {
+        App.app().triggerLoginIfNotLoggedIn({
+            processSuccessful: () => {
+                console.log("try to load projects")
+                this.loadProjects();
+            },
+            processFinished: () => {
+                console.log("login process finished")
+            }
+        });
+    }
+
     private renderPage(): JSX.Element {
+        const theme: Themeable.Theme = utilizeGlobalTheme();
         return (
             <PageV2>
                 <LiteGrid columns={3}>
@@ -55,7 +99,19 @@ export default class DashboardPage extends React.PureComponent<DashboardPageProp
                     </FlexBox>
                 </LiteGrid>
                 <PosInCenter>
-                    <Text uppercase align={Align.CENTER} type={TextType.secondaryDescription} text={"*Select a project*"} />
+                    {
+                        this.state.loading ? (
+                            // todo fix progress width css bug (width maybe 1px wide..)
+                            <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.defaultGab}>
+                                <CircularProgress variant={"indeterminate"} size={20} sx={{
+                                    color: theme.colors.primaryHighlightColor.css()
+                                }}/>
+                                <Text uppercase align={Align.CENTER} type={TextType.secondaryDescription} text={"*Loading*"} />
+                            </FlexBox>
+                        ) : (
+                            <Text uppercase align={Align.CENTER} type={TextType.secondaryDescription} text={"*Select a project*"} />
+                        )
+                    }
                 </PosInCenter>
                 <LiteGrid responsive minResponsiveWidth={px(300)} gap={em(1)}>
                     {
@@ -64,6 +120,7 @@ export default class DashboardPage extends React.PureComponent<DashboardPageProp
                             key={v4()}
                             onSelect={data => this.onProjectSelect(data)}
                             data={{
+                                creatorUserID: v4(),
                                 id: v4(),
                                 state: LoadState.ONLINE,
                                 stator: true,
@@ -73,49 +130,23 @@ export default class DashboardPage extends React.PureComponent<DashboardPageProp
                             }}
                         />, 3)
                     }
+                    {
+                        this.state.projects.map(project => <ProjectInfo
+                            key={project.id}
+                            onSelect={data => this.onProjectSelect(data)}
+                            data={{
+                                creatorUserID: project.creatorUserID,
+                                id: project.id,
+                                state: project.state,
+                                stator: project.stator,
+                                edits: project.edits,
+                                lastEdited: project.lastEdited,
+                                title: project.title
+                            }}
+                        />)
+                    }
                 </LiteGrid>
             </PageV2>
-            //<div className={"dashboard-page"}>
-            //    {/* header */}
-            //    <div className={"dashboard-header"}>
-            //        <div className={"left-icons"}>
-            //            <MenuIcon onClick={event => this.menuIconClickHandle(event)}/>
-            //        </div>
-            //        <div className={"right-icons"}>
-            //            <BadgedWrapper badgeFlowDirection={"right"} badge={<Badge background={Color.ofHex("71D99E")}>20</Badge>} showBadgeInitially={true}>
-            //                <InboxIcon/>
-            //            </BadgedWrapper>
-            //            <BadgedWrapper badgeFlowDirection={"right"} badge={<Badge background={Color.ofHex("71D99E")}>4</Badge>} showBadgeInitially={false}>
-            //                <FilterIcon/>
-            //            </BadgedWrapper>
-            //            <BadgedWrapper badgeFlowDirection={"right"} badge={<Badge background={Color.ofHex("71D99E")}>1</Badge>} showBadgeInitially={false}>
-            //                <CreateIcon/>
-            //            </BadgedWrapper>
-            //        </div>
-            //    </div>
-//
-            //    {/* title */}
-            //    <div className={"dashboard-title"}>
-            //        <p>Hello,</p>
-            //        <h2 className={"name"}>Christian Bernstein</h2>
-            //        <pre>{window.localStorage.getItem("session-id")}</pre>
-            //        <pre>{this.state._a}</pre>
-            //    </div>
-//
-            //    <FlexBox>
-            //        <ProjectInfo
-            //            onSelect={data => this.onProjectSelect(data)}
-            //            data={{
-            //                id: v4(),
-            //                state: LoadState.ONLINE,
-            //                stator: true,
-            //                edits: 10,
-            //                lastEdited: new Date(),
-            //                title: "SQL lesson 21"
-            //            }}
-            //        />
-            //    </FlexBox>
-            //</div>
         );
     }
 
