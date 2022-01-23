@@ -15,6 +15,12 @@ import {AreaChartComponent} from "./AreaChartComponent";
 import styled from "styled-components";
 import {Themeable} from "../Themeable";
 import {utilizeGlobalTheme} from "../logic/App";
+import {Justify} from "../logic/Justify";
+import {ProjectInfoOnlineIcon} from "./ProjectInfoOnlineIcon";
+import {Utils} from "../logic/Utils";
+import {Tooltip, Zoom} from "@mui/material";
+import {CustomTooltip} from "./CustomTooltip";
+import {ObjectJSONDisplay} from "./ObjectJSONDisplay";
 
 export type ProjectInfoProps = {
     data: ProjectInfoData,
@@ -27,34 +33,57 @@ export class ProjectInfo extends React.Component<ProjectInfoProps, any> {
         super(props);
     }
 
-    private onClick(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+    private onSelect(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
         if (this.props.onSelect !== undefined) {
             this.props.onSelect(this.props.data);
         }
     }
 
+    renderHeader() {
+        return (
+            <FlexBox flexDir={FlexDirection.ROW} justifyContent={Justify.SPACE_BETWEEN}>
+                <Text
+                    text={Utils.format("**{0}**", this.props.data.title)}
+                    enableLeftAppendix={true}
+                    leftAppendix={(
+                        <CustomTooltip noBorder noPadding arrow title={(
+                            <ObjectJSONDisplay object={this.props.data} title={"**[DEBUG]** Project JSON Representation"} pure={false} showControls={true}/>
+                        )} TransitionComponent={Zoom}>
+                                <span>
+                                    <Icon icon={<ProjectIcon/>}/>
+                                </span>
+                        </CustomTooltip>
+                    )}
+                />
+                <CustomTooltip noBorder title={(
+                    <Text text={
+                        `**Stator**: ${this.props.data.stator}\n**State**: ${this.props.data.state}\n`
+                    }/>
+                )} TransitionComponent={Zoom} arrow>
+                        <span>
+                            <ProjectInfoOnlineIcon static={this.props.data.stator} state={this.props.data.state}/>
+                        </span>
+                </CustomTooltip>
+            </FlexBox>
+        );
+    }
+
     render() {
         const theme: Themeable.Theme = utilizeGlobalTheme();
-
         const ChartGrid = styled.div`
           display: grid;
           grid-template-columns: repeat(2, 1fr);
           gap: ${theme.gaps.defaultGab.css()};
         `;
-
         return (
             <Box width={percent(100)} gapY={px(10)}>
-                <Text text={"**Nordwind-Database**"} leftAppendix={<Icon icon={<ProjectIcon/>}/>} enableLeftAppendix={true}/>
-                <Text text={"**Load-type**: STATIC"}/>
-                <Text text={"**Status**: ONLINE"}/>
-                <Text text={"**Description**: This is the description you looked for a long time. It is worth reading it trough. See database workthrough [here](https://luo-darmstadt.de/sqltutorial/db_nordwind.html)."}/>
-
+                {this.renderHeader()}
+                <Text text={Utils.format("**Description**: {0}", this.props.data.description)}/>
                 <ChartGrid>
                     <AreaChartComponent/>
                     <AreaChartComponent/>
                 </ChartGrid>
-
-                <Button visualMeaning={ObjectVisualMeaning.INFO} opaque={true} onClick={event => this.onClick(event)}>
+                <Button visualMeaning={ObjectVisualMeaning.INFO} opaque={true} onClick={event => this.onSelect(event)}>
                     <FlexBox flexDir={FlexDirection.ROW} gap={px(10)}>
                         <Text text={"Load"}/>
                         <Icon icon={<LoadIcon/>}/>

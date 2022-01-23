@@ -8,6 +8,7 @@ export type ProjectInfoData = {
     // contributorIDs: Array<string>,
     creatorUserID: string,
     lastEdited: Date,
+    description: string
     // rows: number,
     edits: number
 }

@@ -25,7 +25,8 @@ export type BoxProps = {
     gapX?: DimensionalMeasured,
     gapY?: DimensionalMeasured,
     color?: Color,
-    hideScrollbar?: boolean
+    hideScrollbar?: boolean,
+    borderless?: boolean
 }
 
 export class Box extends React.Component<BoxProps, any> {
@@ -47,7 +48,7 @@ export class Box extends React.Component<BoxProps, any> {
           // position: relative;
           background-color: ${bgColor.css()};
           border-radius: ${theme.radii.defaultObjectRadius.css()};
-          border: 1px solid ${meaningfulColors.lighter.css()};
+          border: ${this.props.borderless ? "none" : `1px solid ${meaningfulColors.lighter.css()}`};
           padding: ${this.props.noPadding ? "0" : (getOr(this.props.paddingY, theme.paddings.defaultObjectPadding).css() + " " + getOr(this.props.paddingX, theme.paddings.defaultObjectPadding).css())};
           width: ${getOr(this.props.width?.css(), "auto")};
           // min-width: ${getOr(this.props.width?.css(), "auto")};

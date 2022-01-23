@@ -110,7 +110,8 @@ export class DebugEditor extends React.Component<DebugEditorProps, DebugEditorSt
                 edits: 256,
                 stator: false,
                 lastEdited: new Date(),
-                state: LoadState.ONLINE
+                state: LoadState.ONLINE,
+                description: "For debugging purposes"
             }
         }
     }

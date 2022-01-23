@@ -13,7 +13,7 @@ import {Justify} from "../../logic/Justify";
 import {LiteGrid} from "../../components/LiteGrid";
 import {ReactComponent as MenuIcon} from "../../assets/icons/ic-20/ic20-menu.svg";
 import {Icon} from "../../components/Icon";
-import {arrayFactory} from "../../logic/Utils";
+import {arrayFactory, Utils} from "../../logic/Utils";
 import {PosInCenter} from "../../components/PosInCenter";
 import {em, px} from "../../logic/DimensionalMeasured";
 import {DBSessionCacheShard} from "../../shards/DBSessionCacheShard";
@@ -78,7 +78,7 @@ export default class DashboardPage extends React.PureComponent<DashboardPageProp
         App.app().triggerLoginIfNotLoggedIn({
             processSuccessful: () => {
                 console.log("try to load projects")
-                this.loadProjects();
+                // this.loadProjects();
             },
             processFinished: () => {
                 console.log("login process finished")
@@ -122,11 +122,12 @@ export default class DashboardPage extends React.PureComponent<DashboardPageProp
                             data={{
                                 creatorUserID: v4(),
                                 id: v4(),
-                                state: LoadState.ONLINE,
-                                stator: true,
+                                state: LoadState.OFFLINE,
+                                stator: Utils.randomBool(),
                                 edits: 10,
                                 lastEdited: new Date(),
-                                title: "SQL lesson 21"
+                                title: "SQL lesson 21",
+                                description: "This is the description you looked for a long time. It is worth reading it trough. See database workthrough [here](https://luo-darmstadt.de/sqltutorial/db_nordwind.html)."
                             }}
                         />, 3)
                     }
@@ -134,15 +135,7 @@ export default class DashboardPage extends React.PureComponent<DashboardPageProp
                         this.state.projects.map(project => <ProjectInfo
                             key={project.id}
                             onSelect={data => this.onProjectSelect(data)}
-                            data={{
-                                creatorUserID: project.creatorUserID,
-                                id: project.id,
-                                state: project.state,
-                                stator: project.stator,
-                                edits: project.edits,
-                                lastEdited: project.lastEdited,
-                                title: project.title
-                            }}
+                            data={project}
                         />)
                     }
                 </LiteGrid>

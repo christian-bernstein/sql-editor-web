@@ -67,6 +67,8 @@ export namespace Themeable {
         backgroundHighlightColor: Color,
         backgroundHighlightInputColor: Color,
         backgroundDeactivatedColor: Color,
+        tooltipBackgroundColor: Color,
+        tooltipPrimaryFontColor: Color,
         iconColor: Color,
         fontPrimaryColor: Color,
         fontPrimaryInvertedColor: Color,
@@ -87,6 +89,9 @@ export namespace Themeable {
     export type Theme = {
         colors: ColorPallet,
         mode: "dark" | "light",
+        alpha: {
+            opaqueUI: number
+        },
         radii: {
             defaultObjectRadius: DimensionalMeasured
         },
@@ -125,6 +130,8 @@ export namespace Themeable {
         backgroundHighlightColor: Color.ofHex("#222429"),
         backgroundHighlightInputColor: Color.ofHex("#282c34"),
         backgroundDeactivatedColor: Color.ofHex("#434750"),
+        tooltipBackgroundColor: Color.ofHex("#171717"),
+        tooltipPrimaryFontColor: Color.ofHex("#DEDFE0"),
         iconColor: Color.ofHex("#FFFFFF"),
         fontPrimaryColor: Color.ofHex("#FFFFFF"),
         fontPrimaryInvertedColor: Color.ofHex("#000000"),
@@ -147,6 +154,9 @@ export namespace Themeable {
         backgroundHighlightColor: Color.ofHex("#eaeaea"),
         backgroundHighlightInputColor: Color.ofHex("#ffffff"),
         backgroundDeactivatedColor: Color.ofHex("#e8e8e8"),
+        // tooltipBackgroundColor: Color.ofHex("#323335"),
+        tooltipBackgroundColor: Color.ofHex("#171717"),
+        tooltipPrimaryFontColor: Color.ofHex("#DEDFE0"),
         iconColor: Color.ofHex("#000000"),
         fontPrimaryColor: Color.ofHex("#000000"),
         fontPrimaryInvertedColor: Color.ofHex("#ffffff"),
@@ -167,6 +177,9 @@ export namespace Themeable {
     export const defaultTheme: Theme = {
         colors: defaultThemePallet,
         mode: "dark",
+        alpha: {
+            opaqueUI: .1
+        },
         radii: {
             defaultObjectRadius: px(6)
         },
@@ -255,6 +268,9 @@ export namespace Themeable {
     export const lightTheme: Theme = {
         colors: lightThemePallet,
         mode: "light",
+        alpha: {
+            opaqueUI: .1
+        },
         radii: {
             defaultObjectRadius: px(6)
         },

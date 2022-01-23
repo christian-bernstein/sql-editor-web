@@ -24,6 +24,21 @@ export function arrayFactory<T>(objSuppl: (i: number) => T, n: number = 1): T[] 
 
 export namespace Utils {
 
+    /**
+     * IMPORTANT: Only works with number-based enums. not: TEST = (...)
+     *
+     * source: https://stackoverflow.com/a/55699349/16368544
+     */
+    export function randomEnum<T>(anEnum: T): T[keyof T] {
+        const enumValues = Object.keys(anEnum).map(n => Number.parseInt(n)).filter(n => !Number.isNaN(n)) as unknown as T[keyof T][];
+        const randomIndex = Math.floor(Math.random() * enumValues.length);
+        return enumValues[randomIndex];
+    }
+
+    export function randomBool(): boolean {
+        return Math.random() > .5;
+    }
+
     export function format(format: string, ...replacements: string[]): string {
         return format.replace(/{(\d+)}/g, function(match, number) {
             return typeof replacements[number] !== 'undefined'
