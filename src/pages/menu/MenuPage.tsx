@@ -16,6 +16,7 @@ import {FlexBox} from "../../components/FlexBox";
 import {FlexDirection} from "../../logic/FlexDirection";
 import {Justify} from "../../logic/Justify";
 import {Align} from "../../logic/Align";
+import {CodeEditor} from "../../components/CodeEditor";
 
 export type MenuPageProps = {
     showMenuInitially?: boolean
@@ -93,29 +94,35 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
         let mc: MeaningfulColors;
         const config = connector.config;
 
-        const getConnectingBox = () => (<InformationBox visualMeaning={ObjectVisualMeaning.WARNING} width={percent(100)}>
-            <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} justifyContent={Justify.SPACE_BETWEEN} width={percent(100)}>
-                <Text text={`Connecting to\n ${config.address}`}/>
-                <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER}>
-                    <Text text={`${connector.connectionAttempts} / ${config.maxConnectAttempts}`}/>
-                    <BounceLoader color={getMeaningfulColors(ObjectVisualMeaning.WARNING, theme).lighter.css()} size={20}/>
+        const getConnectingBox = () => (
+            <InformationBox visualMeaning={ObjectVisualMeaning.WARNING} width={percent(100)}>
+                <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} justifyContent={Justify.SPACE_BETWEEN}
+                         width={percent(100)}>
+                    <Text text={`Connecting to\n ${config.address}`}/>
+                    <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER}>
+                        <Text text={`${connector.connectionAttempts} / ${config.maxConnectAttempts}`}/>
+                        <BounceLoader color={getMeaningfulColors(ObjectVisualMeaning.WARNING, theme).lighter.css()}
+                                      size={20}/>
+                    </FlexBox>
                 </FlexBox>
-            </FlexBox>
-        </InformationBox>);
+            </InformationBox>
+        );
 
         switch (state) {
             case 0:
                 return (getConnectingBox());
-            case 1: return (
-                <InformationBox visualMeaning={ObjectVisualMeaning.SUCCESS} width={percent(100)}>
-                    <Text text={"Socket connection online."}/>
-                </InformationBox>
-            );
-            case 2: return (
-                <InformationBox visualMeaning={ObjectVisualMeaning.WARNING} width={percent(100)}>
-                    <Text text={"**WARN**: Socket connection closing."}/>
-                </InformationBox>
-            );
+            case 1:
+                return (
+                    <InformationBox visualMeaning={ObjectVisualMeaning.SUCCESS} width={percent(100)}>
+                        <Text text={"Socket connection online."}/>
+                    </InformationBox>
+                );
+            case 2:
+                return (
+                    <InformationBox visualMeaning={ObjectVisualMeaning.WARNING} width={percent(100)}>
+                        <Text text={"**WARN**: Socket connection closing."}/>
+                    </InformationBox>
+                );
             case 3:
                 if (connector.connectionAttempts < connector.config.maxConnectAttempts) {
                     return getConnectingBox();
@@ -124,7 +131,8 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
                         <Text text={"**ERR**: Socket connection closed."}/>
                     </InformationBox>
                 );
-            default: return (<>Error</>);
+            default:
+                return (<>Error</>);
         }
     }
 
@@ -155,6 +163,9 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
                          paddingRight: theme.paddings.defaultObjectPadding.css()
                      }}>
                     <Box width={percent(100)}
+                         style={{
+                             minHeight: "100%"
+                         }}
                          overflowYBehaviour={OverflowBehaviour.SCROLL}
                          overflowXBehaviour={OverflowBehaviour.SCROLL}
                          gapY={theme.gaps.defaultGab}>
@@ -217,13 +228,18 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
                                 <Text text={"Dark-Theme"}/>
                             </Button>
                         </FlexBox>
-
-                        <FlexBox flexDir={FlexDirection.ROW}>
-
-                        </FlexBox>
-                        <ObjectJSONDisplay object={App.app().config} title={"App config"}/>
-                        <ObjectJSONDisplay object={App.app().logHistory} title={`Log history (*${App.app().logHistory.length} entries*)`} showControls/>
-                    </Box >
+                        <ObjectJSONDisplay
+                            object={App.app().config}
+                            title={"**App config**"}
+                            pure={false}
+                        />
+                        <ObjectJSONDisplay
+                            object={App.app().logHistory}
+                            pure={false}
+                            title={`**Log history** (*${App.app().logHistory.length} entries*)`}
+                            showControls
+                        />
+                    </Box>
                 </div>
             </div>
         );

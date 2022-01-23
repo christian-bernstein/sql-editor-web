@@ -73,8 +73,8 @@ export class ObjectJSONDisplay extends React.Component<ObjectJSONDisplayProps, O
                         {this.renderControls()}
                     </FlexBox>}
                 <div style={{width: "100%", overflowX: "scroll"}}>
-                    <ReactJson collapsed={this.state.collapsed} displayDataTypes={false} src={this.props.object}
-                               enableClipboard={false} displayObjectSize={false} theme={"grayscale"}
+                    <ReactJson collapsed={this.state.collapsed} displayDataTypes={true} src={this.props.object}
+                               enableClipboard={true} displayObjectSize={true} theme={theme.libraries.reactJson.theme}
                                iconStyle={"square"} style={{
                         width: "100%",
                         backgroundColor: theme.colors.backgroundHighlightColor.css()

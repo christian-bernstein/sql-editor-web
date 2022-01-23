@@ -12,6 +12,8 @@ import {Align} from "../../logic/Align";
 import {Justify} from "../../logic/Justify";
 import {LiteGrid} from "../../components/LiteGrid";
 import {ReactComponent as MenuIcon} from "../../assets/icons/ic-20/ic20-menu.svg";
+import {ReactComponent as CreateIcon} from "../../assets/icons/ic-20/ic20-plus.svg";
+import {ReactComponent as SyncIcon} from "../../assets/icons/ic-20/ic20-refresh.svg";
 import {Icon} from "../../components/Icon";
 import {arrayFactory, Utils} from "../../logic/Utils";
 import {PosInCenter} from "../../components/PosInCenter";
@@ -20,8 +22,12 @@ import {DBSessionCacheShard} from "../../shards/DBSessionCacheShard";
 import {Redirect} from "react-router-dom";
 import {ListProjectResponsePacketData} from "../../packets/in/ListProjectResponsePacketData";
 import {Themeable} from "../../Themeable";
+import {Box} from "../../components/Box";
+import {ObjectVisualMeaning} from "../../logic/ObjectVisualMeaning";
+import {CustomTooltip} from "../../components/CustomTooltip";
+import {Separator} from "../../components/Separator";
+import {Orientation} from "../../logic/Orientation";
 import {FlexDirection} from "../../logic/FlexDirection";
-import {CircularProgress} from "@mui/material";
 
 export type DashboardPageProps = {
 }
@@ -54,36 +60,62 @@ export default class DashboardPage extends React.PureComponent<DashboardPageProp
     private loadProjects() {
         this.setState({
             loading: true
-        });
-        App.app().getConnector().call({
-            protocol: "main",
-            packetID: "ListProjectPacketData",
-            data: {},
-            callback: {
-                handle: (connector, packet) => {
-                    const lpr: ListProjectResponsePacketData = packet.data;
-                    this.setState({
-                        projects: lpr.projects
-                    }, () => {
+        }, () => {
+            App.app().getConnector().call({
+                protocol: "main",
+                packetID: "ListProjectPacketData",
+                data: {},
+                callback: {
+                    handle: (connector, packet) => {
+                        const lpr: ListProjectResponsePacketData = packet.data;
                         this.setState({
+                            projects: lpr.projects,
                             loading: false
                         });
-                    });
+                    }
                 }
-            }
+            });
         });
     }
 
-    componentDidMount() {
+    private async init() {
         App.app().triggerLoginIfNotLoggedIn({
             processSuccessful: () => {
                 console.log("try to load projects")
-                // this.loadProjects();
+                this.loadProjects();
             },
             processFinished: () => {
                 console.log("login process finished")
             }
         });
+    }
+
+    componentDidMount() {
+        this.init().then(r => {});
+    }
+
+    private createProject() {
+
+    }
+
+    private renderSubtitle(): JSX.Element {
+        const theme: Themeable.Theme = utilizeGlobalTheme();
+        if (this.state.loading) {
+            return (
+                <Box visualMeaning={ObjectVisualMeaning.WARNING} opaque>
+                    <PosInCenter>
+                        {/*<CircularProgress variant={"indeterminate"} size={20} sx={{
+                            color: theme.colors.warnHighlightColor.css()
+                        }}/>*/}
+                        <Text text={"Loading projects from database.."}/>
+                    </PosInCenter>
+                </Box>
+            );
+        } else {
+            return (
+                <Text uppercase align={Align.CENTER} type={TextType.secondaryDescription} text={"*Select a project*"} />
+            );
+        }
     }
 
     private renderPage(): JSX.Element {
@@ -92,25 +124,60 @@ export default class DashboardPage extends React.PureComponent<DashboardPageProp
             <PageV2>
                 <LiteGrid columns={3}>
                     <FlexBox align={Align.START} justifyContent={Justify.CENTER}>
-                        <Icon icon={<MenuIcon/>} onClick={() => App.app().openMenu()}/>
+                        <Icon icon={(
+                            <CustomTooltip title={"Toggle menu"} arrow>
+                                <span>
+                                    <MenuIcon/>
+                                </span>
+                            </CustomTooltip>
+                        )} onClick={() => App.app().openMenu()}/>
                     </FlexBox>
                     <FlexBox align={Align.CENTER} justifyContent={Justify.CENTER}>
                         <Text uppercase align={Align.CENTER} type={TextType.smallHeader} text={"Dashboard"} />
                     </FlexBox>
+                    <FlexBox align={Align.CENTER} justifyContent={Justify.FLEX_END} flexDir={FlexDirection.ROW}>
+                        <CustomTooltip title={(
+                            <Text text={"Reload the projects"}/>
+                        )} arrow noBorder>
+                            <span>
+                                {
+                                    this.state.loading ? (
+                                        <Icon icon={<SyncIcon/>} visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} colored={true}/>
+                                    ) : (
+                                        <Icon icon={<SyncIcon/>} visualMeaning={ObjectVisualMeaning.INFO} colored={true} onClick={() => this.loadProjects()}/>
+                                    )
+                                }
+                            </span>
+                        </CustomTooltip>
+                        <Separator orientation={Orientation.VERTICAL}/>
+                        <CustomTooltip title={(
+                            <Text text={"**Create a new project**\nBlank project or choose a template."}/>
+                        )} arrow noBorder>
+                            <span>
+                                <Icon icon={<CreateIcon/>} visualMeaning={ObjectVisualMeaning.INFO} colored={true} onClick={() => this.createProject()}/>
+                            </span>
+                        </CustomTooltip>
+                    </FlexBox>
                 </LiteGrid>
                 <PosInCenter>
                     {
-                        this.state.loading ? (
-                            // todo fix progress width css bug (width maybe 1px wide..)
-                            <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.defaultGab}>
-                                <CircularProgress variant={"indeterminate"} size={20} sx={{
-                                    color: theme.colors.primaryHighlightColor.css()
-                                }}/>
-                                <Text uppercase align={Align.CENTER} type={TextType.secondaryDescription} text={"*Loading*"} />
-                            </FlexBox>
-                        ) : (
-                            <Text uppercase align={Align.CENTER} type={TextType.secondaryDescription} text={"*Select a project*"} />
-                        )
+                        // this.state.loading ? (
+                        //     // todo fix progress width css bug (width maybe 1px wide..)
+                        //     <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.defaultGab}>
+                        //         <CircularProgress variant={"indeterminate"} size={20} sx={{
+                        //             color: theme.colors.primaryHighlightColor.css()
+                        //         }}/>
+                        //         <Text uppercase align={Align.CENTER} type={TextType.secondaryDescription} text={"*Loading*"} />
+                        //     </FlexBox>
+                        // ) : (
+                        //     <>
+                        //         <Text uppercase align={Align.CENTER} type={TextType.secondaryDescription} text={"*Select a project*"} />
+                        //         <CircularProgress variant={"indeterminate"} size={20} sx={{
+                        //             color: theme.colors.primaryHighlightColor.css()
+                        //         }}/>
+                        //     </>
+                        // )
+                        this.renderSubtitle()
                     }
                 </PosInCenter>
                 <LiteGrid responsive minResponsiveWidth={px(300)} gap={em(1)}>

@@ -5,6 +5,7 @@ import {CSSProperties} from "react";
 import {ObjectVisualMeaning} from "./logic/ObjectVisualMeaning";
 import {time, TimeMeasured} from "./logic/TimeMeasured";
 import {TimeUnit} from "./logic/TimeUnit";
+import {ThemeKeys, ThemeObject} from "react-json-view";
 
 export function getMeaningfulColors(meaning: ObjectVisualMeaning, theme: Themeable.Theme): MeaningfulColors {
     switch (meaning) {
@@ -122,6 +123,11 @@ export namespace Themeable {
                 boldSmallHeaderDeactivated: CSSProperties,
                 secondaryDescription: CSSProperties
             }
+        },
+        libraries: {
+            reactJson: {
+                theme: ThemeKeys | ThemeObject
+            }
         }
     }
 
@@ -130,7 +136,8 @@ export namespace Themeable {
         backgroundHighlightColor: Color.ofHex("#222429"),
         backgroundHighlightInputColor: Color.ofHex("#282c34"),
         backgroundDeactivatedColor: Color.ofHex("#434750"),
-        tooltipBackgroundColor: Color.ofHex("#171717"),
+        // tooltipBackgroundColor: Color.ofHex("#171717"),
+        tooltipBackgroundColor: Color.ofHex("#2f3636"),
         tooltipPrimaryFontColor: Color.ofHex("#DEDFE0"),
         iconColor: Color.ofHex("#FFFFFF"),
         fontPrimaryColor: Color.ofHex("#FFFFFF"),
@@ -263,6 +270,11 @@ export namespace Themeable {
                 }
             }
         },
+        libraries: {
+            reactJson: {
+                theme: "grayscale"
+            }
+        }
     }
 
     export const lightTheme: Theme = {
@@ -354,5 +366,10 @@ export namespace Themeable {
                 }
             }
         },
+        libraries: {
+            reactJson: {
+                theme: "grayscale:inverted"
+            }
+        }
     }
 }

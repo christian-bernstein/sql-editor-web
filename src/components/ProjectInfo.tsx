@@ -17,7 +17,7 @@ import {Themeable} from "../Themeable";
 import {utilizeGlobalTheme} from "../logic/App";
 import {Justify} from "../logic/Justify";
 import {ProjectInfoOnlineIcon} from "./ProjectInfoOnlineIcon";
-import {Utils} from "../logic/Utils";
+import {arrayFactory, Utils} from "../logic/Utils";
 import {Tooltip, Zoom} from "@mui/material";
 import {CustomTooltip} from "./CustomTooltip";
 import {ObjectJSONDisplay} from "./ObjectJSONDisplay";
@@ -80,8 +80,8 @@ export class ProjectInfo extends React.Component<ProjectInfoProps, any> {
                 {this.renderHeader()}
                 <Text text={Utils.format("**Description**: {0}", this.props.data.description)}/>
                 <ChartGrid>
-                    <AreaChartComponent/>
-                    <AreaChartComponent/>
+                    <AreaChartComponent title={"rows"} numIndicator={10} series={arrayFactory(() => Math.random() > .5 ? Math.random() * 100 : Math.random() * 50, 10)}/>
+                    <AreaChartComponent title={"rows"} numIndicator={10} series={arrayFactory(() => Math.random() > .5 ? Math.random() * 100 : Math.random() * 50, 10)}/>
                 </ChartGrid>
                 <Button visualMeaning={ObjectVisualMeaning.INFO} opaque={true} onClick={event => this.onSelect(event)}>
                     <FlexBox flexDir={FlexDirection.ROW} gap={px(10)}>

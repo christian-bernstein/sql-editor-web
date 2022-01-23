@@ -1,4 +1,4 @@
-import React from "react";
+import React, {CSSProperties} from "react";
 import styled from "styled-components";
 import {getMeaningfulColors, MeaningfulColors, Themeable} from "../Themeable";
 import {utilizeGlobalTheme} from "../logic/App";
@@ -26,7 +26,8 @@ export type BoxProps = {
     gapY?: DimensionalMeasured,
     color?: Color,
     hideScrollbar?: boolean,
-    borderless?: boolean
+    borderless?: boolean,
+    style?: CSSProperties
 }
 
 export class Box extends React.Component<BoxProps, any> {
@@ -73,7 +74,7 @@ export class Box extends React.Component<BoxProps, any> {
         const classNames: string[] = this.props.classNames === undefined ? [] : this.props.classNames;
         const highlight: boolean = this.props.highlight === undefined ? false : this.props.highlight;
         return (
-            <Box onClick={event => getOr(this.props.onClick, () => {})(event)} className={[...classNames, "box", highlight ? "highlight" : ""].join(" ").trim()}>
+            <Box style={getOr(this.props.style, {})} onClick={event => getOr(this.props.onClick, () => {})(event)} className={[...classNames, "box", highlight ? "highlight" : ""].join(" ").trim()}>
                 {this.props.children}
             </Box>
         );

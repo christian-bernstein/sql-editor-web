@@ -10,7 +10,17 @@ import {Text, TextType} from "./Text";
 import styled from "styled-components";
 import {Themeable} from "../Themeable";
 
-export class AreaChartComponent extends React.Component<any, any> {
+export type AreaChartComponentProps = {
+    series: number[],
+    title: string,
+    numIndicator: number
+}
+
+export class AreaChartComponent extends React.Component<AreaChartComponentProps, any> {
+
+    constructor(props: AreaChartComponentProps) {
+        super(props);
+    }
 
     render() {
         const theme: Themeable.Theme = utilizeGlobalTheme();
@@ -34,14 +44,14 @@ export class AreaChartComponent extends React.Component<any, any> {
                  paddingY={DimensionalMeasured.of(.25, Dimension.em)}
                  color={theme.colors.backgroundColor}>
                 <FrontWrapper>
-                    <Text text={String(Math.round(Math.random() * 100 * Math.random() * 10))} type={TextType.smallHeader} fontSize={px(20)}/>
-                    <Text text={"Rows"}/>
+                    <Text text={String(this.props.numIndicator)} type={TextType.smallHeader} fontSize={px(20)}/>
+                    <Text text={this.props.title}/>
                 </FrontWrapper>
                 <ReactApexChart type={"area"} height={"50"}
                                 series={[
                                     {
-                                        data: arrayFactory(() => Math.random() > .5 ? Math.random() * 100 : Math.random() * 50, 10)
-                                    }
+                                        data: this.props.series
+                                    },
                                 ]}
                                 options={{
                                     chart: {

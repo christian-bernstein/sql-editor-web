@@ -6,7 +6,7 @@ import {utilizeGlobalTheme} from "../logic/App";
 
 export type CustomTooltipProps = {
     noPadding?: boolean,
-    noBorder?: boolean
+    noBorder?: boolean,
 }
 
 // noinspection RequiredAttributes
