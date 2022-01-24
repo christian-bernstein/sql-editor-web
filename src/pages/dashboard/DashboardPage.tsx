@@ -81,17 +81,17 @@ export default class DashboardPage extends React.PureComponent<DashboardPageProp
     private async init() {
         App.app().triggerLoginIfNotLoggedIn({
             processSuccessful: () => {
-                console.log("try to load projects")
-                this.loadProjects();
+                // console.log("try to load projects after successful login")
+                // this.loadProjects();
             },
             processFinished: () => {
-                console.log("login process finished")
+                this.loadProjects();
             }
         });
     }
 
     componentDidMount() {
-        this.init().then(r => {});
+        this.init().then(() => {});
     }
 
     private createProject() {
@@ -196,7 +196,7 @@ export default class DashboardPage extends React.PureComponent<DashboardPageProp
                                 title: "SQL lesson 21",
                                 description: "This is the description you looked for a long time. It is worth reading it trough. See database workthrough [here](https://luo-darmstadt.de/sqltutorial/db_nordwind.html)."
                             }}
-                        />, 3)
+                        />, 1)
                     }
                     {
                         this.state.projects.map(project => <ProjectInfo

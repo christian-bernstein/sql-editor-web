@@ -411,6 +411,8 @@ export class App {
             // multiple session entries are present
             console.error("more than one session present");
 
+            // todo implement
+            config.processFinished?.();
         } else if (entries.length === 1) {
             // a single session entry is present
             console.error("one session present");
@@ -433,6 +435,10 @@ export class App {
         } else {
             // no session entry is present, trigger the full login page
             console.error("no sessions present");
+
+            // todo implement
+
+            config.processFinished?.();
         }
     }
 }

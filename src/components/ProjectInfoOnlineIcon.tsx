@@ -18,6 +18,9 @@ export const ProjectInfoOnlineIcon: React.FC<{
             case LoadState.OFFLINE: return ObjectVisualMeaning.UI_NO_HIGHLIGHT;
             case LoadState.STOPPING: return ObjectVisualMeaning.ERROR;
             case LoadState.STARTING: return ObjectVisualMeaning.WARNING;
+            case undefined:
+                console.error("ProjectInfoOnlineIcon reads undefined on LoadState, but shouldn't do that")
+                return ObjectVisualMeaning.UI_NO_HIGHLIGHT;
         }
     })();
     const theme: Themeable.Theme = utilizeGlobalTheme();

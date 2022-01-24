@@ -105,7 +105,8 @@ export namespace Themeable {
             defaultTextIconPadding: DimensionalMeasured,
         },
         gaps: {
-            defaultGab: DimensionalMeasured
+            defaultGab: DimensionalMeasured,
+            smallGab: DimensionalMeasured,
         },
         hovers: {
             hoverLightFilter: DimensionalMeasured
@@ -199,7 +200,8 @@ export namespace Themeable {
             defaultTextIconPadding: px(4)
         },
         gaps: {
-            defaultGab: px(16)
+            defaultGab: px(16),
+            smallGab: px(8)
         },
         hovers: {
             hoverLightFilter: DimensionalMeasured.of(120, Dimension.percentage)
@@ -295,7 +297,8 @@ export namespace Themeable {
             defaultTextIconPadding: px(4)
         },
         gaps: {
-            defaultGab: px(16)
+            defaultGab: px(16),
+            smallGab: px(8)
         },
         hovers: {
             hoverLightFilter: DimensionalMeasured.of(120, Dimension.percentage)
