@@ -20,6 +20,7 @@ import {CommandPallet} from "../../components/CommandPallet";
 import {DebugEditor} from "../editor/debug/DebugEditor";
 import {DBSessionCacheShard} from "../../shards/DBSessionCacheShard";
 import {RegexPage} from "../../tests/regex/RegexPage";
+import {DebugTableDataDisplayPage} from "../../components/TableDataDisplay";
 
 export type AppPageProps = {
 }
@@ -167,7 +168,8 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                 <Route path={"/regex"} render={() => <RegexPage/>}/>,
                 <Route path={"/d-editor"} component={() => <DebugEditor/>}/>,
                 <Route path={"/monaco"} render={() => <Monaco/>}/>,
-                <Route path={"/panel"} render={() => <ControlPanelComponent address={"ws:192.168.2.100:30001"} connectorID={"panel"}/>}/>
+                <Route path={"/panel"} render={() => <ControlPanelComponent address={"ws:192.168.2.100:30001"} connectorID={"panel"}/>}/>,
+                <Route path={"/result"} component={() => <DebugTableDataDisplayPage/>}/>,
             );
         }
         return routs;

@@ -16,7 +16,8 @@ export type CodeEditorProps = {
     extensions?: Extension[],
     debounce?: boolean,
     debounceMS?: number,
-    width?: DimensionalMeasured
+    width?: DimensionalMeasured,
+    editable?: boolean
 }
 
 export class CodeEditor extends React.PureComponent<CodeEditorProps, any> {
@@ -97,6 +98,7 @@ export class CodeEditor extends React.PureComponent<CodeEditorProps, any> {
         return (
             <Editor>
                 <ReactCodeMirror value={getOr(this.props.value, "")}
+                                 editable={getOr(this.props.editable, true)}
                                  indentWithTab={true}
                                  spellCheck={false}
                                  placeholder={this.props.placeholder}

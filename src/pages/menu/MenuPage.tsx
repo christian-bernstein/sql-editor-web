@@ -10,7 +10,7 @@ import {OverflowBehaviour} from "../../logic/OverflowBehaviour";
 import {InformationBox} from "../../components/InformationBox";
 import {ObjectVisualMeaning} from "../../logic/ObjectVisualMeaning";
 import {Button} from "../../components/Button";
-import {Utils} from "../../logic/Utils";
+import {getOr, Utils} from "../../logic/Utils";
 import {BounceLoader} from "react-spinners";
 import {FlexBox} from "../../components/FlexBox";
 import {FlexDirection} from "../../logic/FlexDirection";
@@ -19,7 +19,8 @@ import {Align} from "../../logic/Align";
 import {CodeEditor} from "../../components/CodeEditor";
 
 export type MenuPageProps = {
-    showMenuInitially?: boolean
+    showMenuInitially?: boolean,
+    doubleClickMenuOpen?: boolean
 }
 
 export type MenuPageState = {
@@ -86,6 +87,12 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
         App.app().callAction("show-menu");
     }
 
+    private onDoubleClick(event: React.MouseEvent<HTMLDivElement>) {
+        if (getOr(this.props.doubleClickMenuOpen, false) && !this.state.showMenu) {
+            this.openMenu(event);
+        }
+    }
+
     // noinspection JSMethodCanBeStatic
     private renderServerAvailabilityStatus(): JSX.Element {
         const connector = App.app().getConnector();
@@ -148,7 +155,7 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
         return (
             <div className={"menu-wrapper"}>
                 <div
-                    onDoubleClick={(event) => this.openMenu(event)}
+                    onDoubleClick={(event) => this.onDoubleClick(event)}
                     onClick={event => this.handleWrapperClick(event)}
                     className={["wrapper", this.state.showMenu ? "menu-showing" : ""].join(" ").trim()}
                     style={{
