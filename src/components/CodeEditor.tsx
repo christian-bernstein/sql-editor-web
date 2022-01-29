@@ -3,11 +3,13 @@ import React from "react";
 import _ from "lodash";
 import {getOr} from "../logic/Utils";
 import styled from "styled-components";
-import {Themeable} from "../Themeable";
+import {getMeaningfulColors, MeaningfulColors, Themeable} from "../Themeable";
 import {utilizeGlobalTheme} from "../logic/App";
 import {DimensionalMeasured} from "../logic/DimensionalMeasured";
+import {WithVisualMeaning} from "../logic/WithVisualMeaning";
+import {ObjectVisualMeaning} from "../logic/ObjectVisualMeaning";
 
-export type CodeEditorProps = {
+export type CodeEditorProps = WithVisualMeaning & {
     value?: string,
     upstreamHook: (value: string) => void,
     placeholder?: string | HTMLElement,
@@ -17,7 +19,8 @@ export type CodeEditorProps = {
     debounce?: boolean,
     debounceMS?: number,
     width?: DimensionalMeasured,
-    editable?: boolean
+    editable?: boolean,
+    hoverEffect?: boolean
 }
 
 export class CodeEditor extends React.PureComponent<CodeEditorProps, any> {
@@ -47,6 +50,7 @@ export class CodeEditor extends React.PureComponent<CodeEditorProps, any> {
 
     render() {
         const theme: Themeable.Theme = utilizeGlobalTheme();
+        const meaningfulColors: MeaningfulColors = getMeaningfulColors(getOr(this.props.visualMeaning, ObjectVisualMeaning.UI_NO_HIGHLIGHT), theme);
         const Editor = styled.div`
           max-width: 100%;
           width: ${getOr(this.props.width?.css(), "100%")};
@@ -60,7 +64,13 @@ export class CodeEditor extends React.PureComponent<CodeEditorProps, any> {
           border: 1px solid ${theme.colors.borderPrimaryColor.css()};
           background-color: #282c34;
           overflow-x: hidden;
-        
+          transition: all ${theme.transitions.mainTime.css()};
+          
+          &:hover {
+            filter: ${getOr(this.props.hoverEffect, true) ? `brightness(1.2)` : "none"};
+            box-shadow: ${getOr(this.props.hoverEffect, true) ? `0 0 0 4px ${meaningfulColors.lighter.withAlpha(.13).css()}` : "none"};
+          }
+          
           .CodeMirror-gutters, .CodeMirror {
               // background-color: ${theme.colors.backgroundColor.css()} !important;
             background-color: #282c34;

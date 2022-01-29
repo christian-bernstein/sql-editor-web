@@ -95,7 +95,7 @@ export default class DashboardPage extends React.PureComponent<DashboardPageProp
     }
 
     private createProject() {
-
+        // todo implement
     }
 
     private renderSubtitle(): JSX.Element {

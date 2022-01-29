@@ -138,7 +138,7 @@ export namespace Themeable {
         backgroundHighlightInputColor: Color.ofHex("#282c34"),
         backgroundDeactivatedColor: Color.ofHex("#434750"),
         // tooltipBackgroundColor: Color.ofHex("#171717"),
-        tooltipBackgroundColor: Color.ofHex("#2f3636"),
+        tooltipBackgroundColor: Color.ofHex("#2b2c2e"),
         tooltipPrimaryFontColor: Color.ofHex("#DEDFE0"),
         iconColor: Color.ofHex("#FFFFFF"),
         fontPrimaryColor: Color.ofHex("#FFFFFF"),

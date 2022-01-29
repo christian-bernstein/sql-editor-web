@@ -401,7 +401,7 @@ export class App {
      */
     public triggerLoginIfNotLoggedIn(config: {
         processFinished?: () => void,
-        processSuccessful?: () => void
+        processSuccessful?: () => void,
     }) {
 
         // todo only if not logged in

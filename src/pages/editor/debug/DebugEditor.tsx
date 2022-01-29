@@ -26,7 +26,6 @@ import {cs} from "../../../logic/state/State";
 import {v4} from "uuid";
 import {sql} from "@codemirror/lang-sql";
 import {OverflowBehaviour} from "../../../logic/OverflowBehaviour";
-import {Task} from "../../../components/Task";
 import {Themeable} from "../../../Themeable";
 import {SessionCommand} from "../../../logic/data/SessionCommand";
 import {getOr} from "../../../logic/Utils";
@@ -34,9 +33,10 @@ import {RenderController} from "../../../tests/regex/RenderController";
 import {RenderExecutor} from "../../../tests/regex/RenderExecutor";
 import {Button} from "../../../components/Button";
 import {LoadState} from "../../../logic/LoadState";
-import {CircularProgress} from "@mui/material";
+import {CircularProgress, Zoom} from "@mui/material";
 import {Assembly} from "../../../logic/Assembly";
 import {SessionCommandType} from "../../../logic/data/SessionCommandType";
+import {CustomTooltip} from "../../../components/CustomTooltip";
 
 export type DebugEditorProps = {
 }
@@ -55,7 +55,7 @@ export type DebugEditorLocalState = {
 export class DebugEditor extends React.Component<DebugEditorProps, DebugEditorState> {
 
     private readonly local = cs<DebugEditorLocalState>({
-        command: "",
+        command: "show tables from information_schema",
         processPullCommand: false,
         processPushCommand: false
     });
@@ -63,6 +63,8 @@ export class DebugEditor extends React.Component<DebugEditorProps, DebugEditorSt
     private readonly controller = new RenderController();
 
     private readonly assembly: Assembly;
+
+    private projectStaticData?: ProjectInfoData;
 
     constructor(props: DebugEditorProps) {
         super(props);
@@ -80,39 +82,81 @@ export class DebugEditor extends React.Component<DebugEditorProps, DebugEditorSt
             const working: boolean = localState.processPushCommand || localState.processPullCommand;
             return (
                 <>
-                    <Button visualMeaning={working ? ObjectVisualMeaning.UI_NO_HIGHLIGHT : ObjectVisualMeaning.INFO} opaque={true} onClick={() => this.sendCommand(SessionCommandType.PUSH)}>{
-                        localState.processPushCommand ? (
-                            <CircularProgress variant={"indeterminate"} size={20} sx={{
-                                color: theme.colors.primaryHighlightColor.css()
-                            }}/>
-                        ) : (
-                            <Icon visualMeaning={working ? ObjectVisualMeaning.UI_NO_HIGHLIGHT : ObjectVisualMeaning.INFO} colored={true} icon={<PushIcon/>}/>
-                        )
-                    }</Button>
-                    <Button visualMeaning={working ? ObjectVisualMeaning.UI_NO_HIGHLIGHT : ObjectVisualMeaning.INFO} opaque={true} onClick={() => this.sendCommand(SessionCommandType.PULL)}>{
-                        localState.processPullCommand ? (
-                            <CircularProgress variant={"indeterminate"} size={20} sx={{
-                                color: theme.colors.primaryHighlightColor.css()
-                            }}/>
-                        ) : (
-                            <Icon visualMeaning={working ? ObjectVisualMeaning.UI_NO_HIGHLIGHT : ObjectVisualMeaning.INFO} colored={true} icon={<PullIcon/>}/>
-                        )
-                    }</Button>
+                    <CustomTooltip noBorder arrow title={(
+                        <Text text={"**Update**\n Update something in the database"}/>
+                    )} TransitionComponent={Zoom}>
+                        <span>
+                            <Button visualMeaning={working ? ObjectVisualMeaning.UI_NO_HIGHLIGHT : ObjectVisualMeaning.INFO} opaque={true} onClick={() => this.sendCommand(SessionCommandType.PUSH)}>{
+                                localState.processPushCommand ? (
+                                    <CircularProgress variant={"indeterminate"} size={20} sx={{
+                                        color: theme.colors.primaryHighlightColor.css()
+                                    }}/>
+                                ) : (
+                                    <Icon visualMeaning={working ? ObjectVisualMeaning.UI_NO_HIGHLIGHT : ObjectVisualMeaning.INFO} colored={true} icon={<PushIcon/>}/>
+                                )
+                            }</Button>
+                        </span>
+                    </CustomTooltip>
+                    <CustomTooltip noBorder arrow title={(
+                        <Text text={"**Query**\n Query data from the database"}/>
+                    )} TransitionComponent={Zoom}>
+                        <span>
+                            <Button visualMeaning={working ? ObjectVisualMeaning.UI_NO_HIGHLIGHT : ObjectVisualMeaning.INFO} opaque={true} onClick={() => this.sendCommand(SessionCommandType.PULL)}>{
+                                localState.processPullCommand ? (
+                                    <CircularProgress variant={"indeterminate"} size={20} sx={{
+                                        color: theme.colors.primaryHighlightColor.css()
+                                    }}/>
+                                ) : (
+                                    <Icon visualMeaning={working ? ObjectVisualMeaning.UI_NO_HIGHLIGHT : ObjectVisualMeaning.INFO} colored={true} icon={<PullIcon/>}/>
+                                )
+                            }</Button>
+                        </span>
+                    </CustomTooltip>
                 </>
             )
         });
 
-        if (App.app().config.debugMode) {
-            App.app().shard<DBSessionCacheShard>("db-session-cache").currentInfoData = {
-                id: v4(),
-                creatorUserID: v4(),
-                title: "Debug session",
-                edits: 256,
-                stator: false,
-                lastEdited: new Date(),
-                state: LoadState.ONLINE,
-                description: "For debugging purposes"
+        const data = App.app().shard<DBSessionCacheShard>("db-session-cache").currentInfoData;
+        if (data === undefined) {
+            if (App.app().config.debugMode) {
+                App.app().shard<DBSessionCacheShard>("db-session-cache").currentInfoData = {
+                    id: v4(),
+                    creatorUserID: v4(),
+                    title: "Debug session",
+                    edits: 256,
+                    stator: false,
+                    lastEdited: new Date(),
+                    state: LoadState.ONLINE,
+                    description: "For debugging purposes"
+                };
+            } else {
+                console.error("currentInfoData is undefined & app not in debugging mode -> This is an error");
             }
+        } else {
+            this.projectStaticData = data;
+        }
+
+        this.requestServerDBActionStream();
+    }
+
+    /**
+     * todo convert from singleton to call -> and display a badge in the editors menu displaying the current
+     *  streaming state (DB streaming online | DB streaming offline)
+     *
+     * Ask the server to add this client to its database-client lookup table.
+     * This results in the server broadcasting database actions to this client
+     */
+    private requestServerDBActionStream() {
+        if (this.projectStaticData !== undefined) {
+            App.app().connector(connector => connector.singleton({
+                protocol: "main",
+                packetID: "SqlCommandStreamRequestPacketData",
+                data: {
+                    projectID: this.projectStaticData?.id
+                }
+            }));
+        } else {
+            console.error("Cannot request server db streaming because editor holds no project data (Editor is wrongly mapped)")
         }
     }
 
@@ -219,7 +263,7 @@ export class DebugEditor extends React.Component<DebugEditorProps, DebugEditorSt
         const theme: Themeable.Theme = utilizeGlobalTheme();
         return (
             <PageV2>
-                <FlexBox height={percent(100)} flexDir={FlexDirection.COLUMN} justifyContent={Justify.SPACE_BETWEEN}>
+                <FlexBox height={percent(100)} flexDir={FlexDirection.COLUMN} overflowXBehaviour={OverflowBehaviour.VISIBLE} overflowYBehaviour={OverflowBehaviour.VISIBLE} justifyContent={Justify.SPACE_BETWEEN}>
                     <FlexBox width={percent(100)}>
                         <LiteGrid columns={3}>
                             <FlexBox align={Align.START} justifyContent={Justify.CENTER}>
@@ -228,7 +272,7 @@ export class DebugEditor extends React.Component<DebugEditorProps, DebugEditorSt
                             <FlexBox align={Align.CENTER} justifyContent={Justify.CENTER}>
                                 <Text uppercase align={Align.CENTER} type={TextType.smallHeader} text={"Debug Editor"} />
                             </FlexBox>
-                            <FlexBox align={Align.END} justifyContent={Justify.CENTER}>
+                            <FlexBox align={Align.CENTER} justifyContent={Justify.FLEX_END} flexDir={FlexDirection.ROW}>
                                 <Text
                                     highlight={true}
                                     text={"Close editor"}
@@ -238,25 +282,33 @@ export class DebugEditor extends React.Component<DebugEditorProps, DebugEditorSt
                                     cursor={Cursor.pointer}
                                     onClick={() => this.closeSession()}
                                 />
+                                <Text
+                                    highlight={true}
+                                    visualMeaning={ObjectVisualMeaning.WARNING}
+                                    text={"**[debug]** Boarding"}
+                                    uppercase={true}
+                                    cursor={Cursor.pointer}
+                                    onClick={() => this.redirect("/")}
+                                />
                             </FlexBox>
                         </LiteGrid>
                         <Text text={session.title} type={TextType.smallHeader}/>
                     </FlexBox>
 
-                    <FlexBox width={percent(100)} height={percent(90)} overflowYBehaviour={OverflowBehaviour.SCROLL} justifyContent={Justify.FLEX_END}>
-                        <Box width={percent(100)} gapY={theme.gaps.defaultGab}>
+                    <FlexBox width={percent(100)} height={percent(90)} overflowYBehaviour={OverflowBehaviour.VISIBLE} justifyContent={Justify.FLEX_END}>
+                        {/*<Box width={percent(100)} gapY={theme.gaps.defaultGab}>
                             <Text text={"Edits"}/>
                             <Task task={{}}/>
-                        </Box>
+                        </Box>*/}
 
-                        <RenderExecutor
+                        {/*<RenderExecutor
                             id={v4()}
                             channels={["*", "command"]}
                             componentDidMountRelay={bridge => this.controller.register(bridge)}
                             componentFactory={() => (
                                 <Text text={this.local.state.command}/>
                             )}
-                        />
+                        />*/}
 
                         <FlexBox flexDir={FlexDirection.ROW} width={percent(100)}>
                             <CodeEditor
@@ -264,7 +316,9 @@ export class DebugEditor extends React.Component<DebugEditorProps, DebugEditorSt
                                 theme={"dark"}
                                 classnames={["cm"]}
                                 debounce={true}
-                                value={this.local.state.command} placeholder={"select * from Users"}
+                                debounceMS={300}
+                                value={this.local.state.command}
+                                placeholder={"select * from Users"}
                                 extensions={[
                                     sql()
                                 ]}

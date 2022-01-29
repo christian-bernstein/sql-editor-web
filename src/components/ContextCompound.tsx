@@ -78,11 +78,6 @@ export class ContextCompound extends React.Component<ContextMenuProps, ContextMe
                             <Button shrinkOnClick={true} width={percent(100)} visualMeaning={ObjectVisualMeaning.SUCCESS} opaque={true}>
                                 Delete
                             </Button>
-                            <Separator/>
-                            <Button width={percent(100)} visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} opaque={true}>
-                                Delete asd asd
-                            </Button>
-                            <Separator/>
                             <Button shrinkOnClick={true} width={percent(100)} visualMeaning={ObjectVisualMeaning.ERROR} opaque={true}>
                                 <Text text={"Delete project"} cursor={Cursor.pointer}/>
                             </Button>

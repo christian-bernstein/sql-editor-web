@@ -76,9 +76,6 @@ export class ProjectInfo extends React.Component<ProjectInfoProps, any> {
                         }}/>
                     </ContextCompound>
                 </FlexBox>
-
-
-
             </FlexBox>
         );
     }
