@@ -194,7 +194,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
             connectorConfig: {
                 protocol: "login",
                 // address: "ws://192.168.2.100:80",
-                address: "ws://localhost:80",
+                address: "ws://192.168.2.104:80",
                 id: "ton",
                 maxConnectAttempts: 10,
                 connectionRetryDelayFunc: () => 0,
