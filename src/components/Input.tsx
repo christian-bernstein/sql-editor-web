@@ -17,7 +17,8 @@ export type InputProps = {
     opaqueValue?: number,
     onChange?: (ev: ChangeEvent<HTMLInputElement>) => void,
     value?: string
-    autoFocus?: boolean
+    autoFocus?: boolean,
+    type?: string
 }
 
 export type InputState = {
@@ -112,6 +113,7 @@ export class Input extends React.Component<InputProps, InputState> {
         return (
             <Wrapper className={"input-container"} key={this.state.id}>
                 <input key={this.state.id}
+                       type={getOr(this.props.type, "input")}
                        autoFocus={getOr(this.props.autoFocus, false)}
                        spellCheck={false}
                        ref={() => this.ref}

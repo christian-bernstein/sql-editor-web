@@ -1,4 +1,4 @@
-import React from "react";
+import React, {ForwardedRef} from "react";
 import {PageV2} from "../../../components/Page";
 import {LiteGrid} from "../../../components/LiteGrid";
 import {FlexBox} from "../../../components/FlexBox";
@@ -10,10 +10,12 @@ import {ReactComponent as ErrorIcon} from "../../../assets/icons/ic-20/ic20-aler
 import {ReactComponent as RedirectIcon} from "../../../assets/icons/ic-20/ic20-arrow-right.svg";
 import {ReactComponent as PushIcon} from "../../../assets/icons/ic-20/ic20-upload.svg";
 import {ReactComponent as PullIcon} from "../../../assets/icons/ic-20/ic20-download.svg";
+import {ReactComponent as CloseIcon} from "../../../assets/icons/ic-20/ic20-close.svg";
+import {ReactComponent as TableIcon} from "../../../assets/icons/ic-20/ic20-view-table.svg";
 import {App, utilizeGlobalTheme} from "../../../logic/App";
 import {Text, TextType} from "../../../components/Text";
 import {DBSessionCacheShard} from "../../../shards/DBSessionCacheShard";
-import {percent} from "../../../logic/DimensionalMeasured";
+import {percent, px} from "../../../logic/DimensionalMeasured";
 import {Box} from "../../../components/Box";
 import {ObjectVisualMeaning} from "../../../logic/ObjectVisualMeaning";
 import {Cursor} from "../../../logic/style/Cursor";
@@ -33,36 +35,59 @@ import {RenderController} from "../../../tests/regex/RenderController";
 import {RenderExecutor} from "../../../tests/regex/RenderExecutor";
 import {Button} from "../../../components/Button";
 import {LoadState} from "../../../logic/LoadState";
-import {CircularProgress, Zoom} from "@mui/material";
+import {CircularProgress, Dialog, Slide, Zoom} from "@mui/material";
 import {Assembly} from "../../../logic/Assembly";
 import {SessionCommandType} from "../../../logic/data/SessionCommandType";
 import {CustomTooltip} from "../../../components/CustomTooltip";
+import {TransitionProps} from '@mui/material/transitions';
+import {SQLCommandQueryResponsePacketData} from "../../../packets/in/SQLCommandQueryResponsePacketData";
+import {DebugTableDataDisplayPage} from "../../../components/TableDataDisplay";
+import {ServerConnectionIcon} from "../../../components/ServerConnectionIcon";
+import {Separator} from "../../../components/Separator";
+import {Orientation} from "../../../logic/Orientation";
+
+import {oneDark} from '@codemirror/theme-one-dark';
+import {HighlightStyle, tags} from "@codemirror/highlight"
+
 
 export type DebugEditorProps = {
 }
 
 export type DebugEditorState = {
     redirect: boolean,
-    to: string
+    to: string,
+    openMainDialog: boolean,
+    dialogComponent?: string
 }
 
 export type DebugEditorLocalState = {
     command: string,
     processPushCommand: boolean,
     processPullCommand: boolean,
+    // todo SQLCommandQueryResponsePacketData | SQLCommandUpdateResponsePacketData
+    sqlCommandResultCache: (SQLCommandQueryResponsePacketData)[]
 }
 
+/**
+ * todo create 'acknowledge'-feature
+ */
 export class DebugEditor extends React.Component<DebugEditorProps, DebugEditorState> {
+
+    private readonly DialogTransition = React.forwardRef((props: TransitionProps & {children?: React.ReactElement<any, any>}, ref: ForwardedRef<unknown>) => {
+        return <Slide direction="up" ref={ref} {...props} />;
+    });
 
     private readonly local = cs<DebugEditorLocalState>({
         command: "show tables from information_schema",
         processPullCommand: false,
-        processPushCommand: false
+        processPushCommand: false,
+        sqlCommandResultCache: []
     });
 
     private readonly controller = new RenderController();
 
     private readonly assembly: Assembly;
+    // noinspection TypeScriptFieldCanBeMadeReadonly
 
     private projectStaticData?: ProjectInfoData;
 
@@ -70,52 +95,16 @@ export class DebugEditor extends React.Component<DebugEditorProps, DebugEditorSt
         super(props);
         this.state = {
             redirect: false,
-            to: "/"
+            to: "/",
+            openMainDialog: false
         };
         this.local.on((state, value) => {
             console.log("rerender")
             this.controller.rerender(...getOr(value.get("channels"), ["*"]));
         });
-
-        this.assembly = new Assembly().assembly("push-pull-button", (theme, props1) => {
-            const localState = this.local.state;
-            const working: boolean = localState.processPushCommand || localState.processPullCommand;
-            return (
-                <>
-                    <CustomTooltip noBorder arrow title={(
-                        <Text text={"**Update**\n Update something in the database"}/>
-                    )} TransitionComponent={Zoom}>
-                        <span>
-                            <Button visualMeaning={working ? ObjectVisualMeaning.UI_NO_HIGHLIGHT : ObjectVisualMeaning.INFO} opaque={true} onClick={() => this.sendCommand(SessionCommandType.PUSH)}>{
-                                localState.processPushCommand ? (
-                                    <CircularProgress variant={"indeterminate"} size={20} sx={{
-                                        color: theme.colors.primaryHighlightColor.css()
-                                    }}/>
-                                ) : (
-                                    <Icon visualMeaning={working ? ObjectVisualMeaning.UI_NO_HIGHLIGHT : ObjectVisualMeaning.INFO} colored={true} icon={<PushIcon/>}/>
-                                )
-                            }</Button>
-                        </span>
-                    </CustomTooltip>
-                    <CustomTooltip noBorder arrow title={(
-                        <Text text={"**Query**\n Query data from the database"}/>
-                    )} TransitionComponent={Zoom}>
-                        <span>
-                            <Button visualMeaning={working ? ObjectVisualMeaning.UI_NO_HIGHLIGHT : ObjectVisualMeaning.INFO} opaque={true} onClick={() => this.sendCommand(SessionCommandType.PULL)}>{
-                                localState.processPullCommand ? (
-                                    <CircularProgress variant={"indeterminate"} size={20} sx={{
-                                        color: theme.colors.primaryHighlightColor.css()
-                                    }}/>
-                                ) : (
-                                    <Icon visualMeaning={working ? ObjectVisualMeaning.UI_NO_HIGHLIGHT : ObjectVisualMeaning.INFO} colored={true} icon={<PullIcon/>}/>
-                                )
-                            }</Button>
-                        </span>
-                    </CustomTooltip>
-                </>
-            )
-        });
-
+        this.assembly = new Assembly();
+        this.initAssembly();
+        this.initProtocolHandlers();
         const data = App.app().shard<DBSessionCacheShard>("db-session-cache").currentInfoData;
         if (data === undefined) {
             if (App.app().config.debugMode) {
@@ -135,8 +124,97 @@ export class DebugEditor extends React.Component<DebugEditorProps, DebugEditorSt
         } else {
             this.projectStaticData = data;
         }
-
         this.requestServerDBActionStream();
+    }
+
+    private initAssembly() {
+        this.createPullPushAssembly();
+        this.createSqlCommandResultAssembly();
+    }
+
+    private createPullPushAssembly() {
+        this.assembly.assembly("push-pull-button", (theme, props1) => {
+            const localState = this.local.state;
+            const working: boolean = localState.processPushCommand || localState.processPullCommand;
+            return (
+                <>
+                    <CustomTooltip noBorder arrow title={(
+                        <Text text={"**Update**\n Update something in the database"}/>
+                    )} TransitionComponent={Zoom}>
+                        <span>
+                            <Button visualMeaning={working ? ObjectVisualMeaning.UI_NO_HIGHLIGHT : ObjectVisualMeaning.INFO} opaque={true} onClick={() => {
+                                if (!working) {
+                                    this.sendCommand(SessionCommandType.PUSH);
+                                }
+                            }}>{
+                                localState.processPushCommand ? (
+                                    <CircularProgress variant={"indeterminate"} size={20} sx={{
+                                        color: theme.colors.primaryHighlightColor.css()
+                                    }}/>
+                                ) : (
+                                    <Icon visualMeaning={working ? ObjectVisualMeaning.UI_NO_HIGHLIGHT : ObjectVisualMeaning.INFO} colored={true} icon={<PushIcon/>}/>
+                                )
+                            }</Button>
+                        </span>
+                    </CustomTooltip>
+                    <CustomTooltip noBorder arrow title={(
+                        <Text text={"**Query**\n Query data from the database"}/>
+                    )} TransitionComponent={Zoom}>
+                        <span>
+                            <Button visualMeaning={working ? ObjectVisualMeaning.UI_NO_HIGHLIGHT : ObjectVisualMeaning.INFO} opaque={true} onClick={() => {
+                                if (!working) {
+                                    this.sendCommand(SessionCommandType.PULL);
+                                }
+                            }}>{
+                                localState.processPullCommand ? (
+                                    <CircularProgress variant={"indeterminate"} size={20} sx={{
+                                        color: theme.colors.primaryHighlightColor.css()
+                                    }}/>
+                                ) : (
+                                    <Icon visualMeaning={working ? ObjectVisualMeaning.UI_NO_HIGHLIGHT : ObjectVisualMeaning.INFO} colored={true} icon={<PullIcon/>}/>
+                                )
+                            }</Button>
+                        </span>
+                    </CustomTooltip>
+                </>
+            )
+        });
+    }
+
+    private createSqlCommandResultAssembly() {
+        this.assembly.assembly("sql-command-result", (theme, props1) => {
+            const cache = this.local.state.sqlCommandResultCache;
+            const data = cache[cache.length - 1];
+            if (data !== undefined) {
+                return (
+                    <>
+                        <DebugTableDataDisplayPage data={data} onClose={() => this.setState({
+                            openMainDialog: false
+                        })}/>
+                    </>
+                );
+            } else return <>Date is undefined</>;
+        });
+    }
+
+    private initProtocolHandlers() {
+        // todo check if component has unmounted -> don't execute the code then
+        App.app().getConnector().registerProtocolPacketHandler("main", "SQLCommandQueryResponsePacketData", {
+            handle: (connector1, packet) => {
+                const data: SQLCommandQueryResponsePacketData = packet.data as SQLCommandQueryResponsePacketData;
+                // todo check if response matches the currently mapped project
+                const cache = this.local.state.sqlCommandResultCache;
+                cache.push(data);
+                this.local.setState({
+                    sqlCommandResultCache: cache
+                });
+                this.openMainDialog("sql-command-result");
+
+                this.local.setState({
+                    processPullCommand: false,
+                }, new Map([["channels", ["push-pull"]]]));
+            }
+        })
     }
 
     /**
@@ -148,13 +226,13 @@ export class DebugEditor extends React.Component<DebugEditorProps, DebugEditorSt
      */
     private requestServerDBActionStream() {
         if (this.projectStaticData !== undefined) {
-            App.app().connector(connector => connector.singleton({
+            App.app().getConnector().singleton({
                 protocol: "main",
                 packetID: "SqlCommandStreamRequestPacketData",
                 data: {
                     projectID: this.projectStaticData?.id
                 }
-            }));
+            });
         } else {
             console.error("Cannot request server db streaming because editor holds no project data (Editor is wrongly mapped)")
         }
@@ -164,6 +242,13 @@ export class DebugEditor extends React.Component<DebugEditorProps, DebugEditorSt
         this.setState({
             to: to,
             redirect: true
+        });
+    }
+
+    private openMainDialog(dialogComponent: string) {
+        this.setState({
+            openMainDialog: true,
+            dialogComponent: dialogComponent
         });
     }
 
@@ -187,30 +272,28 @@ export class DebugEditor extends React.Component<DebugEditorProps, DebugEditorSt
                 break;
         }
 
-        App.app().connector(connector => {
-            connector.call({
-                // todo check protocol name
-                protocol: "main",
-                // todo create java counterpart & check packet id name
-                packetID: "SessionCommandPacketData",
-                data: {
-                    type: type,
-                    raw: this.local.state.command,
-                    attributes: new Map<string, string>(),
-                    dbID: App.app().shard<DBSessionCacheShard>("db-session-cache").currentInfoData?.id
+        App.app().getConnector().call({
+            // todo check protocol name
+            protocol: "main",
+            // todo create java counterpart & check packet id name
+            packetID: "SessionCommandPacketData",
+            data: {
+                type: type,
+                raw: this.local.state.command,
+                attributes: new Map<string, string>(),
+                dbID: App.app().shard<DBSessionCacheShard>("db-session-cache").currentInfoData?.id
 
-                } as SessionCommand,
-                callback: {
-                    handle: (connector1, packet) => {
-                        // todo cast packet to useful d-type
+            } as SessionCommand,
+            callback: {
+                handle: (connector1, packet) => {
+                    // todo cast packet to useful d-type
 
-                        // todo set local working state to false
-                        this.local.setState({
-                            processPushCommand: false
-                        }, new Map([["channels", ["*", "push-pull"]]]));
-                    }
+                    // todo set local working state to false
+                    this.local.setState({
+                        processPushCommand: false
+                    }, new Map([["channels", ["*", "push-pull"]]]));
                 }
-            });
+            }
         });
 
         setTimeout(() => {
@@ -259,10 +342,36 @@ export class DebugEditor extends React.Component<DebugEditorProps, DebugEditorSt
         );
     }
 
+    private renderDialog(): JSX.Element {
+        const theme: Themeable.Theme = utilizeGlobalTheme();
+
+        if (this.state.openMainDialog) {
+            return (
+                <Dialog open={this.state.openMainDialog} onClose={() => this.setState({
+                    openMainDialog: false
+                })} TransitionComponent={this.DialogTransition} fullScreen sx={{
+                    '& .MuiDialog-paper': {
+                        backgroundColor: theme.colors.backgroundColor.css()
+                    }
+                }}>
+                    {
+                        this.assembly.render({
+                            // todo create fallback
+                            component: this.state.dialogComponent as string,
+                        })
+                    }
+                </Dialog>
+            );
+        } else return <></>
+    }
+
     private renderEditor(session: ProjectInfoData) {
         const theme: Themeable.Theme = utilizeGlobalTheme();
+
         return (
             <PageV2>
+                {this.renderDialog()}
+
                 <FlexBox height={percent(100)} flexDir={FlexDirection.COLUMN} overflowXBehaviour={OverflowBehaviour.VISIBLE} overflowYBehaviour={OverflowBehaviour.VISIBLE} justifyContent={Justify.SPACE_BETWEEN}>
                     <FlexBox width={percent(100)}>
                         <LiteGrid columns={3}>
@@ -272,27 +381,51 @@ export class DebugEditor extends React.Component<DebugEditorProps, DebugEditorSt
                             <FlexBox align={Align.CENTER} justifyContent={Justify.CENTER}>
                                 <Text uppercase align={Align.CENTER} type={TextType.smallHeader} text={"Debug Editor"} />
                             </FlexBox>
-                            <FlexBox align={Align.CENTER} justifyContent={Justify.FLEX_END} flexDir={FlexDirection.ROW}>
-                                <Text
-                                    highlight={true}
-                                    text={"Close editor"}
-                                    uppercase={true}
-                                    visualMeaning={ObjectVisualMeaning.INFO}
-                                    coloredText={true}
-                                    cursor={Cursor.pointer}
-                                    onClick={() => this.closeSession()}
-                                />
-                                <Text
-                                    highlight={true}
-                                    visualMeaning={ObjectVisualMeaning.WARNING}
-                                    text={"**[debug]** Boarding"}
-                                    uppercase={true}
-                                    cursor={Cursor.pointer}
-                                    onClick={() => this.redirect("/")}
-                                />
+                            <FlexBox align={Align.CENTER} justifyContent={Justify.FLEX_END} flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab}>
+                                <Icon icon={<CloseIcon/>} onClick={() => this.closeSession()}/>
+                                <Separator orientation={Orientation.VERTICAL}/>
+                                <ServerConnectionIcon/>
                             </FlexBox>
                         </LiteGrid>
-                        <Text text={session.title} type={TextType.smallHeader}/>
+                    </FlexBox>
+
+                    <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} gap={px(1)}>
+                        <Text text={`${App.app().config.connectorConfig.address}/`}/>
+                        <Box paddingY={px(2)} paddingX={px(4)} visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}>
+                            <Text text={`**${session.title}**`}/>
+                        </Box>
+                    </FlexBox>
+
+
+
+                    <Separator/>
+
+                    <FlexBox flexDir={FlexDirection.ROW}>
+                        <CustomTooltip arrow title={"Show SQL result history"}>
+                            <span>
+                                {
+                                    this.local.state.sqlCommandResultCache.length > 0 ? (
+                                        <Button
+                                            cursor={Cursor.pointer}
+                                            visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
+                                            shrinkOnClick={true}
+                                            onClick={() => {
+                                                this.setState({
+                                                    openMainDialog: true
+                                                })
+                                            }}>
+                                            <Icon visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} icon={<TableIcon/>}/>
+                                        </Button>
+                                    ) : (
+                                        <Button
+                                            cursor={Cursor.notAllowed}
+                                            visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}>
+                                            <Icon colored visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} icon={<TableIcon/>}/>
+                                        </Button>
+                                    )
+                                }
+                            </span>
+                        </CustomTooltip>
                     </FlexBox>
 
                     <FlexBox width={percent(100)} height={percent(90)} overflowYBehaviour={OverflowBehaviour.VISIBLE} justifyContent={Justify.FLEX_END}>
@@ -313,14 +446,25 @@ export class DebugEditor extends React.Component<DebugEditorProps, DebugEditorSt
                         <FlexBox flexDir={FlexDirection.ROW} width={percent(100)}>
                             <CodeEditor
                                 width={percent(100)}
-                                theme={"dark"}
+                                theme={oneDark}
                                 classnames={["cm"]}
                                 debounce={true}
                                 debounceMS={300}
                                 value={this.local.state.command}
                                 placeholder={"select * from Users"}
                                 extensions={[
-                                    sql()
+                                    sql(),
+                                    HighlightStyle.define([
+                                        {tag: tags.keyword, class: "keyword"},
+                                        {tag: tags.local, class: "local"},
+                                        {tag: tags.color, class: "color"},
+                                        {tag: tags.comment, class: "comment"},
+                                        {tag: tags.function, class: "function"},
+                                        {tag: tags.string, class: "string"},
+                                        {tag: tags.content, class: "content"},
+                                        {tag: tags.arithmeticOperator, class: "arithmeticOperator"},
+
+                                    ])
                                 ]}
                                 upstreamHook={value => this.local.setState({
                                     command: value

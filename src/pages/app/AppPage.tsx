@@ -169,7 +169,6 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                 <Route path={"/d-editor"} component={() => <DebugEditor/>}/>,
                 <Route path={"/monaco"} render={() => <Monaco/>}/>,
                 <Route path={"/panel"} render={() => <ControlPanelComponent address={"ws:192.168.2.100:30001"} connectorID={"panel"}/>}/>,
-                <Route path={"/result"} component={() => <DebugTableDataDisplayPage/>}/>,
             );
         }
         return routs;
@@ -234,7 +233,6 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                     app.callAction("open-command-pallet");
                 }
             });
-
 
             // Open the menu when ctrl + m is pressed
             document.addEventListener("keydown", ev => {

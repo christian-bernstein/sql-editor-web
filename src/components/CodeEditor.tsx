@@ -102,20 +102,58 @@ export class CodeEditor extends React.PureComponent<CodeEditorProps, any> {
             //     color: ${theme.colors.primaryHighlightColor.css()};
             //   }
             // }
+            
+            .keyword {
+              // color: #66A6FF;
+              color: ${theme.colors.primaryColor.css( )};
+            }
+            
+            .local {
+              color: #2EA043 !important;
+            }
+            
+            .color {
+              color: #2EA043 !important;
+            }
+            
+            .comment {
+              color: #7A7A7A  ;
+            }
+            
+            .function {
+              color: #E8BF6A;
+            }
+            
+            .string {
+              color: #E8BF6A;
+            }
+            
+            .content {
+              color: white;
+            }
+            
+            // .ͼv {
+            //   color: #A782BB;
+            // }
+            
+            [class="ͼq"] {
+              color: #CFD2D5; 
+            }
           }
         `;
 
         return (
             <Editor>
-                <ReactCodeMirror value={getOr(this.props.value, "")}
-                                 editable={getOr(this.props.editable, true)}
-                                 indentWithTab={true}
-                                 spellCheck={false}
-                                 placeholder={this.props.placeholder}
-                                 onChange={this.valueChangeHandler}
-                                 className={getOr(this.props.classnames?.join(" "), "")}
-                                 theme={this.props.theme}
-                                 extensions={this.props.extensions}
+                <ReactCodeMirror
+                    value={getOr(this.props.value, "")}
+                    editable={getOr(this.props.editable, true)}
+                    indentWithTab={true}
+                    spellCheck={false}
+                    placeholder={this.props.placeholder}
+                    onChange={this.valueChangeHandler}
+                    className={getOr(this.props.classnames?.join(" "), "")}
+                    theme={this.props.theme}
+                    extensions={this.props.extensions}
                 />
             </Editor>
         );

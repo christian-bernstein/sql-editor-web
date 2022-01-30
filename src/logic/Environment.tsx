@@ -2,6 +2,7 @@ import React, {Dispatch, SetStateAction} from "react";
 import {v4} from "uuid";
 import {ConnectorConfig} from "./ConnectorConfig";
 import {App} from "./App";
+import {SocketSwitchProtocolDataPacket} from "../packets/in/SocketSwitchProtocolDataPacket";
 
 export namespace Environment {
 
@@ -117,6 +118,14 @@ export namespace Environment {
                         // Set reconnect lock to true
                         console.log("set the lock to: " + data.activateReconnectLock);
                         connector.reconnectLock = data.activateReconnectLock;
+                    }
+                })],
+                ["SocketSwitchProtocolDataPacket", new Array<Environment.Handler>({
+                    handle: (connector, packet) => {
+                        const data: SocketSwitchProtocolDataPacket = packet.data as SocketSwitchProtocolDataPacket;
+                        // todo fire some sort of event
+                        console.log(`Switching protocols from '${connector.currentProtocol}' to '${data.newProtocol}'`);
+                        connector.currentProtocol = data.newProtocol;
                     }
                 })]
             ])
@@ -315,13 +324,16 @@ export namespace Environment {
                                 });
                             })
                             // Call current protocol
-                            const protocol: Protocol | undefined = this._protocols.get(this._config.protocol);
+                            // const protocol: Protocol | undefined = this._protocols.get(this._config.protocol);
+                            const protocol: Protocol | undefined = this._protocols.get(this.currentProtocol);
                             if (protocol !== undefined) {
                                 this.handlePacketForProtocol({
                                     packet: packet,
                                     protocol: protocol,
                                     errorHandler: console.error
                                 });
+                            } else {
+                                console.error(`No protocol instance available: '${this.currentProtocol}'`);
                             }
                         }
                     };

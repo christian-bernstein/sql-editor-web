@@ -24,7 +24,7 @@ export class BadgedWrapper extends React.Component<BadgedWrapperProps, BadgedWra
 
     render() {
         const Container = styled.div`
-          ${this.props.badgeFlowDirection === "right" ? "left: 50%;" : "right: -50%;"}
+          ${this.props.badgeFlowDirection === "right" ? "left: 25%;" : "right: -25%;"}
         `;
         return (
             <div className={"badged-wrapper"}>

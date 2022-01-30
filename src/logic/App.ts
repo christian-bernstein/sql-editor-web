@@ -145,7 +145,7 @@ export class App {
     }
 
     public checkServerAvailability(): boolean {
-        return false;
+        throw new Error("checkServerAvailability not implemented yet!");
     }
 
     public registerAction(name: string, action: () => void) {
@@ -239,35 +239,38 @@ export class App {
     }
 
     public connector(action: (connector: Environment.Connector) => void) {
-        action(Environment.Connector.useConnector("ton", () => {
-            return new Environment.Connector(this.config.connectorConfig).registerSocketEventHandler(Environment.SocketEventTypes.ONOPEN, {
-                stator: true,
-                usagesLeft: 10000,
-                handle: ev => {
-                    console.log("connection established");
-                    this.callAction("connection-established");
-                }
-            }).connect();
-        }));
+        action(Environment.Connector.useConnector("ton", this.createConnectorFactory()));
     }
 
     public getConnector(): Environment.Connector {
-        return Environment.Connector.useConnector("ton", () => {
-            return new Environment.Connector(this.config.connectorConfig).registerSocketEventHandler(Environment.SocketEventTypes.ONOPEN, {
-                stator: true,
-                usagesLeft: 10000,
-                handle: ev => {
-                    console.log("connection established");
-                    this.callAction("connection-established");
-                }
-            }).registerSocketEventHandler(Environment.SocketEventTypes.ONCLOSE, {
-                stator: true,
-                usagesLeft: 10000,
-                handle: ev => {
-                    this.rerenderGlobally();
-                }
-            }).connect();
-        })
+        return Environment.Connector.useConnector("ton", this.createConnectorFactory())
+    }
+
+    private createConnectorFactory(): () => Environment.Connector {
+        return () => {
+            return new Environment.Connector(this.config.connectorConfig)
+                .registerSocketEventHandler(Environment.SocketEventTypes.ONOPEN, {
+                    stator: true,
+                    usagesLeft: 10000,
+                    handle: ev => {
+                        console.log("connection established");
+                        this.callAction("connection-established");
+                    }
+                })
+                .registerSocketEventHandler(Environment.SocketEventTypes.ONCLOSE, {
+                    stator: true,
+                    usagesLeft: 10000,
+                    handle: ev => {
+                        this.rerenderGlobally();
+                    }
+                })
+                .registerProtocolPacketHandler("main", "SQLCommandQueryResponsePacketData", {
+                    handle: (connector1, packet) => {
+                        console.error("SQLCommandQueryResponsePacketData SQLCommandQueryResponsePacketData SQLCommandQueryResponsePacketData!!")
+                    }
+                })
+                .connect();
+        }
     }
 
     public getGlobalTheme(): Themeable.Theme {

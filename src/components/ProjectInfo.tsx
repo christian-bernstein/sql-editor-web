@@ -37,7 +37,7 @@ export class ProjectInfo extends React.Component<ProjectInfoProps, any> {
         super(props);
     }
 
-    private onSelect(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+    private onSelect(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
         if (this.props.onSelect !== undefined) {
             this.props.onSelect(this.props.data);
         }

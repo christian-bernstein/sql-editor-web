@@ -17,6 +17,7 @@ import {FlexDirection} from "../../logic/FlexDirection";
 import {Justify} from "../../logic/Justify";
 import {Align} from "../../logic/Align";
 import {CodeEditor} from "../../components/CodeEditor";
+import {Cursor} from "../../logic/style/Cursor";
 
 export type MenuPageProps = {
     showMenuInitially?: boolean,
@@ -235,6 +236,7 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
                                 <Text text={"Dark-Theme"}/>
                             </Button>
                         </FlexBox>
+
                         <ObjectJSONDisplay
                             object={App.app().config}
                             title={"**App config**"}

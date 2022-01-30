@@ -6,15 +6,18 @@ import {ObjectVisualMeaning} from "../logic/ObjectVisualMeaning";
 import {getOr} from "../logic/Utils";
 import {Color} from "../Color";
 import {DimensionalMeasured} from "../logic/DimensionalMeasured";
+import {Cursor} from "../logic/style/Cursor";
 
 export type ButtonProps = {
     style?: CSSProperties,
     visualMeaning?: ObjectVisualMeaning,
     opaque?: boolean,
     opaqueValue?: number,
-    onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void,
+    onClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void,
     shrinkOnClick?: boolean,
-    width?: DimensionalMeasured
+    width?: DimensionalMeasured,
+    height?: DimensionalMeasured,
+    cursor?: Cursor
 }
 
 export class Button extends React.Component<ButtonProps, any> {
@@ -28,7 +31,7 @@ export class Button extends React.Component<ButtonProps, any> {
         const meaningfulColors: MeaningfulColors = getMeaningfulColors(getOr(this.props.visualMeaning, ObjectVisualMeaning.UI_NO_HIGHLIGHT), theme);
         const bgColor: Color = this.props.opaque ? meaningfulColors.main.withAlpha(getOr(this.props.opaqueValue, .1)): meaningfulColors.main;
 
-        const Button = styled.button`
+        const Button = styled.div`
           border-radius: ${theme.radii.defaultObjectRadius.css()};
           background-color: ${bgColor.css()};
           border: 1px solid ${meaningfulColors.lighter.css()};
@@ -36,11 +39,16 @@ export class Button extends React.Component<ButtonProps, any> {
           color: ${theme.colors.fontPrimaryColor.css()};
           font-family: ${theme.texts.fontFamily};
           width: ${getOr(this.props.width?.css(), "auto")};
+          height: ${getOr(this.props.height?.css(), "auto")};
           display: flex;
           align-content: center;
           justify-content: center;
-          cursor: pointer;
+          cursor: ${getOr(this.props.cursor, Cursor.pointer)};
           transition: all ${theme.transitions.mainTime.css()};
+          
+          & * {
+            cursor: ${getOr(this.props.cursor, Cursor.pointer)};
+          }
           
           &:hover {
             filter: brightness(1.2);

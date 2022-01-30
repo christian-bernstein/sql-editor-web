@@ -14,6 +14,9 @@ import {FlexBox} from "../../components/FlexBox";
 import {FlexDirection} from "../../logic/FlexDirection";
 import {Align} from "../../logic/Align";
 import {Text, TextType} from "../../components/Text";
+import {Justify} from "../../logic/Justify";
+import {ServerConnectionIcon} from "../../components/ServerConnectionIcon";
+import {Icon} from "../../components/Icon";
 
 export type LoginPageProps = {
     calledFromWhere?: string
@@ -46,7 +49,7 @@ export class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
         };
     }
 
-    private clickReturnToBoarding(event: React.MouseEvent<SVGSVGElement, MouseEvent>) {
+    private clickReturnToBoarding() {
         this.setState({
             redirect: true,
             redirectLocation: "/boarding"
@@ -158,22 +161,32 @@ export class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
             <div className={"login-page"}>
                 <div className={"login-page-foreground"}>
                     <div className={"l-p-f-header"}>
-                        <BackIcon onClick={event => this.clickReturnToBoarding(event)}/>
+                        <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER}>
+                            <Icon icon={<BackIcon/>} onClick={() => this.clickReturnToBoarding()}/>
+                        </FlexBox>
                         <h3 className={"page-name"}>Login</h3>
+                        <FlexBox flexDir={FlexDirection.ROW} justifyContent={Justify.FLEX_END}>
+                            <ServerConnectionIcon/>
+                        </FlexBox>
                     </div>
 
                     <FlexBox flexDir={FlexDirection.COLUMN} align={Align.CENTER}>
                         <AppLogo/>
                         <Text text={"SQL-Editor"} type={TextType.largeHeader}/>
-                        <Text text={"Learn SQL in our interactive\neditor and create powerful projects"}
+                        <Text text={"Learn SQL in our interactive\neditor and create your projects"}
                               type={TextType.secondaryDescription}
                               align={Align.CENTER}
                         />
                     </FlexBox>
 
                     <form className={"login"}>
+                        <FlexBox flexDir={FlexDirection.ROW} justifyContent={Justify.SPACE_BETWEEN}>
+                            <Text text={"Not a member? [Sign up now](/register/)"}/>
+                            <Text text={"[Forgot password](/password-reset/)"}/>
+                        </FlexBox>
                         <Input label={"Username"}
                                opaque
+                               autoFocus
                                key={"username-input"}
                                onChange={(ev: ChangeEvent<HTMLInputElement>) => {
                                    this.updateCredentials("user", ev.currentTarget.value);
@@ -182,12 +195,12 @@ export class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
 
                         <Input label={"Password"}
                                opaque
+                               type={"password"}
                                key={"password-input"}
                                onChange={(ev: ChangeEvent<HTMLInputElement>) => {
                                    this.updateCredentials("pass", ev.currentTarget.value);
                                }}
                         />
-
                         <button
                             className={["login-btn", this.state.sufficientCredentialsToLogin ? "active" : "inactive"].join(" ")}
                             onClick={(ev) => {
