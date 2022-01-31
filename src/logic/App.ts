@@ -109,6 +109,10 @@ export class App {
         }
     }
 
+    public clearSessionHistory() {
+        window.localStorage.setItem("session-history-entries", JSON.stringify([]));
+    }
+
     public addSessionHistoryEntry(entry: SessionHistoryEntry) {
         let entries: Array<SessionHistoryEntry> = this.getSessionHistoryEntries();
         if (entries.filter(ent => ent.profileData.id === entry.profileData.id).length > 0) {

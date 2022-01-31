@@ -28,6 +28,7 @@ import {Cursor} from "../../logic/style/Cursor";
 import {RegExpHighlighter} from "./RegExpHighlighter";
 import {RenderController} from "./RenderController";
 import {RenderExecutor} from "./RenderExecutor";
+import {Assembly} from "../../logic/Assembly";
 
 export const getRegExp: (regex: string) => [exp: RegExp, expValid: boolean] = regex => {
     let exp: RegExp = new RegExp("");
@@ -136,13 +137,6 @@ export class CodeEditor extends React.PureComponent<CodeEditorProps, any> {
     }
 }
 
-
-// todo use within local state
-export type RegexPageState = {
-    regex: string,
-    search: string
-}
-
 export class RegexPage extends React.PureComponent {
 
     public static readonly controller: RenderController = new RenderController();
@@ -150,6 +144,8 @@ export class RegexPage extends React.PureComponent {
     public static downstreamHook: ((value: string, type: ("regex" | "search")) => void) | undefined = undefined;
 
     public static staticRenderCheatsheet: boolean = false;
+
+    private assembly: Assembly;
 
     /**
      * Function to update the localstorage.
@@ -163,6 +159,43 @@ export class RegexPage extends React.PureComponent {
 
     constructor() {
         super({});
+        this.assembly = new Assembly()
+            .assembly("annotation", props => {
+                const [exp, expValid] = getRegExp(RegExpHighlighter.staticRegex);
+                const match: RegExpMatchArray | null = exp.exec(RegExpHighlighter.staticSearch);
+                const exact: boolean = match !== null && match.length === 1 && match[0].length === RegExpHighlighter.staticSearch.length;
+                return (
+                    <LiteGrid responsive={true} minResponsiveWidth={em(8)}>
+                        <Text text={`Valid`}
+                              type={TextType.secondaryDescription}
+                              fontSize={px(12)}
+                              enableLeftAppendix={true}
+                              leftAppendix={expValid ?
+                                  <Icon colored={true}
+                                        visualMeaning={ObjectVisualMeaning.SUCCESS}
+                                        icon={<SuccessIcon/>}/> :
+                                  <Icon colored={true}
+                                        visualMeaning={ObjectVisualMeaning.ERROR}
+                                        icon={<ErrorIcon/>}/>
+                              }
+                        />
+                        <Text text={`Exact match`}
+                              type={TextType.secondaryDescription}
+                              fontSize={px(12)}
+                              enableLeftAppendix={true}
+                              leftAppendix={exact ?
+                                  <Icon colored={true}
+                                        visualMeaning={ObjectVisualMeaning.SUCCESS}
+                                        icon={<SuccessIcon/>}/> :
+                                  <Icon colored={true}
+                                        visualMeaning={ObjectVisualMeaning.ERROR}
+                                        icon={<ErrorIcon/>}/>
+                              }
+                        />
+                    </LiteGrid>
+                );
+            })
+        ;
         document.title = "Regex viewer"
     }
 
@@ -329,41 +362,9 @@ export class RegexPage extends React.PureComponent {
                                             upstreamOnComponentUnmountHandler={id => RegexPage.controller.unregister(id)}
                                             channels={["*", "regex", "search"]}
                                             componentDidMountRelay={bridge => RegexPage.controller.register(bridge)}
-                                            componentFactory={() => {
-                                                const [exp, expValid] = getRegExp(RegExpHighlighter.staticRegex);
-                                                const match: RegExpMatchArray | null = exp.exec(RegExpHighlighter.staticSearch);
-                                                const exact: boolean = match !== null && match.length === 1 && match[0].length === RegExpHighlighter.staticSearch.length;
-                                                return (
-                                                    <LiteGrid responsive={true} minResponsiveWidth={em(8)}>
-                                                        <Text text={`Valid`}
-                                                              type={TextType.secondaryDescription}
-                                                              fontSize={px(12)}
-                                                              enableLeftAppendix={true}
-                                                              leftAppendix={expValid ?
-                                                                  <Icon colored={true}
-                                                                        visualMeaning={ObjectVisualMeaning.SUCCESS}
-                                                                        icon={<SuccessIcon/>}/> :
-                                                                  <Icon colored={true}
-                                                                        visualMeaning={ObjectVisualMeaning.ERROR}
-                                                                        icon={<ErrorIcon/>}/>
-                                                              }
-                                                        />
-                                                        <Text text={`Exact match`}
-                                                              type={TextType.secondaryDescription}
-                                                              fontSize={px(12)}
-                                                              enableLeftAppendix={true}
-                                                              leftAppendix={exact ?
-                                                                  <Icon colored={true}
-                                                                        visualMeaning={ObjectVisualMeaning.SUCCESS}
-                                                                        icon={<SuccessIcon/>}/> :
-                                                                  <Icon colored={true}
-                                                                        visualMeaning={ObjectVisualMeaning.ERROR}
-                                                                        icon={<ErrorIcon/>}/>
-                                                              }
-                                                        />
-                                                    </LiteGrid>
-                                                );
-                                            }}
+                                            componentFactory={() => this.assembly.render({
+                                                component: "annotation"
+                                            })}
                                         />
 
                                         <CodeEditor

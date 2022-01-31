@@ -9,25 +9,39 @@ import {getMeaningfulColors, Themeable} from "../Themeable";
 import {BounceLoader} from "react-spinners";
 import {Badge} from "./Badge";
 import {px} from "../logic/DimensionalMeasured";
+import {getOr} from "../logic/Utils";
 
-export const ServerConnectionIcon: React.FC = props => {
+export type ServerConnectionIconProps = {
+    openConnectionMetricsDialog?: boolean
+}
+
+export const ServerConnectionIcon: React.FC<ServerConnectionIconProps> = props => {
     const theme: Themeable.Theme = utilizeGlobalTheme();
     const connector = App.app().getConnector();
     const conState = connector.socket?.readyState;
 
-
-    switch (conState) {
-        case 0:
-            return renderConnecting(theme, connector);
-        case 1:
-            return renderOnline(theme, connector);
-        case 2:
-            return <>Stopping</>;
-        case 3:
-            return renderNoConnection(theme, connector);
-        default:
-            return <></>
-    }
+    return (
+        <span onClick={() => {
+            if (getOr(props.openConnectionMetricsDialog, false)) {
+                App.app().callAction("open-main-dialog", "server-connection-assembly");
+            }
+        }}>
+            {(() => {
+                switch (conState) {
+                    case 0:
+                        return renderConnecting(theme, connector);
+                    case 1:
+                        return renderOnline(theme, connector);
+                    case 2:
+                        return <>Stopping</>;
+                    case 3:
+                        return renderNoConnection(theme, connector);
+                    default:
+                        return <></>
+                }
+            })()}
+        </span>
+    );
 }
 
 export const renderOnline: (theme: Themeable.Theme, con: Environment.Connector) => JSX.Element = (theme, con) => {

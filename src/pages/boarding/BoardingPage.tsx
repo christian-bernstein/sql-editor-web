@@ -4,6 +4,7 @@ import {ReactComponent as Logo} from "../../assets/retired_logo_v2.svg";
 import {ReactComponent as AppLogo} from "../../assets/logo.svg";
 import {ReactComponent as FullscreenEnterIcon} from "../../assets/icons/ic-20/ic20-fullscreen.svg";
 import {ReactComponent as FullscreenExitIcon} from "../../assets/icons/ic-20/ic20-fullscreen-exit.svg";
+import {ReactComponent as ClearIcon} from "../../assets/icons/ic-20/ic20-delete.svg";
 // todo remove completely
 // import "../../styles/pages/BoardingPage.scss";
 import {_Button} from "../../components/_Button";
@@ -28,10 +29,9 @@ import {Utils} from "../../logic/Utils";
 import {Separator} from "../../components/Separator";
 import {Orientation} from "../../logic/Orientation";
 import {Justify} from "../../logic/Justify";
-import {ObjectJSONDisplay} from "../../components/ObjectJSONDisplay";
 import {Zoom} from "@mui/material";
-import {ReactComponent as ProjectIcon} from "../../assets/icons/ic-20/ic20-file.svg";
 import {CustomTooltip} from "../../components/CustomTooltip";
+import {createMargin} from "../../logic/Margin";
 
 export type BoardingPageProps = {}
 
@@ -233,7 +233,9 @@ export class BoardingPage extends React.Component<BoardingPageProps, BoardingPag
 
                             <FlexBox flexDir={FlexDirection.ROW_REVERSE} height={percent(100)} gap={theme.gaps.smallGab}>
                                 <FlexBox align={Align.CENTER} justifyContent={Justify.CENTER} height={percent(100)}>
-                                    <ServerConnectionIcon/>
+                                    <ServerConnectionIcon
+                                        openConnectionMetricsDialog
+                                    />
                                 </FlexBox>
                                 <Separator orientation={Orientation.VERTICAL} width={px(1)}/>
                                 <FlexBox align={Align.CENTER} justifyContent={Justify.CENTER} height={percent(100)}>
@@ -250,6 +252,12 @@ export class BoardingPage extends React.Component<BoardingPageProps, BoardingPag
                                             })}/>
                                         </span>
                                     </CustomTooltip>
+                                </FlexBox>
+                                <FlexBox align={Align.CENTER} justifyContent={Justify.CENTER} height={percent(100)} margin={createMargin(0, theme.gaps.smallGab.measurand, 0, 0)}>
+                                    <Icon icon={<ClearIcon/>} onClick={() => {
+                                        App.app().clearSessionHistory();
+                                        this.forceUpdate();
+                                    }}/>
                                 </FlexBox>
                             </FlexBox>
                         </div>

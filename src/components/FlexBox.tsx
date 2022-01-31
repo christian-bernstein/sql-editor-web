@@ -8,6 +8,7 @@ import {DimensionalMeasured} from "../logic/DimensionalMeasured";
 import {Align} from "../logic/Align";
 import {Justify} from "../logic/Justify";
 import {OverflowBehaviour} from "../logic/OverflowBehaviour";
+import {createMargin, Margin} from "../logic/Margin";
 
 export type FlexBoxProps = {
     flexDir?: FlexDirection,
@@ -19,13 +20,15 @@ export type FlexBoxProps = {
     height?: DimensionalMeasured,
     overflowXBehaviour?: OverflowBehaviour,
     overflowYBehaviour?: OverflowBehaviour
-    classnames?: string[]
+    classnames?: string[],
+    margin?: Margin
 }
 
 export class FlexBox extends React.Component<FlexBoxProps, any> {
 
     render() {
         const theme: Themeable.Theme = utilizeGlobalTheme();
+        const margin: Margin = getOr(this.props.margin, createMargin(0, 0, 0, 0));
         const Wrapper = styled.div`
           display: flex;
           flex-direction: ${getOr(this.props.flexDir, FlexDirection.COLUMN)};
@@ -36,7 +39,10 @@ export class FlexBox extends React.Component<FlexBoxProps, any> {
           height: ${getOr(this.props.height?.css(), "auto")};
           overflow-x: ${getOr<OverflowBehaviour>(this.props.overflowXBehaviour, OverflowBehaviour.VISIBLE)};
           overflow-y: ${getOr<OverflowBehaviour>(this.props.overflowYBehaviour, OverflowBehaviour.VISIBLE)};
-          // overflow-y: visible;
+          margin-top: ${margin.top?.css()};
+          margin-bottom: ${margin.bottom?.css()};
+          margin-left: ${margin.left?.css()};
+          margin-right: ${margin.right?.css()};
         `;
         return (
             <Wrapper style={getOr(this.props.style, {})} className={getOr(this.props.classnames?.join(" "), "")}>
