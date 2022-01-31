@@ -57,7 +57,7 @@ export class App {
 
     private readonly shards: Map<String, Shard> = new Map<String, Shard>();
 
-    private readonly actions: Map<String, Array<() => void>> = new Map<String, Array<() => void>>();
+    private readonly actions: Map<String, Array<(parameters?: any) => void>> = new Map<String, Array<(parameters?: any) => void>>();
 
     private globalTheme: string;
 
@@ -148,7 +148,7 @@ export class App {
         throw new Error("checkServerAvailability not implemented yet!");
     }
 
-    public registerAction(name: string, action: () => void) {
+    public registerAction(name: string, action: (parameters?: any) => void) {
         if (!this.actions.has(name)) {
             this.actions.set(name, [action]);
         } else {
@@ -156,7 +156,7 @@ export class App {
         }
     }
 
-    public callAction(name: string) {
+    public callAction(name: string, parameters: any = undefined) {
         this.actions.get(name)?.forEach(act => act());
     }
 

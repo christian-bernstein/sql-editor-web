@@ -16,8 +16,11 @@ import {FlexBox} from "../../components/FlexBox";
 import {FlexDirection} from "../../logic/FlexDirection";
 import {Justify} from "../../logic/Justify";
 import {Align} from "../../logic/Align";
+import {ReactComponent as OpenDialogIcon} from "../../assets/icons/ic-20/ic20-open-in-browser.svg";
 import {CodeEditor} from "../../components/CodeEditor";
 import {Cursor} from "../../logic/style/Cursor";
+import {Icon} from "../../components/Icon";
+import {CustomTooltip} from "../../components/CustomTooltip";
 
 export type MenuPageProps = {
     showMenuInitially?: boolean,
@@ -214,6 +217,8 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
                             </Button>
                         </FlexBox>
 
+
+
                         <FlexBox flexDir={FlexDirection.ROW} overflowXBehaviour={OverflowBehaviour.SCROLL}>
                             <Button visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
                                     width={percent(100)}
@@ -235,6 +240,21 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
                                     }}>
                                 <Text text={"Dark-Theme"}/>
                             </Button>
+                        </FlexBox>
+
+                        <FlexBox flexDir={FlexDirection.ROW}>
+                            <CustomTooltip title={"Open main dialog"} arrow>
+                                <span>
+                                    <Button visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
+                                            opaque={true}
+                                            shrinkOnClick={true}
+                                            onClick={() => {
+                                                App.app().callAction("open-main-dialog");
+                                            }}>
+                                <Icon icon={<OpenDialogIcon/>}/>
+                            </Button>
+                                </span>
+                            </CustomTooltip>
                         </FlexBox>
 
                         <ObjectJSONDisplay

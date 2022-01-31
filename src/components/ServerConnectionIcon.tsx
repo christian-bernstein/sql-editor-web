@@ -15,6 +15,7 @@ export const ServerConnectionIcon: React.FC = props => {
     const connector = App.app().getConnector();
     const conState = connector.socket?.readyState;
 
+
     switch (conState) {
         case 0:
             return renderConnecting(theme, connector);

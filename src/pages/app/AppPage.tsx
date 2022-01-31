@@ -1,4 +1,4 @@
-import React from "react";
+import React, {ForwardedRef} from "react";
 import "../../styles/pages/AppPage.scss";
 import "../../utils.scss";
 import {BrowserRouter, Redirect, Route} from "react-router-dom";
@@ -7,7 +7,7 @@ import {BoardingPage} from "../boarding/BoardingPage";
 import {LoginPage} from "../login/LoginPage";
 import DashboardPage from "../dashboard/DashboardPage";
 import MenuPage from "../menu/MenuPage";
-import {App} from "../../logic/App";
+import {App, utilizeGlobalTheme} from "../../logic/App";
 import {Environment} from "../../logic/Environment";
 import {Themeable} from "../../Themeable";
 import {ChartPage} from "../../tests/task/ChartPage";
@@ -20,7 +20,21 @@ import {CommandPallet} from "../../components/CommandPallet";
 import {DebugEditor} from "../editor/debug/DebugEditor";
 import {DBSessionCacheShard} from "../../shards/DBSessionCacheShard";
 import {RegexPage} from "../../tests/regex/RegexPage";
-import {DebugTableDataDisplayPage} from "../../components/TableDataDisplay";
+import {Assembly} from "../../logic/Assembly";
+import {Dialog, Slide} from "@mui/material";
+import {TransitionProps} from "@mui/material/transitions";
+import {PageV2} from "../../components/Page";
+import {FlexBox} from "../../components/FlexBox";
+import {FlexDirection} from "../../logic/FlexDirection";
+import {percent} from "../../logic/DimensionalMeasured";
+import {Icon} from "../../components/Icon";
+import {ReactComponent as CloseIcon} from "../../assets/icons/ic-20/ic20-close.svg";
+import {ObjectVisualMeaning} from "../../logic/ObjectVisualMeaning";
+import {PosInCenter} from "../../components/PosInCenter";
+import {InformationBox} from "../../components/InformationBox";
+import {Text} from "../../components/Text";
+import {Align} from "../../logic/Align";
+import {Justify} from "../../logic/Justify";
 
 export type AppPageProps = {
 }
@@ -30,7 +44,9 @@ export type AppPageState = {
     currentSpecialPage?: string,
     paramSupplier?: () => any,
     updateSlave: number,
-    showCommandPallet: boolean
+    showCommandPallet: boolean,
+    showDialog: boolean,
+    dialogAssembly?: string
 }
 
 let hook: undefined | (() => void);
@@ -39,7 +55,13 @@ let instance: AppPage | undefined = undefined;
 
 export class AppPage extends React.Component<AppPageProps, AppPageState> {
 
+    private readonly DialogTransition = React.forwardRef((props: TransitionProps & {children?: React.ReactElement<any, any>}, ref: ForwardedRef<unknown>) => {
+        return <Slide direction="up" ref={ref} {...props} />;
+    });
+
     private mounted: boolean = false;
+
+    private readonly assembly: Assembly;
 
     private readonly specialPageRenderers: Map<string, (params: any) => JSX.Element> = new Map<string, (params: any) => JSX.Element>([
         [DefaultSpecialPages.BOARDING, () => <></>],
@@ -53,9 +75,12 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
         super(props);
         this.state = {
             showMenu: false,
+            // todo remove variable
             updateSlave: 0,
-            showCommandPallet: false
+            showCommandPallet: false,
+            showDialog: false
         };
+        this.assembly = new Assembly();
         this.init();
     }
 
@@ -64,7 +89,6 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
             updateSlave: this.state.updateSlave + 1
         });
         this.mounted = true;
-
         // this.activateSpecialPage(DefaultSpecialPages.SELECT_APP_CONFIG, () => arrayFactory<AppConfigSelectionData>(i => {
         //     return {
         //         title: String(i),
@@ -91,13 +115,9 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
         //         }
         //     };
         // }, 10));
-
-        console.log("app page mounted")
     }
 
     componentWillUnmount() {
-        console.log("app page will unmount")
-
         this.mounted = false;
         hook = undefined;
         instance = undefined;
@@ -125,6 +145,57 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
         return this.specialPageRenderers.get(page)?.(paramSupplier()) as JSX.Element;
     }
 
+    private openDialog(dialogComponent: string) {
+        this.setState({
+            showDialog: true,
+            dialogAssembly: dialogComponent
+        });
+    }
+
+    private closeDialog() {
+        this.setState({
+            showDialog: false,
+            dialogAssembly: undefined
+        });
+    }
+
+    private renderDialog(): JSX.Element {
+        const theme: Themeable.Theme = utilizeGlobalTheme();
+
+        if (this.state.showDialog) {
+            return (
+                <Dialog open={this.state.showDialog} onClose={() => this.setState({
+                    showDialog: false
+                })} TransitionComponent={this.DialogTransition} fullScreen sx={{
+                    '& .MuiDialog-paper': {
+                        backgroundColor: theme.colors.backgroundColor.css()
+                    }
+                }}>
+                    {
+                        this.assembly.render({
+                            // todo create fallback
+                            component: this.state.dialogAssembly as string,
+                            errorComponent: e => {
+                                return (
+                                    <PageV2>
+                                        <FlexBox flexDir={FlexDirection.COLUMN} align={Align.CENTER} justifyContent={Justify.FLEX_END} height={percent(100)}>
+                                            <PosInCenter fullHeight>
+                                                <InformationBox visualMeaning={ObjectVisualMeaning.ERROR}>
+                                                    <Text text={"**[DEBUG]** No assembly found"}/>
+                                                </InformationBox>
+                                            </PosInCenter>
+                                            <Icon icon={<CloseIcon/>} visualMeaning={ObjectVisualMeaning.ERROR} colored onClick={() => App.app().callAction("close-main-dialog")}/>
+                                        </FlexBox>
+                                    </PageV2>
+                                );
+                            }
+                        })
+                    }
+                </Dialog>
+            );
+        } else return <></>
+    }
+
     public rerender() {
         if (this.mounted) {
             if (hook) {
@@ -136,6 +207,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
     render() {
         return (
             <div className={"app"}>
+                {this.renderDialog()}
                 <CommandPallet isOpen={this.state.showCommandPallet}/>
                 {this.state.currentSpecialPage !== undefined ? this.renderSpecialPage() : this.renderDefaultPage()}
             </div>
@@ -146,7 +218,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
         if (App.isInitiated()) {
             return (
                 <BrowserRouter>
-                    <MenuPage showMenuInitially={false}>
+                    <MenuPage showMenuInitially={false} doubleClickMenuOpen={true}>
                         {this.getRouts()}
                     </MenuPage>
                 </BrowserRouter>
@@ -215,13 +287,36 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                 }
             });
 
-            // CLoses the command pallet
+            // Closes the command pallet
             app.registerAction("close-command-pallet", () => {
                 if (instance) {
                     if (instance.mounted) {
                         instance.setState({
                             showCommandPallet: false
                         });
+                    } else console.error("Can't execute close-command-pallet, because component not mounted.");
+                }
+            });
+
+            // Open the main dialog
+            app.registerAction("open-main-dialog", (parameters) => {
+                if (instance) {
+                    if (instance.mounted) {
+                        try {
+                            const dialog = parameters as string;
+                            instance.openDialog(dialog);
+                        } catch (e) {
+                            console.error(`open-main-dialog action: parameter ${parameters} isn't assignable to type: string`)
+                        }
+                    } else console.error("Can't execute close-command-pallet, because component not mounted.");
+                }
+            });
+
+            // Close the main dialog
+            app.registerAction("close-main-dialog", () => {
+                if (instance) {
+                    if (instance.mounted) {
+                        instance.closeDialog();
                     } else console.error("Can't execute close-command-pallet, because component not mounted.");
                 }
             });
