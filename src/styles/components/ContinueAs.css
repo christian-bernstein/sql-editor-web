@@ -20,6 +20,7 @@
   white-space: nowrap;
   box-sizing: border-box;
   position: relative;
+  cursor: pointer;
 }
 .session-history-entry:hover {
   filter: brightness(120%);

@@ -6,6 +6,7 @@ import {v4} from "uuid";
 import {Themeable} from "../../Themeable";
 import {arrayFactory} from "../../logic/Utils";
 import _ from "lodash";
+import {Assembly} from "../../logic/Assembly";
 
 function getConfigs(fil: string): AppConfigSelectionData[] {
     return arrayFactory<AppConfigSelectionData>(i => {
@@ -18,6 +19,7 @@ function getConfigs(fil: string): AppConfigSelectionData[] {
                 appTitle: "",
                 debugMode: false,
                 defaultAppRoute: "",
+                appAssembly: new Assembly(),
                 rootRerenderHook: () => {},
                 themes: new Map<string, Themeable.Theme>(),
                 defaultTheme: "",

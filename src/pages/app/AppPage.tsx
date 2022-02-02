@@ -35,6 +35,8 @@ import {InformationBox} from "../../components/InformationBox";
 import {Text} from "../../components/Text";
 import {Align} from "../../logic/Align";
 import {Justify} from "../../logic/Justify";
+import {Constants} from "../../Constants";
+import {ProjectCreationDialog} from "../../dialogs/ProjectCreationDialog";
 
 export type AppPageProps = {
 }
@@ -168,7 +170,9 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                     showDialog: false
                 })} TransitionComponent={this.DialogTransition} fullScreen sx={{
                     '& .MuiDialog-paper': {
-                        backgroundColor: theme.colors.backgroundColor.css()
+                        // todo make configurable
+                        background: "transparent"
+                        // backgroundColor: theme.colors.backgroundColor.css()
                     }
                 }}>
                     {
@@ -181,7 +185,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                                         <FlexBox flexDir={FlexDirection.COLUMN} align={Align.CENTER} justifyContent={Justify.FLEX_END} height={percent(100)}>
                                             <PosInCenter fullHeight>
                                                 <InformationBox visualMeaning={ObjectVisualMeaning.ERROR}>
-                                                    <Text text={"**[DEBUG]** No assembly found"}/>
+                                                    <Text text={`**[DEBUG]** No assembly found\n'${e}'`}/>
                                                 </InformationBox>
                                             </PosInCenter>
                                             <Icon icon={<CloseIcon/>} visualMeaning={ObjectVisualMeaning.ERROR} colored onClick={() => App.app().callAction("close-main-dialog")}/>
@@ -229,7 +233,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
     private getRouts(): JSX.Element[] {
         const config: AppConfig = App.app().config;
         const routs: JSX.Element[] = [
-            <Route path={"/"} exact render={() => <Redirect push to={config.debugMode ? config.defaultDebugAppRoute : config.defaultAppRoute}/>}/>,
+            <Route path={"/"} exact={false} render={() => <Redirect push to={config.debugMode ? config.defaultDebugAppRoute : config.defaultAppRoute}/>}/>,
             <Route path={"/boarding"} render={() => <BoardingPage/>}/>,
             <Route path={"/login"} render={() => <LoginPage/>}/>,
             <Route path={"/dashboard"} render={() => <DashboardPage/>}/>
@@ -246,6 +250,10 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
         return routs;
     }
 
+    private initDialogs() {
+        this.assembly.assembly(Constants.createProjectDialog, (theme, props) => <ProjectCreationDialog/>);
+    }
+
     private init(config?: AppConfig) {
         instance = this;
         App.appOrCreate(config ? config : {
@@ -258,6 +266,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
             logInterceptors: [],
             logSaveSize: 1000,
             defaultTheme: "dark-green",
+            appAssembly: this.assembly,
             themes: new Map<string, Themeable.Theme>([
                 ["dark-green", Themeable.defaultTheme],
                 ["light-green", Themeable.lightTheme]
@@ -275,6 +284,8 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
             }
         }, app => {
             app.shard("db-session-cache", new DBSessionCacheShard());
+
+            this.initDialogs();
 
             // Opens the command pallet
             app.registerAction("open-command-pallet", () => {
@@ -335,6 +346,21 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                     if (ev.ctrlKey && ev.key === "m") {
                         ev.preventDefault();
                         app.callAction("toggle-menu");
+                    }
+                }
+            });
+
+            // Toggle the dialog page when ctrl + d is pressed
+            // Important: The dialog component gets re-rendered
+            document.addEventListener("keydown", ev => {
+                if (instance) {
+                    if (ev.ctrlKey && ev.key === "d") {
+                        ev.preventDefault();
+                        if (instance.state.showDialog) {
+                            app.callAction("close-main-dialog");
+                        } else {
+                            app.callAction("open-main-dialog");
+                        }
                     }
                 }
             });

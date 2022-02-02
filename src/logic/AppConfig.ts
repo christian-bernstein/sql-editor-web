@@ -1,5 +1,6 @@
 import {ConnectorConfig} from "./ConnectorConfig";
 import {Themeable} from "../Themeable";
+import {Assembly} from "./Assembly";
 
 export type AppConfig = {
     rootRerenderHook?: (callback?: () => void) => void,
@@ -11,5 +12,6 @@ export type AppConfig = {
     themes: Map<string, Themeable.Theme>,
     defaultTheme: string,
     logInterceptors?: ((...data: any[]) => void)[]
-    logSaveSize: number
+    logSaveSize: number,
+    appAssembly: Assembly
 }

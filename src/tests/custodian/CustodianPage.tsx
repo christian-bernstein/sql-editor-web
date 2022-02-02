@@ -3,6 +3,7 @@ import {App} from "../../logic/App";
 import {Themeable} from "../../Themeable";
 import {Environment} from "../../logic/Environment";
 import {BrowserRouter, Redirect, Route} from "react-router-dom";
+import {Assembly} from "../../logic/Assembly";
 
 export type CustodianPageProps = {
     appTitle: string
@@ -46,6 +47,7 @@ export function initApp() {
         defaultDebugAppRoute: "/chart",
         themes: new Map<string, Themeable.Theme>([["dark-green", Themeable.defaultTheme]]),
         defaultTheme: "dark-green",
+        appAssembly: new Assembly(),
         logSaveSize: 250,
         connectorConfig: {
             protocol: "login",

@@ -14,6 +14,7 @@ import {LoginCallConfig} from "./LoginCallConfig";
 import {Themeable} from "../Themeable";
 import {ProgressTrackerManager} from "./ProgressTrackerManager";
 import Modal from "react-modal";
+import {Assembly} from "./Assembly";
 
 export function utilizeApp(): App {
     return App.app();
@@ -69,10 +70,13 @@ export class App {
 
     private _initiated: boolean = false;
 
+    private _dialogAssembly: Assembly;
+
     constructor(config: AppConfig) {
         this._config = config;
         this.globalTheme = config.defaultTheme;
         this.themes = config.themes;
+        this._dialogAssembly = config.appAssembly;
         this.init();
     }
 
@@ -161,7 +165,7 @@ export class App {
     }
 
     public callAction(name: string, parameters: any = undefined) {
-        this.actions.get(name)?.forEach(act => act());
+        this.actions.get(name)?.forEach(act => act(parameters));
     }
 
     public openMenu() {
@@ -447,5 +451,13 @@ export class App {
 
             config.processFinished?.();
         }
+    }
+
+    get dialogAssembly(): Assembly {
+        return this._dialogAssembly;
+    }
+
+    set dialogAssembly(value: Assembly) {
+        this._dialogAssembly = value;
     }
 }

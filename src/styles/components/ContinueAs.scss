@@ -22,6 +22,7 @@
   white-space: nowrap;
   box-sizing: border-box;
   position: relative;
+  cursor: pointer;
 
   &:hover {
     filter: brightness(120%);
