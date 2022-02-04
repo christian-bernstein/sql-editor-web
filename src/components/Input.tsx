@@ -7,6 +7,7 @@ import {utilizeGlobalTheme} from "../logic/App";
 import {getOr} from "../logic/Utils";
 import styled from "styled-components";
 import {Color} from "../Color";
+import {FontWeight} from "../logic/style/FontWeight";
 
 export type InputProps = {
     id?: string,
@@ -15,10 +16,12 @@ export type InputProps = {
     visualMeaning?: ObjectVisualMeaning,
     opaque?: boolean,
     opaqueValue?: number,
-    onChange?: (ev: ChangeEvent<HTMLInputElement>) => void,
+    onChange?: (ev: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
     value?: string
     autoFocus?: boolean,
-    type?: string
+    type?: string,
+    placeholder?: string,
+    fontWeight?: FontWeight
 }
 
 export type InputState = {
@@ -38,7 +41,7 @@ export class Input extends React.Component<InputProps, InputState> {
         };
     }
 
-    private onInputChange(ev: ChangeEvent<HTMLInputElement>) {
+    private onInputChange(ev: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         this.props.onChange?.(ev);
     }
 
@@ -72,6 +75,7 @@ export class Input extends React.Component<InputProps, InputState> {
             border: none;
             color: ${theme.colors.fontPrimaryColor.css()};
             font-family: "${theme.texts.fontFamily}", "Consolas", monospace !important;
+            font-weight: ${getOr(this.props.fontWeight, "normal")};
             position: absolute;
             top: 0;
             left: 0;
@@ -87,7 +91,7 @@ export class Input extends React.Component<InputProps, InputState> {
               box-shadow: 0 0 0 4px ${meaningfulColors.shadowColor.css()};
             }
           }
-
+          
           label {
             font-size: 14px;
             position: absolute;
@@ -118,7 +122,7 @@ export class Input extends React.Component<InputProps, InputState> {
                        spellCheck={false}
                        ref={() => this.ref}
                        onChange={event => this.onInputChange(event)}
-                       placeholder={" "}
+                       placeholder={getOr(this.props.placeholder, " ")}
                        value={this.props.value}
                 />
                 <label htmlFor={this.state.id}>{this.props.label}</label>

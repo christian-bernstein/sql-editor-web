@@ -286,8 +286,11 @@ export class App {
     }
 
     // todo add rerender feature
-    public setGlobalTheme(theme: string) {
+    public setGlobalTheme(theme: string, setDefaultBrowserTheme: boolean = true) {
         this.globalTheme = theme;
+        if (setDefaultBrowserTheme) {
+            this.setDefaultBrowserTheme(theme);
+        }
     }
 
     public rerenderGlobally() {
@@ -303,6 +306,20 @@ export class App {
 
         // Set the modals attachment element
         Modal.setAppElement("#root");
+
+        // Try to load the default theme, set in the browser
+        this.loadDefaultBrowserTheme();
+    }
+
+    private loadDefaultBrowserTheme() {
+        const theme: string | null = window.localStorage.getItem("default-browser-theme");
+        if (theme != null) {
+            this.globalTheme = theme;
+        }
+    }
+
+    private setDefaultBrowserTheme(theme: string) {
+        window.localStorage.setItem("default-browser-theme", theme);
     }
 
     private addLogInterceptor(methodName: "log" | "info" | "warn" | "error") {

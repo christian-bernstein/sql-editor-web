@@ -28,6 +28,7 @@
     "@types/styled-components": "^5.1.15",
     "@types/uuid": "^8.3.1",
     "@uiw/react-codemirror": "^4.3.2",
+    "@uiw/react-md-editor": "^3.9.4",
     "apexcharts": "^3.28.3",
     "bootstrap": "^4.6.0",
     "codemirror": "^5.65.0",

@@ -188,7 +188,7 @@ export class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
                                opaque
                                autoFocus
                                key={"username-input"}
-                               onChange={(ev: ChangeEvent<HTMLInputElement>) => {
+                               onChange={(ev: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
                                    this.updateCredentials("user", ev.currentTarget.value);
                                }}
                         />
@@ -197,7 +197,7 @@ export class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
                                opaque
                                type={"password"}
                                key={"password-input"}
-                               onChange={(ev: ChangeEvent<HTMLInputElement>) => {
+                               onChange={(ev: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
                                    this.updateCredentials("pass", ev.currentTarget.value);
                                }}
                         />
