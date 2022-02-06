@@ -1,5 +1,7 @@
 export type ProjectCreateRequestPacketData = {
     title: string,
     description: string,
-    stator: boolean
+    stator: boolean,
+    dbFactoryID: string,
+    dbFactoryParams: Map<String, object>
 }

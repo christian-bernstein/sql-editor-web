@@ -25,6 +25,7 @@ import {ObjectJSONDisplay} from "./ObjectJSONDisplay";
 import {Separator} from "./Separator";
 import {Orientation} from "../logic/Orientation";
 import {ContextCompound} from "./ContextCompound";
+import {If} from "./If";
 
 export type ProjectInfoProps = {
     data: ProjectInfoData,
@@ -90,7 +91,14 @@ export class ProjectInfo extends React.Component<ProjectInfoProps, any> {
         return (
             <Box width={percent(100)} gapY={px(10)}>
                 {this.renderHeader()}
-                <Text text={Utils.format("**Description**: {0}", this.props.data.description)}/>
+                <If condition={this.props.data.description !== null} ifTrue={
+                    <>
+                        {/*<Text text={"**Description**:"}/>*/}
+                        <Text text={this.props.data.description} />
+                    </>
+                } ifFalse={
+                    <></>
+                }/>
                 {/* todo replace with flexbox handling */}
                 <div style={{
                     height: "100%"

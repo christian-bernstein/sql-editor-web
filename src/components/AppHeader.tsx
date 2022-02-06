@@ -22,7 +22,7 @@ export const AppHeader: React.FC<AppHeaderProps> = React.memo(props => {
                     {props.left}
                 </FlexBox>
                 <FlexBox justifyContent={Justify.CENTER} align={Align.CENTER}>
-                    <Text text={props.title} uppercase={true} align={Align.CENTER} type={TextType.smallHeader}/>
+                    <Text text={props.title} whitespace={"nowrap"} uppercase={true} align={Align.CENTER} type={TextType.smallHeader}/>
                 </FlexBox>
                 <FlexBox justifyContent={Justify.FLEX_START} flexDir={FlexDirection.ROW_REVERSE} align={Align.CENTER}>
                     {props.right}

@@ -169,9 +169,9 @@ export default class DashboardPage extends React.PureComponent<DashboardPageProp
                         <FlexBox align={Align.START} justifyContent={Justify.CENTER}>
                             <Icon icon={(
                                 <CustomTooltip title={"Toggle menu"} arrow>
-                                <span>
-                                    <MenuIcon/>
-                                </span>
+                                    <span>
+                                        <MenuIcon/>
+                                    </span>
                                 </CustomTooltip>
                             )} onClick={() => App.app().openMenu()}/>
                         </FlexBox>
@@ -182,23 +182,23 @@ export default class DashboardPage extends React.PureComponent<DashboardPageProp
                             <CustomTooltip title={(
                                 <Text text={"Reload the projects"}/>
                             )} arrow noBorder>
-                            <span>
-                                {
-                                    this.state.loading ? (
-                                        <Icon icon={<SyncIcon/>} visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} colored={true}/>
-                                    ) : (
-                                        <Icon icon={<SyncIcon/>} visualMeaning={ObjectVisualMeaning.INFO} colored={true} onClick={() => this.loadProjects()}/>
-                                    )
-                                }
-                            </span>
+                                <span>
+                                    {
+                                        this.state.loading ? (
+                                            <Icon icon={<SyncIcon/>} visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} colored={true}/>
+                                        ) : (
+                                            <Icon icon={<SyncIcon/>} visualMeaning={ObjectVisualMeaning.INFO} colored={true} onClick={() => this.loadProjects()}/>
+                                        )
+                                    }
+                                </span>
                             </CustomTooltip>
                             <Separator orientation={Orientation.VERTICAL}/>
                             <CustomTooltip title={(
                                 <Text text={"**Create a new project**\nBlank project or choose a template."}/>
                             )} arrow noBorder>
-                            <span>
-                                <Icon icon={<CreateIcon/>} visualMeaning={ObjectVisualMeaning.INFO} colored={true} onClick={() => this.createProject()}/>
-                            </span>
+                                <span>
+                                    <Icon icon={<CreateIcon/>} visualMeaning={ObjectVisualMeaning.INFO} colored={true} onClick={() => this.createProject()}/>
+                                </span>
                             </CustomTooltip>
                         </FlexBox>
                     </LiteGrid>
@@ -276,7 +276,9 @@ export default class DashboardPage extends React.PureComponent<DashboardPageProp
                 channels={["*" , "dial"]}
                 componentFactory={() => (
                     <>
-                        <Backdrop open={this.local.state.speedDialOpen} />
+                        <Backdrop open={this.local.state.speedDialOpen} style={{
+                            zIndex: 1000
+                        }}/>
                         <SpeedDial
                             ariaLabel="SpeedDial tooltip example"
                             sx={{
@@ -293,13 +295,14 @@ export default class DashboardPage extends React.PureComponent<DashboardPageProp
                                     fontFamily: "OperatorMono !important"
                                 },
                                 ['& .MuiButtonBase-root:hover']: {
-                                    backgroundColor: infoVM.main.css(),
+                                    backgroundColor: infoVM.main.withAlpha(.2).css(),
                                     borderColor: infoVM.lighter.css(),
                                     boxShadow: "0 0 0 4px " + infoVM.shadowColor.css()
                                 },
                                 ['& svg path']: {
                                     fill: infoVM.icon.css() + " !important"
                                 },
+                                zIndex: 1100,
                                 position: 'absolute',
                                 bottom: 16,
                                 right: 16,
@@ -316,16 +319,24 @@ export default class DashboardPage extends React.PureComponent<DashboardPageProp
                             open={this.local.state.speedDialOpen}
                         >
                             <SpeedDialAction
-                                key={"b"}
+                                key={"create-empty-action"}
                                 icon={<CreateIcon/>}
-                                tooltipTitle={"Create"}
+                                tooltipTitle={"Create empty"}
                                 tooltipOpen
-                                onClick={event => {}}
+                                style={{
+                                    whiteSpace: "nowrap"
+                                }}
+                                onClick={event => {
+                                    this.createProject()
+                                }}
                             />
                             <SpeedDialAction
-                                key={"c"}
+                                key={"create-from-template-action"}
                                 icon={<CreateIcon/>}
-                                tooltipTitle={"Template"}
+                                tooltipTitle={"Create from Template"}
+                                style={{
+                                    whiteSpace: "nowrap"
+                                }}
                                 tooltipOpen
                                 onClick={event => {}}
                             />

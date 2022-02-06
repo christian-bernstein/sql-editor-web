@@ -2,7 +2,8 @@ import React, {CSSProperties} from "react";
 import {PageV2} from "./Page";
 import ReactDataGrid from '@inovua/reactdatagrid-community';
 import '@inovua/reactdatagrid-community/index.css';
-import '@inovua/reactdatagrid-community/theme/green-dark.css'
+import '@inovua/reactdatagrid-community/theme/green-dark.css';
+import '@inovua/reactdatagrid-community/theme/green-light.css';
 import {FlexBox} from "./FlexBox";
 import {LiteGrid} from "./LiteGrid";
 import {Align} from "../logic/Align";
@@ -10,18 +11,28 @@ import {Justify} from "../logic/Justify";
 import {Icon} from "./Icon";
 import {CustomTooltip} from "./CustomTooltip";
 import {ReactComponent as MenuIcon} from "../assets/icons/ic-20/ic20-menu.svg";
+import {ReactComponent as DebugIcon} from "../assets/icons/ic-20/ic20-bug.svg";
+import {ReactComponent as CloseIcon} from "../assets/icons/ic-20/ic20-close.svg";
 import {App, utilizeGlobalTheme} from "../logic/App";
 import {Text, TextType} from "./Text";
 import {FlexDirection} from "../logic/FlexDirection";
-import {ReactComponent as CloseIcon} from "../assets/icons/ic-20/ic20-close.svg";
 import {ObjectVisualMeaning} from "../logic/ObjectVisualMeaning";
-import {Box} from "./Box";
-import {OverflowBehaviour} from "../logic/OverflowBehaviour";
-import {percent} from "../logic/DimensionalMeasured";
 import {Themeable} from "../Themeable";
-import {arrayFactory} from "../logic/Utils";
 import {SQLCommandQueryResponsePacketData} from "../packets/in/SQLCommandQueryResponsePacketData";
+import {cs} from "../logic/state/State";
+import {RenderController} from "../tests/regex/RenderController";
+import {getOr} from "../logic/Utils";
+import {v4} from "uuid";
+import {RenderExecutor} from "../tests/regex/RenderExecutor";
+import {If} from "./If";
+import {Separator} from "./Separator";
+import {Orientation} from "../logic/Orientation";
+import {Box} from "./Box";
 import {ObjectJSONDisplay} from "./ObjectJSONDisplay";
+import {percent} from "../logic/DimensionalMeasured";
+import {OverflowBehaviour} from "../logic/OverflowBehaviour";
+import styled from "styled-components";
+import {generateCSSBodyForInovuaReactDataGrid} from "./table/InovuaReactDataGridTheme";
 
 export type TableDataDisplayProps = {
     data: SQLCommandQueryResponsePacketData,
@@ -81,6 +92,10 @@ export class TableDataDisplay extends React.Component<TableDataDisplayProps, any
             })
         ]
 
+        // const Wrapper = styled.span`
+        //   ${generateCSSBodyForInovuaReactDataGrid()}
+        // `;
+
         // noinspection RequiredAttributes
         return (
             <ReactDataGrid
@@ -100,7 +115,30 @@ export type DebugTableDataDisplayPageProps = {
     onClose?: () => void
 }
 
+export type DebugTableDataDisplayPageLocalState = {
+    debug: boolean
+}
+
 export class DebugTableDataDisplayPage extends React.Component<DebugTableDataDisplayPageProps, any> {
+
+    private readonly local = cs<DebugTableDataDisplayPageLocalState>({
+        debug: App.app().config.debugMode
+    });
+
+    private readonly controller = new RenderController();
+
+    constructor(props: DebugTableDataDisplayPageProps) {
+        super(props);
+        this.local.on((state, value) => {
+            this.controller.rerender(...getOr(value.get("channels"), ["*"]));
+        });
+    }
+
+    private toggleDebugMode() {
+        this.local.setState({
+            debug: !this.local.state.debug
+        }, new Map<string, any>([["channels", ["debug"]]]));
+    }
 
     render() {
         const theme: Themeable.Theme = utilizeGlobalTheme();
@@ -120,6 +158,21 @@ export class DebugTableDataDisplayPage extends React.Component<DebugTableDataDis
                         <Text uppercase align={Align.CENTER} type={TextType.smallHeader} text={"SQL Result"}/>
                     </FlexBox>
                     <FlexBox align={Align.CENTER} justifyContent={Justify.FLEX_END} flexDir={FlexDirection.ROW}>
+
+                        <CustomTooltip title={<Text text={"Toggles debugging mode"}/>} arrow noBorder>
+                            <span>
+                                <RenderExecutor id={v4()} channels={["debug"]} componentDidMountRelay={bridge => this.controller.register(bridge)} componentFactory={() => (
+                                    <If condition={this.local.state.debug} ifTrue={
+                                        <Icon icon={<DebugIcon/>} colored visualMeaning={ObjectVisualMeaning.INFO} onClick={() => this.toggleDebugMode()}/>
+                                    } ifFalse={
+                                        <Icon icon={<DebugIcon/>} colored visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} onClick={() => this.toggleDebugMode()}/>
+                                    }/>
+                                )}/>
+                            </span>
+                        </CustomTooltip>
+
+                        <Separator orientation={Orientation.VERTICAL}/>
+
                         <CustomTooltip title={<Text text={"Close"}/>} arrow noBorder>
                             <span>
                                 <Icon icon={<CloseIcon/>} visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} colored={false} onClick={() => {
@@ -130,7 +183,13 @@ export class DebugTableDataDisplayPage extends React.Component<DebugTableDataDis
                     </FlexBox>
                 </LiteGrid>
 
-                <ObjectJSONDisplay title={"**[DEBUG]** Packet viewer"} showControls pure={false} object={this.props.data}/>
+                <RenderExecutor id={v4()} channels={["debug"]} componentDidMountRelay={bridge => this.controller.register(bridge)} componentFactory={() => (
+                    <If condition={this.local.state.debug} ifTrue={
+                        <ObjectJSONDisplay title={"**[DEBUG]** Packet viewer"} showControls pure={false} object={this.props.data}/>
+                    } ifFalse={
+                        <></>
+                    }/>
+                )}/>
 
                 <Box height={percent(100)} noPadding={true} overflowYBehaviour={OverflowBehaviour.HIDDEN} overflowXBehaviour={OverflowBehaviour.HIDDEN}>
                     <TableDataDisplay data={this.props.data}/>

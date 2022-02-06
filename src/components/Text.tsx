@@ -19,6 +19,8 @@ export type TextProps = {
     visualMeaning?: ObjectVisualMeaning,
     enableLeftAppendix?: boolean,
     leftAppendix?: JSX.Element,
+    enableRightAppendix?: boolean,
+    rightAppendix?: JSX.Element,
     coloredIcon?: boolean,
     coloredText?: boolean,
     linkTooltip?: boolean,
@@ -26,7 +28,9 @@ export type TextProps = {
     align?: Align,
     uppercase?: boolean,
     onClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void,
-    cursor?: Cursor
+    cursor?: Cursor,
+    // todo write elegant enum
+    whitespace?: "normal" | "pre-wrap" | "nowrap"
 }
 
 export enum TextType {
@@ -77,13 +81,14 @@ export const Text: React.FC<TextProps> = props => {
         fill: ${(props.coloredIcon ? meaningfulColors.iconColored : meaningfulColors.icon).css()};
       }
       
-      p {
+      p, h1, h2, h3, h4, h5, h6 {
         margin-top: 0;
         margin-bottom: 0;
       }
       
       .md {
-        white-space: pre-wrap;
+        width: 100%;
+        white-space: ${getOr(props.whitespace, "pre-wrap")};
         // todo was comment, why? & does it make errors?
         
         text-align: ${getOr(props.align, Align.START)};
@@ -102,6 +107,7 @@ export const Text: React.FC<TextProps> = props => {
                     );
                 }
             }}/>
+            {props.enableRightAppendix ? props.rightAppendix : <></>}
         </Wrapper>
     )
 }

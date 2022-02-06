@@ -379,7 +379,7 @@ export class DebugEditor extends React.Component<DebugEditorProps, DebugEditorSt
                                 <Icon icon={<MenuIcon/>} onClick={() => App.app().openMenu()}/>
                             </FlexBox>
                             <FlexBox align={Align.CENTER} justifyContent={Justify.CENTER}>
-                                <Text uppercase align={Align.CENTER} type={TextType.smallHeader} text={"Debug Editor"} />
+                                <Text uppercase align={Align.CENTER} type={TextType.smallHeader} text={"DB Editor"} />
                             </FlexBox>
                             <FlexBox align={Align.CENTER} justifyContent={Justify.FLEX_END} flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab}>
                                 <Icon icon={<CloseIcon/>} onClick={() => this.closeSession()}/>

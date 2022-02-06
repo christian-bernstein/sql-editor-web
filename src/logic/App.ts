@@ -172,6 +172,14 @@ export class App {
         this.callAction("show-menu");
     }
 
+    public toggleMainDialog(switchTo: "open" | "closed" ) {
+        if (switchTo === "open") {
+            this.callAction("close-main-dialog");
+        } else {
+            this.callAction("open-main-dialog");
+        }
+    }
+
     public getDefaultTheme(): Themeable.Theme {
         return this.themes.get("default") as Themeable.Theme;
     }

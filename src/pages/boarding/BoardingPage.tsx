@@ -1,5 +1,5 @@
 import React from "react";
-import {Link} from "react-router-dom";
+import {Link, Redirect} from "react-router-dom";
 import {ReactComponent as Logo} from "../../assets/retired_logo_v2.svg";
 import {ReactComponent as AppLogo} from "../../assets/logo.svg";
 import {ReactComponent as FullscreenEnterIcon} from "../../assets/icons/ic-20/ic20-fullscreen.svg";
@@ -51,11 +51,6 @@ export class BoardingPage extends React.Component<BoardingPageProps, BoardingPag
                 this.forceUpdate();
             });
         })
-    }
-
-    // todo implement
-    private clearSessionHistory() {
-        console.log("clearing session history")
     }
 
     render() {
@@ -219,6 +214,12 @@ export class BoardingPage extends React.Component<BoardingPageProps, BoardingPag
             }
           }
         `;
+
+        // todo make more versatile solution to the problem that the user can be logged in, while being on the boarding page
+        //  the same goes for the login page as well
+        if (App.app().getConnector().currentProtocol === "main") {
+            return <Redirect to={"/dashboard/"}/>
+        }
 
         return (
             // className={"boarding-page"}
