@@ -37,6 +37,7 @@ import {Align} from "../../logic/Align";
 import {Justify} from "../../logic/Justify";
 import {Constants} from "../../Constants";
 import {ProjectCreationDialog} from "../../dialogs/ProjectCreationDialog";
+import {arrayFactory} from "../../logic/Utils";
 
 export type AppPageProps = {
 }
@@ -83,7 +84,8 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
             showDialog: false
         };
         this.assembly = new Assembly();
-        this.init();
+
+        // this.init();
     }
 
     componentDidMount() {
@@ -91,32 +93,39 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
             updateSlave: this.state.updateSlave + 1
         });
         this.mounted = true;
-        // this.activateSpecialPage(DefaultSpecialPages.SELECT_APP_CONFIG, () => arrayFactory<AppConfigSelectionData>(i => {
-        //     return {
-        //         title: String(i),
-        //         description: "",
-        //         config: {
-        //             logSaveSize: 1000,
-        //             logInterceptors: [],
-        //             appTitle: "",
-        //             debugMode: false,
-        //             defaultAppRoute: "",
-        //             rootRerenderHook: () => {},
-        //             themes: new Map<string, Themeable.Theme>(),
-        //             defaultTheme: "",
-        //             defaultDebugAppRoute: "",
-        //             connectorConfig: {
-        //                 protocol: "",
-        //                 id: "",
-        //                 packetInterceptor: () => {},
-        //                 maxConnectAttempts: 0,
-        //                 address: "",
-        //                 connectionRetryDelayFunc: () => 1,
-        //                 onConnectionFailed: () => {}
-        //             }
-        //         }
-        //     };
-        // }, 10));
+
+        this.activateSpecialPage(DefaultSpecialPages.SELECT_APP_CONFIG, () => [
+            {
+                title: "SQL Editor - Local debug",
+                description: "Profile used for local debugging. (This profile can only be used, if the browser is running on the same device as the server is running.)",
+                config: {
+                    appTitle: "SQL Editor",
+                    debugMode: true,
+                    defaultAppRoute: "/boarding",
+                    defaultDebugAppRoute: "/boarding",
+                    rootRerenderHook: (callback) => this.rerender.bind(this)(),
+                    logInterceptors: [],
+                    logSaveSize: 1000,
+                    defaultTheme: "dark-green",
+                    appAssembly: this.assembly,
+                    themes: new Map<string, Themeable.Theme>([
+                        ["dark-green", Themeable.defaultTheme],
+                        ["light-green", Themeable.lightTheme]
+                    ]),
+                    connectorConfig: {
+                        protocol: "login",
+                        // address: "ws://192.168.2.100:80",
+                        address: "ws://192.168.2.104:80",
+                        id: "ton",
+                        maxConnectAttempts: 10,
+                        connectionRetryDelayFunc: () => 0,
+                        packetInterceptor: (packet: Environment.Packet) => {
+                            console.log("received packet from server", packet);
+                        }
+                    }
+                }
+            }
+        ] as AppConfigSelectionData[]);
     }
 
     componentWillUnmount() {

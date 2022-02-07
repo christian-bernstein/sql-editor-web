@@ -12,8 +12,12 @@ import {v4} from "uuid";
 import _ from "lodash";
 import {Icon} from "../../../components/Icon";
 import {ReactComponent as FilterIcon} from "../../../assets/icons/ic-24/ic24-filter.svg";
-import {ProfilePicture} from "../../../components/ProfilePicture";
-
+import {ReactComponent as DebugIcon} from "../../../assets/icons/ic-20/ic20-bug.svg";
+import {ReactComponent as Logo} from "../../../assets/retired_logo_v2.svg";
+import {Togglable} from "../../../components/Togglable";
+import {ObjectVisualMeaning} from "../../../logic/ObjectVisualMeaning";
+import {AppHeader} from "../../../components/AppHeader";
+import {FlexDirection} from "../../../logic/FlexDirection";
 
 
 export type SelectAppConfigPageProps = {
@@ -97,10 +101,31 @@ export const SelectAppConfigPageV2: React.FC<SelectAppConfigPageProps> = props =
             backgroundColor: theme.colors.backgroundColor.css(),
             gap: theme.gaps.defaultGab.css()
         }}>
+            <AppHeader
+                title={"Debug configuration"}
+                left={
+                    <Icon
+                        icon={<Logo/>}
+                        style={{
+                            fill: "white !important"
+                        }}
+                    />
+                }
+                right={
+                    <FlexBox flexDir={FlexDirection.ROW}>
+                        <Togglable active={
+                            <Icon icon={<DebugIcon/>} visualMeaning={ObjectVisualMeaning.SUCCESS} colored/>
+                        } inactive={
+                            <Icon icon={<DebugIcon/>} visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} colored/>
+                        }/>
+                    </FlexBox>
+                }
+            />
+
+
             <FlexBox gap={dimension(5, Dimension.px)}>
                 <Text type={TextType.smallHeader} text={"Select app profile…"}/>
-                <Text type={TextType.secondaryDescription}
-                      text={"Starting the **App** instance with a selected app config"}/>
+                <Text type={TextType.secondaryDescription} text={"Starting the **App** instance, based on the 'bernie-infrastructure' with a selected app config"}/>
             </FlexBox>
 
             <Input opaque

@@ -41,7 +41,7 @@ export class AppConfigSelector extends React.Component<AppConfigSelectorProps, a
                     />
                 </FlexBox>
                 <Text type={TextType.secondaryDescription} visualMeaning={visualMeaning} text={this.props.data.description}/>
-                <ObjectJSONDisplay object={this.props.data.config}/>
+                <ObjectJSONDisplay title={"**[DEBUG]** Data display"} pure={false} showControls={true} object={this.props.data.config}/>
                 {this.renderDebuggingHint()}
                 <Button opaque={true}
                         shrinkOnClick={true}
@@ -57,7 +57,7 @@ export class AppConfigSelector extends React.Component<AppConfigSelectorProps, a
         if (this.props.data.config.debugMode) {
             return (
                 <InformationBox visualMeaning={ObjectVisualMeaning.WARNING}>
-                    <Text text={"The config uses debugging mode, extensive metrics & log gets recorded. **Potentially vulnerable**"}/>
+                    <Text text={"The config uses debugging mode, extensive metrics & logs get recorded. **Potentially vulnerable**"}/>
                 </InformationBox>
             );
         } else return <></>

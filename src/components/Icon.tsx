@@ -1,4 +1,4 @@
-import React from "react";
+import React, {CSSProperties} from "react";
 import {WithVisualMeaning} from "../logic/WithVisualMeaning";
 import styled from "styled-components";
 import {getMeaningfulColors, MeaningfulColors, Themeable} from "../Themeable";
@@ -6,13 +6,16 @@ import {utilizeGlobalTheme} from "../logic/App";
 import {ObjectVisualMeaning} from "../logic/ObjectVisualMeaning";
 import {DimensionalMeasured, px} from "../logic/DimensionalMeasured";
 import {getOr} from "../logic/Utils";
+import {Color} from "../Color";
 
 export type IconProps = {
     colored?: boolean,
     icon: JSX.Element,
     size?: DimensionalMeasured,
     hoverAnimation?: boolean,
-    onClick?: () => void
+    onClick?: () => void,
+    style?: CSSProperties
+    // color?: Color
 } & WithVisualMeaning
 
 export const Icon: React.FC<IconProps> = React.memo(props => {
@@ -42,6 +45,7 @@ export const Icon: React.FC<IconProps> = React.memo(props => {
       svg {
         width: ${(props.size || px(20)).css()};
         height: ${(props.size || px(20)).css()};
+        fill: ${(props.colored ? meaningfulColors.iconColored : meaningfulColors.icon).css()};
         
         path {      
           fill: ${(props.colored ? meaningfulColors.iconColored : meaningfulColors.icon).css()};
@@ -55,7 +59,7 @@ export const Icon: React.FC<IconProps> = React.memo(props => {
     `;
 
     return (
-        <Wrapper onClick={() => props.onClick?.()}>
+        <Wrapper style={getOr(props.style, {})} onClick={() => props.onClick?.()}>
             {props.icon}
         </Wrapper>
     );
