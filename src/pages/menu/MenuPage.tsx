@@ -1,7 +1,6 @@
 import React from "react";
 import "../../styles/pages/MenuPage.scss";
 import {App, utilizeGlobalTheme} from "../../logic/App";
-import {ObjectJSONDisplay} from "../../components/ObjectJSONDisplay";
 import {Text} from "../../components/Text";
 import {getMeaningfulColors, MeaningfulColors, Themeable} from "../../Themeable";
 import {Box} from "../../components/Box";
@@ -17,10 +16,10 @@ import {FlexDirection} from "../../logic/FlexDirection";
 import {Justify} from "../../logic/Justify";
 import {Align} from "../../logic/Align";
 import {ReactComponent as OpenDialogIcon} from "../../assets/icons/ic-20/ic20-open-in-browser.svg";
-import {CodeEditor} from "../../components/CodeEditor";
-import {Cursor} from "../../logic/style/Cursor";
+import {ReactComponent as LogIcon} from "../../assets/icons/ic-20/ic20-tag.svg";
 import {Icon} from "../../components/Icon";
 import {CustomTooltip} from "../../components/CustomTooltip";
+import {ObjectJSONDisplay} from "../../components/ObjectJSONDisplay";
 
 export type MenuPageProps = {
     showMenuInitially?: boolean,
@@ -253,6 +252,34 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
                                             }}>
                                 <Icon icon={<OpenDialogIcon/>}/>
                             </Button>
+                                </span>
+                            </CustomTooltip>
+
+                            <CustomTooltip title={"Open logs"} arrow>
+                                <span>
+                                    <Button visualMeaning={ObjectVisualMeaning.ERROR}
+                                            opaque={false}
+                                            shrinkOnClick
+                                            enableBaseAnimation
+                                            baseAnimation={"hover-repeat"}
+                                            onClick={() => {
+                                                App.app().callAction("open-main-dialog", "log");
+                                            }}
+                                    >
+                                        <FlexBox flexDir={FlexDirection.ROW}>
+                                            <Icon icon={<LogIcon/>}/>
+                                            <Text
+                                                visualMeaning={ObjectVisualMeaning.ERROR}
+                                                leftAppendix={<></>}
+                                                enableLeftAppendix
+                                                uppercase
+                                                text={"**Logs**"}
+                                            />
+                                            <FlexBox flexDir={FlexDirection.ROW} height={percent(100)}>
+                                                <Text text={`(${String(App.app().logHistory.length)})`}/>
+                                            </FlexBox>
+                                        </FlexBox>
+                                    </Button>
                                 </span>
                             </CustomTooltip>
                         </FlexBox>

@@ -58,6 +58,7 @@
     "react-scripts": "4.0.3",
     "react-spinners": "^0.11.0",
     "react-swipeable-views": "^0.14.0",
+    "react-tiger-transition": "^4.1.2",
     "react-tooltip": "^4.2.21",
     "styled-components": "^5.0.0",
     "typescript": "^4.2.4",

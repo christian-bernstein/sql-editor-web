@@ -17,7 +17,9 @@ export type ButtonProps = {
     shrinkOnClick?: boolean,
     width?: DimensionalMeasured,
     height?: DimensionalMeasured,
-    cursor?: Cursor
+    cursor?: Cursor,
+    enableBaseAnimation?: boolean,
+    baseAnimation?: "hover-repeat"
 }
 
 export class Button extends React.Component<ButtonProps, any> {
@@ -45,6 +47,9 @@ export class Button extends React.Component<ButtonProps, any> {
           justify-content: center;
           cursor: ${getOr(this.props.cursor, Cursor.pointer)};
           transition: all ${theme.transitions.mainTime.css()};
+          ${getOr(this.props.enableBaseAnimation, false) ? (
+              `animation: 1.5s infinite ${this.props.baseAnimation};`
+          ) : ("")}
           
           & * {
             cursor: ${getOr(this.props.cursor, Cursor.pointer)};
@@ -57,6 +62,17 @@ export class Button extends React.Component<ButtonProps, any> {
 
           &:active {
             transform: ${this.props.shrinkOnClick ? "scale(.99)" : "scale(1)"};
+          }
+          
+          
+          @keyframes hover-repeat {
+            0%, 100% {
+              box-shadow: 0 0 0 0 ${meaningfulColors.lighter.withAlpha(.13).css()};
+            }
+
+            50% {
+              box-shadow: 0 0 0 4px ${meaningfulColors.lighter.withAlpha(.13).css()};
+            }
           }
         `;
 

@@ -1,6 +1,7 @@
 import React, {ForwardedRef} from "react";
 import "../../styles/pages/AppPage.scss";
 import "../../utils.scss";
+import "react-tiger-transition/styles/main.min.css";
 import {BrowserRouter, Redirect, Route} from "react-router-dom";
 import {DefaultSpecialPages} from "../../logic/DefaultSpecialPages";
 import {BoardingPage} from "../boarding/BoardingPage";
@@ -37,7 +38,7 @@ import {Align} from "../../logic/Align";
 import {Justify} from "../../logic/Justify";
 import {Constants} from "../../Constants";
 import {ProjectCreationDialog} from "../../dialogs/ProjectCreationDialog";
-import {arrayFactory} from "../../logic/Utils";
+import {SignupPage} from "../signup/SignupPage";
 
 export type AppPageProps = {
 }
@@ -244,6 +245,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
         const routs: JSX.Element[] = [
             <Route path={"/"} exact={false} render={() => <Redirect push to={config.debugMode ? config.defaultDebugAppRoute : config.defaultAppRoute}/>}/>,
             <Route path={"/boarding"} render={() => <BoardingPage/>}/>,
+            <Route path={"/register"} render={() => <SignupPage callingFrom={"/boarding"}/>}/>,
             <Route path={"/login"} render={() => <LoginPage/>}/>,
             <Route path={"/dashboard"} render={() => <DashboardPage/>}/>
         ];

@@ -14,6 +14,9 @@ export type PageProps = {
     deactivatePadding?: boolean
 }
 
+/**
+ * todo rename to screen
+ */
 export const PageV2: React.FC<PageProps> = React.memo(props => {
     const theme: Themeable.Theme = utilizeGlobalTheme();
     const Wrapper = styled.div`
