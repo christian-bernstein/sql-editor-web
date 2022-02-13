@@ -5,6 +5,7 @@ import {AppHeader} from "../../components/AppHeader";
 import React from "react";
 import {ReactComponent as CloseIcon} from "../../assets/icons/ic-20/ic20-close.svg";
 import {ReactComponent as ReloadIcon} from "../../assets/icons/ic-20/ic20-refresh.svg";
+import {ReactComponent as DeleteIcon} from "../../assets/icons/ic-20/ic20-delete.svg";
 import {App} from "../../logic/App";
 import {Icon} from "../../components/Icon";
 import {Box} from "../../components/Box";
@@ -23,6 +24,7 @@ import {percent} from "../../logic/DimensionalMeasured";
 import {OverflowBehaviour} from "../../logic/OverflowBehaviour";
 import {LogEntry} from "../../logic/data/LogEntry";
 import {v4} from "uuid";
+import {PosInCenter} from "../../components/PosInCenter";
 
 export class LogPage extends BernieComponent<any, any, any> {
 
@@ -60,8 +62,19 @@ export class LogPage extends BernieComponent<any, any, any> {
         // });
     }
 
+    private renderEmptySophisticatedLogHistory() {
+        return (
+            <PosInCenter fullHeight>
+                <Text text={"No logs recorded yet"}/>
+            </PosInCenter>
+        );
+    }
+
     private renderSophisticatedLogHistory(t: Themeable.Theme): JSX.Element {
         const history: Array<LogEntry> = App.app().sophisticatedLogHistory;
+        if (history.length < 1) {
+            return this.renderEmptySophisticatedLogHistory();
+        }
         return (
             <Box gapY={t.gaps.smallGab}>{
                 history.map(log => {
@@ -114,7 +127,6 @@ export class LogPage extends BernieComponent<any, any, any> {
                                     <></>
                                 )
                             }
-
                         </Box>
                     );
                 })
@@ -135,9 +147,16 @@ export class LogPage extends BernieComponent<any, any, any> {
                         <Separator orientation={Orientation.VERTICAL}/>
                         <Text type={TextType.secondaryDescription} text={`${dateFormat(new Date(), "h:MM:ss")}`}/>
                     </FlexBox>}
-                    right={<Icon icon={<CloseIcon/>} onClick={() => {
-                        App.app().callAction("close-main-dialog");
-                    }}/>}
+                    right={<FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} height={percent(100)}>
+                        <Icon icon={<DeleteIcon/>} onClick={() => {
+                            App.app().sophisticatedLogHistory = [];
+                            this.forceUpdate();
+                        }}/>
+                        <Separator orientation={Orientation.VERTICAL}/>
+                        <Icon icon={<CloseIcon/>} onClick={() => {
+                            App.app().callAction("close-main-dialog");
+                        }}/>
+                    </FlexBox>}
                 />
                 {this.renderSophisticatedLogHistory(t)}
             </PageV2>
