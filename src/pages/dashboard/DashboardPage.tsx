@@ -349,9 +349,9 @@ export default class DashboardPage extends React.PureComponent<DashboardPageProp
 
     render() {
         if (this.state.redirectToEditor) {
-            console.log("redirect to d-editor")
+            console.log("redirect to editor")
             return (
-                <Redirect to={"/d-editor"} push/>
+                <Redirect to={"/editor"} push/>
             );
         } else {
             return this.renderPage();

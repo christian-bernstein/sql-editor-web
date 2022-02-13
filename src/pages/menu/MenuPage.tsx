@@ -20,6 +20,7 @@ import {ReactComponent as LogIcon} from "../../assets/icons/ic-20/ic20-tag.svg";
 import {Icon} from "../../components/Icon";
 import {CustomTooltip} from "../../components/CustomTooltip";
 import {ObjectJSONDisplay} from "../../components/ObjectJSONDisplay";
+import {Constants} from "../../Constants";
 
 export type MenuPageProps = {
     showMenuInitially?: boolean,
@@ -106,13 +107,11 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
 
         const getConnectingBox = () => (
             <InformationBox visualMeaning={ObjectVisualMeaning.WARNING} width={percent(100)}>
-                <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} justifyContent={Justify.SPACE_BETWEEN}
-                         width={percent(100)}>
+                <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} justifyContent={Justify.SPACE_BETWEEN} width={percent(100)}>
                     <Text text={`Connecting to\n ${config.address}`}/>
                     <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER}>
                         <Text text={`${connector.connectionAttempts} / ${config.maxConnectAttempts}`}/>
-                        <BounceLoader color={getMeaningfulColors(ObjectVisualMeaning.WARNING, theme).lighter.css()}
-                                      size={20}/>
+                        <BounceLoader color={getMeaningfulColors(ObjectVisualMeaning.WARNING, theme).lighter.css()} size={20}/>
                     </FlexBox>
                 </FlexBox>
             </InformationBox>
@@ -257,19 +256,17 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
 
                             <CustomTooltip title={"Open logs"} arrow>
                                 <span>
-                                    <Button visualMeaning={ObjectVisualMeaning.ERROR}
-                                            opaque={false}
+                                    <Button visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
+                                            opaque={true}
                                             shrinkOnClick
                                             enableBaseAnimation
                                             baseAnimation={"hover-repeat"}
-                                            onClick={() => {
-                                                App.app().callAction("open-main-dialog", "log");
-                                            }}
+                                            onClick={() => App.app().callAction("open-main-dialog", Constants.logDialog)}
                                     >
                                         <FlexBox flexDir={FlexDirection.ROW}>
                                             <Icon icon={<LogIcon/>}/>
                                             <Text
-                                                visualMeaning={ObjectVisualMeaning.ERROR}
+                                                visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
                                                 leftAppendix={<></>}
                                                 enableLeftAppendix
                                                 uppercase

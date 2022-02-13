@@ -3,7 +3,7 @@ import {Box} from "./Box";
 import ReactJson from "react-json-view";
 import {Dimension} from "../logic/Dimension";
 import {DimensionalMeasured} from "../logic/DimensionalMeasured";
-import {Themeable} from "../Themeable";
+import {getMeaningfulColors, MeaningfulColors, Themeable} from "../Themeable";
 import {utilizeGlobalTheme} from "../logic/App";
 import {OverflowBehaviour} from "../logic/OverflowBehaviour";
 import {Text} from "./Text";
@@ -14,12 +14,16 @@ import {Icon} from "./Icon";
 import {FlexDirection} from "../logic/FlexDirection";
 import {Justify} from "../logic/Justify";
 import {getOr} from "../logic/Utils";
+import {WithVisualMeaning} from "../logic/WithVisualMeaning";
+import {ObjectVisualMeaning} from "../logic/ObjectVisualMeaning";
 
-export type ObjectJSONDisplayProps = {
+export type ObjectJSONDisplayProps = WithVisualMeaning & {
     object: any,
     title?: string
     showControls?: boolean,
-    pure?: boolean
+    pure?: boolean,
+    opaque?: boolean,
+    enableClipboard?: boolean
 }
 
 export type ObjectJSONDisplayState = {
@@ -64,8 +68,11 @@ export class ObjectJSONDisplay extends React.Component<ObjectJSONDisplayProps, O
 
     render() {
         const theme: Themeable.Theme = utilizeGlobalTheme();
+        const vm: ObjectVisualMeaning = getOr(this.props.visualMeaning, ObjectVisualMeaning.UI_NO_HIGHLIGHT);
+        const mc: MeaningfulColors = getMeaningfulColors(vm, theme);
         return (
             <Box overflowXBehaviour={OverflowBehaviour.SCROLL} width={DimensionalMeasured.of(100, Dimension.percentage)}
+                 visualMeaning={getOr(this.props.visualMeaning, ObjectVisualMeaning.UI_NO_HIGHLIGHT)} opaque={this.props.opaque}
                  gapX={DimensionalMeasured.of(10, Dimension.px)} gapY={DimensionalMeasured.of(10, Dimension.px)}>
                 {getOr(this.props.pure, true) ? <></> :
                     <FlexBox flexDir={FlexDirection.ROW} justifyContent={Justify.SPACE_BETWEEN}>
@@ -77,13 +84,15 @@ export class ObjectJSONDisplay extends React.Component<ObjectJSONDisplayProps, O
                         collapsed={this.state.collapsed}
                         displayDataTypes={true}
                         src={this.props.object}
-                        enableClipboard={true}
+                        enableClipboard={getOr(this.props.enableClipboard, false)}
                         displayObjectSize={true}
                         theme={theme.libraries.reactJson.theme}
                         iconStyle={"square"}
                         style={{
                             width: "100%",
-                            backgroundColor: theme.colors.backgroundHighlightColor.css()
+                            // backgroundColor: theme.colors.backgroundHighlightColor.css()
+                            // backgroundColor: mc.lighter.withAlpha(.1).css()
+                            backgroundColor: "transparent"
                         }}
                     />
                 </div>

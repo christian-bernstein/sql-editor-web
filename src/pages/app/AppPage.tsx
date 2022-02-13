@@ -39,6 +39,8 @@ import {Justify} from "../../logic/Justify";
 import {Constants} from "../../Constants";
 import {ProjectCreationDialog} from "../../dialogs/ProjectCreationDialog";
 import {SignupPage} from "../signup/SignupPage";
+import {Editor} from "../editor/Editor";
+import {LogPage} from "../log/LogPage";
 
 export type AppPageProps = {
 }
@@ -247,7 +249,8 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
             <Route path={"/boarding"} render={() => <BoardingPage/>}/>,
             <Route path={"/register"} render={() => <SignupPage callingFrom={"/boarding"}/>}/>,
             <Route path={"/login"} render={() => <LoginPage/>}/>,
-            <Route path={"/dashboard"} render={() => <DashboardPage/>}/>
+            <Route path={"/dashboard"} render={() => <DashboardPage/>}/>,
+            <Route path={"/editor"} component={() => <Editor/>}/>
         ];
         if (config.debugMode) {
             routs.push(
@@ -263,6 +266,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
 
     private initDialogs() {
         this.assembly.assembly(Constants.createProjectDialog, (theme, props) => <ProjectCreationDialog/>);
+        this.assembly.assembly(Constants.logDialog, (theme, props) => <LogPage/>);
     }
 
     private init(config?: AppConfig) {

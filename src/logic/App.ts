@@ -15,6 +15,8 @@ import {Themeable} from "../Themeable";
 import {ProgressTrackerManager} from "./ProgressTrackerManager";
 import Modal from "react-modal";
 import {Assembly} from "./Assembly";
+import {LogEntry} from "./data/LogEntry";
+import {v4} from "uuid";
 
 export function utilizeApp(): App {
     return App.app();
@@ -29,6 +31,13 @@ export function utilizeGlobalTheme(defTheme: Themeable.Theme = Themeable.default
 }
 
 export class App {
+    get sophisticatedLogHistory(): Array<LogEntry> {
+        return this._sophisticatedLogHistory;
+    }
+
+    set sophisticatedLogHistory(value: Array<LogEntry>) {
+        this._sophisticatedLogHistory = value;
+    }
 
     private static instance: App | undefined = undefined;
 
@@ -54,6 +63,12 @@ export class App {
 
     private readonly _progressTrackerManager: ProgressTrackerManager = new ProgressTrackerManager(this);
 
+    // todo rename to logHistory
+    private _sophisticatedLogHistory: Array<LogEntry> = new Array<LogEntry>();
+
+    /**
+     * @deprecated
+     */
     private readonly _logHistory: any[][] = [];
 
     private readonly shards: Map<String, Shard> = new Map<String, Shard>();
@@ -330,6 +345,7 @@ export class App {
         window.localStorage.setItem("default-browser-theme", theme);
     }
 
+    // todo rewrite to accept new log system
     private addLogInterceptor(methodName: "log" | "info" | "warn" | "error") {
         const stream: { (message?: any, ...optionalParams: any[]): void; (...data: any[]): void; (...data: any[]): void } = console[methodName];
         console[methodName] = (...data: any[]) => {
@@ -338,9 +354,28 @@ export class App {
                 timestamp: new Date()
             }, ...data]);
 
+            this.sophisticatedLogHistory.push({
+                appendices: data.map(value => {
+                    return {
+                        type: "unknown",
+                        data: value
+                    }
+                }),
+                creator: "js-relay",
+                id: v4(),
+                message: data[0],
+                timestamp: new Date(),
+                level: methodName.toUpperCase() as "ERROR" | "INFO" | "DEBUG" | "TRACE" | "SEVERE" | "WARN"
+            });
+
             // Delete oldest log entry if needed
             if (this.logHistory.length > this.config.logSaveSize) {
                 this.logHistory.shift();
+            }
+
+            // Delete oldest log entry if needed
+            if (this.sophisticatedLogHistory.length > this.config.logSaveSize) {
+                this.sophisticatedLogHistory.shift();
             }
 
             // Print to standard log
@@ -427,6 +462,11 @@ export class App {
 
     get logHistory(): any[][] {
         return this._logHistory;
+    }
+
+    public log(log: LogEntry): App {
+        this.sophisticatedLogHistory.push(log);
+        return this;
     }
 
     public flow(): FlowAccessPoint {

@@ -1,54 +1,86 @@
+// import React, {ForwardedRef} from "react";
+// import {ReactComponent as MenuIcon} from "../../../assets/icons/ic-20/ic20-menu.svg";
+// import {ReactComponent as ErrorIcon} from "../../../assets/icons/ic-20/ic20-alert.svg";
+// import {ReactComponent as RedirectIcon} from "../../../assets/icons/ic-20/ic20-arrow-right.svg";
+// import {ReactComponent as PushIcon} from "../../../assets/icons/ic-20/ic20-upload.svg";
+// import {ReactComponent as PullIcon} from "../../../assets/icons/ic-20/ic20-download.svg";
+// import {ReactComponent as CloseIcon} from "../../../assets/icons/ic-20/ic20-close.svg";
+// import {ReactComponent as TableIcon} from "../../../assets/icons/ic-20/ic20-view-table.svg";
+//
+// import {oneDark} from '@codemirror/theme-one-dark';
+// import {HighlightStyle, tags} from "@codemirror/highlight"
+// import { SQLCommandQueryResponsePacketData } from "../../packets/in/SQLCommandQueryResponsePacketData";
+// import {TransitionProps} from "@mui/material/transitions";
+// import { App } from "../../logic/App";
+// import {ProjectInfoData} from "../../logic/ProjectInfoData";
+// import {DBSessionCacheShard} from "../../shards/DBSessionCacheShard";
+// import {v4} from "uuid";
+// import {RenderExecutor} from "../../tests/regex/RenderExecutor";
+// import {RedirectController} from "../../components/RedirectController";
+// import { PageV2 } from "../../components/Page";
+// import { FlexBox } from "../../components/FlexBox";
+// import { FlexDirection } from "../../logic/FlexDirection";
+// import {percent} from "../../logic/DimensionalMeasured";
+// import {CodeEditor} from "../../components/CodeEditor";
+// import {OverflowBehaviour} from "../../logic/OverflowBehaviour";
+// import {cs} from "../../logic/state/State";
+// import {RenderController} from "../../tests/regex/RenderController";
+// import {Assembly} from "../../logic/Assembly";
+// import {getOr} from "../../logic/Utils";
+// import {LoadState} from "../../logic/LoadState";
+// import {sql} from "@codemirror/lang-sql";
+// import {CircularProgress, Dialog, Slide, Zoom} from "@mui/material";
+// import {CustomTooltip} from "../../components/CustomTooltip";
+
 import React, {ForwardedRef} from "react";
-import {PageV2} from "../../../components/Page";
-import {LiteGrid} from "../../../components/LiteGrid";
-import {FlexBox} from "../../../components/FlexBox";
-import {Align} from "../../../logic/Align";
-import {Justify} from "../../../logic/Justify";
-import {Icon} from "../../../components/Icon";
-import {ReactComponent as MenuIcon} from "../../../assets/icons/ic-20/ic20-menu.svg";
-import {ReactComponent as ErrorIcon} from "../../../assets/icons/ic-20/ic20-alert.svg";
-import {ReactComponent as RedirectIcon} from "../../../assets/icons/ic-20/ic20-arrow-right.svg";
-import {ReactComponent as PushIcon} from "../../../assets/icons/ic-20/ic20-upload.svg";
-import {ReactComponent as PullIcon} from "../../../assets/icons/ic-20/ic20-download.svg";
-import {ReactComponent as CloseIcon} from "../../../assets/icons/ic-20/ic20-close.svg";
-import {ReactComponent as TableIcon} from "../../../assets/icons/ic-20/ic20-view-table.svg";
-import {App, utilizeGlobalTheme} from "../../../logic/App";
-import {Text, TextType} from "../../../components/Text";
-import {DBSessionCacheShard} from "../../../shards/DBSessionCacheShard";
-import {percent, px} from "../../../logic/DimensionalMeasured";
-import {Box} from "../../../components/Box";
-import {ObjectVisualMeaning} from "../../../logic/ObjectVisualMeaning";
-import {Cursor} from "../../../logic/style/Cursor";
-import {RedirectController} from "../../../components/RedirectController";
-import {ProjectInfoData} from "../../../logic/ProjectInfoData";
-import {PosInCenter} from "../../../components/PosInCenter";
-import {FlexDirection} from "../../../logic/FlexDirection";
-import {CodeEditor} from "../../../components/CodeEditor";
-import {cs} from "../../../logic/state/State";
+import {PageV2} from "../../components/Page";
+import {LiteGrid} from "../../components/LiteGrid";
+import {FlexBox} from "../../components/FlexBox";
+import {Align} from "../../logic/Align";
+import {Justify} from "../../logic/Justify";
+import {Icon} from "../../components/Icon";
+import {ReactComponent as MenuIcon} from "../../assets/icons/ic-20/ic20-menu.svg";
+import {ReactComponent as ErrorIcon} from "../../assets/icons/ic-20/ic20-alert.svg";
+import {ReactComponent as RedirectIcon} from "../../assets/icons/ic-20/ic20-arrow-right.svg";
+import {ReactComponent as PushIcon} from "../../assets/icons/ic-20/ic20-upload.svg";
+import {ReactComponent as PullIcon} from "../../assets/icons/ic-20/ic20-download.svg";
+import {ReactComponent as CloseIcon} from "../../assets/icons/ic-20/ic20-close.svg";
+import {ReactComponent as TableIcon} from "../../assets/icons/ic-20/ic20-view-table.svg";
+import {App, utilizeGlobalTheme} from "../../logic/App";
+import {Text, TextType} from "../../components/Text";
+import {DBSessionCacheShard} from "../../shards/DBSessionCacheShard";
+import {percent, px} from "../../logic/DimensionalMeasured";
+import {Box} from "../../components/Box";
+import {ObjectVisualMeaning} from "../../logic/ObjectVisualMeaning";
+import {Cursor} from "../../logic/style/Cursor";
+import {RedirectController} from "../../components/RedirectController";
+import {ProjectInfoData} from "../../logic/ProjectInfoData";
+import {PosInCenter} from "../../components/PosInCenter";
+import {FlexDirection} from "../../logic/FlexDirection";
+import {CodeEditor} from "../../components/CodeEditor";
+import {cs} from "../../logic/state/State";
 import {v4} from "uuid";
 import {sql} from "@codemirror/lang-sql";
-import {OverflowBehaviour} from "../../../logic/OverflowBehaviour";
-import {Themeable} from "../../../Themeable";
-import {SessionCommand} from "../../../logic/data/SessionCommand";
-import {getOr} from "../../../logic/Utils";
-import {RenderController} from "../../../tests/regex/RenderController";
-import {RenderExecutor} from "../../../tests/regex/RenderExecutor";
-import {Button} from "../../../components/Button";
-import {LoadState} from "../../../logic/LoadState";
+import {OverflowBehaviour} from "../../logic/OverflowBehaviour";
+import {Themeable} from "../../Themeable";
+import {SessionCommand} from "../../logic/data/SessionCommand";
+import {getOr} from "../../logic/Utils";
+import {RenderController} from "../../tests/regex/RenderController";
+import {RenderExecutor} from "../../tests/regex/RenderExecutor";
+import {Button} from "../../components/Button";
+import {LoadState} from "../../logic/LoadState";
 import {CircularProgress, Dialog, Slide, Zoom} from "@mui/material";
-import {Assembly} from "../../../logic/Assembly";
-import {SessionCommandType} from "../../../logic/data/SessionCommandType";
-import {CustomTooltip} from "../../../components/CustomTooltip";
+import {Assembly} from "../../logic/Assembly";
+import {SessionCommandType} from "../../logic/data/SessionCommandType";
+import {CustomTooltip} from "../../components/CustomTooltip";
 import {TransitionProps} from '@mui/material/transitions';
-import {SQLCommandQueryResponsePacketData} from "../../../packets/in/SQLCommandQueryResponsePacketData";
-import {DebugTableDataDisplayPage} from "../../../components/TableDataDisplay";
-import {ServerConnectionIcon} from "../../../components/ServerConnectionIcon";
-import {Separator} from "../../../components/Separator";
-import {Orientation} from "../../../logic/Orientation";
-
+import {SQLCommandQueryResponsePacketData} from "../../packets/in/SQLCommandQueryResponsePacketData";
+import {DebugTableDataDisplayPage} from "../../components/TableDataDisplay";
+import {ServerConnectionIcon} from "../../components/ServerConnectionIcon";
+import {Separator} from "../../components/Separator";
+import {Orientation} from "../../logic/Orientation";
 import {oneDark} from '@codemirror/theme-one-dark';
 import {HighlightStyle, tags} from "@codemirror/highlight"
-
 
 export type DebugEditorProps = {
 }
@@ -71,7 +103,7 @@ export type DebugEditorLocalState = {
 /**
  * todo create 'acknowledge'-feature
  */
-export class DebugEditor extends React.Component<DebugEditorProps, DebugEditorState> {
+export class Editor extends React.Component<DebugEditorProps, DebugEditorState> {
 
     private readonly DialogTransition = React.forwardRef((props: TransitionProps & {children?: React.ReactElement<any, any>}, ref: ForwardedRef<unknown>) => {
         return <Slide direction="up" ref={ref} {...props} />;
@@ -256,7 +288,7 @@ export class DebugEditor extends React.Component<DebugEditorProps, DebugEditorSt
         this.redirect("/dashboard")
     }
 
-    private sendCommand(type: SessionCommandType) {
+    private async sendCommand(type: SessionCommandType) {
         // todo set working state to true
 
         switch (type) {
