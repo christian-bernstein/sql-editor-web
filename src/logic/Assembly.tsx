@@ -5,15 +5,15 @@ import {utilizeGlobalTheme} from "./App";
 
 export class Assembly {
 
-    private readonly components: Map<string, (theme: Themeable.Theme, props: any) => JSX.Element> = new Map<string, (theme: Themeable.Theme, props: any) => JSX.Element>();
+    private readonly _components: Map<string, (theme: Themeable.Theme, props: any) => JSX.Element> = new Map<string, (theme: Themeable.Theme, props: any) => JSX.Element>();
 
     public assembly(component: string, factory: (theme: Themeable.Theme, props: any) => JSX.Element): Assembly {
-        this.components.set(component, factory);
+        this._components.set(component, factory);
         return this;
     }
 
     public render(request: AssemblyRequest): JSX.Element {
-        if (!this.components.has(request.component)) {
+        if (!this._components.has(request.component)) {
             const e: Error = new Error(`Assembly line ${request.component} doesn't exist.`);
             if (request.errorComponent) {
                 return request.errorComponent(e);
@@ -26,7 +26,7 @@ export class Assembly {
             }
         } else {
             try {
-                return (this.components.get(request.component) as (theme: Themeable.Theme, props: any) => JSX.Element)(utilizeGlobalTheme(), request.param);
+                return (this._components.get(request.component) as (theme: Themeable.Theme, props: any) => JSX.Element)(utilizeGlobalTheme(), request.param);
             } catch (e) {
                 return (
                     <p>
@@ -35,5 +35,9 @@ export class Assembly {
                 );
             }
         }
+    }
+
+    get components(): Map<string, (theme: Themeable.Theme, props: any) => JSX.Element> {
+        return this._components;
     }
 }

@@ -8,6 +8,6 @@ export type ConnectorConfig = {
     id: string,
     connectionRetryDelayFunc: (i: number) => number,
     onConnectionFailed?: () => void,
-    packetInterceptor: (packet: Packet) => void,
+    packetInterceptor: (packet: Packet, connector: Environment.Connector) => void,
     onError?: () => void
 }

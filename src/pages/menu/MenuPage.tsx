@@ -151,6 +151,37 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
         });
     }
 
+    private renderLogSection(): JSX.Element {
+        return (
+            <CustomTooltip title={"Open logs"} arrow>
+                <span>
+                    <Button visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
+                            opaque={true}
+                            width={percent(100)}
+                            shrinkOnClick
+                            enableBaseAnimation
+                            baseAnimation={"hover-repeat"}
+                            onClick={() => App.app().callAction("open-main-dialog", Constants.logDialog)}
+                    >
+                        <FlexBox flexDir={FlexDirection.ROW}>
+                            <Icon icon={<LogIcon/>}/>
+                            <Text
+                                visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
+                                leftAppendix={<></>}
+                                enableLeftAppendix
+                                uppercase
+                                text={"**Logs**"}
+                            />
+                            <FlexBox flexDir={FlexDirection.ROW} height={percent(100)}>
+                                <Text text={`(${String(App.app().sophisticatedLogHistory.length)})`}/>
+                            </FlexBox>
+                        </FlexBox>
+                    </Button>
+                </span>
+            </CustomTooltip>
+        );
+    }
+
     // BOX: height={percent(100)}
     render() {
         const theme: Themeable.Theme = utilizeGlobalTheme();
@@ -240,6 +271,8 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
                             </Button>
                         </FlexBox>
 
+                        {this.renderLogSection()}
+
                         <FlexBox flexDir={FlexDirection.ROW}>
                             <CustomTooltip title={"Open main dialog"} arrow>
                                 <span>
@@ -254,31 +287,7 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
                                 </span>
                             </CustomTooltip>
 
-                            <CustomTooltip title={"Open logs"} arrow>
-                                <span>
-                                    <Button visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
-                                            opaque={true}
-                                            shrinkOnClick
-                                            enableBaseAnimation
-                                            baseAnimation={"hover-repeat"}
-                                            onClick={() => App.app().callAction("open-main-dialog", Constants.logDialog)}
-                                    >
-                                        <FlexBox flexDir={FlexDirection.ROW}>
-                                            <Icon icon={<LogIcon/>}/>
-                                            <Text
-                                                visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
-                                                leftAppendix={<></>}
-                                                enableLeftAppendix
-                                                uppercase
-                                                text={"**Logs**"}
-                                            />
-                                            <FlexBox flexDir={FlexDirection.ROW} height={percent(100)}>
-                                                <Text text={`(${String(App.app().logHistory.length)})`}/>
-                                            </FlexBox>
-                                        </FlexBox>
-                                    </Button>
-                                </span>
-                            </CustomTooltip>
+
                         </FlexBox>
 
                         <ObjectJSONDisplay
@@ -286,12 +295,12 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
                             title={"**App config**"}
                             pure={false}
                         />
-                        <ObjectJSONDisplay
+                        {/*<ObjectJSONDisplay
                             object={App.app().logHistory}
                             pure={false}
                             title={`**Log history** (*${App.app().logHistory.length} entries*)`}
                             showControls
-                        />
+                        />*/}
                     </Box>
                 </div>
             </div>

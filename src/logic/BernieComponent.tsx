@@ -7,12 +7,19 @@ import {Themeable} from "../Themeable";
 import {utilizeGlobalTheme} from "./App";
 import {Redirect} from "react-router-dom";
 import {getOr} from "./Utils";
+import {Assembly} from "./Assembly";
 
 export class BernieComponent<RProps, RState, LState extends object> extends React.Component<RProps, RState> {
+
+    get assembly(): Assembly {
+        return this._assembly;
+    }
 
     private readonly _local: State<LState>;
 
     private readonly _controller: RenderController;
+
+    private readonly _assembly: Assembly = new Assembly();
 
     private redirectTo: string | undefined;
 
@@ -64,7 +71,7 @@ export class BernieComponent<RProps, RState, LState extends object> extends Reac
         } else return <></>;
     }
 
-    public componentRender(p: RProps, s: RState, l: LState, t: Themeable.Theme): JSX.Element | undefined {
+    public componentRender(p: RProps, s: RState, l: LState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return undefined;
     }
 
@@ -76,7 +83,8 @@ export class BernieComponent<RProps, RState, LState extends object> extends Reac
                 this.props,
                 this.state,
                 this.local.state,
-                utilizeGlobalTheme()
+                utilizeGlobalTheme(),
+                this.assembly
             );
         }
     }

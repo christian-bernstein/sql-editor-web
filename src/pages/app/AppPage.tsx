@@ -41,6 +41,8 @@ import {ProjectCreationDialog} from "../../dialogs/ProjectCreationDialog";
 import {SignupPage} from "../signup/SignupPage";
 import {Editor} from "../editor/Editor";
 import {LogPage} from "../log/LogPage";
+import {v4} from "uuid";
+import {EpicureSearchPage} from "../../tests/epicure/EpicureSearchPage";
 
 export type AppPageProps = {
 }
@@ -122,9 +124,35 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                         id: "ton",
                         maxConnectAttempts: 10,
                         connectionRetryDelayFunc: () => 0,
-                        packetInterceptor: (packet: Environment.Packet) => {
-                            console.log("received packet from server", packet);
-                        }
+                        packetInterceptor: this.getLogPacketInterceptor()
+                    }
+                }
+            },
+            {
+                title: "Epicure",
+                description: "Profile used for local debugging. (This profile can only be used, if the browser is running on the same device as the server is running.)",
+                config: {
+                    appTitle: "Epicure",
+                    debugMode: true,
+                    defaultAppRoute: "/epicure",
+                    defaultDebugAppRoute: "/epicure",
+                    rootRerenderHook: (callback) => this.rerender.bind(this)(),
+                    logInterceptors: [],
+                    logSaveSize: 1000,
+                    defaultTheme: "dark-green",
+                    appAssembly: this.assembly,
+                    themes: new Map<string, Themeable.Theme>([
+                        ["dark-green", Themeable.defaultTheme],
+                        ["light-green", Themeable.lightTheme]
+                    ]),
+                    connectorConfig: {
+                        protocol: "login",
+                        // address: "ws://192.168.2.100:80",
+                        address: "ws://192.168.2.104:80",
+                        id: "ton",
+                        maxConnectAttempts: 10,
+                        connectionRetryDelayFunc: () => 0,
+                        packetInterceptor: this.getLogPacketInterceptor()
                     }
                 }
             }
@@ -258,6 +286,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                 <Route path={"/regex"} render={() => <RegexPage/>}/>,
                 <Route path={"/d-editor"} component={() => <DebugEditor/>}/>,
                 <Route path={"/monaco"} render={() => <Monaco/>}/>,
+                <Route path={"/epicure"} render={() => <EpicureSearchPage/>}/>,
                 <Route path={"/panel"} render={() => <ControlPanelComponent address={"ws:192.168.2.100:30001"} connectorID={"panel"}/>}/>,
             );
         }
@@ -293,9 +322,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                 id: "ton",
                 maxConnectAttempts: 10,
                 connectionRetryDelayFunc: () => 0,
-                packetInterceptor: (packet: Environment.Packet) => {
-                    console.log("received packet from server", packet);
-                }
+                packetInterceptor: this.getLogPacketInterceptor()
             }
         }, app => {
             app.shard("db-session-cache", new DBSessionCacheShard());
@@ -380,5 +407,21 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                 }
             });
         });
+    }
+
+    private getLogPacketInterceptor(): (packet: Environment.Packet, connector: Environment.Connector) => void {
+        return (packet, connector) => {
+            App.app().log({
+                id: v4(),
+                creator: "network",
+                level: "TRACE",
+                timestamp: new Date(),
+                message: `Received packet from server '*${connector.config.address}*' in protocol '*${connector.currentProtocol}*'`,
+                appendices: [{
+                    type: "packet",
+                    data: packet
+                }]
+            })
+        }
     }
 }
