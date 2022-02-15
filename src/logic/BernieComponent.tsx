@@ -4,7 +4,7 @@ import {RenderController} from "../tests/regex/RenderController";
 import {RenderExecutor} from "../tests/regex/RenderExecutor";
 import {v4} from "uuid";
 import {Themeable} from "../Themeable";
-import {utilizeGlobalTheme} from "./App";
+import {App, utilizeGlobalTheme} from "./App";
 import {Redirect} from "react-router-dom";
 import {getOr} from "./Utils";
 import {Assembly} from "./Assembly";
@@ -63,15 +63,39 @@ export class BernieComponent<RProps, RState, LState extends object> extends Reac
     public goto(to: string, callback?: () => void) {
         this.redirectTo = to;
         this.redirect = true;
-        this.forceUpdate(callback);
+        this.forceUpdate(() => {
+
+            // todo make more performant solution
+            // this doesn't rerender yet
+            this.redirectTo = undefined;
+            this.redirect = false;
+            this.forceUpdate();
+
+            callback?.();
+        });
     }
 
     public renderRedirect(): JSX.Element {
-        if (this.redirect && this.redirectTo) {
-            return (
-                <Redirect to={this.redirectTo} push/>
-            );
-        } else return <></>;
+        App.app().log({
+            id: v4(),
+            level: "TRACE",
+            message: `Try to redirect to *${this.redirectTo}* (redirect: *${this.redirect}*)`,
+            creator: "bernie-component",
+            timestamp: new Date(),
+            appendices: []
+        })
+
+        return (
+            <Redirect to={this.redirectTo as string} push/>
+        );
+
+        // if (this.redirect && this.redirectTo !== undefined) {
+        //     return (
+        //         <Redirect to={this.redirectTo} push/>
+        //     );
+        // } else {
+        //     return <>cannot render redirect</>
+        // }
     }
 
     public componentRender(p: RProps, s: RState, l: LState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {

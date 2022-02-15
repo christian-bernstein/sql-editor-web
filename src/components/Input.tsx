@@ -8,11 +8,13 @@ import {getOr} from "../logic/Utils";
 import styled from "styled-components";
 import {Color} from "../Color";
 import {FontWeight} from "../logic/style/FontWeight";
+import {DimensionalMeasured} from "../logic/DimensionalMeasured";
+import {If} from "./If";
 
 export type InputProps = {
     id?: string,
     defaultValue?: string,
-    label: string,
+    label?: string,
     visualMeaning?: ObjectVisualMeaning,
     opaque?: boolean,
     opaqueValue?: number,
@@ -21,7 +23,10 @@ export type InputProps = {
     autoFocus?: boolean,
     type?: string,
     placeholder?: string,
-    fontWeight?: FontWeight
+    fontWeight?: FontWeight,
+    height?: DimensionalMeasured,
+    hideLabel?: boolean,
+    minHeightBoundary?: boolean
 }
 
 export type InputState = {
@@ -56,9 +61,16 @@ export class Input extends React.Component<InputProps, InputState> {
 
         const Wrapper = styled.div`
           width: 100%;
-          min-height: 3.5rem;
+          
+          
+          
+          min-height: ${getOr(this.props.minHeightBoundary, true) ? "3.5rem" : "0"};
+          
+          height: ${this.props.height === undefined ? "auto" : this.props.height?.css()} !important;
           position: relative;
           background-color: ${theme.colors.backgroundHighlightColor.css()};
+          
+          box-sizing: border-box;
           
           border-radius: ${theme.radii.defaultObjectRadius.css()};
           padding: ${theme.paddings.defaultObjectPadding.css()};
@@ -71,6 +83,7 @@ export class Input extends React.Component<InputProps, InputState> {
           }
           
           input {
+            
             background-color: ${bgColor.css()};
             border: none;
             color: ${theme.colors.fontPrimaryColor.css()};
@@ -79,6 +92,10 @@ export class Input extends React.Component<InputProps, InputState> {
             position: absolute;
             top: 0;
             left: 0;
+            
+            bottom: 0;
+            right: 0;
+            
             width: 100%;
             height: 100%;
             outline: none;
@@ -113,7 +130,6 @@ export class Input extends React.Component<InputProps, InputState> {
           }
         `;
 
-
         return (
             <Wrapper className={"input-container"} key={this.state.id}>
                 <input key={this.state.id}
@@ -125,7 +141,11 @@ export class Input extends React.Component<InputProps, InputState> {
                        placeholder={getOr(this.props.placeholder, " ")}
                        value={this.props.value}
                 />
-                <label htmlFor={this.state.id}>{this.props.label}</label>
+                <If condition={getOr(this.props.hideLabel, false)} ifTrue={
+                    <></>
+                } ifFalse={
+                    <label htmlFor={this.state.id}>{this.props.label}</label>
+                }/>
             </Wrapper>
         );
     }

@@ -29,7 +29,7 @@ export class FlexBox extends React.Component<FlexBoxProps, any> {
     render() {
         const theme: Themeable.Theme = utilizeGlobalTheme();
         const margin: Margin = getOr(this.props.margin, createMargin(0, 0, 0, 0));
-        const Wrapper = styled.div`
+        const Wrapper = styled['div']`
           display: flex;
           flex-direction: ${getOr(this.props.flexDir, FlexDirection.COLUMN)};
           gap: ${getOr(this.props.gap?.css(), theme.gaps.defaultGab.css())};

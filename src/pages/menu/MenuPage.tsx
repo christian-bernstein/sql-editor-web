@@ -17,6 +17,7 @@ import {Justify} from "../../logic/Justify";
 import {Align} from "../../logic/Align";
 import {ReactComponent as OpenDialogIcon} from "../../assets/icons/ic-20/ic20-open-in-browser.svg";
 import {ReactComponent as LogIcon} from "../../assets/icons/ic-20/ic20-bolt.svg";
+import {ReactComponent as RunIcon} from "../../assets/icons/ic-20/ic20-play.svg";
 import {Icon} from "../../components/Icon";
 import {CustomTooltip} from "../../components/CustomTooltip";
 import {ObjectJSONDisplay} from "../../components/ObjectJSONDisplay";
@@ -24,6 +25,9 @@ import {Constants} from "../../Constants";
 import {createMargin} from "../../logic/Margin";
 import {Zoom} from "@mui/material";
 import {BadgedWrapper} from "../../components/BadgedWrapper";
+import {Input} from "../../components/Input";
+import {RedirectController} from "../../components/RedirectController";
+import {Jumper} from "../../components/Jumper";
 
 export type MenuPageProps = {
     showMenuInitially?: boolean,
@@ -187,6 +191,12 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
         );
     }
 
+    private renderRedirectPanel(): JSX.Element {
+        return (
+            <Jumper/>
+        );
+    }
+
     // BOX: height={percent(100)}
     render() {
         const theme: Themeable.Theme = utilizeGlobalTheme();
@@ -251,7 +261,6 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
                             </Button>
                         </FlexBox>
 
-
                         <FlexBox flexDir={FlexDirection.ROW} overflowXBehaviour={OverflowBehaviour.SCROLL}>
                             <Button visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
                                     width={percent(100)}
@@ -313,6 +322,8 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
                             </CustomTooltip>
                         </FlexBox>
 
+                        {this.renderRedirectPanel()}
+
                         <ObjectJSONDisplay
                             object={App.app().config}
                             title={"**App config**"}
@@ -327,6 +338,7 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
                     </Box>
                 </div>
             </div>
+
         );
     }
 }

@@ -293,7 +293,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                 <Route path={"/d-editor"} component={() => <DebugEditor/>}/>,
                 <Route path={"/monaco"} render={() => <Monaco/>}/>,
                 <Route path={"/epicure"} render={() => <EpicureSearchPage/>}/>,
-                <Route path={"/panel"} render={() => <ControlPanelComponent address={"ws:192.168.2.100:30001"} connectorID={"panel"}/>}/>,
+                <Route path={"/panel"} render={() => <ControlPanelComponent address={"ws:192.168.2.104:30001"} connectorID={"panel"}/>}/>,
             );
         }
         return routs;
