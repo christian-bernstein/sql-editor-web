@@ -7,6 +7,7 @@ import {OverflowBehaviour} from "../logic/OverflowBehaviour";
 import {getOr} from "../logic/Utils";
 import {ObjectVisualMeaning} from "../logic/ObjectVisualMeaning";
 import {Color} from "../Color";
+import {Cursor} from "../logic/style/Cursor";
 
 export type BoxProps = {
     highlight?: boolean
@@ -27,7 +28,8 @@ export type BoxProps = {
     color?: Color,
     hideScrollbar?: boolean,
     borderless?: boolean,
-    style?: CSSProperties
+    style?: CSSProperties,
+    cursor?: Cursor
 }
 
 export class Box extends React.Component<BoxProps, any> {
@@ -43,6 +45,7 @@ export class Box extends React.Component<BoxProps, any> {
         const bgColor: Color = this.props.opaque ? col.withAlpha(getOr(this.props.opaqueValue, .1)) : col;
 
         const Box = styled.div`
+          cursor: ${getOr(this.props.cursor, Cursor.default)};
           box-sizing: border-box;
           // todo check if this causes issues along the board
           
@@ -60,15 +63,20 @@ export class Box extends React.Component<BoxProps, any> {
           flex-direction: column;
           gap: ${getOr(this.props.gapY?.css(), "0")} ${getOr(this.props.gapX?.css(), "0")};
           // min-height: 100% !important;
-
+          
+          transition: all ${theme.transitions.fastTime.css()};
+          box-shadow: 0 0 0 0 ${meaningfulColors.shadowColor.css()};
+          
           &::-webkit-scrollbar {
             display: ${getOr(this.props.hideScrollbar, true) ? "none" : "block"};
           }
           
           &.highlight:hover {
             filter: brightness(${theme.hovers.hoverLightFilter.css()});
-            border: 1px solid ${theme.colors.primaryHighlightColor.css()} !important;
-            box-shadow: 0 0 0 4px ${theme.colors.borderPrimaryShadowColor.css()};
+            // border: 1px solid ${theme.colors.primaryHighlightColor.css()} !important;
+            border: 1px solid ${meaningfulColors.lighter.css()} !important;
+            // box-shadow: 0 0 0 4px ${theme.colors.borderPrimaryShadowColor.css()};
+            box-shadow: 0 0 0 4px ${meaningfulColors.shadowColor.css()};
           }
         `;
         const classNames: string[] = this.props.classNames === undefined ? [] : this.props.classNames;

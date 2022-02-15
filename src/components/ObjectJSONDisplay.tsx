@@ -89,7 +89,10 @@ export class ObjectJSONDisplay extends React.Component<ObjectJSONDisplayProps, O
                         theme={theme.libraries.reactJson.theme}
                         iconStyle={"square"}
                         style={{
-                            width: "100%",
+                            // width: "100%",
+
+                            overflowX: "scroll",
+                            whiteSpace: "nowrap",
                             // backgroundColor: theme.colors.backgroundHighlightColor.css()
                             // backgroundColor: mc.lighter.withAlpha(.1).css()
                             backgroundColor: "transparent"

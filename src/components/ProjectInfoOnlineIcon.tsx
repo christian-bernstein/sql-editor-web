@@ -19,7 +19,8 @@ export const ProjectInfoOnlineIcon: React.FC<{
             case LoadState.STOPPING: return ObjectVisualMeaning.ERROR;
             case LoadState.STARTING: return ObjectVisualMeaning.WARNING;
             case undefined:
-                console.error("ProjectInfoOnlineIcon reads undefined on LoadState, but shouldn't do that")
+                // todo fix
+                // console.error("ProjectInfoOnlineIcon reads undefined on LoadState, but shouldn't do that")
                 return ObjectVisualMeaning.UI_NO_HIGHLIGHT;
         }
     })();

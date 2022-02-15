@@ -17,6 +17,7 @@ import Modal from "react-modal";
 import {Assembly} from "./Assembly";
 import {LogEntry} from "./data/LogEntry";
 import {v4} from "uuid";
+import {UserProfileData} from "./UserProfileData";
 
 export function utilizeApp(): App {
     return App.app();
@@ -31,6 +32,11 @@ export function utilizeGlobalTheme(defTheme: Themeable.Theme = Themeable.default
 }
 
 export class App {
+
+    get logEntryAddListeners(): Map<string, (entry: LogEntry) => void> {
+        return this._logEntryAddListeners;
+    }
+
     get sophisticatedLogHistory(): Array<LogEntry> {
         return this._sophisticatedLogHistory;
     }
@@ -86,6 +92,10 @@ export class App {
     private _initiated: boolean = false;
 
     private _dialogAssembly: Assembly;
+
+    private _logEntryAddListeners: Map<string, (entry:  LogEntry) => void> = new Map<string, (entry: LogEntry) => void>();
+
+    private profileData?: UserProfileData;
 
     constructor(config: AppConfig) {
         this._config = config;
@@ -349,12 +359,12 @@ export class App {
     private addLogInterceptor(methodName: "log" | "info" | "warn" | "error") {
         const stream: { (message?: any, ...optionalParams: any[]): void; (...data: any[]): void; (...data: any[]): void } = console[methodName];
         console[methodName] = (...data: any[]) => {
-            this.logHistory.push([{
-                method: methodName.toUpperCase(),
-                timestamp: new Date()
-            }, ...data]);
+            // this.logHistory.push([{
+            //     method: methodName.toUpperCase(),
+            //     timestamp: new Date()
+            // }, ...data]);
 
-            this.sophisticatedLogHistory.push({
+            this.log({
                 appendices: data.map(value => {
                     return {
                         type: "unknown",
@@ -366,18 +376,14 @@ export class App {
                 message: data[0],
                 timestamp: new Date(),
                 level: methodName.toUpperCase() as "ERROR" | "INFO" | "DEBUG" | "TRACE" | "SEVERE" | "WARN"
-            });
+            })
 
             // Delete oldest log entry if needed
             if (this.logHistory.length > this.config.logSaveSize) {
                 this.logHistory.shift();
             }
 
-            // Delete oldest log entry if needed
-            if (this.sophisticatedLogHistory.length > this.config.logSaveSize) {
-                this.sophisticatedLogHistory.shift();
-            }
-
+            // todo reactivate
             // Print to standard log
             stream(...data);
         }
@@ -387,6 +393,10 @@ export class App {
         ["log", "info", "warn", "error"].forEach(method => {
             this.addLogInterceptor(method as "log" | "info" | "warn" | "error");
         });
+    }
+
+    public callDialog(dialog: string) {
+        App.app().callAction("open-main-dialog", dialog);
     }
 
     private sessionLogin(sessionID: string, loginResponseCallback: (data: SessionIDLoginResponsePacketData) => void) {
@@ -466,6 +476,16 @@ export class App {
 
     public log(log: LogEntry): App {
         this.sophisticatedLogHistory.push(log);
+
+        // Delete oldest log entry if needed
+        if (this.sophisticatedLogHistory.length > this.config.logSaveSize) {
+            this.sophisticatedLogHistory.shift();
+        }
+
+        this.logEntryAddListeners.forEach((listener, key) => {
+            listener(log);
+        })
+
         return this;
     }
 

@@ -66,6 +66,7 @@ export namespace Themeable {
     export type ColorPallet = {
         backgroundColor: Color,
         backgroundHighlightColor: Color,
+        backgroundHighlightColor200: Color,
         backgroundHighlightInputColor: Color,
         backgroundDeactivatedColor: Color,
         tooltipBackgroundColor: Color,
@@ -135,6 +136,7 @@ export namespace Themeable {
     export const defaultThemePallet: ColorPallet = {
         backgroundColor: Color.ofHex("#171717"),
         backgroundHighlightColor: Color.ofHex("#222429"),
+        backgroundHighlightColor200: Color.ofHex("#282c34"),
         backgroundHighlightInputColor: Color.ofHex("#282c34"),
         backgroundDeactivatedColor: Color.ofHex("#434750"),
         // tooltipBackgroundColor: Color.ofHex("#171717"),
@@ -160,6 +162,7 @@ export namespace Themeable {
     export const lightThemePallet: ColorPallet = {
         backgroundColor: Color.ofHex("#ffffff"),
         backgroundHighlightColor: Color.ofHex("#eaeaea"),
+        backgroundHighlightColor200: Color.ofHex("#e1e1e1"),
         backgroundHighlightInputColor: Color.ofHex("#ffffff"),
         backgroundDeactivatedColor: Color.ofHex("#e8e8e8"),
         // tooltipBackgroundColor: Color.ofHex("#323335"),

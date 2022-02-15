@@ -1,7 +1,6 @@
 import React from "react";
 import "../../styles/pages/DashboardPage.scss";
 import {ProjectInfo} from "../../components/ProjectInfo";
-import {LoadState} from "../../logic/LoadState";
 import {App, utilizeGlobalTheme} from "../../logic/App";
 import {v4} from "uuid";
 import {ProjectInfoData} from "../../logic/ProjectInfoData";
@@ -15,7 +14,7 @@ import {ReactComponent as MenuIcon} from "../../assets/icons/ic-20/ic20-menu.svg
 import {ReactComponent as CreateIcon} from "../../assets/icons/ic-20/ic20-plus.svg";
 import {ReactComponent as SyncIcon} from "../../assets/icons/ic-20/ic20-refresh.svg";
 import {Icon} from "../../components/Icon";
-import {arrayFactory, getOr, Utils} from "../../logic/Utils";
+import {getOr} from "../../logic/Utils";
 import {PosInCenter} from "../../components/PosInCenter";
 import {em, percent, px} from "../../logic/DimensionalMeasured";
 import {DBSessionCacheShard} from "../../shards/DBSessionCacheShard";
@@ -25,16 +24,15 @@ import {getMeaningfulColors, MeaningfulColors, Themeable} from "../../Themeable"
 import {Box} from "../../components/Box";
 import {ObjectVisualMeaning} from "../../logic/ObjectVisualMeaning";
 import {CustomTooltip} from "../../components/CustomTooltip";
-import {Separator} from "../../components/Separator";
-import {Orientation} from "../../logic/Orientation";
 import {FlexDirection} from "../../logic/FlexDirection";
 import _ from "lodash";
-import {Input} from "../../components/Input";
-import {CloseReason, OpenReason, SpeedDial, SpeedDialAction, SpeedDialIcon, Backdrop} from "@mui/material";
+import {Backdrop, CloseReason, OpenReason, SpeedDial, SpeedDialAction, SpeedDialIcon} from "@mui/material";
 import {RenderController} from "../../tests/regex/RenderController";
 import {cs} from "../../logic/state/State";
 import {RenderExecutor} from "../../tests/regex/RenderExecutor";
 import {Constants} from "../../Constants";
+import {OverflowBehaviour} from "../../logic/OverflowBehaviour";
+import {Input} from "../../components/Input";
 
 export type DashboardPageProps = {
 }
@@ -120,13 +118,19 @@ export default class DashboardPage extends React.PureComponent<DashboardPageProp
                 // this.loadProjects();
             },
             processFinished: () => {
-                this.loadProjects();
+                // loading moved to promise of this function. At the current state of development it is assumed
+                // that when accessing this screen a websocket connection in main-protocol is present.
+                // this.loadProjects();
             }
         });
     }
 
     componentDidMount() {
-        this.init().then(() => {});
+        this.init().then(() => {
+            if (this.state.projects === undefined || this.state.projects.length === 0 && !this.state.loading) {
+                this.loadProjects();
+            }
+        });
     }
 
     private createProject() {
@@ -139,21 +143,22 @@ export default class DashboardPage extends React.PureComponent<DashboardPageProp
 
     private renderSubtitle(): JSX.Element {
         if (this.state.loading) {
-            return (
-                <Box visualMeaning={ObjectVisualMeaning.WARNING} width={percent(100)} opaque>
-                    <PosInCenter>
-                        {/*<CircularProgress variant={"indeterminate"} size={20} sx={{
-                            color: theme.colors.warnHighlightColor.css()
-                        }}/>*/}
-                        <Text text={"Loading projects from database.."}/>
-                    </PosInCenter>
-                </Box>
-            );
+            return <></>;
+            // return (
+            //     <Box visualMeaning={ObjectVisualMeaning.WARNING} width={percent(100)} opaque>
+            //         <PosInCenter>
+            //             {/*<CircularProgress variant={"indeterminate"} size={20} sx={{
+            //                 color: theme.colors.warnHighlightColor.css()
+            //             }}/>*/}
+            //             <Text text={"Loading projects from database.."}/>
+            //         </PosInCenter>
+            //     </Box>
+            // );
         } else {
             return (
                 <FlexBox flexDir={FlexDirection.COLUMN} align={Align.CENTER} width={percent(100)}>
-                    <Text uppercase align={Align.CENTER} type={TextType.secondaryDescription} text={"*Select a project*"} />
-                    {/*<Input opaque label={"Filter"} visualMeaning={ObjectVisualMeaning.INFO}/>*/}
+                    {/*<Text uppercase align={Align.CENTER} type={TextType.secondaryDescription} text={"*Select a project*"} />*/}
+                    <Input opaque label={"Filter"} visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}/>
                 </FlexBox>
             );
         }
@@ -185,21 +190,24 @@ export default class DashboardPage extends React.PureComponent<DashboardPageProp
                                 <span>
                                     {
                                         this.state.loading ? (
-                                            <Icon icon={<SyncIcon/>} visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} colored={true}/>
+                                            <FlexBox flexDir={FlexDirection.ROW_REVERSE}>
+                                                {/*<Icon icon={<SyncIcon/>} visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} colored={true}/>*/}
+                                                <Text text={"**Loading**"} uppercase coloredText visualMeaning={ObjectVisualMeaning.WARNING}/>
+                                            </FlexBox>
                                         ) : (
-                                            <Icon icon={<SyncIcon/>} visualMeaning={ObjectVisualMeaning.INFO} colored={true} onClick={() => this.loadProjects()}/>
+                                            <Icon icon={<SyncIcon/>} onClick={() => this.loadProjects()}/>
                                         )
                                     }
                                 </span>
                             </CustomTooltip>
-                            <Separator orientation={Orientation.VERTICAL}/>
+                            {/*<Separator orientation={Orientation.VERTICAL}/>
                             <CustomTooltip title={(
                                 <Text text={"**Create a new project**\nBlank project or choose a template."}/>
                             )} arrow noBorder>
                                 <span>
                                     <Icon icon={<CreateIcon/>} visualMeaning={ObjectVisualMeaning.INFO} colored={true} onClick={() => this.createProject()}/>
                                 </span>
-                            </CustomTooltip>
+                            </CustomTooltip>*/}
                         </FlexBox>
                     </LiteGrid>
                     <PosInCenter>
@@ -223,32 +231,17 @@ export default class DashboardPage extends React.PureComponent<DashboardPageProp
                             this.renderSubtitle()
                         }
                     </PosInCenter>
-                    <LiteGrid responsive minResponsiveWidth={px(300)} gap={em(1)}>
-                        {
-                            // todo set key the right way
-                            arrayFactory(() => <ProjectInfo
-                                key={v4()}
-                                onSelect={data => this.onProjectSelect(data)}
-                                data={{
-                                    creatorUserID: v4(),
-                                    id: v4(),
-                                    state: LoadState.OFFLINE,
-                                    stator: Utils.randomBool(),
-                                    edits: 10,
-                                    lastEdited: new Date(),
-                                    title: "SQL lesson 21",
-                                    description: "This is the description you looked for a long time. It is worth reading it trough. See database workthrough [here](https://luo-darmstadt.de/sqltutorial/db_nordwind.html)."
-                                }}
-                            />, 0)
-                        }
-                        {
+
+                    <FlexBox height={percent(100)} overflowYBehaviour={OverflowBehaviour.SCROLL}>
+                        <LiteGrid responsive minResponsiveWidth={px(300)} gap={em(1)}>{
                             this.getFilteredProjects().map(project => <ProjectInfo
                                 key={project.id}
                                 onSelect={data => this.onProjectSelect(data)}
                                 data={project}
                             />)
-                        }
-                    </LiteGrid>
+                        }</LiteGrid>
+                    </FlexBox>
+
                 </PageV2>
             </>
         );

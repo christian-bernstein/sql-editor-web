@@ -2,7 +2,8 @@
 import React from "react";
 import {ReactComponent as ProjectIcon} from "../assets/icons/ic-20/ic20-file.svg";
 import {ReactComponent as LoadIcon} from "../assets/icons/ic-20/ic20-arrow-right.svg";
-import {ReactComponent as MoreIcon} from "../assets/icons/ic-20/ic20-more-ver.svg";
+import {ReactComponent as ContextIcon} from "../assets/icons/ic-20/ic20-more-ver.svg";
+import {ReactComponent as DeleteIcon} from "../assets/icons/ic-20/ic20-delete.svg";
 import {ProjectInfoData} from "../logic/ProjectInfoData";
 import {Box} from "./Box";
 import {Text} from "./Text";
@@ -15,7 +16,7 @@ import {FlexDirection} from "../logic/FlexDirection";
 import {AreaChartComponent} from "./AreaChartComponent";
 import styled from "styled-components";
 import {Themeable} from "../Themeable";
-import {utilizeGlobalTheme} from "../logic/App";
+import {App, utilizeGlobalTheme} from "../logic/App";
 import {Justify} from "../logic/Justify";
 import {ProjectInfoOnlineIcon} from "./ProjectInfoOnlineIcon";
 import {arrayFactory, Utils} from "../logic/Utils";
@@ -26,6 +27,7 @@ import {Separator} from "./Separator";
 import {Orientation} from "../logic/Orientation";
 import {ContextCompound} from "./ContextCompound";
 import {If} from "./If";
+import {Constants} from "../Constants";
 
 export type ProjectInfoProps = {
     data: ProjectInfoData,
@@ -44,7 +46,34 @@ export class ProjectInfo extends React.Component<ProjectInfoProps, any> {
         }
     }
 
+    private toggleProjectDeleteDialog() {
+        App.app().callAction(Constants.openMainDialogWithParamsAction, {
+            dialog: Constants.deleteProjectDialog,
+            parameters: this.props.data
+        })
+    }
+
+    private renderContextMenuContent(): JSX.Element {
+        return (
+            <Button visualMeaning={ObjectVisualMeaning.ERROR} opaque width={percent(100)} onClick={() => this.toggleProjectDeleteDialog()}>
+                <FlexBox flexDir={FlexDirection.ROW} justifyContent={Justify.SPACE_BETWEEN}>
+                    <Icon icon={<DeleteIcon/>}/>
+                    <Text text={`Delete`}/>
+                </FlexBox>
+            </Button>
+        );
+    }
+
+    private renderContextMenu(): JSX.Element {
+        return (
+            <ContextCompound menu={this.renderContextMenuContent()}>
+                <Icon icon={<ContextIcon/>}/>
+            </ContextCompound>
+        );
+    }
+
     renderHeader() {
+        const theme = utilizeGlobalTheme();
         return (
             <FlexBox flexDir={FlexDirection.ROW} justifyContent={Justify.SPACE_BETWEEN}>
                 <Text
@@ -60,7 +89,7 @@ export class ProjectInfo extends React.Component<ProjectInfoProps, any> {
                         </CustomTooltip>
                     )}
                 />
-                <FlexBox flexDir={FlexDirection.ROW} height={percent(100)}>
+                <FlexBox flexDir={FlexDirection.ROW} height={percent(100)} gap={theme.gaps.smallGab}>
                     <CustomTooltip noBorder title={(
                         <Text text={
                             `**Stator**: ${this.props.data.stator}\n**State**: ${this.props.data.state}\n`
@@ -71,11 +100,8 @@ export class ProjectInfo extends React.Component<ProjectInfoProps, any> {
                         </span>
                     </CustomTooltip>
                     <Separator orientation={Orientation.VERTICAL}/>
-                    <ContextCompound>
-                        <Icon icon={<MoreIcon/>} onClick={() => {
 
-                        }}/>
-                    </ContextCompound>
+                    {this.renderContextMenu()}
                 </FlexBox>
             </FlexBox>
         );
@@ -112,7 +138,7 @@ export class ProjectInfo extends React.Component<ProjectInfoProps, any> {
                 </ChartGrid>
                 <Button visualMeaning={ObjectVisualMeaning.INFO} opaque={true} shrinkOnClick={true} onClick={event => this.onSelect(event)}>
                     <FlexBox flexDir={FlexDirection.ROW} gap={px(10)}>
-                        <Text text={"Load"}/>
+                        <Text text={"**Load**"}/>
                         <Icon icon={<LoadIcon/>}/>
                     </FlexBox>
                 </Button>

@@ -5,6 +5,7 @@ import {ReactComponent as AppLogo} from "../../assets/logo.svg";
 import {ReactComponent as FullscreenEnterIcon} from "../../assets/icons/ic-20/ic20-fullscreen.svg";
 import {ReactComponent as FullscreenExitIcon} from "../../assets/icons/ic-20/ic20-fullscreen-exit.svg";
 import {ReactComponent as ClearIcon} from "../../assets/icons/ic-20/ic20-delete.svg";
+import {ReactComponent as LogIcon} from "../../assets/icons/ic-20/ic20-bolt.svg";
 // todo remove completely
 // import "../../styles/pages/BoardingPage.scss";
 import {_Button} from "../../components/_Button";
@@ -32,6 +33,8 @@ import {Justify} from "../../logic/Justify";
 import {Zoom} from "@mui/material";
 import {CustomTooltip} from "../../components/CustomTooltip";
 import {createMargin} from "../../logic/Margin";
+import {Constants} from "../../Constants";
+import {BadgedWrapper} from "../../components/BadgedWrapper";
 
 export type BoardingPageProps = {}
 
@@ -254,11 +257,27 @@ export class BoardingPage extends React.Component<BoardingPageProps, BoardingPag
                                         </span>
                                     </CustomTooltip>
                                 </FlexBox>
-                                <FlexBox align={Align.CENTER} justifyContent={Justify.CENTER} height={percent(100)} margin={createMargin(0, theme.gaps.smallGab.measurand, 0, 0)}>
+
+                                {/*<FlexBox align={Align.CENTER} justifyContent={Justify.CENTER} height={percent(100)} margin={createMargin(0, theme.gaps.smallGab.measurand, 0, 0)}>
                                     <Icon icon={<ClearIcon/>} onClick={() => {
                                         App.app().clearSessionHistory();
                                         this.forceUpdate();
                                     }}/>
+                                </FlexBox>*/}
+
+                                <FlexBox align={Align.CENTER} justifyContent={Justify.CENTER} height={percent(100)} margin={createMargin(0, theme.gaps.smallGab.measurand, 0, 0)}>
+                                    <CustomTooltip noBorder arrow title={"Open log dialog"} TransitionComponent={Zoom} onClick={() => {
+                                        App.app().callAction("open-main-dialog", Constants.logDialog)
+                                    }}>
+                                        <span>
+                                            <BadgedWrapper badge={
+                                                <Text text={`${App.app().sophisticatedLogHistory.length}`} fontSize={px(12)}/>
+                                            } showBadgeInitially>
+                                                <Icon icon={<LogIcon/>}/>
+                                            </BadgedWrapper>
+
+                                        </span>
+                                    </CustomTooltip>
                                 </FlexBox>
                             </FlexBox>
                         </div>

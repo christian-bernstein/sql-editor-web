@@ -291,57 +291,76 @@ export class Editor extends React.Component<DebugEditorProps, DebugEditorState> 
     private async sendCommand(type: SessionCommandType) {
         // todo set working state to true
 
+        const apiRequest = async () => {
+            const dbID = App.app().shard<DBSessionCacheShard>("db-session-cache").currentInfoData?.id;
+            App.app().getConnector().call({
+                protocol: "main",
+                packetID: "SessionCommandPacketData",
+                data: {
+                    type: type,
+                    raw: this.local.state.command,
+                    attributes: new Map<string, string>(),
+                    dbID: dbID
+                } as SessionCommand,
+                callback: {
+                    handle: (connector1, packet) => {
+                        // todo cast packet to useful d-type
+                        // todo set local working state to false
+                        this.local.setState({
+                            processPushCommand: false
+                        }, new Map([["channels", ["*", "push-pull"]]]));
+                    }
+                }
+            });
+        };
+
         switch (type) {
             case SessionCommandType.PULL:
                 this.local.setState({
                     processPullCommand: true
-                }, new Map([["channels", ["push-pull"]]]));
+                }, new Map([["channels", ["push-pull"]]]), () => apiRequest());
                 break;
             case SessionCommandType.PUSH:
                 this.local.setState({
                     processPushCommand: true
-                }, new Map([["channels", ["*", "push-pull"]]]));
+                }, new Map([["channels", ["*", "push-pull"]]]), () => apiRequest());
                 break;
         }
 
-        App.app().getConnector().call({
-            // todo check protocol name
-            protocol: "main",
-            // todo create java counterpart & check packet id name
-            packetID: "SessionCommandPacketData",
-            data: {
-                type: type,
-                raw: this.local.state.command,
-                attributes: new Map<string, string>(),
-                dbID: App.app().shard<DBSessionCacheShard>("db-session-cache").currentInfoData?.id
+        // App.app().getConnector().call({
+        //     protocol: "main",
+        //     packetID: "SessionCommandPacketData",
+        //     data: {
+        //         type: type,
+        //         raw: this.local.state.command,
+        //         attributes: new Map<string, string>(),
+        //         dbID: App.app().shard<DBSessionCacheShard>("db-session-cache").currentInfoData?.id
+        //     } as SessionCommand,
+        //     callback: {
+        //         handle: (connector1, packet) => {
+        //             // todo cast packet to useful d-type
+        //             // todo set local working state to false
+        //             this.local.setState({
+        //                 processPushCommand: false
+        //             }, new Map([["channels", ["*", "push-pull"]]]));
+        //         }
+        //     }
+        // });
 
-            } as SessionCommand,
-            callback: {
-                handle: (connector1, packet) => {
-                    // todo cast packet to useful d-type
-
-                    // todo set local working state to false
-                    this.local.setState({
-                        processPushCommand: false
-                    }, new Map([["channels", ["*", "push-pull"]]]));
-                }
-            }
-        });
-
-        setTimeout(() => {
-            switch (type) {
-                case SessionCommandType.PULL:
-                    this.local.setState({
-                        processPullCommand: false
-                    }, new Map([["channels", ["*", "push-pull"]]]));
-                    break;
-                case SessionCommandType.PUSH:
-                    this.local.setState({
-                        processPushCommand: false
-                    }, new Map([["channels", ["*", "push-pull"]]]));
-                    break;
-            }
-        }, 5000);
+        // setTimeout(() => {
+        //     switch (type) {
+        //         case SessionCommandType.PULL:
+        //             this.local.setState({
+        //                 processPullCommand: false
+        //             }, new Map([["channels", ["*", "push-pull"]]]));
+        //             break;
+        //         case SessionCommandType.PUSH:
+        //             this.local.setState({
+        //                 processPushCommand: false
+        //             }, new Map([["channels", ["*", "push-pull"]]]));
+        //             break;
+        //     }
+        // }, 5000);
     }
 
     // noinspection JSMethodCanBeStatic
@@ -397,6 +416,14 @@ export class Editor extends React.Component<DebugEditorProps, DebugEditorState> 
         } else return <></>
     }
 
+    private renderDBHistory(): JSX.Element {
+        return (
+            <Box height={percent(100)} width={percent(100)}>
+
+            </Box>
+        );
+    }
+
     private renderEditor(session: ProjectInfoData) {
         const theme: Themeable.Theme = utilizeGlobalTheme();
 
@@ -404,7 +431,7 @@ export class Editor extends React.Component<DebugEditorProps, DebugEditorState> 
             <PageV2>
                 {this.renderDialog()}
 
-                <FlexBox height={percent(100)} flexDir={FlexDirection.COLUMN} overflowXBehaviour={OverflowBehaviour.VISIBLE} overflowYBehaviour={OverflowBehaviour.VISIBLE} justifyContent={Justify.SPACE_BETWEEN}>
+                <FlexBox height={percent(100)} flexDir={FlexDirection.COLUMN} gap={theme.gaps.smallGab} overflowXBehaviour={OverflowBehaviour.VISIBLE} overflowYBehaviour={OverflowBehaviour.VISIBLE} justifyContent={Justify.SPACE_BETWEEN}>
                     <FlexBox width={percent(100)}>
                         <LiteGrid columns={3}>
                             <FlexBox align={Align.START} justifyContent={Justify.CENTER}>
@@ -430,7 +457,7 @@ export class Editor extends React.Component<DebugEditorProps, DebugEditorState> 
 
                     <Separator/>
 
-                    <FlexBox flexDir={FlexDirection.ROW}>
+                    <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab}>
                         <CustomTooltip arrow title={"Show SQL result history"}>
                             <span>
                                 {
@@ -458,7 +485,9 @@ export class Editor extends React.Component<DebugEditorProps, DebugEditorState> 
                         </CustomTooltip>
                     </FlexBox>
 
-                    <FlexBox width={percent(100)} height={percent(90)} overflowYBehaviour={OverflowBehaviour.VISIBLE} justifyContent={Justify.FLEX_END}>
+                    {this.renderDBHistory()}
+
+                    <FlexBox width={percent(100)} overflowYBehaviour={OverflowBehaviour.VISIBLE} justifyContent={Justify.FLEX_END}>
                         {/*<Box width={percent(100)} gapY={theme.gaps.defaultGab}>
                             <Text text={"Edits"}/>
                             <Task task={{}}/>
@@ -473,7 +502,7 @@ export class Editor extends React.Component<DebugEditorProps, DebugEditorState> 
                             )}
                         />*/}
 
-                        <FlexBox flexDir={FlexDirection.ROW} width={percent(100)}>
+                        <FlexBox flexDir={FlexDirection.ROW} width={percent(100)} gap={theme.gaps.smallGab}>
                             <CodeEditor
                                 width={percent(100)}
                                 theme={oneDark}

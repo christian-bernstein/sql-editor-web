@@ -5,9 +5,7 @@ export class RenderController {
     private readonly executors: Map<string, RenderBridge> = new Map<string, RenderBridge>();
 
     public register(bridge: RenderBridge) {
-
-        console.log(this.executors)
-
+        // console.log(this.executors)
         this.executors.set(bridge.id, bridge);
     }
 

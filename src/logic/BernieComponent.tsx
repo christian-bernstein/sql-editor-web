@@ -11,10 +11,6 @@ import {Assembly} from "./Assembly";
 
 export class BernieComponent<RProps, RState, LState extends object> extends React.Component<RProps, RState> {
 
-    get assembly(): Assembly {
-        return this._assembly;
-    }
-
     private readonly _local: State<LState>;
 
     private readonly _controller: RenderController;
@@ -32,6 +28,13 @@ export class BernieComponent<RProps, RState, LState extends object> extends Reac
         this._controller = new RenderController();
         this.redirectTo = undefined;
         this.redirect = false;
+        this.local.on((state, value) => {
+            this.controller.rerender(...getOr(value.get("channels"), ["*"]));
+        });
+    }
+
+    get assembly(): Assembly {
+        return this._assembly;
     }
 
     get local(): State<LState> {

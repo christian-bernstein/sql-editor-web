@@ -43,6 +43,8 @@ import {Editor} from "../editor/Editor";
 import {LogPage} from "../log/LogPage";
 import {v4} from "uuid";
 import {EpicureSearchPage} from "../../tests/epicure/EpicureSearchPage";
+import {DeleteProjectDialog} from "../deleteProject/DeleteProjectDialog";
+import {OpenMainDialogWithParamsProps} from "../../logic/OpenMainDialogWithParamsProps";
 
 export type AppPageProps = {
 }
@@ -54,7 +56,8 @@ export type AppPageState = {
     updateSlave: number,
     showCommandPallet: boolean,
     showDialog: boolean,
-    dialogAssembly?: string
+    dialogAssembly?: string,
+    dialogProps?: any
 }
 
 let hook: undefined | (() => void);
@@ -187,17 +190,19 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
         return this.specialPageRenderers.get(page)?.(paramSupplier()) as JSX.Element;
     }
 
-    private openDialog(dialogComponent: string) {
+    private openDialog(dialogComponent: string, params: any = undefined) {
         this.setState({
             showDialog: true,
-            dialogAssembly: dialogComponent
+            dialogAssembly: dialogComponent,
+            dialogProps: params
         });
     }
 
     private closeDialog() {
         this.setState({
             showDialog: false,
-            dialogAssembly: undefined
+            dialogAssembly: undefined,
+            dialogProps: undefined
         });
     }
 
@@ -219,6 +224,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                         this.assembly.render({
                             // todo create fallback
                             component: this.state.dialogAssembly as string,
+                            param: this.state.dialogProps,
                             errorComponent: e => {
                                 return (
                                     <PageV2>
@@ -296,6 +302,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
     private initDialogs() {
         this.assembly.assembly(Constants.createProjectDialog, (theme, props) => <ProjectCreationDialog/>);
         this.assembly.assembly(Constants.logDialog, (theme, props) => <LogPage/>);
+        this.assembly.assembly(Constants.deleteProjectDialog, (theme, props) => <DeleteProjectDialog project={props}/>);
     }
 
     private init(config?: AppConfig) {
@@ -361,6 +368,15 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                         } catch (e) {
                             console.error(`open-main-dialog action: parameter ${parameters} isn't assignable to type: string`)
                         }
+                    } else console.error("Can't execute close-command-pallet, because component not mounted.");
+                }
+            });
+
+            app.registerAction(Constants.openMainDialogWithParamsAction, (parameters) => {
+                if (instance) {
+                    if (instance.mounted) {
+                        const params = parameters as OpenMainDialogWithParamsProps;
+                        instance.openDialog(params.dialog, params.parameters);
                     } else console.error("Can't execute close-command-pallet, because component not mounted.");
                 }
             });

@@ -4,7 +4,7 @@ import {App, utilizeGlobalTheme} from "../../logic/App";
 import {Text} from "../../components/Text";
 import {getMeaningfulColors, MeaningfulColors, Themeable} from "../../Themeable";
 import {Box} from "../../components/Box";
-import {percent} from "../../logic/DimensionalMeasured";
+import {percent, px} from "../../logic/DimensionalMeasured";
 import {OverflowBehaviour} from "../../logic/OverflowBehaviour";
 import {InformationBox} from "../../components/InformationBox";
 import {ObjectVisualMeaning} from "../../logic/ObjectVisualMeaning";
@@ -16,11 +16,14 @@ import {FlexDirection} from "../../logic/FlexDirection";
 import {Justify} from "../../logic/Justify";
 import {Align} from "../../logic/Align";
 import {ReactComponent as OpenDialogIcon} from "../../assets/icons/ic-20/ic20-open-in-browser.svg";
-import {ReactComponent as LogIcon} from "../../assets/icons/ic-20/ic20-tag.svg";
+import {ReactComponent as LogIcon} from "../../assets/icons/ic-20/ic20-bolt.svg";
 import {Icon} from "../../components/Icon";
 import {CustomTooltip} from "../../components/CustomTooltip";
 import {ObjectJSONDisplay} from "../../components/ObjectJSONDisplay";
 import {Constants} from "../../Constants";
+import {createMargin} from "../../logic/Margin";
+import {Zoom} from "@mui/material";
+import {BadgedWrapper} from "../../components/BadgedWrapper";
 
 export type MenuPageProps = {
     showMenuInitially?: boolean,
@@ -107,11 +110,13 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
 
         const getConnectingBox = () => (
             <InformationBox visualMeaning={ObjectVisualMeaning.WARNING} width={percent(100)}>
-                <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} justifyContent={Justify.SPACE_BETWEEN} width={percent(100)}>
+                <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} justifyContent={Justify.SPACE_BETWEEN}
+                         width={percent(100)}>
                     <Text text={`Connecting to\n ${config.address}`}/>
                     <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER}>
                         <Text text={`${connector.connectionAttempts} / ${config.maxConnectAttempts}`}/>
-                        <BounceLoader color={getMeaningfulColors(ObjectVisualMeaning.WARNING, theme).lighter.css()} size={20}/>
+                        <BounceLoader color={getMeaningfulColors(ObjectVisualMeaning.WARNING, theme).lighter.css()}
+                                      size={20}/>
                     </FlexBox>
                 </FlexBox>
             </InformationBox>
@@ -211,7 +216,7 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
                          gapY={theme.gaps.defaultGab}>
                         {this.renderServerAvailabilityStatus()}
                         <FlexBox flexDir={FlexDirection.ROW} overflowXBehaviour={OverflowBehaviour.SCROLL}>
-                            <Button visualMeaning={ObjectVisualMeaning.INFO}
+                            <Button visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
                                     width={percent(100)}
                                     opaque={true}
                                     shrinkOnClick={true}
@@ -247,7 +252,6 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
                         </FlexBox>
 
 
-
                         <FlexBox flexDir={FlexDirection.ROW} overflowXBehaviour={OverflowBehaviour.SCROLL}>
                             <Button visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
                                     width={percent(100)}
@@ -271,7 +275,7 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
                             </Button>
                         </FlexBox>
 
-                        {this.renderLogSection()}
+                        {/*this.renderLogSection()*/}
 
                         <FlexBox flexDir={FlexDirection.ROW}>
                             <CustomTooltip title={"Open main dialog"} arrow>
@@ -287,7 +291,26 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
                                 </span>
                             </CustomTooltip>
 
-
+                            <CustomTooltip title={"Open log dialog"} arrow>
+                                <span>
+                                    <Button
+                                        visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
+                                        opaque={true}
+                                        shrinkOnClick={true}
+                                        onClick={() => {
+                                            App.app().callAction("open-main-dialog", Constants.logDialog);
+                                        }}
+                                    >
+                                        <BadgedWrapper
+                                            badge={
+                                                <Text text={`${App.app().sophisticatedLogHistory.length}`} fontSize={px(12)}/>
+                                            } showBadgeInitially
+                                        >
+                                                <Icon icon={<LogIcon/>}/>
+                                        </BadgedWrapper>
+                                    </Button>
+                                </span>
+                            </CustomTooltip>
                         </FlexBox>
 
                         <ObjectJSONDisplay

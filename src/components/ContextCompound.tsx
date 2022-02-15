@@ -12,6 +12,7 @@ import {Text} from "./Text";
 import {Cursor} from "../logic/style/Cursor";
 
 export type ContextMenuProps = {
+    menu?: JSX.Element
 }
 
 export type ContextMenuState = {
@@ -74,7 +75,16 @@ export class ContextCompound extends React.Component<ContextMenuProps, ContextMe
                     }}
                 >
                     <MenuWrapper>
-                        <FlexBox gap={theme.gaps.smallGab}>
+                        {this.props.menu ? this.props.menu : <></>}
+                    </MenuWrapper>
+                </Menu>
+            </div>
+        );
+    }
+}
+
+/*
+ <FlexBox gap={theme.gaps.smallGab}>
                             <Button shrinkOnClick={true} width={percent(100)} visualMeaning={ObjectVisualMeaning.SUCCESS} opaque={true}>
                                 Delete
                             </Button>
@@ -82,9 +92,4 @@ export class ContextCompound extends React.Component<ContextMenuProps, ContextMe
                                 <Text text={"Delete project"} cursor={Cursor.pointer}/>
                             </Button>
                         </FlexBox>
-                    </MenuWrapper>
-                </Menu>
-            </div>
-        );
-    }
-}
+* */
