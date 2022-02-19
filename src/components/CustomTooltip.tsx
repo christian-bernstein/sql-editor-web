@@ -3,6 +3,7 @@ import {Tooltip, tooltipClasses, TooltipProps} from "@mui/material";
 import styled from "styled-components";
 import {Themeable} from "../Themeable";
 import {utilizeGlobalTheme} from "../logic/App";
+import {ContextCompound} from "./ContextCompound";
 
 export type CustomTooltipProps = {
     noPadding?: boolean,
@@ -11,7 +12,9 @@ export type CustomTooltipProps = {
 
 // noinspection RequiredAttributes
 export const CustomTooltip = styled(({ className, ...props }: TooltipProps & CustomTooltipProps) => (
-    <Tooltip {...props} classes={{ popper: className }}/>
+    <ContextCompound clickType={"double"} wrapMenu={false} menu={<>{props.title}</>}>
+        <Tooltip {...props} classes={{ popper: className }}/>
+    </ContextCompound>
 ))((props) => {
     const theme: Themeable.Theme = utilizeGlobalTheme();
     return ({

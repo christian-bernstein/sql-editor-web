@@ -6,7 +6,9 @@ export class Constants {
 
     public static deleteProjectDialog: string = "delete-project-dialog";
 
+    public static serverConnectionDialog: string = "server-connection-dialog";
 
+    public static roadmapDialog: string = "roadmap-dialog";
 
     public static openMainDialogWithParamsAction: string = "open-main-dialog-with-params";
 }

@@ -12,6 +12,10 @@ export class State<T extends object> {
         this._state = state;
     }
 
+    public setStateWithChannels(state: Partial<T>, channels: string[], callback?: () => void) {
+        this.setState(state, new Map<string, any>([["channels", channels]]), callback);
+    }
+
     public setState(state: Partial<T>, params: Map<string, any> = new Map<string, any>(), callback?: () => void) {
         this._state = {
             ...this._state,

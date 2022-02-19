@@ -17,7 +17,11 @@ export const ProfilePicture: React.FC<ProfilePictureProps> = props => {
     const vm: ObjectVisualMeaning = getOr(props.visualMeaning, ObjectVisualMeaning.UI_NO_HIGHLIGHT);
     const mc: MeaningfulColors = getMeaningfulColors(vm, theme);
 
-    const Wrapper = styled.div`      
+    const Wrapper = styled.div`     
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      
       .avatar {
         border-radius: 50%;
         height: 20px;
@@ -26,6 +30,8 @@ export const ProfilePicture: React.FC<ProfilePictureProps> = props => {
       }
 
       .avatar-loader {
+        
+        
         border-radius: 50%;
         border: 1px solid ${theme.colors.borderPrimaryShadowColor.css()};
         height: 20px;

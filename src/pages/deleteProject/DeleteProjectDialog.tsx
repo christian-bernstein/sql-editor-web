@@ -21,9 +21,12 @@ import {Cursor} from "../../logic/style/Cursor";
 import {Input} from "../../components/Input";
 import {If} from "../../components/If";
 import {Align} from "../../logic/Align";
+import {ProjectDeleteRequestPacketData} from "../../packets/out/ProjectDeleteRequestPacketData";
 
 export type DeleteProjectDialogProps = {
-    project: ProjectInfoData
+    project: ProjectInfoData,
+    // todo implement
+    onProjectDeleteCompleted?: () => void
 }
 
 export type DeleteProjectDialogLocalState = {
@@ -58,32 +61,48 @@ export class DeleteProjectDialog extends BernieComponent<DeleteProjectDialogProp
     }
 
     private deleteProject() {
-
+        App.use(app => {
+            app.getConnector().call({
+                protocol: "main",
+                packetID: "ProjectDeleteRequestPacketData",
+                data: {
+                    id: this.props.project.id
+                } as ProjectDeleteRequestPacketData,
+                callback: {
+                    handle: (connector, packet) => {
+                        // handleProxy()
+                    }
+                }
+            })
+        });
         App.app().callAction("close-main-dialog");
+
+        // todo move to connector call
+        this.props.onProjectDeleteCompleted?.();
     }
 
     private renderBody(): JSX.Element {
         return (
             <PosInCenter fullHeight>
-                <FlexBox height={percent(100)} flexDir={FlexDirection.COLUMN} justifyContent={Justify.SPACE_BETWEEN}>
-                    <FlexBox>
+                <FlexBox height={percent(100)} width={percent(100)} flexDir={FlexDirection.COLUMN} justifyContent={Justify.SPACE_BETWEEN}>
+                    <FlexBox width={percent(100)} justifyContent={Justify.CENTER} align={Align.CENTER}>
                         <InformationBox visualMeaning={ObjectVisualMeaning.WARNING}>
                             <Text text={"**Warning:** This action cannot be undone. This will permanently delete a project and its meta data."} visualMeaning={ObjectVisualMeaning.WARNING} coloredText/>
                         </InformationBox>
                     </FlexBox>
-                    <FlexBox flexDir={FlexDirection.COLUMN}>
-                        <Text type={TextType.smallHeader} text={`Are you sure you want to delete **${this.props.project.title}.**`}/>
-                        <Text text={`Please type your SQLEditor username to confirm`}/>
+                    <FlexBox flexDir={FlexDirection.COLUMN} width={percent(100)}>
+                        <Text type={TextType.smallHeader} text={`Are you sure you want to delete project *${this.props.project.title}.*`}/>
+                        <Text text={`Please type the project's name to confirm`}/>
                         <Input label={"Project title"} placeholder={this.props.project.title} onChange={ev => {
                             this.updateConfirmationValue(ev.currentTarget.value)
                         }}/>
                         {this.component(() => (
                             <If condition={this.local.state.confirmed} ifTrue={
-                                <Button visualMeaning={ObjectVisualMeaning.ERROR} opaque shrinkOnClick cursor={Cursor.pointer} onClick={() => this.deleteProject()}>
+                                <Button visualMeaning={ObjectVisualMeaning.ERROR} opaque shrinkOnClick cursor={Cursor.pointer} width={percent(100)} onClick={() => this.deleteProject()}>
                                     <Text align={Align.CENTER} cursor={Cursor.pointer} text={"**I understand the consequences, delete project**"}/>
                                 </Button>
                             } ifFalse={
-                                <Button visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} opaque cursor={Cursor.notAllowed}>
+                                <Button visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} opaque cursor={Cursor.notAllowed} width={percent(100)}>
                                     <Text align={Align.CENTER} cursor={Cursor.notAllowed} text={"**I understand the consequences, delete project**"} visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} coloredText/>
                                 </Button>
                             }/>

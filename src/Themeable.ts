@@ -1,5 +1,5 @@
 import {Color} from "./Color";
-import {dimension, DimensionalMeasured, px} from "./logic/DimensionalMeasured";
+import {DimensionalMeasured, px} from "./logic/DimensionalMeasured";
 import {Dimension} from "./logic/Dimension";
 import {CSSProperties} from "react";
 import {ObjectVisualMeaning} from "./logic/ObjectVisualMeaning";
@@ -50,6 +50,14 @@ export function getMeaningfulColors(meaning: ObjectVisualMeaning, theme: Themeab
                 icon: theme.colors.iconColor,
                 shadowColor: theme.colors.borderPrimaryColor.withAlpha(0.1)
             };
+        case ObjectVisualMeaning.BETA:
+            return {
+                main: theme.colors.betaColor,
+                lighter: theme.colors.betaHighlightColor,
+                iconColored: theme.colors.betaHighlightColor,
+                icon: theme.colors.iconColor,
+                shadowColor: theme.colors.betaHighlightColor.withAlpha(0.1)
+            }
     }
 }
 
@@ -62,6 +70,10 @@ export type MeaningfulColors = {
 }
 
 export namespace Themeable {
+
+    export function createColorPallet(partial: Partial<ColorPallet> ): ColorPallet {
+        return {...defaultThemePallet, ...partial};
+    }
 
     export type ColorPallet = {
         backgroundColor: Color,
@@ -85,7 +97,10 @@ export namespace Themeable {
         borderPrimaryColor: Color,
         borderColorSecondaryColor: Color,
         borderPrimaryShadowColor: Color,
-        backdropColor: Color
+        backdropColor: Color,
+
+        betaColor: Color,
+        betaHighlightColor: Color
     }
 
     export type Theme = {
@@ -156,10 +171,13 @@ export namespace Themeable {
         borderPrimaryColor: Color.ofHex("#30363D"),
         borderColorSecondaryColor: Color.ofHex("#FBBE63"),
         borderPrimaryShadowColor: Color.ofHex("#71D99E", .13),
-        backdropColor: Color.ofHex("#171717", .8)
+        backdropColor: Color.ofHex("#171717", .8),
+
+        betaColor: Color.ofHex("#8957e5"),
+        betaHighlightColor: Color.ofHex("#a371f7")
     }
 
-    export const lightThemePallet: ColorPallet = {
+    export const lightThemePallet: ColorPallet = createColorPallet({
         backgroundColor: Color.ofHex("#ffffff"),
         backgroundHighlightColor: Color.ofHex("#eaeaea"),
         backgroundHighlightColor200: Color.ofHex("#e1e1e1"),
@@ -183,7 +201,7 @@ export namespace Themeable {
         borderColorSecondaryColor: Color.ofHex("#FBBE63"),
         borderPrimaryShadowColor: Color.ofHex("#71D99E", .13),
         backdropColor: Color.ofHex("#171717", .8)
-    }
+    })
 
     export const defaultTheme: Theme = {
         colors: defaultThemePallet,

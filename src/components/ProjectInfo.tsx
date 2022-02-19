@@ -6,7 +6,7 @@ import {ReactComponent as ContextIcon} from "../assets/icons/ic-20/ic20-more-ver
 import {ReactComponent as DeleteIcon} from "../assets/icons/ic-20/ic20-delete.svg";
 import {ProjectInfoData} from "../logic/ProjectInfoData";
 import {Box} from "./Box";
-import {Text} from "./Text";
+import {Text, TextType} from "./Text";
 import {percent, px} from "../logic/DimensionalMeasured";
 import {Icon} from "./Icon";
 import {Button} from "./Button";
@@ -19,7 +19,7 @@ import {Themeable} from "../Themeable";
 import {App, utilizeGlobalTheme} from "../logic/App";
 import {Justify} from "../logic/Justify";
 import {ProjectInfoOnlineIcon} from "./ProjectInfoOnlineIcon";
-import {arrayFactory, Utils} from "../logic/Utils";
+import {arrayFactory} from "../logic/Utils";
 import {Zoom} from "@mui/material";
 import {CustomTooltip} from "./CustomTooltip";
 import {ObjectJSONDisplay} from "./ObjectJSONDisplay";
@@ -28,6 +28,7 @@ import {Orientation} from "../logic/Orientation";
 import {ContextCompound} from "./ContextCompound";
 import {If} from "./If";
 import {Constants} from "../Constants";
+import dateFormat from "dateformat";
 
 export type ProjectInfoProps = {
     data: ProjectInfoData,
@@ -76,10 +77,8 @@ export class ProjectInfo extends React.Component<ProjectInfoProps, any> {
         const theme = utilizeGlobalTheme();
         return (
             <FlexBox flexDir={FlexDirection.ROW} justifyContent={Justify.SPACE_BETWEEN}>
-                <Text
-                    text={Utils.format("**{0}**", this.props.data.title)}
-                    enableLeftAppendix={true}
-                    leftAppendix={(
+                <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab}>
+                    <Icon icon={(
                         <CustomTooltip noBorder noPadding arrow title={(
                             <ObjectJSONDisplay object={this.props.data} title={"**[DEBUG]** Project JSON Representation"} pure={false} showControls={true}/>
                         )} TransitionComponent={Zoom}>
@@ -87,8 +86,14 @@ export class ProjectInfo extends React.Component<ProjectInfoProps, any> {
                                     <Icon icon={<ProjectIcon/>}/>
                                 </span>
                         </CustomTooltip>
-                    )}
-                />
+                    )}/>
+
+                    <FlexBox flexDir={FlexDirection.ROW} gap={px(1)}>
+                        <Text text={`${"root"}/`}/>
+                        <Text text={`${this.props.data.title}`} bold/>
+                    </FlexBox>
+                </FlexBox>
+
                 <FlexBox flexDir={FlexDirection.ROW} height={percent(100)} gap={theme.gaps.smallGab}>
                     <CustomTooltip noBorder title={(
                         <Text text={
@@ -120,11 +125,13 @@ export class ProjectInfo extends React.Component<ProjectInfoProps, any> {
                 <If condition={this.props.data.description !== null} ifTrue={
                     <>
                         {/*<Text text={"**Description**:"}/>*/}
-                        <Text text={this.props.data.description} />
+                        <Text text={this.props.data.description}/>
                     </>
-                } ifFalse={
-                    <></>
                 }/>
+                <FlexBox flexDir={FlexDirection.ROW}>
+                    <Text text={"Lase edited: "} type={TextType.secondaryDescription}/>
+                    <Text text={String(this.props.data.lastEdited)}/>
+                </FlexBox>
                 {/* todo replace with flexbox handling */}
                 <div style={{
                     height: "100%"

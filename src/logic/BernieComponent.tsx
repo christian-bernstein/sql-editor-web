@@ -31,6 +31,7 @@ export class BernieComponent<RProps, RState, LState extends object> extends Reac
         this.local.on((state, value) => {
             this.controller.rerender(...getOr(value.get("channels"), ["*"]));
         });
+        this.init();
     }
 
     get assembly(): Assembly {
@@ -96,6 +97,9 @@ export class BernieComponent<RProps, RState, LState extends object> extends Reac
         // } else {
         //     return <>cannot render redirect</>
         // }
+    }
+
+    public init() {
     }
 
     public componentRender(p: RProps, s: RState, l: LState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {

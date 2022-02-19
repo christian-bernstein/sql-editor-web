@@ -29,8 +29,9 @@ export type TextProps = {
     uppercase?: boolean,
     onClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void,
     cursor?: Cursor,
-    // todo write elegant enum
-    whitespace?: "normal" | "pre-wrap" | "nowrap"
+    whitespace?: "normal" | "pre-wrap" | "nowrap",
+
+    bold?: boolean
 }
 
 export enum TextType {
@@ -61,7 +62,7 @@ export const Text: React.FC<TextProps> = props => {
             fontSize: props.fontSize.css()
         };
     }
-
+    const text = getOr(props.bold, false) ? `**${props.text}**` : props.text;
     const meaningfulColors: MeaningfulColors = getMeaningfulColors(getOr(props.visualMeaning, ObjectVisualMeaning.UI_NO_HIGHLIGHT), theme);
     const Wrapper = styled.div`
       display: flex;
@@ -70,6 +71,8 @@ export const Text: React.FC<TextProps> = props => {
       cursor: ${getOr(props.cursor, Cursor.default)};
       color: ${props.coloredText ? meaningfulColors.lighter.css() : theme.colors.fontPrimaryColor.css()} !important;
       transition: all ${theme.transitions.fastTime.css()};
+
+      text-overflow: ellipsis;
       
       &:hover {
         color: ${props.highlight ? meaningfulColors.main.css() : "auto"} !important;
@@ -100,7 +103,7 @@ export const Text: React.FC<TextProps> = props => {
     return (
         <Wrapper style={style} onClick={event => getOr(props.onClick, () => {})(event)}>
             {props.enableLeftAppendix ? props.leftAppendix : <></>}
-            <ReactMarkdown className={"md"} children={props.text} components={{
+            <ReactMarkdown className={"md"} children={text} components={{
                 a: (mdProps, context) => {
                     return (
                         <Link showLinkIcon={false} visualMeaning={props.visualMeaning} href={getOr<string>(mdProps.href, "")}>{mdProps.children}</Link>

@@ -10,9 +10,13 @@ import styled from "styled-components";
 import {Separator} from "./Separator";
 import {Text} from "./Text";
 import {Cursor} from "../logic/style/Cursor";
+import {getOr} from "../logic/Utils";
+import {If} from "./If";
 
 export type ContextMenuProps = {
-    menu?: JSX.Element
+    menu?: JSX.Element,
+    clickType?: "single" | "double",
+    wrapMenu?: boolean
 }
 
 export type ContextMenuState = {
@@ -46,12 +50,24 @@ export class ContextCompound extends React.Component<ContextMenuProps, ContextMe
 
     render() {
         const theme: Themeable.Theme = utilizeGlobalTheme();
+        const clickType = getOr(this.props.clickType, "single");
+        const wrapMenu = getOr(this.props.wrapMenu, true);
         const MenuWrapper = styled.div`
           padding: ${theme.paddings.defaultButtonPadding.css()};
         `;
         return (
             <div>
-                <div onClick={event => this.handleChildrenClick(event)}>
+                <div
+                    onDoubleClick={event => {
+                        if (clickType === "double") {
+                            this.handleChildrenClick(event);
+                        }
+                    }}
+                    onClick={event => {
+                        if (clickType === "single") {
+                            this.handleChildrenClick(event);
+                        }
+                    }}>
                     {this.props.children}
                 </div>
                 <Menu
@@ -74,9 +90,14 @@ export class ContextCompound extends React.Component<ContextMenuProps, ContextMe
                         'aria-labelledby': 'basic-button',
                     }}
                 >
-                    <MenuWrapper>
-                        {this.props.menu ? this.props.menu : <></>}
-                    </MenuWrapper>
+                    <If condition={wrapMenu} ifTrue={
+                        <MenuWrapper>
+                            {this.props.menu ? this.props.menu : <></>}
+                        </MenuWrapper>
+                    } ifFalse={
+                        this.props.menu ? this.props.menu : <></>
+                    }/>
+
                 </Menu>
             </div>
         );

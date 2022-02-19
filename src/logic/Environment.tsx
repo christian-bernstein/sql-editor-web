@@ -126,6 +126,21 @@ export namespace Environment {
                         // todo fire some sort of event
                         console.log(`Switching protocols from '${connector.currentProtocol}' to '${data.newProtocol}'`);
                         connector.currentProtocol = data.newProtocol;
+
+                        connector.protocolChangeHandlers.forEach(handler => {
+                            try {
+                                handler(connector, data);
+                            } catch (e) {
+                                App.app().log({
+                                    id: v4(),
+                                    appendices: [e, handler],
+                                    timestamp: new Date(),
+                                    level: "ERROR",
+                                    creator: "network",
+                                    message: `Exception in protocol change handler.`
+                                })
+                            }
+                        });
                     }
                 })]
             ])
@@ -139,6 +154,8 @@ export namespace Environment {
         ]);
 
         private _socket: WebSocket | undefined;
+
+        private protocolChangeHandlers: Map<string, (connector: Environment.Connector, switchData: SocketSwitchProtocolDataPacket) => void> = new Map<string, (connector: Environment.Connector, switchData: SocketSwitchProtocolDataPacket) => void>();
 
         private _protocols: Map<string, Protocol> = new Map<string, Environment.Protocol>();
 
@@ -158,6 +175,17 @@ export namespace Environment {
             this._connectionAttempts = 0;
             this._currentProtocol = config.protocol;
             Connector.connectors.push(this);
+        }
+
+        public registerOnProtocolChangeHandler(id: string, handler: (connector: Environment.Connector, switchData: SocketSwitchProtocolDataPacket) => void) {
+            if (this.protocolChangeHandlers.has(id)) {
+                return;
+            }
+            this.protocolChangeHandlers.set(id, handler);
+        }
+
+        public unregisterOnProtocolChangeHandler(id: string) {
+            this.protocolChangeHandlers.delete(id);
         }
 
         public requestServersideShutdownRoutine(): Connector {

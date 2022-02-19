@@ -45,6 +45,8 @@ import {v4} from "uuid";
 import {EpicureSearchPage} from "../../tests/epicure/EpicureSearchPage";
 import {DeleteProjectDialog} from "../deleteProject/DeleteProjectDialog";
 import {OpenMainDialogWithParamsProps} from "../../logic/OpenMainDialogWithParamsProps";
+import {ServerInfoDialog} from "../serverInfo/ServerInfoDialog";
+import {RoadmapDialog} from "../roadmap/RoadmapDialog";
 
 export type AppPageProps = {
 }
@@ -125,7 +127,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                         // address: "ws://192.168.2.100:80",
                         address: "ws://192.168.2.104:80",
                         id: "ton",
-                        maxConnectAttempts: 10,
+                        maxConnectAttempts: 1,
                         connectionRetryDelayFunc: () => 0,
                         packetInterceptor: this.getLogPacketInterceptor()
                     }
@@ -153,7 +155,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                         // address: "ws://192.168.2.100:80",
                         address: "ws://192.168.2.104:80",
                         id: "ton",
-                        maxConnectAttempts: 10,
+                        maxConnectAttempts: 1,
                         connectionRetryDelayFunc: () => 0,
                         packetInterceptor: this.getLogPacketInterceptor()
                     }
@@ -268,7 +270,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
         if (App.isInitiated()) {
             return (
                 <BrowserRouter>
-                    <MenuPage showMenuInitially={false} doubleClickMenuOpen={true}>
+                    <MenuPage showMenuInitially={false} doubleClickMenuOpen={false}>
                         {this.getRouts()}
                     </MenuPage>
                 </BrowserRouter>
@@ -303,13 +305,14 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
         this.assembly.assembly(Constants.createProjectDialog, (theme, props) => <ProjectCreationDialog/>);
         this.assembly.assembly(Constants.logDialog, (theme, props) => <LogPage/>);
         this.assembly.assembly(Constants.deleteProjectDialog, (theme, props) => <DeleteProjectDialog project={props}/>);
+        this.assembly.assembly(Constants.serverConnectionDialog, (theme, props) => <ServerInfoDialog/>);
+        this.assembly.assembly(Constants.roadmapDialog, (theme, props) => <RoadmapDialog/>);
     }
 
     private init(config?: AppConfig) {
         instance = this;
         App.appOrCreate(config ? config : {
-            // appTitle: "SQL Editor",
-            appTitle: "Regex Viewer",
+            appTitle: "SQL Editor",
             debugMode: true,
             defaultAppRoute: "/boarding",
             defaultDebugAppRoute: "/boarding",

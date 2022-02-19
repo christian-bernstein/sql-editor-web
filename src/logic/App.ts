@@ -59,6 +59,10 @@ export class App {
         return App.instance as App;
     };
 
+    public static use(handler: (app: App) => void) {
+        handler(App.app());
+    }
+
     public static isInitiated(): boolean {
         return App.instance !== undefined && App.app().initiated;
     }

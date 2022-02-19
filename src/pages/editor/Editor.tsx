@@ -1,37 +1,3 @@
-// import React, {ForwardedRef} from "react";
-// import {ReactComponent as MenuIcon} from "../../../assets/icons/ic-20/ic20-menu.svg";
-// import {ReactComponent as ErrorIcon} from "../../../assets/icons/ic-20/ic20-alert.svg";
-// import {ReactComponent as RedirectIcon} from "../../../assets/icons/ic-20/ic20-arrow-right.svg";
-// import {ReactComponent as PushIcon} from "../../../assets/icons/ic-20/ic20-upload.svg";
-// import {ReactComponent as PullIcon} from "../../../assets/icons/ic-20/ic20-download.svg";
-// import {ReactComponent as CloseIcon} from "../../../assets/icons/ic-20/ic20-close.svg";
-// import {ReactComponent as TableIcon} from "../../../assets/icons/ic-20/ic20-view-table.svg";
-//
-// import {oneDark} from '@codemirror/theme-one-dark';
-// import {HighlightStyle, tags} from "@codemirror/highlight"
-// import { SQLCommandQueryResponsePacketData } from "../../packets/in/SQLCommandQueryResponsePacketData";
-// import {TransitionProps} from "@mui/material/transitions";
-// import { App } from "../../logic/App";
-// import {ProjectInfoData} from "../../logic/ProjectInfoData";
-// import {DBSessionCacheShard} from "../../shards/DBSessionCacheShard";
-// import {v4} from "uuid";
-// import {RenderExecutor} from "../../tests/regex/RenderExecutor";
-// import {RedirectController} from "../../components/RedirectController";
-// import { PageV2 } from "../../components/Page";
-// import { FlexBox } from "../../components/FlexBox";
-// import { FlexDirection } from "../../logic/FlexDirection";
-// import {percent} from "../../logic/DimensionalMeasured";
-// import {CodeEditor} from "../../components/CodeEditor";
-// import {OverflowBehaviour} from "../../logic/OverflowBehaviour";
-// import {cs} from "../../logic/state/State";
-// import {RenderController} from "../../tests/regex/RenderController";
-// import {Assembly} from "../../logic/Assembly";
-// import {getOr} from "../../logic/Utils";
-// import {LoadState} from "../../logic/LoadState";
-// import {sql} from "@codemirror/lang-sql";
-// import {CircularProgress, Dialog, Slide, Zoom} from "@mui/material";
-// import {CustomTooltip} from "../../components/CustomTooltip";
-
 import React, {ForwardedRef} from "react";
 import {PageV2} from "../../components/Page";
 import {LiteGrid} from "../../components/LiteGrid";
@@ -42,10 +8,13 @@ import {Icon} from "../../components/Icon";
 import {ReactComponent as MenuIcon} from "../../assets/icons/ic-20/ic20-menu.svg";
 import {ReactComponent as ErrorIcon} from "../../assets/icons/ic-20/ic20-alert.svg";
 import {ReactComponent as RedirectIcon} from "../../assets/icons/ic-20/ic20-arrow-right.svg";
-import {ReactComponent as PushIcon} from "../../assets/icons/ic-20/ic20-upload.svg";
-import {ReactComponent as PullIcon} from "../../assets/icons/ic-20/ic20-download.svg";
+import {ReactComponent as PushIcon} from "../../assets/icons/ic-16/ic16-upload.svg";
+import {ReactComponent as PullIcon} from "../../assets/icons/ic-16/ic16-download.svg";
 import {ReactComponent as CloseIcon} from "../../assets/icons/ic-20/ic20-close.svg";
 import {ReactComponent as TableIcon} from "../../assets/icons/ic-20/ic20-view-table.svg";
+import {ReactComponent as UploadIcon} from "../../assets/icons/ic-16/ic16-upload.svg";
+import {ReactComponent as DownloadIcon} from "../../assets/icons/ic-16/ic16-download.svg";
+import {ReactComponent as CreateIcon} from "../../assets/icons/ic-16/ic16-plus.svg";
 import {App, utilizeGlobalTheme} from "../../logic/App";
 import {Text, TextType} from "../../components/Text";
 import {DBSessionCacheShard} from "../../shards/DBSessionCacheShard";
@@ -64,7 +33,7 @@ import {sql} from "@codemirror/lang-sql";
 import {OverflowBehaviour} from "../../logic/OverflowBehaviour";
 import {Themeable} from "../../Themeable";
 import {SessionCommand} from "../../logic/data/SessionCommand";
-import {getOr} from "../../logic/Utils";
+import {arrayFactory, getOr} from "../../logic/Utils";
 import {RenderController} from "../../tests/regex/RenderController";
 import {RenderExecutor} from "../../tests/regex/RenderExecutor";
 import {Button} from "../../components/Button";
@@ -81,6 +50,10 @@ import {Separator} from "../../components/Separator";
 import {Orientation} from "../../logic/Orientation";
 import {oneDark} from '@codemirror/theme-one-dark';
 import {HighlightStyle, tags} from "@codemirror/highlight"
+import {ElementHeader} from "../../components/ElementHeader";
+import {InformationBox} from "../../components/InformationBox";
+import {SQLQueryResultDialog} from "../sqlQueryResult/SQLQueryResultDialog";
+import {RoadmapEntry} from "../../components/RoadmapEntry";
 
 export type DebugEditorProps = {
 }
@@ -119,8 +92,8 @@ export class Editor extends React.Component<DebugEditorProps, DebugEditorState> 
     private readonly controller = new RenderController();
 
     private readonly assembly: Assembly;
-    // noinspection TypeScriptFieldCanBeMadeReadonly
 
+    // noinspection TypeScriptFieldCanBeMadeReadonly
     private projectStaticData?: ProjectInfoData;
 
     constructor(props: DebugEditorProps) {
@@ -162,6 +135,7 @@ export class Editor extends React.Component<DebugEditorProps, DebugEditorState> 
     private initAssembly() {
         this.createPullPushAssembly();
         this.createSqlCommandResultAssembly();
+        this.createSqlCommandResultAssemblyV2();
     }
 
     private createPullPushAssembly() {
@@ -213,6 +187,20 @@ export class Editor extends React.Component<DebugEditorProps, DebugEditorState> 
         });
     }
 
+    private createSqlCommandResultAssemblyV2() {
+        this.assembly.assembly("sql-command-result-v2", (theme, props1) => {
+            const cache = this.local.state.sqlCommandResultCache;
+            if (cache !== undefined && cache.length > 0) {
+                // todo remove cache duplication
+                return (
+                    <SQLQueryResultDialog data={[...cache, ...cache, ...cache, ...cache]} startingIndex={cache.length * 4} onClose={() => this.setState({
+                        openMainDialog: false
+                    })}/>
+                );
+            } else return <>Date is undefined or no data accessible</>;
+        });
+    }
+
     private createSqlCommandResultAssembly() {
         this.assembly.assembly("sql-command-result", (theme, props1) => {
             const cache = this.local.state.sqlCommandResultCache;
@@ -225,7 +213,7 @@ export class Editor extends React.Component<DebugEditorProps, DebugEditorState> 
                         })}/>
                     </>
                 );
-            } else return <>Date is undefined</>;
+            } else return <>Data is undefined</>;
         });
     }
 
@@ -240,7 +228,9 @@ export class Editor extends React.Component<DebugEditorProps, DebugEditorState> 
                 this.local.setState({
                     sqlCommandResultCache: cache
                 });
-                this.openMainDialog("sql-command-result");
+
+                // this.openMainDialog("sql-command-result");
+                this.openMainDialog("sql-command-result-v2");
 
                 this.local.setState({
                     processPullCommand: false,
@@ -327,40 +317,20 @@ export class Editor extends React.Component<DebugEditorProps, DebugEditorState> 
                 break;
         }
 
-        // App.app().getConnector().call({
-        //     protocol: "main",
-        //     packetID: "SessionCommandPacketData",
-        //     data: {
-        //         type: type,
-        //         raw: this.local.state.command,
-        //         attributes: new Map<string, string>(),
-        //         dbID: App.app().shard<DBSessionCacheShard>("db-session-cache").currentInfoData?.id
-        //     } as SessionCommand,
-        //     callback: {
-        //         handle: (connector1, packet) => {
-        //             // todo cast packet to useful d-type
-        //             // todo set local working state to false
-        //             this.local.setState({
-        //                 processPushCommand: false
-        //             }, new Map([["channels", ["*", "push-pull"]]]));
-        //         }
-        //     }
-        // });
-
-        // setTimeout(() => {
-        //     switch (type) {
-        //         case SessionCommandType.PULL:
-        //             this.local.setState({
-        //                 processPullCommand: false
-        //             }, new Map([["channels", ["*", "push-pull"]]]));
-        //             break;
-        //         case SessionCommandType.PUSH:
-        //             this.local.setState({
-        //                 processPushCommand: false
-        //             }, new Map([["channels", ["*", "push-pull"]]]));
-        //             break;
-        //     }
-        // }, 5000);
+        setTimeout(() => {
+            switch (type) {
+                case SessionCommandType.PULL:
+                    this.local.setState({
+                        processPullCommand: false
+                    }, new Map([["channels", ["*", "push-pull"]]]));
+                    break;
+                case SessionCommandType.PUSH:
+                    this.local.setState({
+                        processPushCommand: false
+                    }, new Map([["channels", ["*", "push-pull"]]]));
+                    break;
+            }
+        }, 10000);
     }
 
     // noinspection JSMethodCanBeStatic
@@ -404,22 +374,33 @@ export class Editor extends React.Component<DebugEditorProps, DebugEditorState> 
                     '& .MuiDialog-paper': {
                         backgroundColor: theme.colors.backgroundColor.css()
                     }
-                }}>
-                    {
-                        this.assembly.render({
-                            // todo create fallback
-                            component: this.state.dialogComponent as string,
-                        })
+                }}>{
+                    this.assembly.render({
+                        component: this.state.dialogComponent as string,
                     }
-                </Dialog>
+                )}</Dialog>
             );
         } else return <></>
     }
 
     private renderDBHistory(): JSX.Element {
-        return (
-            <Box height={percent(100)} width={percent(100)}>
+        const theme: Themeable.Theme = utilizeGlobalTheme();
 
+        /*
+        <DBTask data={{
+            timestamp: new Date(),
+            client: {
+                type: ClientType.USER,
+                id: v4(),
+                username: "root"
+            }
+        }}/>
+         */
+        return (
+            <Box height={percent(100)} overflowYBehaviour={OverflowBehaviour.SCROLL} width={percent(100)}>
+                <FlexBox gap={theme.gaps.smallGab}>{arrayFactory(() => (
+                    <RoadmapEntry status={"completed"}/>
+                ), 5)}</FlexBox>
             </Box>
         );
     }
@@ -448,17 +429,47 @@ export class Editor extends React.Component<DebugEditorProps, DebugEditorState> 
                         </LiteGrid>
                     </FlexBox>
 
-                    <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} gap={px(1)}>
+                    <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} gap={px(1)} width={percent(100)}>
                         <Text text={`${App.app().config.connectorConfig.address}/`}/>
-                        <Box paddingY={px(2)} paddingX={px(4)} visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}>
-                            <Text text={`**${session.title}**`}/>
+                        <Box paddingY={px(2)} paddingX={px(4)} overflowXBehaviour={OverflowBehaviour.SCROLL} visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}>
+                            <Text text={`**${session.title}**`} whitespace={"nowrap"}/>
                         </Box>
                     </FlexBox>
 
                     <Separator/>
 
                     <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab}>
-                        <CustomTooltip arrow title={"Show SQL result history"}>
+                        <CustomTooltip arrow noPadding noBorder title={
+                            <Box gapY={theme.gaps.smallGab}>
+                                <ElementHeader
+                                    icon={<DownloadIcon/>}
+                                    appendix={
+                                        <Button visualMeaning={ObjectVisualMeaning.BETA} shrinkOnClick opaque padding={px(4)}>
+                                            <Text text={"View roadmap"}/>
+                                        </Button>
+                                    }
+                                    wrapIcon
+                                    title={"Download data"}
+                                    beta={false}
+                                />
+                                <Separator/>
+                                <Text text={"Export data to a downloadable file. \nAllowed file formats: **.dat**, **.csv**, **.xls** *(Excel spreadsheet)*."}/>
+                                <InformationBox visualMeaning={ObjectVisualMeaning.BETA}>
+                                    <Text type={TextType.secondaryDescription} text={"As of version **v16** *(19. Feb 2022)*, this feature is still in development and will be accessible to beta mode in a couple of weeks."}/>
+                                </InformationBox>
+                            </Box>
+                        }>
+                            <span>
+                                <Button
+                                    cursor={Cursor.pointer}
+                                    visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
+                                    shrinkOnClick={true}>
+                                    <Icon icon={<CreateIcon/>}/>
+                                </Button>
+                            </span>
+                        </CustomTooltip>
+
+                        <CustomTooltip arrow title={<Text text={"Show SQL result history **[v1]**"}/>}>
                             <span>
                                 {
                                     this.local.state.sqlCommandResultCache.length > 0 ? (
@@ -468,19 +479,121 @@ export class Editor extends React.Component<DebugEditorProps, DebugEditorState> 
                                             shrinkOnClick={true}
                                             onClick={() => {
                                                 this.setState({
-                                                    openMainDialog: true
+                                                    openMainDialog: true,
+                                                    dialogComponent: "sql-command-result"
                                                 })
                                             }}>
-                                            <Icon visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} icon={<TableIcon/>}/>
+                                            <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab}>
+                                                <Icon visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} icon={<TableIcon/>}/>
+                                                <Text text={"v1"} bold/>
+                                            </FlexBox>
                                         </Button>
                                     ) : (
                                         <Button
                                             cursor={Cursor.notAllowed}
                                             visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}>
-                                            <Icon colored visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} icon={<TableIcon/>}/>
+                                            <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab}>
+                                                <Icon visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} colored icon={<TableIcon/>}/>
+                                                <Text text={"v1"} bold visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} coloredText/>
+                                            </FlexBox>
                                         </Button>
                                     )
                                 }
+                            </span>
+                        </CustomTooltip>
+
+                        <CustomTooltip arrow title={<Text text={"Show SQL result history **[v2]**"}/>}>
+                            <span>
+                                {
+                                    this.local.state.sqlCommandResultCache.length > 0 ? (
+                                        <Button
+                                            cursor={Cursor.pointer}
+                                            visualMeaning={ObjectVisualMeaning.BETA}
+                                            opaque
+                                            shrinkOnClick={true}
+                                            onClick={() => {
+                                                this.setState({
+                                                    openMainDialog: true,
+                                                    dialogComponent: "sql-command-result-v2"
+                                                })
+                                            }}>
+                                            <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab}>
+                                                <Icon visualMeaning={ObjectVisualMeaning.BETA} colored icon={<TableIcon/>}/>
+                                                <Text text={"v2"} bold visualMeaning={ObjectVisualMeaning.BETA} coloredText/>
+                                            </FlexBox>
+                                        </Button>
+                                    ) : (
+                                        <Button
+                                            cursor={Cursor.notAllowed}
+                                            opaque
+                                            visualMeaning={ObjectVisualMeaning.BETA}>
+                                            <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab}>
+                                                <Icon visualMeaning={ObjectVisualMeaning.BETA} colored icon={<TableIcon/>}/>
+                                                <Text text={"v2"} bold visualMeaning={ObjectVisualMeaning.BETA} coloredText/>
+                                            </FlexBox>
+                                        </Button>
+                                    )
+                                }
+                            </span>
+                        </CustomTooltip>
+
+                        <CustomTooltip arrow noPadding noBorder title={
+                            <Box gapY={theme.gaps.smallGab}>
+                                <ElementHeader
+                                    icon={<UploadIcon/>}
+                                    appendix={
+                                        <Button visualMeaning={ObjectVisualMeaning.BETA} shrinkOnClick opaque padding={px(4)}>
+                                            <Text text={"View roadmap"}/>
+                                        </Button>
+                                    }
+                                    wrapIcon
+                                    title={"Upload data"}
+                                    beta={false}
+                                />
+                                <Separator/>
+                                <Text text={"Import data from your device. \nAllowed file formats: **.dat**, **.csv**, **.xls** *(Excel spreadsheet)*."}/>
+                                <InformationBox visualMeaning={ObjectVisualMeaning.BETA}>
+                                    <Text type={TextType.secondaryDescription} text={"As of version **v16** *(19. Feb 2022)*, this feature is still in development and will be accessible to beta mode in a couple of weeks."}/>
+                                </InformationBox>
+                            </Box>
+                        }>
+                            <span>
+                                <Button
+                                    cursor={Cursor.pointer}
+                                    visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
+                                    shrinkOnClick={true}>
+                                     <Icon icon={<UploadIcon/>}/>
+                                </Button>
+                            </span>
+                        </CustomTooltip>
+
+                        <CustomTooltip arrow noPadding noBorder title={
+                            <Box gapY={theme.gaps.smallGab}>
+                                <ElementHeader
+                                    icon={<DownloadIcon/>}
+                                    appendix={
+                                        <Button visualMeaning={ObjectVisualMeaning.BETA} shrinkOnClick opaque padding={px(4)}>
+                                            <Text text={"View roadmap"}/>
+                                        </Button>
+                                    }
+                                    wrapIcon
+                                    title={"Download data"}
+                                    beta={false}
+                                />
+                                <Separator/>
+                                <Text text={"Export data to a downloadable file. \nAllowed file formats: **.dat**, **.csv**, **.xls** *(Excel spreadsheet)*."}/>
+                                <InformationBox visualMeaning={ObjectVisualMeaning.BETA}>
+                                    <Text type={TextType.secondaryDescription} text={"As of version **v16** *(19. Feb 2022)*, this feature is still in development and will be accessible to beta mode in a couple of weeks."}/>
+                                </InformationBox>
+                            </Box>
+                        }>
+                            <span>
+                                <Button
+                                    cursor={Cursor.pointer}
+                                    visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
+                                    shrinkOnClick={true}>
+                                     <Icon icon={<DownloadIcon/>}/>
+                                </Button>
                             </span>
                         </CustomTooltip>
                     </FlexBox>

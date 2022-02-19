@@ -19,7 +19,8 @@ export type ButtonProps = {
     height?: DimensionalMeasured,
     cursor?: Cursor,
     enableBaseAnimation?: boolean,
-    baseAnimation?: "hover-repeat"
+    baseAnimation?: "hover-repeat",
+    padding?: DimensionalMeasured
 }
 
 export class Button extends React.Component<ButtonProps, any> {
@@ -37,7 +38,7 @@ export class Button extends React.Component<ButtonProps, any> {
           border-radius: ${theme.radii.defaultObjectRadius.css()};
           background-color: ${bgColor.css()};
           border: 1px solid ${meaningfulColors.lighter.css()};
-          padding: ${theme.paddings.defaultButtonPadding.css()};
+          padding: ${getOr(this.props.padding, theme.paddings.defaultButtonPadding).css()};
           color: ${theme.colors.fontPrimaryColor.css()};
           font-family: ${theme.texts.fontFamily};
           width: ${getOr(this.props.width?.css(), "auto")};
