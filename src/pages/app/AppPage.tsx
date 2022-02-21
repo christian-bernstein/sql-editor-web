@@ -430,7 +430,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
 
     private getLogPacketInterceptor(): (packet: Environment.Packet, connector: Environment.Connector) => void {
         return (packet, connector) => {
-            App.app().log({
+            App.app().baseLog({
                 id: v4(),
                 creator: "network",
                 level: "TRACE",

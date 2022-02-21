@@ -131,7 +131,7 @@ export namespace Environment {
                             try {
                                 handler(connector, data);
                             } catch (e) {
-                                App.app().log({
+                                App.app().baseLog({
                                     id: v4(),
                                     appendices: [e, handler],
                                     timestamp: new Date(),

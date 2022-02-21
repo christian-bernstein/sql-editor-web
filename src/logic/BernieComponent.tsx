@@ -77,7 +77,7 @@ export class BernieComponent<RProps, RState, LState extends object> extends Reac
     }
 
     public renderRedirect(): JSX.Element {
-        App.app().log({
+        App.app().baseLog({
             id: v4(),
             level: "TRACE",
             message: `Try to redirect to *${this.redirectTo}* (redirect: *${this.redirect}*)`,

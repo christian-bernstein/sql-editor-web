@@ -3,6 +3,7 @@ import {BernieComponent} from "../logic/BernieComponent";
 import {Themeable} from "../Themeable";
 import {Assembly} from "../logic/Assembly";
 import {getOr} from "../logic/Utils";
+import {App} from "../logic/App";
 
 export type IfProps = {
     condition: boolean,

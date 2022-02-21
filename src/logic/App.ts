@@ -311,7 +311,7 @@ export class App {
                 })
                 .registerProtocolPacketHandler("main", "SQLCommandQueryResponsePacketData", {
                     handle: (connector1, packet) => {
-                        console.error("SQLCommandQueryResponsePacketData SQLCommandQueryResponsePacketData SQLCommandQueryResponsePacketData!!")
+                        // todo do something with this method
                     }
                 })
                 .connect();
@@ -368,7 +368,7 @@ export class App {
             //     timestamp: new Date()
             // }, ...data]);
 
-            this.log({
+            this.baseLog({
                 appendices: data.map(value => {
                     return {
                         type: "unknown",
@@ -478,7 +478,31 @@ export class App {
         return this._logHistory;
     }
 
-    public log(log: LogEntry): App {
+    public error(message: string, ...appendices: any[]): App {
+        this.baseLog({
+            id: v4(),
+            timestamp: new Date(),
+            level: "ERROR",
+            message: message,
+            creator: "unknown",
+            appendices: appendices
+        });
+        return this;
+    }
+
+    public log(message: string, ...appendices: any[]): App {
+        this.baseLog({
+            id: v4(),
+            timestamp: new Date(),
+            level: "INFO",
+            message: message,
+            creator: "unknown",
+            appendices: appendices
+        });
+        return this;
+    }
+
+    public baseLog(log: LogEntry): App {
         this.sophisticatedLogHistory.push(log);
 
         // Delete oldest log entry if needed
@@ -518,7 +542,6 @@ export class App {
             config.processFinished?.();
         } else if (entries.length === 1) {
             // a single session entry is present
-            console.error("one session present");
             this.login({
                 initialLoginProcedure: "session",
                 sessionID: entries[0].sessionID,

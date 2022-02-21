@@ -21,7 +21,7 @@ import {Themeable} from "../../Themeable";
 import {ServerConnectionIcon} from "../../components/ServerConnectionIcon";
 import {Button} from "../../components/Button";
 import {ObjectVisualMeaning} from "../../logic/ObjectVisualMeaning";
-import {DimensionalMeasured, percent, px} from "../../logic/DimensionalMeasured";
+import {percent, px} from "../../logic/DimensionalMeasured";
 import {PosInCenter} from "../../components/PosInCenter";
 import {Cursor} from "../../logic/style/Cursor";
 import {Icon} from "../../components/Icon";
@@ -37,10 +37,8 @@ import {BadgedWrapper} from "../../components/BadgedWrapper";
 import {v4} from "uuid";
 import {BernieComponent} from "../../logic/BernieComponent";
 import {Assembly} from "../../logic/Assembly";
-import {DBTask} from "../../components/dbTask/DBTask";
-import {Dimension} from "../../logic/Dimension";
-import {ClientType} from "../../logic/ClientType";
 import {InformationBox} from "../../components/InformationBox";
+import {If} from "../../components/If";
 
 export type BoardingPageProps = {}
 
@@ -331,13 +329,16 @@ export class BoardingPage extends BernieComponent<BoardingPageProps, BoardingPag
                                 }}/>
                             </FlexBox>*/}
 
-                            <InformationBox visualMeaning={ObjectVisualMeaning.BETA}>
-                                <Text type={TextType.secondaryDescription} text={"As of subversion **v16** *(19. Feb 2022)*, the website is in it's development phase."}/>
-                                <Button onClick={() => App.app().callDialog(Constants.roadmapDialog)}>
-                                    <Text text={"Roadmap"} uppercase bold fontSize={px(12)}/>
-                                </Button>
-                            </InformationBox>
+                            <If.Beta/>
 
+                            <InformationBox visualMeaning={ObjectVisualMeaning.BETA} width={percent(100)}>
+                                <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} width={percent(100)} justifyContent={Justify.SPACE_BETWEEN}>
+                                    <Text type={TextType.secondaryDescription} text={"As of subversion **v16** *(19. Feb 2022)*, the website is in it's development phase."}/>
+                                    <Button onClick={() => App.app().callDialog(Constants.roadmapDialog)}>
+                                        <Text text={"Roadmap"} uppercase bold fontSize={px(12)}/>
+                                    </Button>
+                                </FlexBox>
+                            </InformationBox>
 
                             <ol className={"continue-as-list"}>
                                 {

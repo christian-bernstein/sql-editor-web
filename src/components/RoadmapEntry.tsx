@@ -88,5 +88,4 @@ export class RoadmapEntry extends BernieComponent<RoadmapEntryProps, any, any> {
             </FlexBox>
         );
     }
-
 }
