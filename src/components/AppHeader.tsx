@@ -2,10 +2,10 @@ import React from "react";
 import {LiteGrid} from "./LiteGrid";
 import {FlexBox} from "./FlexBox";
 import {Text, TextType} from "./Text";
-import {Justify} from "../logic/Justify";
+import {Justify} from "../logic/style/Justify";
 import {Align} from "../logic/Align";
-import {percent} from "../logic/DimensionalMeasured";
-import {FlexDirection} from "../logic/FlexDirection";
+import {percent} from "../logic/style/DimensionalMeasured";
+import {FlexDirection} from "../logic/style/FlexDirection";
 
 export type AppHeaderProps = {
     title: string

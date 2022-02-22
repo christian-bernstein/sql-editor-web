@@ -2,10 +2,10 @@ import React from "react";
 import {Themeable} from "../../Themeable";
 import {utilizeGlobalTheme} from "../../logic/App";
 import {Box} from "../../components/Box";
-import {OverflowBehaviour} from "../../logic/OverflowBehaviour";
+import {OverflowBehaviour} from "../../logic/style/OverflowBehaviour";
 import {Text, TextType} from "../../components/Text";
 import {LiteGrid} from "../../components/LiteGrid";
-import {px} from "../../logic/DimensionalMeasured";
+import {px} from "../../logic/style/DimensionalMeasured";
 import {ObjectVisualMeaning} from "../../logic/ObjectVisualMeaning";
 
 export type CheatsheetData = {

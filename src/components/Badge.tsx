@@ -9,7 +9,7 @@ import {getOr} from "../logic/Utils";
 import {ObjectVisualMeaning} from "../logic/ObjectVisualMeaning";
 import {Cursor} from "../logic/style/Cursor";
 import {Text} from "./Text";
-import {px} from "../logic/DimensionalMeasured";
+import {px} from "../logic/style/DimensionalMeasured";
 
 export type BadgeProps = WithVisualMeaning & {
     background?: Color,

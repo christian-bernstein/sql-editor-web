@@ -8,9 +8,9 @@ import React from "react";
 import {AppHeader} from "../../components/AppHeader";
 import {Input} from "../../components/Input";
 import {FlexBox} from "../../components/FlexBox";
-import {FlexDirection} from "../../logic/FlexDirection";
-import {percent} from "../../logic/DimensionalMeasured";
-import {OverflowBehaviour} from "../../logic/OverflowBehaviour";
+import {FlexDirection} from "../../logic/style/FlexDirection";
+import {percent} from "../../logic/style/DimensionalMeasured";
+import {OverflowBehaviour} from "../../logic/style/OverflowBehaviour";
 import {RecipeComponent} from "./RecipeComponent";
 import {arrayFactory} from "../../logic/Utils";
 

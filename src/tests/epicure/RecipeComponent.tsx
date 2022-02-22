@@ -5,11 +5,11 @@ import {Assembly} from "../../logic/Assembly";
 import {Box} from "../../components/Box";
 import {Text, TextType} from "../../components/Text";
 import React from "react";
-import {percent} from "../../logic/DimensionalMeasured";
+import {percent} from "../../logic/style/DimensionalMeasured";
 import {Separator} from "../../components/Separator";
 import {FlexBox} from "../../components/FlexBox";
-import {FlexDirection} from "../../logic/FlexDirection";
-import {Justify} from "../../logic/Justify";
+import {FlexDirection} from "../../logic/style/FlexDirection";
+import {Justify} from "../../logic/style/Justify";
 
 export type RecipeComponentProps = {
     recipe: Recipe

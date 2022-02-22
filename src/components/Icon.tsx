@@ -4,7 +4,7 @@ import styled from "styled-components";
 import {getMeaningfulColors, MeaningfulColors, Themeable} from "../Themeable";
 import {utilizeGlobalTheme} from "../logic/App";
 import {ObjectVisualMeaning} from "../logic/ObjectVisualMeaning";
-import {DimensionalMeasured, px} from "../logic/DimensionalMeasured";
+import {DimensionalMeasured, px} from "../logic/style/DimensionalMeasured";
 import {getOr} from "../logic/Utils";
 import {Color} from "../Color";
 

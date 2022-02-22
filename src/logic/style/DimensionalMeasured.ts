@@ -1,5 +1,5 @@
 import {Dimension} from "./Dimension";
-import {IToCSSConvertable} from "./IToCSSConvertable";
+import {IToCSSConvertable} from "../IToCSSConvertable";
 
 // noinspection SpellCheckingInspection
 export class DimensionalMeasured implements IToCSSConvertable {

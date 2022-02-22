@@ -8,7 +8,7 @@ import {getOr} from "../logic/Utils";
 import styled from "styled-components";
 import {Color} from "../Color";
 import {FontWeight} from "../logic/style/FontWeight";
-import {DimensionalMeasured} from "../logic/DimensionalMeasured";
+import {DimensionalMeasured} from "../logic/style/DimensionalMeasured";
 import {If} from "./If";
 
 export type InputProps = {

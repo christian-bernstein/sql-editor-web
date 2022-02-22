@@ -58,7 +58,7 @@
       }
     }
 
-    // Small background image on the left side, maybe expandable to a introduction images slider
+    // Small background images on the left side, maybe expandable to a introduction images slider
     .brand-background {
       top: 0;
       left: 0;
@@ -342,7 +342,7 @@ $breakpoint-h-sm: 500px;
 
 // Large tablet view (no center card)
 @media screen and (max-width: $breakpoint-w-l) and (min-height: $breakpoint-h-m) {
-  .image-reference {
+  .images-reference {
     display: none;
   }
 

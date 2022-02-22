@@ -6,10 +6,10 @@ import React from "react";
 import {Icon} from "../../components/Icon";
 import {ReactComponent as BackIcon} from "../../assets/icons/ic-20/ic20-arrow-left.svg";
 import {FlexBox} from "../../components/FlexBox";
-import {FlexDirection} from "../../logic/FlexDirection";
-import {Justify} from "../../logic/Justify";
+import {FlexDirection} from "../../logic/style/FlexDirection";
+import {Justify} from "../../logic/style/Justify";
 import {Input} from "../../components/Input";
-import {percent} from "../../logic/DimensionalMeasured";
+import {percent} from "../../logic/style/DimensionalMeasured";
 import {Text} from "../../components/Text";
 
 export type SignupPageProps = {

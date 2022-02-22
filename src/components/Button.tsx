@@ -5,7 +5,7 @@ import styled from "styled-components";
 import {ObjectVisualMeaning} from "../logic/ObjectVisualMeaning";
 import {getOr} from "../logic/Utils";
 import {Color} from "../Color";
-import {DimensionalMeasured} from "../logic/DimensionalMeasured";
+import {DimensionalMeasured} from "../logic/style/DimensionalMeasured";
 import {Cursor} from "../logic/style/Cursor";
 
 export type ButtonProps = {

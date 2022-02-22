@@ -2,7 +2,7 @@ import {Shard} from "./Shard";
 import {SessionHistoryEntry} from "./SessionHistoryEntry";
 import {Environment} from "./Environment";
 import {AppConfig} from "./AppConfig";
-import {UserData} from "./UserData";
+import {UserData} from "./data/UserData";
 import {CredentialsLoginResponsePacketData} from "../pages/login/CredentialsLoginResponsePacketData";
 import {Credentials} from "../pages/login/Credentials";
 import {CredentialsCheckResultType} from "../pages/login/CredentialsCheckResultType";

@@ -2,7 +2,7 @@ import React from "react";
 import {Menu} from "@mui/material";
 import {Button} from "./Button";
 import {ObjectVisualMeaning} from "../logic/ObjectVisualMeaning";
-import {percent} from "../logic/DimensionalMeasured";
+import {percent} from "../logic/style/DimensionalMeasured";
 import {Themeable} from "../Themeable";
 import {utilizeGlobalTheme} from "../logic/App";
 import {FlexBox} from "./FlexBox";

@@ -1,14 +1,14 @@
 import {BernieComponent} from "../logic/BernieComponent";
 import {Themeable} from "../Themeable";
 import {Assembly} from "../logic/Assembly";
-import {percent} from "../logic/DimensionalMeasured";
+import {percent} from "../logic/style/DimensionalMeasured";
 import {Input} from "./Input";
 import {Button} from "./Button";
 import {Icon} from "./Icon";
 import {ReactComponent as RunIcon} from "../assets/icons/ic-16/ic16-play.svg";
 import {FlexBox} from "./FlexBox";
 import React from "react";
-import {FlexDirection} from "../logic/FlexDirection";
+import {FlexDirection} from "../logic/style/FlexDirection";
 import {ObjectVisualMeaning} from "../logic/ObjectVisualMeaning";
 import {Align} from "../logic/Align";
 

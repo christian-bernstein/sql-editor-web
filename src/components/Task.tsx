@@ -8,7 +8,7 @@ import {Themeable} from "../Themeable";
 import {utilizeGlobalTheme} from "../logic/App";
 import {styled} from "@mui/material/styles";
 import {Check} from "@mui/icons-material";
-import {px} from "../logic/DimensionalMeasured";
+import {px} from "../logic/style/DimensionalMeasured";
 
 export type TaskProps = {
     task: TaskInformation

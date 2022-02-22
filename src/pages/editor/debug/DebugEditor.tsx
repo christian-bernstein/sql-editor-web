@@ -3,7 +3,7 @@ import {PageV2} from "../../../components/Page";
 import {LiteGrid} from "../../../components/LiteGrid";
 import {FlexBox} from "../../../components/FlexBox";
 import {Align} from "../../../logic/Align";
-import {Justify} from "../../../logic/Justify";
+import {Justify} from "../../../logic/style/Justify";
 import {Icon} from "../../../components/Icon";
 import {ReactComponent as MenuIcon} from "../../../assets/icons/ic-20/ic20-menu.svg";
 import {ReactComponent as ErrorIcon} from "../../../assets/icons/ic-20/ic20-alert.svg";
@@ -15,19 +15,19 @@ import {ReactComponent as TableIcon} from "../../../assets/icons/ic-20/ic20-view
 import {App, utilizeGlobalTheme} from "../../../logic/App";
 import {Text, TextType} from "../../../components/Text";
 import {DBSessionCacheShard} from "../../../shards/DBSessionCacheShard";
-import {percent, px} from "../../../logic/DimensionalMeasured";
+import {percent, px} from "../../../logic/style/DimensionalMeasured";
 import {Box} from "../../../components/Box";
 import {ObjectVisualMeaning} from "../../../logic/ObjectVisualMeaning";
 import {Cursor} from "../../../logic/style/Cursor";
 import {RedirectController} from "../../../components/RedirectController";
 import {ProjectInfoData} from "../../../logic/ProjectInfoData";
 import {PosInCenter} from "../../../components/PosInCenter";
-import {FlexDirection} from "../../../logic/FlexDirection";
+import {FlexDirection} from "../../../logic/style/FlexDirection";
 import {CodeEditor} from "../../../components/CodeEditor";
 import {cs} from "../../../logic/state/State";
 import {v4} from "uuid";
 import {sql} from "@codemirror/lang-sql";
-import {OverflowBehaviour} from "../../../logic/OverflowBehaviour";
+import {OverflowBehaviour} from "../../../logic/style/OverflowBehaviour";
 import {Themeable} from "../../../Themeable";
 import {SessionCommand} from "../../../logic/data/SessionCommand";
 import {getOr} from "../../../logic/Utils";
@@ -44,7 +44,7 @@ import {SQLCommandQueryResponsePacketData} from "../../../packets/in/SQLCommandQ
 import {DebugTableDataDisplayPage} from "../../../components/TableDataDisplay";
 import {ServerConnectionIcon} from "../../../components/ServerConnectionIcon";
 import {Separator} from "../../../components/Separator";
-import {Orientation} from "../../../logic/Orientation";
+import {Orientation} from "../../../logic/style/Orientation";
 
 import {oneDark} from '@codemirror/theme-one-dark';
 import {HighlightStyle, tags} from "@codemirror/highlight"

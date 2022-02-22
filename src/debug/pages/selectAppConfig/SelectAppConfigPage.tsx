@@ -4,9 +4,9 @@ import {Themeable} from "../../../Themeable";
 import {utilizeGlobalTheme} from "../../../logic/App";
 import {AppConfigSelectionData, AppConfigSelector} from "../../components/AppConfigSelector";
 import {Text, TextType} from "../../../components/Text";
-import {Dimension} from "../../../logic/Dimension";
+import {Dimension} from "../../../logic/style/Dimension";
 import {Input} from "../../../components/Input";
-import {dimension, px} from "../../../logic/DimensionalMeasured";
+import {dimension, px} from "../../../logic/style/DimensionalMeasured";
 import {FlexBox} from "../../../components/FlexBox";
 import {v4} from "uuid";
 import _ from "lodash";
@@ -17,7 +17,7 @@ import {ReactComponent as Logo} from "../../../assets/retired_logo_v2.svg";
 import {Togglable} from "../../../components/Togglable";
 import {ObjectVisualMeaning} from "../../../logic/ObjectVisualMeaning";
 import {AppHeader} from "../../../components/AppHeader";
-import {FlexDirection} from "../../../logic/FlexDirection";
+import {FlexDirection} from "../../../logic/style/FlexDirection";
 
 
 export type SelectAppConfigPageProps = {

@@ -1,7 +1,7 @@
 import React from "react";
 import {array} from "../../logic/Utils";
 import {FlexBox} from "../../components/FlexBox";
-import {FlexDirection} from "../../logic/FlexDirection";
+import {FlexDirection} from "../../logic/style/FlexDirection";
 import {Align} from "../../logic/Align";
 
 let hook: () => void;

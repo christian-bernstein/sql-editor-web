@@ -2,7 +2,7 @@ import React from "react";
 import {ObjectVisualMeaning} from "../logic/ObjectVisualMeaning";
 import {Box} from "./Box";
 import {FlexBox} from "./FlexBox";
-import {FlexDirection} from "../logic/FlexDirection";
+import {FlexDirection} from "../logic/style/FlexDirection";
 import {ReactComponent as WarningIcon} from "../assets/icons/ic-20/ic20-warning.svg";
 import {ReactComponent as InformationIcon} from "../assets/icons/ic-20/ic20-info.svg";
 import {ReactComponent as ErrorIcon} from "../assets/icons/ic-20/ic20-alert-full.svg";
@@ -11,8 +11,8 @@ import {ReactComponent as BetaIcon} from "../assets/icons/ic-20/ic20-bug.svg";
 import {Icon} from "./Icon";
 import {Align} from "../logic/Align";
 import {getOr} from "../logic/Utils";
-import {DimensionalMeasured} from "../logic/DimensionalMeasured";
-import {OverflowBehaviour} from "../logic/OverflowBehaviour";
+import {DimensionalMeasured} from "../logic/style/DimensionalMeasured";
+import {OverflowBehaviour} from "../logic/style/OverflowBehaviour";
 
 export type InformationBoxProps = {
     visualMeaning?: ObjectVisualMeaning,

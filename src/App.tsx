@@ -20,7 +20,7 @@ export class App extends React.Component {
         // return (
         //     <>
         //         <div className={"App"}>
-        //             {Store.defStore().get<Environment.EnvironmentDebugData>("overlays-config")?.showOverlays ? <img src={debugImage} alt={"Debug image"} height={"100%"} className={"debug-overlay"}/> : []}
+        //             {Store.defStore().get<Environment.EnvironmentDebugData>("overlays-config")?.showOverlays ? <img src={debugImage} alt={"Debug images"} height={"100%"} className={"debug-overlay"}/> : []}
         //             <ThemeProvider theme={Environment.constants.themes.get(Store.defStore()?.get<Environment.EnvironmentVisualData>("visual-config")?.activeTheme as string) as Theme}>
         //                 <CssBaseline />
         //                 <Login/>

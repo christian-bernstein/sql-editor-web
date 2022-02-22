@@ -1,8 +1,8 @@
 import React from "react";
 import {WithVisualMeaning} from "../logic/WithVisualMeaning";
 import styled from "styled-components";
-import {DimensionalMeasured, px} from "../logic/DimensionalMeasured";
-import {Orientation} from "../logic/Orientation";
+import {DimensionalMeasured, px} from "../logic/style/DimensionalMeasured";
+import {Orientation} from "../logic/style/Orientation";
 import {getOr} from "../logic/Utils";
 import {getMeaningfulColors, MeaningfulColors, Themeable} from "../Themeable";
 import {Color} from "../Color";

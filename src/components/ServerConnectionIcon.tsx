@@ -8,7 +8,7 @@ import {Environment} from "../logic/Environment";
 import {getMeaningfulColors, Themeable} from "../Themeable";
 import {BounceLoader} from "react-spinners";
 import {Badge} from "./Badge";
-import {px} from "../logic/DimensionalMeasured";
+import {px} from "../logic/style/DimensionalMeasured";
 import {getOr} from "../logic/Utils";
 import {CustomTooltip} from "./CustomTooltip";
 import {FlexBox} from "./FlexBox";

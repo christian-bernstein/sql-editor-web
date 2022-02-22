@@ -4,14 +4,14 @@ import {AppConfig} from "../../logic/AppConfig";
 import {Text, TextType} from "../../components/Text";
 import {ObjectJSONDisplay} from "../../components/ObjectJSONDisplay";
 import {Button} from "../../components/Button";
-import {Dimension} from "../../logic/Dimension";
-import {dimension, DimensionalMeasured, px} from "../../logic/DimensionalMeasured";
+import {Dimension} from "../../logic/style/Dimension";
+import {dimension, DimensionalMeasured, px} from "../../logic/style/DimensionalMeasured";
 import {ObjectVisualMeaning} from "../../logic/ObjectVisualMeaning";
 import {ReactComponent as ConfigIcon} from "../../assets/icons/ic-20/ic20-dns.svg";
 import {ReactComponent as DebugIcon} from "../../assets/icons/ic-16/ic16-bug.svg";
 import {InformationBox} from "../../components/InformationBox";
 import {FlexBox} from "../../components/FlexBox";
-import {FlexDirection} from "../../logic/FlexDirection";
+import {FlexDirection} from "../../logic/style/FlexDirection";
 import {Icon} from "../../components/Icon";
 import {Align} from "../../logic/Align";
 

@@ -6,7 +6,7 @@ import {Icon} from "./Icon";
 import {ObjectVisualMeaning} from "../logic/ObjectVisualMeaning";
 import {getMeaningfulColors, MeaningfulColors, Themeable} from "../Themeable";
 import {utilizeGlobalTheme} from "../logic/App";
-import {px} from "../logic/DimensionalMeasured";
+import {px} from "../logic/style/DimensionalMeasured";
 
 export const ProjectInfoOnlineIcon: React.FC<{
     static: boolean,

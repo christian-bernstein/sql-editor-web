@@ -6,7 +6,7 @@ import {App, utilizeGlobalTheme} from "../logic/App";
 import {ObjectVisualMeaning} from "../logic/ObjectVisualMeaning";
 import {Input} from "./Input";
 import {FlexBox} from "./FlexBox";
-import {FlexDirection} from "../logic/FlexDirection";
+import {FlexDirection} from "../logic/style/FlexDirection";
 import {Separator} from "./Separator";
 import {CodeEditor} from "./CodeEditor";
 import {cs} from "../logic/state/State";

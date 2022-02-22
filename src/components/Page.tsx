@@ -2,7 +2,7 @@ import React, {CSSProperties} from "react";
 import {Themeable} from "../Themeable";
 import {utilizeGlobalTheme} from "../logic/App";
 import styled from "styled-components";
-import {DimensionalMeasured} from "../logic/DimensionalMeasured";
+import {DimensionalMeasured} from "../logic/style/DimensionalMeasured";
 import {getOr} from "../logic/Utils";
 
 export type PageProps = {

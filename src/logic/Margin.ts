@@ -1,5 +1,5 @@
-import {DimensionalMeasured} from "./DimensionalMeasured";
-import {Dimension} from "./Dimension";
+import {DimensionalMeasured} from "./style/DimensionalMeasured";
+import {Dimension} from "./style/Dimension";
 import {CSSProperties} from "styled-components";
 
 export type Margin = {

@@ -1,7 +1,7 @@
 import React, {CSSProperties} from "react";
 import styled from "styled-components";
 import {getOr} from "../logic/Utils";
-import {DimensionalMeasured, px} from "../logic/DimensionalMeasured";
+import {DimensionalMeasured, px} from "../logic/style/DimensionalMeasured";
 
 export type GridProps = {
     rows?: number

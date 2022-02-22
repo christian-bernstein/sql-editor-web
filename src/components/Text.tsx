@@ -4,7 +4,7 @@ import {getMeaningfulColors, MeaningfulColors, Themeable} from "../Themeable";
 import {utilizeGlobalTheme} from "../logic/App";
 import {createMargin, Margin, setMarginToCSSProperties} from "../logic/Margin";
 import {getOr} from "../logic/Utils";
-import {DimensionalMeasured} from "../logic/DimensionalMeasured";
+import {DimensionalMeasured} from "../logic/style/DimensionalMeasured";
 import {ObjectVisualMeaning} from "../logic/ObjectVisualMeaning";
 import ReactMarkdown from 'react-markdown'
 import {Link} from "./Link";

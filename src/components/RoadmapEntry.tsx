@@ -12,10 +12,10 @@ import {ReactComponent as DownloadIcon} from "../assets/icons/ic-16/ic16-downloa
 import {ReactComponent as CheckIcon} from "../assets/icons/ic-16/ic16-check.svg";
 import {ReactComponent as FutureIcon} from "../assets/icons/ic-16/ic16-play.svg";
 import {Button} from "./Button";
-import {percent, px} from "../logic/DimensionalMeasured";
+import {percent, px} from "../logic/style/DimensionalMeasured";
 import {Separator} from "./Separator";
-import {Orientation} from "../logic/Orientation";
-import {FlexDirection} from "../logic/FlexDirection";
+import {Orientation} from "../logic/style/Orientation";
+import {FlexDirection} from "../logic/style/FlexDirection";
 import {Align} from "../logic/Align";
 import {CircularProgress} from "@mui/material";
 import {Icon} from "./Icon";
@@ -55,35 +55,18 @@ export class RoadmapEntry extends BernieComponent<RoadmapEntryProps, any, any> {
     // <Icon icon={<DownloadIcon/>}/>
     componentRender(p: any, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
-            <FlexBox flexDir={FlexDirection.ROW}>
+            <FlexBox flexDir={FlexDirection.ROW} width={percent(100)}>
                 <FlexBox height={percent(100)} align={Align.CENTER}>
                     {this.renderAnchor()}
                     <Separator orientation={Orientation.VERTICAL} borderRadius={px(9999)} width={px(3)}/>
                 </FlexBox>
-                <FlexBox>
+                <FlexBox width={percent(100)}>
                     <ElementHeader title={"**Test**"} beta appendix={
                         <FlexBox flexDir={FlexDirection.ROW_REVERSE} width={percent(100)} align={Align.CENTER}>
                             <Text text={new Date().toLocaleTimeString()} fontSize={px(12)}/>
                         </FlexBox>
                     }/>
-                    <Box gapY={t.gaps.smallGab}>
-                        <ElementHeader
-                            icon={<DownloadIcon/>}
-                            appendix={
-                                <Button visualMeaning={ObjectVisualMeaning.BETA} shrinkOnClick opaque padding={px(4)}>
-                                    <Text text={"View roadmap"}/>
-                                </Button>
-                            }
-                            wrapIcon
-                            title={"Download data"}
-                            beta={false}
-                        />
-                        <Separator/>
-                        <Text text={"Export data to a downloadable file. \nAllowed file formats: **.dat**, **.csv**, **.xls** *(Excel spreadsheet)*."}/>
-                        <InformationBox visualMeaning={ObjectVisualMeaning.BETA}>
-                            <Text type={TextType.secondaryDescription} text={"As of version **v16** *(19. Feb 2022)*, this feature is still in development and will be accessible to beta mode in a couple of weeks."}/>
-                        </InformationBox>
-                    </Box>
+                    <Box gapY={t.gaps.smallGab} width={percent(100)} children={this.props.children}/>
                 </FlexBox>
             </FlexBox>
         );

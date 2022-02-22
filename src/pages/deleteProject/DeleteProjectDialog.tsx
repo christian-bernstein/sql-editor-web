@@ -9,13 +9,13 @@ import {ReactComponent as CloseIcon} from "../../assets/icons/ic-20/ic20-close.s
 import React from "react";
 import {PosInCenter} from "../../components/PosInCenter";
 import {FlexBox} from "../../components/FlexBox";
-import {FlexDirection} from "../../logic/FlexDirection";
-import {Justify} from "../../logic/Justify";
+import {FlexDirection} from "../../logic/style/FlexDirection";
+import {Justify} from "../../logic/style/Justify";
 import {InformationBox} from "../../components/InformationBox";
 import {ObjectVisualMeaning} from "../../logic/ObjectVisualMeaning";
 import {Text, TextType} from "../../components/Text";
 import {App} from "../../logic/App";
-import {percent} from "../../logic/DimensionalMeasured";
+import {percent} from "../../logic/style/DimensionalMeasured";
 import {Button} from "../../components/Button";
 import {Cursor} from "../../logic/style/Cursor";
 import {Input} from "../../components/Input";

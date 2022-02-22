@@ -1,6 +1,6 @@
 import {Color} from "./Color";
-import {DimensionalMeasured, px} from "./logic/DimensionalMeasured";
-import {Dimension} from "./logic/Dimension";
+import {DimensionalMeasured, px} from "./logic/style/DimensionalMeasured";
+import {Dimension} from "./logic/style/Dimension";
 import {CSSProperties} from "react";
 import {ObjectVisualMeaning} from "./logic/ObjectVisualMeaning";
 import {time, TimeMeasured} from "./logic/TimeMeasured";

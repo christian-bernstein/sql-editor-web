@@ -4,7 +4,7 @@ import {Assembly} from "../../logic/Assembly";
 import {PageV2} from "../../components/Page";
 import {AppHeader} from "../../components/AppHeader";
 import {FlexBox} from "../../components/FlexBox";
-import {FlexDirection} from "../../logic/FlexDirection";
+import {FlexDirection} from "../../logic/style/FlexDirection";
 import {Icon} from "../../components/Icon";
 import {ReactComponent as CloseIcon} from "../../assets/icons/ic-20/ic20-close.svg";
 import React from "react";

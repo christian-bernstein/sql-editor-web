@@ -3,7 +3,7 @@ import {PageV2} from "../../components/Page";
 import {LiteGrid} from "../../components/LiteGrid";
 import {FlexBox} from "../../components/FlexBox";
 import {Align} from "../../logic/Align";
-import {Justify} from "../../logic/Justify";
+import {Justify} from "../../logic/style/Justify";
 import {Icon} from "../../components/Icon";
 import {ReactComponent as MenuIcon} from "../../assets/icons/ic-20/ic20-menu.svg";
 import {ReactComponent as ErrorIcon} from "../../assets/icons/ic-20/ic20-alert.svg";
@@ -18,19 +18,19 @@ import {ReactComponent as CreateIcon} from "../../assets/icons/ic-16/ic16-plus.s
 import {App, utilizeGlobalTheme} from "../../logic/App";
 import {Text, TextType} from "../../components/Text";
 import {DBSessionCacheShard} from "../../shards/DBSessionCacheShard";
-import {percent, px} from "../../logic/DimensionalMeasured";
+import {percent, px} from "../../logic/style/DimensionalMeasured";
 import {Box} from "../../components/Box";
 import {ObjectVisualMeaning} from "../../logic/ObjectVisualMeaning";
 import {Cursor} from "../../logic/style/Cursor";
 import {RedirectController} from "../../components/RedirectController";
 import {ProjectInfoData} from "../../logic/ProjectInfoData";
 import {PosInCenter} from "../../components/PosInCenter";
-import {FlexDirection} from "../../logic/FlexDirection";
+import {FlexDirection} from "../../logic/style/FlexDirection";
 import {CodeEditor} from "../../components/CodeEditor";
 import {cs} from "../../logic/state/State";
 import {v4} from "uuid";
 import {sql} from "@codemirror/lang-sql";
-import {OverflowBehaviour} from "../../logic/OverflowBehaviour";
+import {OverflowBehaviour} from "../../logic/style/OverflowBehaviour";
 import {Themeable} from "../../Themeable";
 import {SessionCommand} from "../../logic/data/SessionCommand";
 import {arrayFactory, getOr} from "../../logic/Utils";
@@ -47,13 +47,14 @@ import {SQLCommandQueryResponsePacketData} from "../../packets/in/SQLCommandQuer
 import {DebugTableDataDisplayPage} from "../../components/TableDataDisplay";
 import {ServerConnectionIcon} from "../../components/ServerConnectionIcon";
 import {Separator} from "../../components/Separator";
-import {Orientation} from "../../logic/Orientation";
+import {Orientation} from "../../logic/style/Orientation";
 import {oneDark} from '@codemirror/theme-one-dark';
 import {HighlightStyle, tags} from "@codemirror/highlight"
 import {ElementHeader} from "../../components/ElementHeader";
 import {InformationBox} from "../../components/InformationBox";
 import {SQLQueryResultDialog} from "../sqlQueryResult/SQLQueryResultDialog";
 import {RoadmapEntry} from "../../components/RoadmapEntry";
+import {Debug} from "../../components/Debug";
 
 export type DebugEditorProps = {
 }
@@ -439,26 +440,27 @@ export class Editor extends React.Component<DebugEditorProps, DebugEditorState> 
                     <Separator/>
 
                     <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab}>
-                        <CustomTooltip arrow noPadding noBorder title={
-                            <Box gapY={theme.gaps.smallGab}>
-                                <ElementHeader
-                                    icon={<DownloadIcon/>}
-                                    appendix={
-                                        <Button visualMeaning={ObjectVisualMeaning.BETA} shrinkOnClick opaque padding={px(4)}>
-                                            <Text text={"View roadmap"}/>
-                                        </Button>
-                                    }
-                                    wrapIcon
-                                    title={"Download data"}
-                                    beta={false}
-                                />
-                                <Separator/>
-                                <Text text={"Export data to a downloadable file. \nAllowed file formats: **.dat**, **.csv**, **.xls** *(Excel spreadsheet)*."}/>
-                                <InformationBox visualMeaning={ObjectVisualMeaning.BETA}>
-                                    <Text type={TextType.secondaryDescription} text={"As of version **v16** *(19. Feb 2022)*, this feature is still in development and will be accessible to beta mode in a couple of weeks."}/>
-                                </InformationBox>
-                            </Box>
-                        }>
+                        <Debug>
+                            <CustomTooltip arrow noPadding noBorder title={
+                                <Box gapY={theme.gaps.smallGab}>
+                                    <ElementHeader
+                                        icon={<DownloadIcon/>}
+                                        appendix={
+                                            <Button visualMeaning={ObjectVisualMeaning.BETA} shrinkOnClick opaque padding={px(4)}>
+                                                <Text text={"View roadmap"}/>
+                                            </Button>
+                                        }
+                                        wrapIcon
+                                        title={"Download data"}
+                                        beta={false}
+                                    />
+                                    <Separator/>
+                                    <Text text={"Export data to a downloadable file. \nAllowed file formats: **.dat**, **.csv**, **.xls** *(Excel spreadsheet)*."}/>
+                                    <InformationBox visualMeaning={ObjectVisualMeaning.BETA}>
+                                        <Text type={TextType.secondaryDescription} text={"As of version **v16** *(19. Feb 2022)*, this feature is still in development and will be accessible to beta mode in a couple of weeks."}/>
+                                    </InformationBox>
+                                </Box>
+                            }>
                             <span>
                                 <Button
                                     cursor={Cursor.pointer}
@@ -467,7 +469,9 @@ export class Editor extends React.Component<DebugEditorProps, DebugEditorState> 
                                     <Icon icon={<CreateIcon/>}/>
                                 </Button>
                             </span>
-                        </CustomTooltip>
+                            </CustomTooltip>
+                        </Debug>
+
 
                         <CustomTooltip arrow title={<Text text={"Show SQL result history **[v1]**"}/>}>
                             <span>
@@ -537,26 +541,27 @@ export class Editor extends React.Component<DebugEditorProps, DebugEditorState> 
                             </span>
                         </CustomTooltip>
 
-                        <CustomTooltip arrow noPadding noBorder title={
-                            <Box gapY={theme.gaps.smallGab}>
-                                <ElementHeader
-                                    icon={<UploadIcon/>}
-                                    appendix={
-                                        <Button visualMeaning={ObjectVisualMeaning.BETA} shrinkOnClick opaque padding={px(4)}>
-                                            <Text text={"View roadmap"}/>
-                                        </Button>
-                                    }
-                                    wrapIcon
-                                    title={"Upload data"}
-                                    beta={false}
-                                />
-                                <Separator/>
-                                <Text text={"Import data from your device. \nAllowed file formats: **.dat**, **.csv**, **.xls** *(Excel spreadsheet)*."}/>
-                                <InformationBox visualMeaning={ObjectVisualMeaning.BETA}>
-                                    <Text type={TextType.secondaryDescription} text={"As of version **v16** *(19. Feb 2022)*, this feature is still in development and will be accessible to beta mode in a couple of weeks."}/>
-                                </InformationBox>
-                            </Box>
-                        }>
+                        <Debug>
+                            <CustomTooltip arrow noPadding noBorder title={
+                                <Box gapY={theme.gaps.smallGab}>
+                                    <ElementHeader
+                                        icon={<UploadIcon/>}
+                                        appendix={
+                                            <Button visualMeaning={ObjectVisualMeaning.BETA} shrinkOnClick opaque padding={px(4)}>
+                                                <Text text={"View roadmap"}/>
+                                            </Button>
+                                        }
+                                        wrapIcon
+                                        title={"Upload data"}
+                                        beta={false}
+                                    />
+                                    <Separator/>
+                                    <Text text={"Import data from your device. \nAllowed file formats: **.dat**, **.csv**, **.xls** *(Excel spreadsheet)*."}/>
+                                    <InformationBox visualMeaning={ObjectVisualMeaning.BETA}>
+                                        <Text type={TextType.secondaryDescription} text={"As of version **v16** *(19. Feb 2022)*, this feature is still in development and will be accessible to beta mode in a couple of weeks."}/>
+                                    </InformationBox>
+                                </Box>
+                            }>
                             <span>
                                 <Button
                                     cursor={Cursor.pointer}
@@ -565,28 +570,28 @@ export class Editor extends React.Component<DebugEditorProps, DebugEditorState> 
                                      <Icon icon={<UploadIcon/>}/>
                                 </Button>
                             </span>
-                        </CustomTooltip>
+                            </CustomTooltip>
 
-                        <CustomTooltip arrow noPadding noBorder title={
-                            <Box gapY={theme.gaps.smallGab}>
-                                <ElementHeader
-                                    icon={<DownloadIcon/>}
-                                    appendix={
-                                        <Button visualMeaning={ObjectVisualMeaning.BETA} shrinkOnClick opaque padding={px(4)}>
-                                            <Text text={"View roadmap"}/>
-                                        </Button>
-                                    }
-                                    wrapIcon
-                                    title={"Download data"}
-                                    beta={false}
-                                />
-                                <Separator/>
-                                <Text text={"Export data to a downloadable file. \nAllowed file formats: **.dat**, **.csv**, **.xls** *(Excel spreadsheet)*."}/>
-                                <InformationBox visualMeaning={ObjectVisualMeaning.BETA}>
-                                    <Text type={TextType.secondaryDescription} text={"As of version **v16** *(19. Feb 2022)*, this feature is still in development and will be accessible to beta mode in a couple of weeks."}/>
-                                </InformationBox>
-                            </Box>
-                        }>
+                            <CustomTooltip arrow noPadding noBorder title={
+                                <Box gapY={theme.gaps.smallGab}>
+                                    <ElementHeader
+                                        icon={<DownloadIcon/>}
+                                        appendix={
+                                            <Button visualMeaning={ObjectVisualMeaning.BETA} shrinkOnClick opaque padding={px(4)}>
+                                                <Text text={"View roadmap"}/>
+                                            </Button>
+                                        }
+                                        wrapIcon
+                                        title={"Download data"}
+                                        beta={false}
+                                    />
+                                    <Separator/>
+                                    <Text text={"Export data to a downloadable file. \nAllowed file formats: **.dat**, **.csv**, **.xls** *(Excel spreadsheet)*."}/>
+                                    <InformationBox visualMeaning={ObjectVisualMeaning.BETA}>
+                                        <Text type={TextType.secondaryDescription} text={"As of version **v16** *(19. Feb 2022)*, this feature is still in development and will be accessible to beta mode in a couple of weeks."}/>
+                                    </InformationBox>
+                                </Box>
+                            }>
                             <span>
                                 <Button
                                     cursor={Cursor.pointer}
@@ -595,10 +600,11 @@ export class Editor extends React.Component<DebugEditorProps, DebugEditorState> 
                                      <Icon icon={<DownloadIcon/>}/>
                                 </Button>
                             </span>
-                        </CustomTooltip>
+                            </CustomTooltip>
+                        </Debug>
                     </FlexBox>
 
-                    {this.renderDBHistory()}
+                    <Debug children={this.renderDBHistory()}/>
 
                     <FlexBox width={percent(100)} overflowYBehaviour={OverflowBehaviour.VISIBLE} justifyContent={Justify.FLEX_END}>
                         {/*<Box width={percent(100)} gapY={theme.gaps.defaultGab}>

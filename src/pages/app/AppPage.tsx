@@ -26,8 +26,8 @@ import {Dialog, Slide} from "@mui/material";
 import {TransitionProps} from "@mui/material/transitions";
 import {PageV2} from "../../components/Page";
 import {FlexBox} from "../../components/FlexBox";
-import {FlexDirection} from "../../logic/FlexDirection";
-import {percent} from "../../logic/DimensionalMeasured";
+import {FlexDirection} from "../../logic/style/FlexDirection";
+import {percent} from "../../logic/style/DimensionalMeasured";
 import {Icon} from "../../components/Icon";
 import {ReactComponent as CloseIcon} from "../../assets/icons/ic-20/ic20-close.svg";
 import {ObjectVisualMeaning} from "../../logic/ObjectVisualMeaning";
@@ -35,9 +35,9 @@ import {PosInCenter} from "../../components/PosInCenter";
 import {InformationBox} from "../../components/InformationBox";
 import {Text} from "../../components/Text";
 import {Align} from "../../logic/Align";
-import {Justify} from "../../logic/Justify";
+import {Justify} from "../../logic/style/Justify";
 import {Constants} from "../../Constants";
-import {ProjectCreationDialog} from "../../dialogs/ProjectCreationDialog";
+import {ProjectCreationDialog} from "../createProject/ProjectCreationDialog";
 import {SignupPage} from "../signup/SignupPage";
 import {Editor} from "../editor/Editor";
 import {LogPage} from "../log/LogPage";
@@ -111,6 +111,34 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                 config: {
                     appTitle: "SQL Editor",
                     debugMode: true,
+                    defaultAppRoute: "/boarding",
+                    defaultDebugAppRoute: "/boarding",
+                    rootRerenderHook: (callback) => this.rerender.bind(this)(),
+                    logInterceptors: [],
+                    logSaveSize: 1000,
+                    defaultTheme: "dark-green",
+                    appAssembly: this.assembly,
+                    themes: new Map<string, Themeable.Theme>([
+                        ["dark-green", Themeable.defaultTheme],
+                        ["light-green", Themeable.lightTheme]
+                    ]),
+                    connectorConfig: {
+                        protocol: "login",
+                        // address: "ws://192.168.2.100:80",
+                        address: "ws://192.168.2.104:80",
+                        id: "ton",
+                        maxConnectAttempts: 1,
+                        connectionRetryDelayFunc: () => 0,
+                        packetInterceptor: this.getLogPacketInterceptor()
+                    }
+                }
+            },
+            {
+                title: "SQL Editor",
+                description: "SQL Editor Panel live version",
+                config: {
+                    appTitle: "SQL Editor",
+                    debugMode: false,
                     defaultAppRoute: "/boarding",
                     defaultDebugAppRoute: "/boarding",
                     rootRerenderHook: (callback) => this.rerender.bind(this)(),
@@ -301,6 +329,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
         return routs;
     }
 
+    // todo use DialogData instead
     private initDialogs() {
         this.assembly.assembly(Constants.createProjectDialog, (theme, props) => <ProjectCreationDialog/>);
         this.assembly.assembly(Constants.logDialog, (theme, props) => <LogPage/>);
@@ -327,7 +356,6 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
             ]),
             connectorConfig: {
                 protocol: "login",
-                // address: "ws://192.168.2.100:80",
                 address: "ws://192.168.2.104:80",
                 id: "ton",
                 maxConnectAttempts: 10,

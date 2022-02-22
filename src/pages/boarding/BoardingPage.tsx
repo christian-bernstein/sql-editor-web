@@ -12,7 +12,7 @@ import {ComponentStyle} from "../../ComponentStyle";
 import {ContinueAs} from "../../components/ContinueAs";
 import {App} from "../../logic/App";
 import {SessionHistoryEntry} from "../../logic/SessionHistoryEntry";
-import {FlexDirection} from "../../logic/FlexDirection";
+import {FlexDirection} from "../../logic/style/FlexDirection";
 import {Align} from "../../logic/Align";
 import {Text, TextType} from "../../components/Text";
 import {FlexBox} from "../../components/FlexBox";
@@ -21,14 +21,14 @@ import {Themeable} from "../../Themeable";
 import {ServerConnectionIcon} from "../../components/ServerConnectionIcon";
 import {Button} from "../../components/Button";
 import {ObjectVisualMeaning} from "../../logic/ObjectVisualMeaning";
-import {percent, px} from "../../logic/DimensionalMeasured";
+import {percent, px} from "../../logic/style/DimensionalMeasured";
 import {PosInCenter} from "../../components/PosInCenter";
 import {Cursor} from "../../logic/style/Cursor";
 import {Icon} from "../../components/Icon";
 import {Utils} from "../../logic/Utils";
 import {Separator} from "../../components/Separator";
-import {Orientation} from "../../logic/Orientation";
-import {Justify} from "../../logic/Justify";
+import {Orientation} from "../../logic/style/Orientation";
+import {Justify} from "../../logic/style/Justify";
 import {Zoom} from "@mui/material";
 import {CustomTooltip} from "../../components/CustomTooltip";
 import {createMargin} from "../../logic/Margin";
@@ -39,6 +39,8 @@ import {BernieComponent} from "../../logic/BernieComponent";
 import {Assembly} from "../../logic/Assembly";
 import {InformationBox} from "../../components/InformationBox";
 import {If} from "../../components/If";
+import {Debug} from "../../components/Debug";
+import {Image} from "../../components/Image";
 
 export type BoardingPageProps = {}
 
@@ -328,17 +330,18 @@ export class BoardingPage extends BernieComponent<BoardingPageProps, BoardingPag
                                     }
                                 }}/>
                             </FlexBox>*/}
+                            <Debug>
+                                <InformationBox visualMeaning={ObjectVisualMeaning.BETA} width={percent(100)}>
+                                    <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} width={percent(100)} justifyContent={Justify.SPACE_BETWEEN}>
+                                        <Text type={TextType.secondaryDescription} text={"As of subversion **v16** *(19. Feb 2022)*, the website is in it's development phase."}/>
+                                        <Button onClick={() => App.app().callDialog(Constants.roadmapDialog)}>
+                                            <Text text={"Roadmap"} uppercase bold fontSize={px(12)}/>
+                                        </Button>
+                                    </FlexBox>
+                                </InformationBox>
+                            </Debug>
 
-                            <If.Beta/>
 
-                            <InformationBox visualMeaning={ObjectVisualMeaning.BETA} width={percent(100)}>
-                                <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} width={percent(100)} justifyContent={Justify.SPACE_BETWEEN}>
-                                    <Text type={TextType.secondaryDescription} text={"As of subversion **v16** *(19. Feb 2022)*, the website is in it's development phase."}/>
-                                    <Button onClick={() => App.app().callDialog(Constants.roadmapDialog)}>
-                                        <Text text={"Roadmap"} uppercase bold fontSize={px(12)}/>
-                                    </Button>
-                                </FlexBox>
-                            </InformationBox>
 
                             <ol className={"continue-as-list"}>
                                 {

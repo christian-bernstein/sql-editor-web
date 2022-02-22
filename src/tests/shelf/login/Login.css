@@ -194,7 +194,7 @@ $breakpoint-h-sm: 500px;
 
 // Large tablet view (no center card)
 @media screen and (max-width: $breakpoint-w-l) and (min-height: $breakpoint-h-m) {
-  .image-reference {
+  .images-reference {
     display: none;
   }
 

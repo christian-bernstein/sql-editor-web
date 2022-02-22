@@ -2,12 +2,12 @@ import React, {CSSProperties} from "react";
 import {Themeable} from "../Themeable";
 import {utilizeGlobalTheme} from "../logic/App";
 import styled from "styled-components";
-import {FlexDirection} from "../logic/FlexDirection";
+import {FlexDirection} from "../logic/style/FlexDirection";
 import {getOr} from "../logic/Utils";
-import {DimensionalMeasured} from "../logic/DimensionalMeasured";
+import {DimensionalMeasured} from "../logic/style/DimensionalMeasured";
 import {Align} from "../logic/Align";
-import {Justify} from "../logic/Justify";
-import {OverflowBehaviour} from "../logic/OverflowBehaviour";
+import {Justify} from "../logic/style/Justify";
+import {OverflowBehaviour} from "../logic/style/OverflowBehaviour";
 import {createMargin, Margin} from "../logic/Margin";
 
 export type FlexBoxProps = {

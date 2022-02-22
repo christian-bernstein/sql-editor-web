@@ -11,10 +11,10 @@ import {css} from "@emotion/react";
 import {App} from "../../logic/App";
 import {Input} from "../../components/Input";
 import {FlexBox} from "../../components/FlexBox";
-import {FlexDirection} from "../../logic/FlexDirection";
+import {FlexDirection} from "../../logic/style/FlexDirection";
 import {Align} from "../../logic/Align";
 import {Text, TextType} from "../../components/Text";
-import {Justify} from "../../logic/Justify";
+import {Justify} from "../../logic/style/Justify";
 import {ServerConnectionIcon} from "../../components/ServerConnectionIcon";
 import {Icon} from "../../components/Icon";
 
