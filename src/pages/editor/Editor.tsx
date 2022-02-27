@@ -55,6 +55,7 @@ import {InformationBox} from "../../components/InformationBox";
 import {SQLQueryResultDialog} from "../sqlQueryResult/SQLQueryResultDialog";
 import {RoadmapEntry} from "../../components/RoadmapEntry";
 import {Debug} from "../../components/Debug";
+import {If} from "../../components/If";
 
 export type DebugEditorProps = {
 }
@@ -194,7 +195,7 @@ export class Editor extends React.Component<DebugEditorProps, DebugEditorState> 
             if (cache !== undefined && cache.length > 0) {
                 // todo remove cache duplication
                 return (
-                    <SQLQueryResultDialog data={[...cache, ...cache, ...cache, ...cache]} startingIndex={cache.length * 4} onClose={() => this.setState({
+                    <SQLQueryResultDialog data={cache} startingIndex={cache.length - 1} onClose={() => this.setState({
                         openMainDialog: false
                     })}/>
                 );
@@ -401,8 +402,84 @@ export class Editor extends React.Component<DebugEditorProps, DebugEditorState> 
             <Box height={percent(100)} overflowYBehaviour={OverflowBehaviour.SCROLL} width={percent(100)}>
                 <FlexBox gap={theme.gaps.smallGab}>{arrayFactory(() => (
                     <RoadmapEntry status={"completed"}/>
-                ), 5)}</FlexBox>
+                ), 0)}</FlexBox>
             </Box>
+        );
+    }
+
+    private renderHistoryButton(): JSX.Element {
+        const theme = utilizeGlobalTheme();
+
+        return (
+            <If condition={App.app().config.debugMode} ifTrue={
+                <CustomTooltip arrow title={<Text text={"Show SQL result history **[v2]**"}/>}>
+                    <span>
+                        {
+                            this.local.state.sqlCommandResultCache.length > 0 ? (
+                                <Button
+                                    cursor={Cursor.pointer}
+                                    visualMeaning={ObjectVisualMeaning.BETA}
+                                    opaque
+                                    shrinkOnClick={true}
+                                    onClick={() => {
+                                        this.setState({
+                                            openMainDialog: true,
+                                            dialogComponent: "sql-command-result-v2"
+                                        })
+                                    }}>
+                                    <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab}>
+                                        <Icon visualMeaning={ObjectVisualMeaning.BETA} colored icon={<TableIcon/>}/>
+                                        <Text text={"v2"} bold visualMeaning={ObjectVisualMeaning.BETA} coloredText/>
+                                    </FlexBox>
+                                </Button>
+                            ) : (
+                                <Button
+                                    cursor={Cursor.notAllowed}
+                                    opaque
+                                    visualMeaning={ObjectVisualMeaning.BETA}>
+                                    <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab}>
+                                        <Icon visualMeaning={ObjectVisualMeaning.BETA} colored icon={<TableIcon/>}/>
+                                        <Text text={"v2"} bold visualMeaning={ObjectVisualMeaning.BETA} coloredText/>
+                                    </FlexBox>
+                                </Button>
+                            )
+                        }
+                    </span>
+                </CustomTooltip>
+            } ifFalse={
+                <CustomTooltip arrow title={<Text text={"Show SQL result history **[v1]**"}/>}>
+                    <span>
+                        {
+                            this.local.state.sqlCommandResultCache.length > 0 ? (
+                                <Button
+                                    cursor={Cursor.pointer}
+                                    visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
+                                    shrinkOnClick={true}
+                                    onClick={() => {
+                                        this.setState({
+                                            openMainDialog: true,
+                                            dialogComponent: "sql-command-result"
+                                        })
+                                    }}>
+                                    <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab}>
+                                        <Icon visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} icon={<TableIcon/>}/>
+                                        <Text text={"v1"} bold/>
+                                    </FlexBox>
+                                </Button>
+                            ) : (
+                                <Button
+                                    cursor={Cursor.notAllowed}
+                                    visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}>
+                                    <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab}>
+                                        <Icon visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} colored icon={<TableIcon/>}/>
+                                        <Text text={"v1"} bold visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} coloredText/>
+                                    </FlexBox>
+                                </Button>
+                            )
+                        }
+                    </span>
+                </CustomTooltip>
+            }/>
         );
     }
 
@@ -472,74 +549,7 @@ export class Editor extends React.Component<DebugEditorProps, DebugEditorState> 
                             </CustomTooltip>
                         </Debug>
 
-
-                        <CustomTooltip arrow title={<Text text={"Show SQL result history **[v1]**"}/>}>
-                            <span>
-                                {
-                                    this.local.state.sqlCommandResultCache.length > 0 ? (
-                                        <Button
-                                            cursor={Cursor.pointer}
-                                            visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
-                                            shrinkOnClick={true}
-                                            onClick={() => {
-                                                this.setState({
-                                                    openMainDialog: true,
-                                                    dialogComponent: "sql-command-result"
-                                                })
-                                            }}>
-                                            <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab}>
-                                                <Icon visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} icon={<TableIcon/>}/>
-                                                <Text text={"v1"} bold/>
-                                            </FlexBox>
-                                        </Button>
-                                    ) : (
-                                        <Button
-                                            cursor={Cursor.notAllowed}
-                                            visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}>
-                                            <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab}>
-                                                <Icon visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} colored icon={<TableIcon/>}/>
-                                                <Text text={"v1"} bold visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} coloredText/>
-                                            </FlexBox>
-                                        </Button>
-                                    )
-                                }
-                            </span>
-                        </CustomTooltip>
-
-                        <CustomTooltip arrow title={<Text text={"Show SQL result history **[v2]**"}/>}>
-                            <span>
-                                {
-                                    this.local.state.sqlCommandResultCache.length > 0 ? (
-                                        <Button
-                                            cursor={Cursor.pointer}
-                                            visualMeaning={ObjectVisualMeaning.BETA}
-                                            opaque
-                                            shrinkOnClick={true}
-                                            onClick={() => {
-                                                this.setState({
-                                                    openMainDialog: true,
-                                                    dialogComponent: "sql-command-result-v2"
-                                                })
-                                            }}>
-                                            <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab}>
-                                                <Icon visualMeaning={ObjectVisualMeaning.BETA} colored icon={<TableIcon/>}/>
-                                                <Text text={"v2"} bold visualMeaning={ObjectVisualMeaning.BETA} coloredText/>
-                                            </FlexBox>
-                                        </Button>
-                                    ) : (
-                                        <Button
-                                            cursor={Cursor.notAllowed}
-                                            opaque
-                                            visualMeaning={ObjectVisualMeaning.BETA}>
-                                            <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab}>
-                                                <Icon visualMeaning={ObjectVisualMeaning.BETA} colored icon={<TableIcon/>}/>
-                                                <Text text={"v2"} bold visualMeaning={ObjectVisualMeaning.BETA} coloredText/>
-                                            </FlexBox>
-                                        </Button>
-                                    )
-                                }
-                            </span>
-                        </CustomTooltip>
+                        {this.renderHistoryButton()}
 
                         <Debug>
                             <CustomTooltip arrow noPadding noBorder title={
@@ -604,7 +614,7 @@ export class Editor extends React.Component<DebugEditorProps, DebugEditorState> 
                         </Debug>
                     </FlexBox>
 
-                    <Debug children={this.renderDBHistory()}/>
+                    <If condition={App.app().config.debugMode} ifTrue={this.renderDBHistory()} ifFalse={<span/>}/>
 
                     <FlexBox width={percent(100)} overflowYBehaviour={OverflowBehaviour.VISIBLE} justifyContent={Justify.FLEX_END}>
                         {/*<Box width={percent(100)} gapY={theme.gaps.defaultGab}>

@@ -47,6 +47,7 @@ import {DeleteProjectDialog} from "../deleteProject/DeleteProjectDialog";
 import {OpenMainDialogWithParamsProps} from "../../logic/OpenMainDialogWithParamsProps";
 import {ServerInfoDialog} from "../serverInfo/ServerInfoDialog";
 import {RoadmapDialog} from "../roadmap/RoadmapDialog";
+import {ClientDisplayPlaygroundDialog} from "../../debug/pages/clientDisplay/ClientDisplayPlaygroundDialog";
 
 export type AppPageProps = {
 }
@@ -125,7 +126,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                     connectorConfig: {
                         protocol: "login",
                         // address: "ws://192.168.2.100:80",
-                        address: "ws://192.168.2.104:80",
+                        address: "ws://192.168.2.104:25574",
                         id: "ton",
                         maxConnectAttempts: 1,
                         connectionRetryDelayFunc: () => 0,
@@ -153,7 +154,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                     connectorConfig: {
                         protocol: "login",
                         // address: "ws://192.168.2.100:80",
-                        address: "ws://192.168.2.104:80",
+                        address: "ws://2.59.135.242:25574",
                         id: "ton",
                         maxConnectAttempts: 1,
                         connectionRetryDelayFunc: () => 0,
@@ -162,13 +163,13 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                 }
             },
             {
-                title: "Epicure",
-                description: "Profile used for local debugging. (This profile can only be used, if the browser is running on the same device as the server is running.)",
+                title: "SQL Editor Test-Version 23. FEB 2022",
+                description: "SQL Editor Panel test version (v21)",
                 config: {
-                    appTitle: "Epicure",
+                    appTitle: "SQL Editor",
                     debugMode: true,
-                    defaultAppRoute: "/epicure",
-                    defaultDebugAppRoute: "/epicure",
+                    defaultAppRoute: "/boarding",
+                    defaultDebugAppRoute: "/boarding",
                     rootRerenderHook: (callback) => this.rerender.bind(this)(),
                     logInterceptors: [],
                     logSaveSize: 1000,
@@ -180,15 +181,42 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                     ]),
                     connectorConfig: {
                         protocol: "login",
-                        // address: "ws://192.168.2.100:80",
-                        address: "ws://192.168.2.104:80",
+                        address: "ws://2.59.135.242:25574",
                         id: "ton",
                         maxConnectAttempts: 1,
                         connectionRetryDelayFunc: () => 0,
                         packetInterceptor: this.getLogPacketInterceptor()
                     }
                 }
-            }
+            },
+            // {
+            //     title: "Epicure",
+            //     description: "Profile used for local debugging. (This profile can only be used, if the browser is running on the same device as the server is running.)",
+            //     config: {
+            //         appTitle: "Epicure",
+            //         debugMode: true,
+            //         defaultAppRoute: "/epicure",
+            //         defaultDebugAppRoute: "/epicure",
+            //         rootRerenderHook: (callback) => this.rerender.bind(this)(),
+            //         logInterceptors: [],
+            //         logSaveSize: 1000,
+            //         defaultTheme: "dark-green",
+            //         appAssembly: this.assembly,
+            //         themes: new Map<string, Themeable.Theme>([
+            //             ["dark-green", Themeable.defaultTheme],
+            //             ["light-green", Themeable.lightTheme]
+            //         ]),
+            //         connectorConfig: {
+            //             protocol: "login",
+            //             // address: "ws://192.168.2.100:80",
+            //             address: "ws://192.168.2.104:80",
+            //             id: "ton",
+            //             maxConnectAttempts: 1,
+            //             connectionRetryDelayFunc: () => 0,
+            //             packetInterceptor: this.getLogPacketInterceptor()
+            //         }
+            //     }
+            // }
         ] as AppConfigSelectionData[]);
     }
 
@@ -330,7 +358,10 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
     }
 
     // todo use DialogData instead
-    private initDialogs() {
+    private initDialogs(app: App) {
+        if (app.config.debugMode) {
+            this.assembly.assembly("client-display-playground-dialog", (theme, props) => <ClientDisplayPlaygroundDialog/>);
+        }
         this.assembly.assembly(Constants.createProjectDialog, (theme, props) => <ProjectCreationDialog/>);
         this.assembly.assembly(Constants.logDialog, (theme, props) => <LogPage/>);
         this.assembly.assembly(Constants.deleteProjectDialog, (theme, props) => <DeleteProjectDialog project={props}/>);
@@ -365,7 +396,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
         }, app => {
             app.shard("db-session-cache", new DBSessionCacheShard());
 
-            this.initDialogs();
+            this.initDialogs(app);
 
             // Opens the command pallet
             app.registerAction("open-command-pallet", () => {

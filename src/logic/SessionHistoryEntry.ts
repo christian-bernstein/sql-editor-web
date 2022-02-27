@@ -1,4 +1,4 @@
-import {UserProfileData} from "./UserProfileData";
+import {UserProfileData} from "./data/UserProfileData";
 
 export type SessionHistoryEntry = {
     sessionID: string,

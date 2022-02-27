@@ -89,7 +89,8 @@ export class ProjectInfo extends React.Component<ProjectInfoProps, any> {
                     )}/>
 
                     <FlexBox flexDir={FlexDirection.ROW} gap={px(1)}>
-                        <Text text={`${"root"}/`}/>
+                        {/* todo put username here */}
+                        <Text text={`${this.props.data.creatorUserID}/`}/>
                         <Text text={`${this.props.data.title}`} bold/>
                     </FlexBox>
                 </FlexBox>
@@ -129,7 +130,7 @@ export class ProjectInfo extends React.Component<ProjectInfoProps, any> {
                     </>
                 }/>
                 <FlexBox flexDir={FlexDirection.ROW}>
-                    <Text text={"Lase edited: "} type={TextType.secondaryDescription}/>
+                    <Text text={"Last edited: "} type={TextType.secondaryDescription}/>
                     <Text text={String(this.props.data.lastEdited)}/>
                 </FlexBox>
                 {/* todo replace with flexbox handling */}

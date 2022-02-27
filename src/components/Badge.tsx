@@ -30,7 +30,7 @@ export class Badge extends React.Component<BadgeProps, any>{
     public static beta(theme: Themeable.Theme = utilizeGlobalTheme()): JSX.Element {
         return (
             <Badge background={theme.colors.betaHighlightColor} visualMeaning={ObjectVisualMeaning.BETA} padding opaque>
-                <Text text={"**beta**"} uppercase fontSize={px(12)} visualMeaning={ObjectVisualMeaning.BETA} coloredText/>
+                <Text text={"beta"} bold uppercase fontSize={px(12)} visualMeaning={ObjectVisualMeaning.BETA} coloredText/>
             </Badge>
         )
     }

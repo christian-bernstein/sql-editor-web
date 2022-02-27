@@ -17,10 +17,26 @@ import Modal from "react-modal";
 import {Assembly} from "./Assembly";
 import {LogEntry} from "./data/LogEntry";
 import {v4} from "uuid";
-import {UserProfileData} from "./UserProfileData";
+import {UserProfileData} from "./data/UserProfileData";
+import {getOr} from "./Utils";
 
 export function utilizeApp(): App {
     return App.app();
+}
+
+export function utilizeUserProfile(defUser: UserData = {
+    id: v4(),
+    username: "sample",
+    userEntrySetupDate: new Date(),
+    Date: new Date(),
+    firstname: "sample",
+    lastname: "sample"
+}): UserData {
+    if (App.isInitiated()) {
+        return getOr(App.app().userData, defUser);
+    } else {
+        return defUser;
+    }
 }
 
 export function utilizeGlobalTheme(defTheme: Themeable.Theme = Themeable.defaultTheme): Themeable.Theme {
@@ -438,11 +454,16 @@ export class App {
                     }
                 }
             });
-        })
+        });
     }
 
-    set userData(value: UserData) {
+    // todo implement
+    set userData(value: UserData | undefined) {
         this._userData = value;
+    }
+
+    get userData(): UserData | undefined {
+        return this._userData;
     }
 
     get config(): AppConfig {

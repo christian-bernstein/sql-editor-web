@@ -20,7 +20,8 @@ export type ButtonProps = {
     cursor?: Cursor,
     enableBaseAnimation?: boolean,
     baseAnimation?: "hover-repeat",
-    padding?: DimensionalMeasured
+    padding?: DimensionalMeasured,
+    zIndex?: number
 }
 
 export class Button extends React.Component<ButtonProps, any> {
@@ -48,6 +49,8 @@ export class Button extends React.Component<ButtonProps, any> {
           justify-content: center;
           cursor: ${getOr(this.props.cursor, Cursor.pointer)};
           transition: all ${theme.transitions.mainTime.css()};
+          z-index: ${getOr(this.props.zIndex, 1)};
+          
           ${getOr(this.props.enableBaseAnimation, false) ? (
               `animation: 1.5s infinite ${this.props.baseAnimation};`
           ) : ("")}

@@ -300,6 +300,20 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
                                 </span>
                             </CustomTooltip>
 
+                            <CustomTooltip title={<Text text={"**[DEBUG]**\nOpen **client-display-playground-dialog**-dialog"}/>} arrow>
+                                <span>
+                                    <Button
+                                        visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
+                                        opaque={true}
+                                        shrinkOnClick={true}
+                                        children={<Icon icon={<OpenDialogIcon/>}/>}
+                                        onClick={() => {
+                                            App.app().callDialog("client-display-playground-dialog");
+                                        }}
+                                    />
+                                </span>
+                            </CustomTooltip>
+
                             <CustomTooltip title={"Open log dialog"} arrow>
                                 <span>
                                     <Button

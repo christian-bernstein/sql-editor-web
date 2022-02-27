@@ -11,6 +11,9 @@ import {FontWeight} from "../logic/style/FontWeight";
 import {DimensionalMeasured} from "../logic/style/DimensionalMeasured";
 import {If} from "./If";
 
+// todo remove
+import {ReactComponent as EditIcon} from "../assets/icons/ic-16/ic16-edit.svg";
+
 export type InputProps = {
     id?: string,
     defaultValue?: string,
@@ -61,17 +64,11 @@ export class Input extends React.Component<InputProps, InputState> {
 
         const Wrapper = styled.div`
           width: 100%;
-          
-          
-          
           min-height: ${getOr(this.props.minHeightBoundary, true) ? "3.5rem" : "0"};
-          
           height: ${this.props.height === undefined ? "auto" : this.props.height?.css()} !important;
           position: relative;
           background-color: ${theme.colors.backgroundHighlightColor.css()};
-          
           box-sizing: border-box;
-          
           border-radius: ${theme.radii.defaultObjectRadius.css()};
           padding: ${theme.paddings.defaultObjectPadding.css()};
           border: 1px solid ${meaningfulColors.lighter.css()};
@@ -83,7 +80,6 @@ export class Input extends React.Component<InputProps, InputState> {
           }
           
           input {
-            
             background-color: ${bgColor.css()};
             border: none;
             color: ${theme.colors.fontPrimaryColor.css()};
@@ -92,10 +88,8 @@ export class Input extends React.Component<InputProps, InputState> {
             position: absolute;
             top: 0;
             left: 0;
-            
             bottom: 0;
             right: 0;
-            
             width: 100%;
             height: 100%;
             outline: none;
@@ -112,13 +106,22 @@ export class Input extends React.Component<InputProps, InputState> {
           label {
             font-size: 14px;
             position: absolute;
+            
+            user-select: none;
+            pointer-events: none;
+            z-index: 2;
+            
             left: ${theme.paddings.defaultObjectPadding.css()};
             top: 1.25rem;
             // padding: 0 .25rem;
-            color: white;
+            font-weight: 100;
+            color: ${theme.colors.fontSecondaryColor.css()};
             transition: all .3s;
           }
 
+          // todo fix
+          // input:not(:placeholder-shown)
+          // input:placeholder-shown
           input:focus + label, input:not(:placeholder-shown) + label {
             top: +.15rem;
             left: ${theme.paddings.defaultObjectPadding.css()};

@@ -295,6 +295,9 @@ export default class DashboardPage extends BernieComponent<DashboardPageProps, D
 
     private renderPage(): JSX.Element {
         const theme: Themeable.Theme = utilizeGlobalTheme();
+
+        const profile = App.app().userData;
+
         return (
             <>
                 <If condition={this.state.loading} ifFalse={this.renderSpeedDial()}/>

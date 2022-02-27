@@ -4,5 +4,7 @@ export type UserData = {
     firstname: string,
     lastname: string,
     userEntrySetupDate: Date,
+
+    // what is date?
     Date: Date,
 }

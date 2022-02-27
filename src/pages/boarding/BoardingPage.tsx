@@ -41,6 +41,10 @@ import {InformationBox} from "../../components/InformationBox";
 import {If} from "../../components/If";
 import {Debug} from "../../components/Debug";
 import {Image} from "../../components/Image";
+import {ContextCompound} from "../../components/ContextCompound";
+import {ProfileShortView} from "../../components/ProfileShortView";
+import {ClientDisplay} from "../../components/ClientDisplay";
+import {Box} from "../../components/Box";
 
 export type BoardingPageProps = {}
 
@@ -250,7 +254,7 @@ export class BoardingPage extends BernieComponent<BoardingPageProps, BoardingPag
                 <div className={"boarding-page-foreground"}>
                     <div className={"header"}>
                         <div className={"header-container"}>
-                            <div className={"logo-space"}>
+                            <div className={"logo-space"} onClick={() => App.app().openMenu()}>
                                 <Logo/>
                             </div>
                             <h3 className={"page-name"}>Boarding</h3>
@@ -331,17 +335,20 @@ export class BoardingPage extends BernieComponent<BoardingPageProps, BoardingPag
                                 }}/>
                             </FlexBox>*/}
                             <Debug>
-                                <InformationBox visualMeaning={ObjectVisualMeaning.BETA} width={percent(100)}>
-                                    <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} width={percent(100)} justifyContent={Justify.SPACE_BETWEEN}>
-                                        <Text type={TextType.secondaryDescription} text={"As of subversion **v16** *(19. Feb 2022)*, the website is in it's development phase."}/>
-                                        <Button onClick={() => App.app().callDialog(Constants.roadmapDialog)}>
-                                            <Text text={"Roadmap"} uppercase bold fontSize={px(12)}/>
-                                        </Button>
-                                    </FlexBox>
-                                </InformationBox>
+                                <FlexBox width={percent(100)} gap={theme.gaps.smallGab}>
+                                    {/*<Box width={percent(100)}>
+                                        <ClientDisplay/>
+                                    </Box>*/}
+                                    <InformationBox visualMeaning={ObjectVisualMeaning.BETA} width={percent(100)}>
+                                        <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} width={percent(100)} justifyContent={Justify.SPACE_BETWEEN}>
+                                            <Text type={TextType.secondaryDescription} text={"As of subversion **v16** *(19. Feb 2022)*, the website is in it's development phase."}/>
+                                            <Button onClick={() => App.app().callDialog(Constants.roadmapDialog)}>
+                                                <Text text={"Roadmap"} uppercase bold fontSize={px(12)}/>
+                                            </Button>
+                                        </FlexBox>
+                                    </InformationBox>
+                                </FlexBox>
                             </Debug>
-
-
 
                             <ol className={"continue-as-list"}>
                                 {

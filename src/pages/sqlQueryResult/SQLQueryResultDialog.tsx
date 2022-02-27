@@ -71,7 +71,8 @@ export class SQLQueryResultDialog extends BernieComponent<SQLQueryResultDialogPr
     }
 
     private dataset(): SQLCommandQueryResponsePacketData {
-        return this.props.data[this.local.state.current - 1]
+        // return this.props.data[this.local.state.current - 1];
+        return this.props.data[this.local.state.current];
     }
 
     private canDatasetSwitchTo(mode: DatasetSwitchMode): boolean {
@@ -83,7 +84,7 @@ export class SQLQueryResultDialog extends BernieComponent<SQLQueryResultDialogPr
                 return current > 0;
             case DatasetSwitchMode.NEXT:
             case DatasetSwitchMode.LAST:
-                return current < len;
+                return current + 1 < len;
         }
     }
 
@@ -102,7 +103,7 @@ export class SQLQueryResultDialog extends BernieComponent<SQLQueryResultDialogPr
                     nextIndex = current + 1;
                     break;
                 case DatasetSwitchMode.LAST:
-                    nextIndex = this.props.data.length;
+                    nextIndex = this.props.data.length - 1;
                     break;
             }
             if (nextIndex !== undefined) {
@@ -145,7 +146,7 @@ export class SQLQueryResultDialog extends BernieComponent<SQLQueryResultDialogPr
                             </span>
                         </CustomTooltip>*/}
 
-                        <Separator orientation={Orientation.VERTICAL}/>
+                        {/*<Separator orientation={Orientation.VERTICAL}/>*/}
 
                         <CustomTooltip title={<Text text={"Close"}/>} arrow noBorder>
                             <span>
@@ -164,7 +165,7 @@ export class SQLQueryResultDialog extends BernieComponent<SQLQueryResultDialogPr
         this.assembly.assembly("dataset-viewer", (theme, props) => {
             return (
                 <Box height={percent(100)} noPadding={true} overflowYBehaviour={OverflowBehaviour.HIDDEN} overflowXBehaviour={OverflowBehaviour.HIDDEN}>
-                    <TableDataDisplay data={this.props.data[this.local.state.current - 1]}/>
+                    <TableDataDisplay data={this.dataset()}/>
                 </Box>
             );
         })
@@ -227,7 +228,7 @@ export class SQLQueryResultDialog extends BernieComponent<SQLQueryResultDialogPr
         this.assembly.assembly("result-switcher", (theme, props) => {
             if (this.props.data.length > 1) {
                 const mc = getMeaningfulColors(ObjectVisualMeaning.BETA, theme);
-                const progressVal = Math.round((this.local.state.current) / this.props.data.length * 100);
+                const progressVal = Math.round((this.local.state.current + 1) / this.props.data.length * 100);
                 return (
                     <FlexBox gap={theme.gaps.smallGab} width={percent(100)} justifyContent={Justify.CENTER} align={Align.CENTER}>
                         <LinearProgress sx={{
@@ -238,13 +239,13 @@ export class SQLQueryResultDialog extends BernieComponent<SQLQueryResultDialogPr
                             backgroundColor: mc.lighter.withAlpha(.1).css(),
                             ['& .MuiLinearProgress-bar']: {
                                 backgroundColor: mc.lighter.css(),
-                                borderRight: (this.props.data.length === this.local.state.current ? "0" : "1px") + " solid " + theme.colors.borderPrimaryColor.css(),
+                                borderRight: (this.props.data.length === this.local.state.current + 1 ? "0" : "1px") + " solid " + theme.colors.borderPrimaryColor.css(),
                             }
                         }} variant="determinate" value={progressVal}/>
                         <FlexBox flexDir={FlexDirection.ROW}>
                             <Icon colored={!this.canDatasetSwitchTo(DatasetSwitchMode.FIRST)} icon={<FirstIcon/>} onClick={() => this.onDatasetSwitch(DatasetSwitchMode.FIRST)}/>
                             <Icon colored={!this.canDatasetSwitchTo(DatasetSwitchMode.PREV)} icon={<PrevIcon/>} onClick={() => this.onDatasetSwitch(DatasetSwitchMode.PREV)}/>
-                            <Text text={`${this.local.state.current}/${this.props.data.length}`} type={TextType.secondaryDescription}/>
+                            <Text text={`${this.local.state.current + 1}/${this.props.data.length}`} type={TextType.secondaryDescription}/>
                             <Icon colored={!this.canDatasetSwitchTo(DatasetSwitchMode.NEXT)} icon={<NextIcon/>} onClick={() => this.onDatasetSwitch(DatasetSwitchMode.NEXT)}/>
                             <Icon colored={!this.canDatasetSwitchTo(DatasetSwitchMode.LAST)} icon={<LastIcon/>} onClick={() => this.onDatasetSwitch(DatasetSwitchMode.LAST)}/>
                         </FlexBox>

@@ -21,6 +21,8 @@ export class BernieComponent<RProps, RState, LState extends object> extends Reac
 
     private redirect: boolean;
 
+    private componentActive: boolean;
+
     constructor(props: RProps, state: RState, local: LState) {
         super(props);
         this.state = state;
@@ -28,6 +30,7 @@ export class BernieComponent<RProps, RState, LState extends object> extends Reac
         this._controller = new RenderController();
         this.redirectTo = undefined;
         this.redirect = false;
+        this.componentActive = false;
         this.local.on((state, value) => {
             this.controller.rerender(...getOr(value.get("channels"), ["*"]));
         });
@@ -46,11 +49,11 @@ export class BernieComponent<RProps, RState, LState extends object> extends Reac
         return this._controller;
     }
 
-    public _component(channels: string[], renderFactory: (state: State<LState>) => JSX.Element): JSX.Element {
+    public _component(channels: string[], renderFactory: (local: State<LState>) => JSX.Element): JSX.Element {
         return this.component(renderFactory, ...channels);
     }
 
-    public component(renderFactory: (state: State<LState>) => JSX.Element, ...channels: string[]): JSX.Element {
+    public component(renderFactory: (local: State<LState>) => JSX.Element, ...channels: string[]): JSX.Element {
         return (
             <RenderExecutor
                 id={v4()}
@@ -104,6 +107,20 @@ export class BernieComponent<RProps, RState, LState extends object> extends Reac
 
     public componentRender(p: RProps, s: RState, l: LState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return undefined;
+    }
+
+    public ifActive(handler: (component: BernieComponent<RProps, RState, LState>) => void) {
+        if (this.componentActive) {
+            handler(this);
+        }
+    }
+
+    componentDidMount() {
+        this.componentActive = true;
+    }
+
+    componentWillUnmount() {
+        this.componentActive = false;
     }
 
     render() {

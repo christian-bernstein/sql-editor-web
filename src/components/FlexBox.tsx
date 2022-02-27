@@ -21,7 +21,11 @@ export type FlexBoxProps = {
     overflowXBehaviour?: OverflowBehaviour,
     overflowYBehaviour?: OverflowBehaviour
     classnames?: string[],
-    margin?: Margin
+    margin?: Margin,
+    type?: 'div' | 'form',
+    paddingX?: DimensionalMeasured,
+    paddingY?: DimensionalMeasured,
+    padding?: boolean
 }
 
 export class FlexBox extends React.Component<FlexBoxProps, any> {
@@ -31,6 +35,9 @@ export class FlexBox extends React.Component<FlexBoxProps, any> {
         const margin: Margin = getOr(this.props.margin, createMargin(0, 0, 0, 0));
         const Wrapper = styled['div']`
           display: flex;
+          
+          padding: ${!this.props.padding ? "0" : (getOr(this.props.paddingY, theme.paddings.defaultObjectPadding).css() + " " + getOr(this.props.paddingX, theme.paddings.defaultObjectPadding).css())};
+          
           flex-direction: ${getOr(this.props.flexDir, FlexDirection.COLUMN)};
           gap: ${getOr(this.props.gap?.css(), theme.gaps.defaultGab.css())};
           align-items: ${this.props.align || Align.START};
@@ -45,7 +52,7 @@ export class FlexBox extends React.Component<FlexBoxProps, any> {
           margin-right: ${margin.right?.css()};
         `;
         return (
-            <Wrapper style={getOr(this.props.style, {})} className={getOr(this.props.classnames?.join(" "), "")}>
+            <Wrapper as={getOr(this.props.type, "div")} style={getOr(this.props.style, {})} className={getOr(this.props.classnames?.join(" "), "")}>
                 {this.props.children}
             </Wrapper>
         );

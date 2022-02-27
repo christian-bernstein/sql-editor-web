@@ -14,6 +14,8 @@ export type BoxProps = {
     classNames?: string[],
     width?: DimensionalMeasured,
     height?: DimensionalMeasured,
+    maxHeight?: DimensionalMeasured,
+    maxWidth?: DimensionalMeasured,
     overflowXBehaviour?: OverflowBehaviour,
     overflowYBehaviour?: OverflowBehaviour,
     visualMeaning?: ObjectVisualMeaning,
@@ -57,6 +59,8 @@ export class Box extends React.Component<BoxProps, any> {
           width: ${getOr(this.props.width?.css(), "auto")};
           // min-width: ${getOr(this.props.width?.css(), "auto")};
           height: ${getOr(this.props.height?.css(), "auto")};
+          max-height: ${getOr(this.props.maxHeight?.css(), "auto")};
+          max-width: ${getOr(this.props.maxWidth?.css(), "auto")};
           overflow-x: ${getOr<OverflowBehaviour>(this.props.overflowXBehaviour, OverflowBehaviour.VISIBLE)};
           overflow-y: ${getOr<OverflowBehaviour>(this.props.overflowYBehaviour, OverflowBehaviour.VISIBLE)};
           display: flex;
