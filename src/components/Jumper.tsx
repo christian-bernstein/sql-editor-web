@@ -29,7 +29,7 @@ export class Jumper extends BernieComponent<any, any, JumperLocalState> {
     // height={DimensionalMeasured.of(3.5, Dimension.rem)}
     componentRender(p: any, s: any, l: JumperLocalState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
-            <Group orientation={Orientation.HORIZONTAL} height={DimensionalMeasured.of(2.5, Dimension.rem)} enableSeparators elements={[
+            <Group type={"form"} orientation={Orientation.HORIZONTAL} height={DimensionalMeasured.of(2.5, Dimension.rem)} enableSeparators elements={[
                 <Input height={percent(100)} minHeightBoundary={false} hideLabel={true} placeholder={"/"} onChange={ev => this.local.setState({
                     to: ev.target.value
                 })}/>,

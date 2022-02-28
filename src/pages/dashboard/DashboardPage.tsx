@@ -323,10 +323,7 @@ export default class DashboardPage extends BernieComponent<DashboardPageProps, D
                                 <span>
                                     {
                                         this.state.loading ? (
-                                            <FlexBox flexDir={FlexDirection.ROW_REVERSE}>
-                                                {/*<Icon icon={<SyncIcon/>} visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} colored={true}/>*/}
-                                                <Text text={"**Loading**"} uppercase coloredText visualMeaning={ObjectVisualMeaning.WARNING}/>
-                                            </FlexBox>
+                                            <Icon icon={<SyncIcon/>} visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} colored/>
                                         ) : (
                                             <Icon icon={<SyncIcon/>} onClick={() => this.loadProjects()}/>
                                         )
@@ -362,7 +359,7 @@ export default class DashboardPage extends BernieComponent<DashboardPageProps, D
                             </FlexBox>
                         </PosInCenter>
                     } ifFalse={
-                        <FlexBox height={percent(100)} overflowYBehaviour={OverflowBehaviour.SCROLL}>
+                        <FlexBox height={percent(100)} width={percent(100)} overflowYBehaviour={OverflowBehaviour.SCROLL}>
                             {this.renderProjects()}
                         </FlexBox>
                     }/>

@@ -38,13 +38,15 @@ import {v4} from "uuid";
 import {BernieComponent} from "../../logic/BernieComponent";
 import {Assembly} from "../../logic/Assembly";
 import {InformationBox} from "../../components/InformationBox";
-import {If} from "../../components/If";
 import {Debug} from "../../components/Debug";
-import {Image} from "../../components/Image";
-import {ContextCompound} from "../../components/ContextCompound";
-import {ProfileShortView} from "../../components/ProfileShortView";
 import {ClientDisplay} from "../../components/ClientDisplay";
 import {Box} from "../../components/Box";
+import {UserActiveState} from "../../logic/data/UserActiveState";
+import {ClientDeviceType} from "../../logic/data/ClientDeviceType";
+import Banner from "../../assets/images/img-2.png";
+import ProfilePicture from "../../assets/images/img-2.png";
+import {CDNRequestPacketData} from "../../packets/out/CDNRequestPacketData";
+import {CDNResponsePacketData} from "../../packets/in/CDNResponsePacketData";
 
 export type BoardingPageProps = {}
 
@@ -313,7 +315,6 @@ export class BoardingPage extends BernieComponent<BoardingPageProps, BoardingPag
                     </FlexBox>
                     <div className={"boarding"}>
                         <form className={"boarding-form"}>
-
                             {/*<InformationBox visualMeaning={ObjectVisualMeaning.BETA} width={percent(100)}>
                                 <FlexBox width={percent(100)} align={Align.CENTER} justifyContent={Justify.SPACE_BETWEEN} flexDir={FlexDirection.ROW}>
                                     <Text text={"New **beta** available. Do you want to enable beta mode."} visualMeaning={ObjectVisualMeaning.BETA} coloredText/>
@@ -335,10 +336,56 @@ export class BoardingPage extends BernieComponent<BoardingPageProps, BoardingPag
                                 }}/>
                             </FlexBox>*/}
                             <Debug>
-                                <FlexBox width={percent(100)} gap={theme.gaps.smallGab}>
-                                    {/*<Box width={percent(100)}>
-                                        <ClientDisplay/>
-                                    </Box>*/}
+                                <FlexBox width={percent(100)} gap={theme.gaps.smallGab} align={Align.CENTER}>
+                                    <Box width={percent(100)}>
+                                        <FlexBox flexDir={FlexDirection.ROW} width={percent(100)} align={Align.CENTER} justifyContent={Justify.SPACE_BETWEEN}>
+                                            <ClientDisplay clientDataResolver={() => ({
+                                                activeState: UserActiveState.DO_NOT_DISTURB,
+                                                badges: [],
+                                                deviceType: ClientDeviceType.MOBILE,
+                                                email: "christian.bernsteinde@gmail.com",
+                                                id: v4(),
+                                                firstname: "Christian",
+                                                lastname: "Bernstein",
+                                                lastActive: new Date(),
+                                                links: [],
+                                                username: "Christian",
+                                                viewedFromID: undefined,
+                                                biography: "My name is Christian and I'm kinda cute. It contains **basic information about the subject's life** — like their place of birth, education, and interests. A biography may also chronicle relationships with family members, as well as major events in the subject's childhood and how those influenced their upbringing.",
+                                                banner: {
+                                                    type: "SRC",
+                                                    src: Banner
+                                                },
+                                                profilePicture: {
+                                                    type: "SRC",
+                                                    src: ProfilePicture
+                                                }
+                                            })}/>
+                                            <Button children={<Text text={"CDN"} uppercase bold fontSize={px(12)}/>} onClick={() => {
+                                                const requestID = v4();
+                                                App.app().getConnector().call({
+                                                    protocol: "base",
+                                                    packetID: "CDNRequestPacketData",
+                                                    data: {
+                                                        branches: [
+                                                            {
+                                                                branch: "biography",
+                                                                targetID: "626ff913-9faa-4e3d-9d41-1cd4636213ca",
+                                                                requestID: requestID
+                                                            }
+                                                        ]
+                                                    } as CDNRequestPacketData,
+                                                    callback: {
+                                                        handle: (connector, packet) => {
+                                                            const data = packet.data as CDNResponsePacketData;
+                                                            console.log("cdn response", data.response.entries.filter(req => req.requestID === requestID)[0]);
+                                                        }
+                                                    }
+                                                });
+                                            }}/>
+                                        </FlexBox>
+                                    </Box>
+
                                     <InformationBox visualMeaning={ObjectVisualMeaning.BETA} width={percent(100)}>
                                         <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} width={percent(100)} justifyContent={Justify.SPACE_BETWEEN}>
                                             <Text type={TextType.secondaryDescription} text={"As of subversion **v16** *(19. Feb 2022)*, the website is in it's development phase."}/>
@@ -367,7 +414,7 @@ export class BoardingPage extends BernieComponent<BoardingPageProps, BoardingPag
                                 </Link>
                                 <span className={"separator"}>/</span>
                                 <Link to={"/register"} style={{width: "100%", height: "100%", textDecoration: "none"}}>
-                                    <Button width={percent(100)} height={percent(100)}  visualMeaning={ObjectVisualMeaning.INFO} shrinkOnClick opaque>
+                                    <Button width={percent(100)} height={percent(100)} visualMeaning={ObjectVisualMeaning.INFO} shrinkOnClick opaque>
                                         <PosInCenter fullHeight>
                                             <Text cursor={Cursor.pointer} text={"Sign up"} type={TextType.smallHeader}/>
                                         </PosInCenter>

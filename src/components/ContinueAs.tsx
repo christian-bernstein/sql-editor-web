@@ -1,12 +1,15 @@
 import React from "react";
 import {SessionHistoryEntry} from "../logic/SessionHistoryEntry";
 import {ReactComponent as ArrowRight} from "../assets/icons/ic-20/ic20-arrow-right.svg";
-import {Img} from "react-image";
-import {BarLoader, PuffLoader} from "react-spinners";
+import {BarLoader} from "react-spinners";
 import "../styles/components/ContinueAs.scss";
-import {App} from "../logic/App";
+import {App, utilizeGlobalTheme} from "../logic/App";
 import {Redirect} from "react-router-dom";
 import {SimpleErrorBadge} from "./SimpleErrorBadge";
+import {ClientDisplay} from "./ClientDisplay";
+import {Text} from "./Text";
+import {FlexBox} from "./FlexBox";
+import {FlexDirection} from "../logic/style/FlexDirection";
 
 export type ContinueAsProps = {
     sessionHistoryEntry: SessionHistoryEntry,
@@ -70,15 +73,15 @@ export class ContinueAs extends React.Component<ContinueAsProps, ContinueAsState
     }
 
     private renderContinueAs(): JSX.Element {
+        const theme = utilizeGlobalTheme();
+
         return (
             <div className={"session-history-entry"} onClick={event => this.onContinueClicked(event)}>
-                <div className={"name-container"}>
-                    <p>Continue as {<span className={"name"}>{this.props.sessionHistoryEntry.profileData.username}</span>}</p>
-                    <Img className={"avatar"}
-                         alt={"avatar"}
-                         src={"https://gravatar.com/avatar/" + this.props.sessionHistoryEntry.profileData.username + "?d=identicon"}
-                         loader={<div className={"avatar-loader"}><PuffLoader color={"#A9E5C3"} size={"10px"}/></div>}/>
-                </div>
+                <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab}>
+                    <Text text={"Continue as"}/>
+                    <ClientDisplay enableClientBadge={false}/>
+                </FlexBox>
+
                 <div className={"icon"}>
                     {(() => {
                         if (this.state.loginInProcess) {

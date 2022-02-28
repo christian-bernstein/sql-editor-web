@@ -20,6 +20,7 @@ export type GroupProps = {
     removeChildBorders?: boolean,
     enableSeparators?: boolean,
     height?: DimensionalMeasured,
+    type?: 'div' | 'form',
 }
 
 export class Group extends BernieComponent<GroupProps, any, any> {
@@ -28,6 +29,7 @@ export class Group extends BernieComponent<GroupProps, any, any> {
         const orientation = getOr(p.orientation, Orientation.HORIZONTAL);
         const removeChildBorders = getOr(p.removeChildBorders, true);
         const enableSeparators = getOr(p.enableSeparators, true);
+        const type = getOr(p.type, "div");
 
         const Wrapper = styled.span`
           width: 100%;
@@ -42,7 +44,7 @@ export class Group extends BernieComponent<GroupProps, any, any> {
         return (
             <Wrapper>
                 <Box noPadding width={percent(100)} height={percent(100)} gapY={px(0)} gapX={px(0)} overflowXBehaviour={OverflowBehaviour.HIDDEN} overflowYBehaviour={OverflowBehaviour.HIDDEN}>
-                    <FlexBox height={percent(100)} flexDir={orientation === Orientation.HORIZONTAL ? FlexDirection.ROW : FlexDirection.COLUMN} width={percent(100)} gap={px(0)} children={
+                    <FlexBox type={type} height={percent(100)} flexDir={orientation === Orientation.HORIZONTAL ? FlexDirection.ROW : FlexDirection.COLUMN} width={percent(100)} gap={px(0)} children={
                         this.props.elements.filter(e => e !== undefined).filter(e => !ReactIs.isFragment(e)).map((e, index, array) => {
                             if (index === array.length - 1) {
                                 return e;

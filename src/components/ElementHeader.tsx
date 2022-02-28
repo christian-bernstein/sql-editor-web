@@ -20,7 +20,8 @@ export type ElementHeaderProps = {
     beta: boolean
     appendix: JSX.Element,
     // means: should the 'icon'-prop be wrapped in a <Icon icon={}/> component (use wrapIcon = false if you like to customise the icon by yourself.)
-    wrapIcon: boolean
+    wrapIcon: boolean,
+    boldHeader: boolean
 }
 
 export type ElementHeaderPropsPartial = Partial<ElementHeaderProps>;
@@ -34,7 +35,8 @@ export class ElementHeader extends BernieComponent<ElementHeaderPropsPartial, an
         disableTitle: false,
         beta: false,
         appendix: <></>,
-        wrapIcon: true
+        wrapIcon: true,
+        boldHeader: false
     }
 
     componentRender(p: ElementHeaderPropsPartial, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {

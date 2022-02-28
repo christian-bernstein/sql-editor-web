@@ -71,11 +71,11 @@ export class ClientDisplayPlaygroundDialog extends BernieComponent<any, any, Cli
         this.assembly.assembly("display", (t, props) => (
             <Box gapY={t.gaps.smallGab} width={percent(100)}>
                 <PosInCenter>
-                    <ClientDisplay clientDataResolver={() => ClientDisplayPlaygroundDialog.profile} overwriteMenuRenderer={instance => {
+                    <ClientDisplay clientDataResolver={() => ClientDisplayPlaygroundDialog.profile} overwriteMenuRenderer={(instance, profile) => {
                         const ls = this.local.state;
                         return (
                             <ProfileShortView
-                                profile={instance.props.clientDataResolver()}
+                                profile={profile}
                                 enableBiography={ls.biography}
                                 enableBanner={ls.banner}
                                 enableLinks={ls.links}
