@@ -118,8 +118,8 @@ export class ProjectInfo extends React.Component<ProjectInfoProps, any> {
                     <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} gap={px(1)} overflowXBehaviour={OverflowBehaviour.SCROLL}>
                         {/* todo put username here */}
                         {/*<Text text={`${this.props.data.creatorUserID}/`}/>*/}
-                        <ClientDisplay enableClientBadge={false}/>
-                        <Text text={"/"} type={TextType.secondaryDescription}/>
+                        {/*<ClientDisplay enableClientBadge={false}/>
+                        <Text text={"/"} type={TextType.secondaryDescription}/>*/}
                         <Text whitespace={"nowrap"} text={`${this.props.data.title}`} bold/>
                     </FlexBox>
                 </FlexBox>

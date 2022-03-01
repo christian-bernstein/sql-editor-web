@@ -5,6 +5,8 @@ import styled from "styled-components";
 import {DimensionalMeasured} from "../logic/style/DimensionalMeasured";
 import {getOr} from "../logic/Utils";
 
+// import Background from "../assets/images/img-2.png";
+
 export type PageProps = {
     gapX?: DimensionalMeasured,
     gapY?: DimensionalMeasured,

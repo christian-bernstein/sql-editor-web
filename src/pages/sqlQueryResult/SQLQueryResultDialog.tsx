@@ -8,6 +8,7 @@ import {ReactComponent as FirstIcon} from "../../assets/icons/ic-20/ic20-audio-p
 import {ReactComponent as PrevIcon} from "../../assets/icons/ic-20/ic20-arrow-left.svg";
 import {ReactComponent as NextIcon} from "../../assets/icons/ic-20/ic20-arrow-right.svg";
 import {ReactComponent as LastIcon} from "../../assets/icons/ic-20/ic20-audio-next.svg";
+import {ReactComponent as DeleteIcon} from "../../assets/icons/ic-16/ic16-delete.svg";
 import {Icon} from "../../components/Icon";
 import React from "react";
 import {Text, TextType} from "../../components/Text";
@@ -26,6 +27,7 @@ import {App} from "../../logic/App";
 import {Separator} from "../../components/Separator";
 import {Orientation} from "../../logic/style/Orientation";
 import {ReactComponent as CloseIcon} from "../../assets/icons/ic-20/ic20-close.svg";
+import {ReactComponent as OptionsIcon} from "../../assets/icons/ic-20/ic20-more-ver.svg";
 import {LiteGrid} from "../../components/LiteGrid";
 import {CodeEditor} from "../../components/CodeEditor";
 import {oneDark} from "@codemirror/theme-one-dark";
@@ -39,6 +41,9 @@ import {If} from "../../components/If";
 import {ReactComponent as SuccessIcon} from "../../assets/icons/ic-16/ic16-check.svg";
 import {ReactComponent as ErrorIcon} from "../../assets/icons/ic-16/ic16-close.svg";
 import {ElementHeader} from "../../components/ElementHeader";
+import {ContextCompound} from "../../components/ContextCompound";
+import {Button} from "../../components/Button";
+import {ReactComponent as DashboardIcon} from "../../assets/icons/ic-16/ic16-open-in-browser.svg";
 
 export enum DatasetSwitchMode {
     FIRST = "first",
@@ -49,11 +54,13 @@ export enum DatasetSwitchMode {
 
 export type SQLQueryResultDialogProps = {
     data: SQLCommandQueryResponsePacketData[],
+    deleteCurrentSelectionBridge?: (data: SQLCommandQueryResponsePacketData[]) => void,
     startingIndex: number,
     onClose?: () => void
 }
 
 export type SQLQueryResultDialogLocalState = {
+    localData: SQLCommandQueryResponsePacketData[],
     current: number
 }
 
@@ -61,6 +68,7 @@ export class SQLQueryResultDialog extends BernieComponent<SQLQueryResultDialogPr
 
     constructor(props: SQLQueryResultDialogProps) {
         super(props, undefined, {
+            localData: props.data,
             current: props.startingIndex
         });
 
@@ -68,16 +76,17 @@ export class SQLQueryResultDialog extends BernieComponent<SQLQueryResultDialogPr
         this.registerDatasetViewer();
         this.registerTelemetryViewer();
         this.registerHeader();
+        this.registerContextMenu();
     }
 
     private dataset(): SQLCommandQueryResponsePacketData {
         // return this.props.data[this.local.state.current - 1];
-        return this.props.data[this.local.state.current];
+        return this.local.state.localData[this.local.state.current];
     }
 
     private canDatasetSwitchTo(mode: DatasetSwitchMode): boolean {
         const current = this.local.state.current;
-        const len = this.props.data.length;
+        const len = this.local.state.localData.length;
         switch (mode) {
             case DatasetSwitchMode.FIRST:
             case DatasetSwitchMode.PREV:
@@ -114,6 +123,61 @@ export class SQLQueryResultDialog extends BernieComponent<SQLQueryResultDialogPr
         }
     }
 
+    private removeLocalResults(data: SQLCommandQueryResponsePacketData[]) {
+        data.forEach(elem => {
+            const cache = this.local.state.localData;
+            const index = cache.indexOf(elem, 0);
+            if (index > -1) {
+                cache.splice(index, 1);
+            }
+        });
+    }
+
+    private tryToMovePointerToNextSavePosition(): boolean {
+        const ls = this.local.state;
+        if (ls.localData.length === 0) {
+            return false;
+        } else if (ls.current > ls.localData.length - 1) {
+            ls.current = ls.localData.length - 1;
+            return true;
+        } else {
+            return true;
+        }
+    }
+
+    private registerContextMenu() {
+        this.assembly.assembly("ctx-menu", (theme, props) => {
+            return (
+                <FlexBox gap={theme.gaps.smallGab}>
+                    <Button width={percent(100)} visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} opaque onClick={() => {
+                        this.props.deleteCurrentSelectionBridge?.([this.dataset()]);
+                        if (this.tryToMovePointerToNextSavePosition()) {
+                            this.controller.rerender("data");
+                        } else {
+                            App.app().toggleMainDialog("closed");
+                        }
+                    }}>
+                        <FlexBox width={percent(100)}>
+                            <Text text={"Delete current result"} uppercase bold fontSize={px(12)} enableLeftAppendix leftAppendix={
+                                <Icon icon={<DeleteIcon/>}/>
+                            }/>
+                        </FlexBox>
+                    </Button>
+                    <Button width={percent(100)} visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} opaque onClick={() => {
+                        this.props.deleteCurrentSelectionBridge?.(this.props.data);
+                        App.app().toggleMainDialog("closed");
+                    }}>
+                        <FlexBox width={percent(100)}>
+                            <Text text={"Delete"} uppercase bold fontSize={px(12)} enableLeftAppendix leftAppendix={
+                                <Icon icon={<DeleteIcon/>}/>
+                            }/>
+                        </FlexBox>
+                    </Button>
+                </FlexBox>
+            );
+        });
+    }
+
     private registerHeader() {
         this.assembly.assembly("header", (theme, props) => {
             return (
@@ -132,7 +196,7 @@ export class SQLQueryResultDialog extends BernieComponent<SQLQueryResultDialogPr
                     <FlexBox align={Align.CENTER} justifyContent={Justify.CENTER}>
                         <Text uppercase align={Align.CENTER} type={TextType.smallHeader} text={"SQL Result"}/>
                     </FlexBox>
-                    <FlexBox align={Align.CENTER} justifyContent={Justify.FLEX_END} flexDir={FlexDirection.ROW}>
+                    <FlexBox align={Align.CENTER} gap={theme.gaps.smallGab} justifyContent={Justify.FLEX_END} flexDir={FlexDirection.ROW}>
 
                         {/*<CustomTooltip title={<Text text={"Toggles debugging mode"}/>} arrow noBorder>
                             <span>
@@ -146,7 +210,15 @@ export class SQLQueryResultDialog extends BernieComponent<SQLQueryResultDialogPr
                             </span>
                         </CustomTooltip>*/}
 
-                        {/*<Separator orientation={Orientation.VERTICAL}/>*/}
+                        <ContextCompound menu={this.assembly.render({component: "ctx-menu"})} children={
+                            <CustomTooltip title={<Text text={"Show options…"}/>} arrow noBorder>
+                                <span>
+                                    <Icon icon={<OptionsIcon/>} visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} colored={false}/>
+                                </span>
+                            </CustomTooltip>
+                        }/>
+
+                        <Separator orientation={Orientation.VERTICAL}/>
 
                         <CustomTooltip title={<Text text={"Close"}/>} arrow noBorder>
                             <span>
@@ -158,7 +230,7 @@ export class SQLQueryResultDialog extends BernieComponent<SQLQueryResultDialogPr
                     </FlexBox>
                 </LiteGrid>
             );
-        })
+        });
     }
 
     private registerDatasetViewer() {
@@ -168,7 +240,7 @@ export class SQLQueryResultDialog extends BernieComponent<SQLQueryResultDialogPr
                     <TableDataDisplay data={this.dataset()}/>
                 </Box>
             );
-        })
+        });
     }
 
     private registerTelemetryViewer() {
@@ -189,12 +261,12 @@ export class SQLQueryResultDialog extends BernieComponent<SQLQueryResultDialogPr
                         }
                         appendix={
                             <FlexBox flexDir={FlexDirection.ROW} height={percent(100)} align={Align.CENTER} gap={theme.gaps.smallGab}>
-                                <ProfilePicture name={"root"}/>
+                                {/*<ProfilePicture name={"root"}/>*/}
                                 <Text text={"root"} cursor={Cursor.pointer} type={TextType.secondaryDescription}/>
                                 <Box visualMeaning={ObjectVisualMeaning.BETA} opaque paddingY={px(0)} paddingX={px(4)}>
                                     <Text text={data.client.type.toString()} bold uppercase fontSize={px(12)}/>
                                 </Box>
-                                <Text text={`${dateFormat(new Date(), "HH:mm:ss")}`} whitespace={"nowrap"} type={TextType.secondaryDescription}/>
+                                <Text text={`${dateFormat(data.timestamp, "HH:mm:ss")}`} whitespace={"nowrap"} type={TextType.secondaryDescription}/>
                                 {/*<Separator orientation={Orientation.VERTICAL}/>
                                 <Icon icon={<RepeatIcon/>}/>*/}
                             </FlexBox>
@@ -220,7 +292,7 @@ export class SQLQueryResultDialog extends BernieComponent<SQLQueryResultDialogPr
                     />
                 </Box>
             );
-        })
+        });
     }
 
     // this.props.data.length / 100 * this.local.state.current

@@ -156,7 +156,6 @@ export class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
 
     // <ObjectJSONDisplay object={App.app().config.connectorConfig}/>
     private renderLogin(): JSX.Element {
-        console.log("rerender login")
         return (
             <div className={"login-page"}>
                 <div className={"login-page-foreground"}>

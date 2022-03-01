@@ -56,6 +56,7 @@ import {SQLQueryResultDialog} from "../sqlQueryResult/SQLQueryResultDialog";
 import {RoadmapEntry} from "../../components/RoadmapEntry";
 import {Debug} from "../../components/Debug";
 import {If} from "../../components/If";
+import {HistoryEntry} from "./HistoryEntry";
 
 export type DebugEditorProps = {
 }
@@ -72,7 +73,9 @@ export type DebugEditorLocalState = {
     processPushCommand: boolean,
     processPullCommand: boolean,
     // todo SQLCommandQueryResponsePacketData | SQLCommandUpdateResponsePacketData
-    sqlCommandResultCache: (SQLCommandQueryResponsePacketData)[]
+    sqlCommandResultCache: (SQLCommandQueryResponsePacketData)[],
+
+    projectHistoryLocalCache: HistoryEntry[]
 }
 
 /**
@@ -88,7 +91,9 @@ export class Editor extends React.Component<DebugEditorProps, DebugEditorState> 
         command: "show tables from information_schema",
         processPullCommand: false,
         processPushCommand: false,
-        sqlCommandResultCache: []
+        sqlCommandResultCache: [],
+
+        projectHistoryLocalCache: []
     });
 
     private readonly controller = new RenderController();
@@ -106,7 +111,6 @@ export class Editor extends React.Component<DebugEditorProps, DebugEditorState> 
             openMainDialog: false
         };
         this.local.on((state, value) => {
-            console.log("rerender")
             this.controller.rerender(...getOr(value.get("channels"), ["*"]));
         });
         this.assembly = new Assembly();
@@ -195,7 +199,15 @@ export class Editor extends React.Component<DebugEditorProps, DebugEditorState> 
             if (cache !== undefined && cache.length > 0) {
                 // todo remove cache duplication
                 return (
-                    <SQLQueryResultDialog data={cache} startingIndex={cache.length - 1} onClose={() => this.setState({
+                    <SQLQueryResultDialog deleteCurrentSelectionBridge={data => {
+                        data.forEach(elem => {
+                            const cache = this.local.state.sqlCommandResultCache;
+                            const index = cache.indexOf(elem, 0);
+                            if (index > -1) {
+                                cache.splice(index, 1);
+                            }
+                        });
+                    }} data={cache} startingIndex={cache.length - 1} onClose={() => this.setState({
                         openMainDialog: false
                     })}/>
                 );
@@ -614,7 +626,9 @@ export class Editor extends React.Component<DebugEditorProps, DebugEditorState> 
                         </Debug>
                     </FlexBox>
 
-                    <If condition={App.app().config.debugMode} ifTrue={this.renderDBHistory()} ifFalse={<span/>}/>
+                    <If condition={App.app().config.debugMode} ifTrue={this.renderDBHistory()} ifFalse={
+                        <FlexBox height={percent(100)}/>
+                    }/>
 
                     <FlexBox width={percent(100)} overflowYBehaviour={OverflowBehaviour.VISIBLE} justifyContent={Justify.FLEX_END}>
                         {/*<Box width={percent(100)} gapY={theme.gaps.defaultGab}>

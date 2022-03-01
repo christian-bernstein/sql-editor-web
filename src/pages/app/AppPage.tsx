@@ -267,7 +267,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
     private renderDialog(): JSX.Element {
         const theme: Themeable.Theme = utilizeGlobalTheme();
 
-        if (this.state.showDialog) {
+        if (this.state.showDialog && this.state.dialogAssembly !== undefined) {
             return (
                 <Dialog open={this.state.showDialog} onClose={() => this.setState({
                     showDialog: false

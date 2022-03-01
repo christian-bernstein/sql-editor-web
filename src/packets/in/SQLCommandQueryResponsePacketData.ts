@@ -8,5 +8,6 @@ export type SQLCommandQueryResponsePacketData = {
     errormessage: string,
     client: Client,
     rows: Map<string, any>[],
-    columns: Column[]
+    columns: Column[],
+    timestamp: Date
 }

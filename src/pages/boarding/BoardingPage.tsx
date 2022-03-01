@@ -5,8 +5,12 @@ import {ReactComponent as AppLogo} from "../../assets/logo.svg";
 import {ReactComponent as FullscreenEnterIcon} from "../../assets/icons/ic-20/ic20-fullscreen.svg";
 import {ReactComponent as FullscreenExitIcon} from "../../assets/icons/ic-20/ic20-fullscreen-exit.svg";
 import {ReactComponent as LogIcon} from "../../assets/icons/ic-20/ic20-bolt.svg";
+import {ReactComponent as DiscordBlackIcon} from "../../assets/discord/Discord-Logo-Black.svg";
+import {ReactComponent as DiscordWhiteIcon} from "../../assets/discord/Discord-Logo-White.svg";
+
 // todo remove completely
 // import "../../styles/pages/BoardingPage.scss";
+
 import {_Button} from "../../components/_Button";
 import {ComponentStyle} from "../../ComponentStyle";
 import {ContinueAs} from "../../components/ContinueAs";
@@ -37,16 +41,12 @@ import {BadgedWrapper} from "../../components/BadgedWrapper";
 import {v4} from "uuid";
 import {BernieComponent} from "../../logic/BernieComponent";
 import {Assembly} from "../../logic/Assembly";
-import {InformationBox} from "../../components/InformationBox";
+import {If} from "../../components/If";
+import {LiteGrid} from "../../components/LiteGrid";
+import {ReactComponent as OpenDialogIcon} from "../../assets/icons/ic-20/ic20-open-in-browser.svg";
+import {ReactComponent as LogoutIcon} from "../../assets/icons/ic-16/ic16-turn-off.svg";
+import {ReactComponent as DashboardIcon} from "../../assets/icons/ic-16/ic16-open-in-browser.svg";
 import {Debug} from "../../components/Debug";
-import {ClientDisplay} from "../../components/ClientDisplay";
-import {Box} from "../../components/Box";
-import {UserActiveState} from "../../logic/data/UserActiveState";
-import {ClientDeviceType} from "../../logic/data/ClientDeviceType";
-import Banner from "../../assets/images/img-2.png";
-import ProfilePicture from "../../assets/images/img-2.png";
-import {CDNRequestPacketData} from "../../packets/out/CDNRequestPacketData";
-import {CDNResponsePacketData} from "../../packets/in/CDNResponsePacketData";
 
 export type BoardingPageProps = {}
 
@@ -267,6 +267,7 @@ export class BoardingPage extends BernieComponent<BoardingPageProps, BoardingPag
                                         openConnectionMetricsDialog
                                     />
                                 </FlexBox>
+
                                 <Separator orientation={Orientation.VERTICAL} width={px(1)}/>
                                 <FlexBox align={Align.CENTER} justifyContent={Justify.CENTER} height={percent(100)}>
                                     <CustomTooltip noBorder arrow title={"Toggle fullscreen"} TransitionComponent={Zoom}>
@@ -283,6 +284,30 @@ export class BoardingPage extends BernieComponent<BoardingPageProps, BoardingPag
                                         </span>
                                     </CustomTooltip>
                                 </FlexBox>
+
+                                <Debug>
+                                    <FlexBox align={Align.CENTER} justifyContent={Justify.CENTER} height={percent(100)}>
+                                        <CustomTooltip noBorder noPadding arrow title={
+                                            <iframe
+                                                src="https://discord.com/widget?id=948297053539299348&theme=dark" width="350"
+                                                height="500" allowTransparency frameBorder="0"
+                                                sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
+                                            />
+                                        } TransitionComponent={Zoom}>
+                                        <span>
+                                            <If condition={theme.mode === "dark"} ifTrue={
+                                                <Icon icon={
+                                                    <DiscordWhiteIcon/>
+                                                }/>
+                                            } ifFalse={
+                                                <Icon icon={
+                                                    <DiscordBlackIcon/>
+                                                }/>
+                                            }/>
+                                        </span>
+                                        </CustomTooltip>
+                                    </FlexBox>
+                                </Debug>
 
                                 {/*<FlexBox align={Align.CENTER} justifyContent={Justify.CENTER} height={percent(100)} margin={createMargin(0, theme.gaps.smallGab.measurand, 0, 0)}>
                                     <Icon icon={<ClearIcon/>} onClick={() => {
@@ -335,95 +360,54 @@ export class BoardingPage extends BernieComponent<BoardingPageProps, BoardingPag
                                     }
                                 }}/>
                             </FlexBox>*/}
-                            <Debug>
-                                <FlexBox width={percent(100)} gap={theme.gaps.smallGab} align={Align.CENTER}>
-                                    <Box width={percent(100)}>
-                                        <FlexBox flexDir={FlexDirection.ROW} width={percent(100)} align={Align.CENTER} justifyContent={Justify.SPACE_BETWEEN}>
-                                            <ClientDisplay clientDataResolver={() => ({
-                                                activeState: UserActiveState.DO_NOT_DISTURB,
-                                                badges: [],
-                                                deviceType: ClientDeviceType.MOBILE,
-                                                email: "christian.bernsteinde@gmail.com",
-                                                id: v4(),
-                                                firstname: "Christian",
-                                                lastname: "Bernstein",
-                                                lastActive: new Date(),
-                                                links: [],
-                                                username: "Christian",
-                                                viewedFromID: undefined,
-                                                biography: "My name is Christian and I'm kinda cute. It contains **basic information about the subject's life** — like their place of birth, education, and interests. A biography may also chronicle relationships with family members, as well as major events in the subject's childhood and how those influenced their upbringing.",
-                                                banner: {
-                                                    type: "SRC",
-                                                    src: Banner
-                                                },
-                                                profilePicture: {
-                                                    type: "SRC",
-                                                    src: ProfilePicture
-                                                }
-                                            })}/>
-                                            <Button children={<Text text={"CDN"} uppercase bold fontSize={px(12)}/>} onClick={() => {
-                                                const requestID = v4();
-                                                App.app().getConnector().call({
-                                                    protocol: "base",
-                                                    packetID: "CDNRequestPacketData",
-                                                    data: {
-                                                        branches: [
-                                                            {
-                                                                branch: "biography",
-                                                                targetID: "626ff913-9faa-4e3d-9d41-1cd4636213ca",
-                                                                requestID: requestID
-                                                            }
-                                                        ]
-                                                    } as CDNRequestPacketData,
-                                                    callback: {
-                                                        handle: (connector, packet) => {
-                                                            const data = packet.data as CDNResponsePacketData;
-                                                            console.log("cdn response", data.response.entries.filter(req => req.requestID === requestID)[0]);
-                                                        }
-                                                    }
-                                                });
-                                            }}/>
-                                        </FlexBox>
-                                    </Box>
 
-                                    <InformationBox visualMeaning={ObjectVisualMeaning.BETA} width={percent(100)}>
-                                        <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} width={percent(100)} justifyContent={Justify.SPACE_BETWEEN}>
-                                            <Text type={TextType.secondaryDescription} text={"As of subversion **v16** *(19. Feb 2022)*, the website is in it's development phase."}/>
-                                            <Button onClick={() => App.app().callDialog(Constants.roadmapDialog)}>
-                                                <Text text={"Roadmap"} uppercase bold fontSize={px(12)}/>
-                                            </Button>
-                                        </FlexBox>
-                                    </InformationBox>
-                                </FlexBox>
-                            </Debug>
+                            {App.app().getSessionHistoryEntries().length > 0 ? (
+                                <ol className={"continue-as-list"}>
+                                    {
+                                        App.app().getSessionHistoryEntries().map((entry: SessionHistoryEntry) => <ContinueAs
+                                            key={""} sessionHistoryEntry={{
+                                            sessionID: entry.sessionID,
+                                            profileData: entry.profileData
+                                        }}/>)
+                                    }
+                                </ol>
+                            ) : (
+                                <></>
+                            )}
 
-                            <ol className={"continue-as-list"}>
-                                {
-                                    App.app().getSessionHistoryEntries().map((entry: SessionHistoryEntry) => <ContinueAs
-                                        key={""} sessionHistoryEntry={{
-                                        sessionID: entry.sessionID,
-                                        profileData: entry.profileData
-                                    }}/>)
-                                }
-                            </ol>
-                            <div className={"boarding-type"}>
-                                <Link to={"/login"}>
-                                    <_Button onClick={() => {}} internalStyling={true} theme={ComponentStyle.DEFAULT}>
-                                        Log in
-                                    </_Button>
-                                </Link>
-                                <span className={"separator"}>/</span>
-                                <Link to={"/register"} style={{width: "100%", height: "100%", textDecoration: "none"}}>
-                                    <Button width={percent(100)} height={percent(100)} visualMeaning={ObjectVisualMeaning.INFO} shrinkOnClick opaque>
-                                        <PosInCenter fullHeight>
-                                            <Text cursor={Cursor.pointer} text={"Sign up"} type={TextType.smallHeader}/>
-                                        </PosInCenter>
+                            <If condition={App.app().getConnector().currentProtocol === "main"} ifTrue={
+                                <LiteGrid columns={2} gap={theme.gaps.smallGab}>
+                                    <Button visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} opaque>
+                                        <Text text={"logout"} uppercase bold fontSize={px(12)} enableLeftAppendix leftAppendix={
+                                            <Icon icon={<LogoutIcon/>}/>
+                                        }/>
                                     </Button>
-                                    {/*<_Button onClick={() => {}} internalStyling={true} theme={ComponentStyle.PRIMARY}>
+                                    <Button visualMeaning={ObjectVisualMeaning.INFO} opaque onClick={() => this.goto("dashboard/")}>
+                                        <Text text={"go to dashboard"} uppercase bold fontSize={px(12)} enableLeftAppendix leftAppendix={
+                                            <Icon icon={<DashboardIcon/>}/>
+                                        }/>
+                                    </Button>
+                                </LiteGrid>
+                            } ifFalse={
+                                <div className={"boarding-type"}>
+                                    <Link to={"/login"}>
+                                        <_Button onClick={() => {}} internalStyling={true} theme={ComponentStyle.DEFAULT}>
+                                            Log in
+                                        </_Button>
+                                    </Link>
+                                    <span className={"separator"}>/</span>
+                                    <Link to={"/register"} style={{width: "100%", height: "100%", textDecoration: "none"}}>
+                                        <Button width={percent(100)} height={percent(100)} visualMeaning={ObjectVisualMeaning.INFO} shrinkOnClick opaque>
+                                            <PosInCenter fullHeight>
+                                                <Text cursor={Cursor.pointer} text={"Sign up"} type={TextType.smallHeader}/>
+                                            </PosInCenter>
+                                        </Button>
+                                        {/*<_Button onClick={() => {}} internalStyling={true} theme={ComponentStyle.PRIMARY}>
                                         Sign up
                                     </_Button>*/}
-                                </Link>
-                            </div>
+                                    </Link>
+                                </div>
+                            }/>
                         </form>
                     </div>
                 </div>

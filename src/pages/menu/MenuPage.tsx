@@ -1,7 +1,7 @@
 import React from "react";
 import "../../styles/pages/MenuPage.scss";
 import {App, utilizeGlobalTheme} from "../../logic/App";
-import {Text} from "../../components/Text";
+import {Text, TextType} from "../../components/Text";
 import {getMeaningfulColors, MeaningfulColors, Themeable} from "../../Themeable";
 import {Box} from "../../components/Box";
 import {percent, px} from "../../logic/style/DimensionalMeasured";
@@ -28,6 +28,15 @@ import {BadgedWrapper} from "../../components/BadgedWrapper";
 import {Input} from "../../components/Input";
 import {RedirectController} from "../../components/RedirectController";
 import {Jumper} from "../../components/Jumper";
+import {ClientDisplay} from "../../components/ClientDisplay";
+import {UserActiveState} from "../../logic/data/UserActiveState";
+import {ClientDeviceType} from "../../logic/data/ClientDeviceType";
+import {v4} from "uuid";
+import Banner from "../../assets/images/img-4.gif";
+import ProfilePicture from "../../assets/images/img-4.gif";
+import {CDNRequestPacketData} from "../../packets/out/CDNRequestPacketData";
+import {CDNResponsePacketData} from "../../packets/in/CDNResponsePacketData";
+import {Debug} from "../../components/Debug";
 
 export type MenuPageProps = {
     showMenuInitially?: boolean,
@@ -306,7 +315,9 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
                                         visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
                                         opaque={true}
                                         shrinkOnClick={true}
-                                        children={<Icon icon={<OpenDialogIcon/>}/>}
+                                        children={<Text text={"cd-playground"} uppercase bold fontSize={px(12)} enableLeftAppendix leftAppendix={
+                                            <Icon icon={<OpenDialogIcon/>}/>
+                                        } />}
                                         onClick={() => {
                                             App.app().callDialog("client-display-playground-dialog");
                                         }}
@@ -343,6 +354,70 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
                             title={"**App config**"}
                             pure={false}
                         />
+
+                        <Debug>
+                            <FlexBox width={percent(100)} gap={theme.gaps.smallGab} align={Align.CENTER}>
+                                <Box width={percent(100)}>
+                                    <FlexBox flexDir={FlexDirection.ROW} width={percent(100)} align={Align.CENTER} justifyContent={Justify.SPACE_BETWEEN}>
+                                        <ClientDisplay clientDataResolver={() => ({
+                                            activeState: UserActiveState.DO_NOT_DISTURB,
+                                            badges: [],
+                                            deviceType: ClientDeviceType.MOBILE,
+                                            email: "christian.bernsteinde@gmail.com",
+                                            id: v4(),
+                                            firstname: "Christian",
+                                            lastname: "Bernstein",
+                                            lastActive: new Date(),
+                                            links: [],
+                                            username: "Christian",
+                                            viewedFromID: undefined,
+                                            biography: "My name is Christian and I'm kinda cute. It contains **basic information about the subject's life** — like their place of birth, education, and interests. A biography may also chronicle relationships with family members, as well as major events in the subject's childhood and how those influenced their upbringing.",
+                                            banner: {
+                                                type: "SRC",
+                                                src: Banner
+                                            },
+                                            profilePicture: {
+                                                type: "SRC",
+                                                src: ProfilePicture
+                                            }
+                                        })}/>
+                                        <Button children={<Text text={"CDN"} uppercase bold fontSize={px(12)}/>} onClick={() => {
+                                            const requestID = v4();
+                                            App.app().getConnector().call({
+                                                protocol: "base",
+                                                packetID: "CDNRequestPacketData",
+                                                data: {
+                                                    branches: [
+                                                        {
+                                                            branch: "biography",
+                                                            targetID: "626ff913-9faa-4e3d-9d41-1cd4636213ca",
+                                                            requestID: requestID
+                                                        }
+                                                    ]
+                                                } as CDNRequestPacketData,
+                                                callback: {
+                                                    handle: (connector, packet) => {
+                                                        const data = packet.data as CDNResponsePacketData;
+                                                        console.log("cdn response", data.response.entries.filter(req => req.requestID === requestID)[0]);
+                                                    }
+                                                }
+                                            });
+                                        }}/>
+                                    </FlexBox>
+                                </Box>
+
+                                <InformationBox visualMeaning={ObjectVisualMeaning.BETA} width={percent(100)}>
+                                    <FlexBox flexDir={FlexDirection.COLUMN} align={Align.CENTER} width={percent(100)} justifyContent={Justify.SPACE_BETWEEN}>
+                                        <Text type={TextType.secondaryDescription} text={"As of subversion **v26** *(01. Mar 2022)*, the website is in it's development phase."}/>
+                                    </FlexBox>
+                                </InformationBox>
+                            </FlexBox>
+                        </Debug>
+
+                        <Button width={percent(100)} onClick={() => App.app().callDialog(Constants.roadmapDialog)}>
+                            <Text text={"Roadmap"} uppercase bold fontSize={px(12)}/>
+                        </Button>
+
                         {/*<ObjectJSONDisplay
                             object={App.app().logHistory}
                             pure={false}

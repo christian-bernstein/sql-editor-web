@@ -79,7 +79,8 @@ export class ContinueAs extends React.Component<ContinueAsProps, ContinueAsState
             <div className={"session-history-entry"} onClick={event => this.onContinueClicked(event)}>
                 <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab}>
                     <Text text={"Continue as"}/>
-                    <ClientDisplay enableClientBadge={false}/>
+                    {/*<ClientDisplay enableClientBadge={false} />*/}
+                    <Text text={this.props.sessionHistoryEntry.profileData.username}/>
                 </FlexBox>
 
                 <div className={"icon"}>
