@@ -51,7 +51,7 @@ export class ElementHeader extends BernieComponent<ElementHeaderPropsPartial, an
                         })()
                     )}/>
                     <If condition={props.disableTitle} ifFalse={
-                        <Text text={props.title}/>
+                        <Text text={props.title} whitespace={"nowrap"} bold={props.boldHeader}/>
                     }/>
                     <If condition={props.beta} ifTrue={Badge.beta(t)}/>
                 </FlexBox>

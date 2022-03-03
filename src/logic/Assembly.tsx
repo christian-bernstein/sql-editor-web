@@ -12,6 +12,12 @@ export class Assembly {
         return this;
     }
 
+    public liteRender(component: string): JSX.Element {
+        return this.render({
+            component: component
+        });
+    }
+
     public render(request: AssemblyRequest): JSX.Element {
         if (!this._components.has(request.component)) {
             const e: Error = new Error(`Assembly line ${request.component} doesn't exist.`);

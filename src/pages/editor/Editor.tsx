@@ -8,13 +8,15 @@ import {Icon} from "../../components/Icon";
 import {ReactComponent as MenuIcon} from "../../assets/icons/ic-20/ic20-menu.svg";
 import {ReactComponent as ErrorIcon} from "../../assets/icons/ic-20/ic20-alert.svg";
 import {ReactComponent as RedirectIcon} from "../../assets/icons/ic-20/ic20-arrow-right.svg";
-import {ReactComponent as PushIcon} from "../../assets/icons/ic-16/ic16-upload.svg";
-import {ReactComponent as PullIcon} from "../../assets/icons/ic-16/ic16-download.svg";
+import {ReactComponent as PushIcon, ReactComponent as UploadIcon} from "../../assets/icons/ic-16/ic16-upload.svg";
+import {ReactComponent as PullIcon, ReactComponent as DownloadIcon} from "../../assets/icons/ic-16/ic16-download.svg";
 import {ReactComponent as CloseIcon} from "../../assets/icons/ic-20/ic20-close.svg";
 import {ReactComponent as TableIcon} from "../../assets/icons/ic-20/ic20-view-table.svg";
-import {ReactComponent as UploadIcon} from "../../assets/icons/ic-16/ic16-upload.svg";
-import {ReactComponent as DownloadIcon} from "../../assets/icons/ic-16/ic16-download.svg";
 import {ReactComponent as CreateIcon} from "../../assets/icons/ic-16/ic16-plus.svg";
+import {ReactComponent as LastIcon} from "../../assets/icons/ic-20/ic20-chevron-up.svg";
+import {ReactComponent as NextIcon} from "../../assets/icons/ic-20/ic20-chevron-down.svg";
+import {ReactComponent as CopyIcon} from "../../assets/icons/ic-20/ic20-copy.svg";
+import {ReactComponent as SettingsIcon} from "../../assets/icons/ic-20/ic20-settings.svg";
 import {App, utilizeGlobalTheme} from "../../logic/App";
 import {Text, TextType} from "../../components/Text";
 import {DBSessionCacheShard} from "../../shards/DBSessionCacheShard";
@@ -27,19 +29,15 @@ import {ProjectInfoData} from "../../logic/ProjectInfoData";
 import {PosInCenter} from "../../components/PosInCenter";
 import {FlexDirection} from "../../logic/style/FlexDirection";
 import {CodeEditor} from "../../components/CodeEditor";
-import {cs} from "../../logic/state/State";
 import {v4} from "uuid";
 import {sql} from "@codemirror/lang-sql";
 import {OverflowBehaviour} from "../../logic/style/OverflowBehaviour";
 import {Themeable} from "../../Themeable";
 import {SessionCommand} from "../../logic/data/SessionCommand";
-import {arrayFactory, getOr} from "../../logic/Utils";
-import {RenderController} from "../../tests/regex/RenderController";
-import {RenderExecutor} from "../../tests/regex/RenderExecutor";
+import {arrayFactory} from "../../logic/Utils";
 import {Button} from "../../components/Button";
 import {LoadState} from "../../logic/LoadState";
 import {CircularProgress, Dialog, Slide, Zoom} from "@mui/material";
-import {Assembly} from "../../logic/Assembly";
 import {SessionCommandType} from "../../logic/data/SessionCommandType";
 import {CustomTooltip} from "../../components/CustomTooltip";
 import {TransitionProps} from '@mui/material/transitions';
@@ -54,9 +52,15 @@ import {ElementHeader} from "../../components/ElementHeader";
 import {InformationBox} from "../../components/InformationBox";
 import {SQLQueryResultDialog} from "../sqlQueryResult/SQLQueryResultDialog";
 import {RoadmapEntry} from "../../components/RoadmapEntry";
-import {Debug} from "../../components/Debug";
 import {If} from "../../components/If";
 import {HistoryEntry} from "./HistoryEntry";
+import {EditorCommandError} from "./EditorCommandError";
+import {Group} from "../../components/Group";
+import {BernieComponent} from "../../logic/BernieComponent";
+import {DBErrorDisplay} from "../../components/DBErrorDisplay";
+import {Assembly} from "../../logic/Assembly";
+import {Switch} from "../../components/Switch";
+import {SQLCommandUpdateResponsePacketData} from "../../packets/in/SQLCommandUpdateResponsePacketData";
 
 export type DebugEditorProps = {
 }
@@ -74,46 +78,37 @@ export type DebugEditorLocalState = {
     processPullCommand: boolean,
     // todo SQLCommandQueryResponsePacketData | SQLCommandUpdateResponsePacketData
     sqlCommandResultCache: (SQLCommandQueryResponsePacketData)[],
-
-    projectHistoryLocalCache: HistoryEntry[]
+    projectHistoryLocalCache: HistoryEntry[],
+    error?: EditorCommandError,
+    masterOpenDialogOnCommandResponse: boolean
 }
 
 /**
  * todo create 'acknowledge'-feature
  */
-export class Editor extends React.Component<DebugEditorProps, DebugEditorState> {
+export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, DebugEditorLocalState> {
 
     private readonly DialogTransition = React.forwardRef((props: TransitionProps & {children?: React.ReactElement<any, any>}, ref: ForwardedRef<unknown>) => {
         return <Slide direction="up" ref={ref} {...props} />;
     });
 
-    private readonly local = cs<DebugEditorLocalState>({
-        command: "show tables from information_schema",
-        processPullCommand: false,
-        processPushCommand: false,
-        sqlCommandResultCache: [],
-
-        projectHistoryLocalCache: []
-    });
-
-    private readonly controller = new RenderController();
-
-    private readonly assembly: Assembly;
-
     // noinspection TypeScriptFieldCanBeMadeReadonly
     private projectStaticData?: ProjectInfoData;
 
     constructor(props: DebugEditorProps) {
-        super(props);
-        this.state = {
+        super(props, {
             redirect: false,
             to: "/",
             openMainDialog: false
-        };
-        this.local.on((state, value) => {
-            this.controller.rerender(...getOr(value.get("channels"), ["*"]));
+        }, {
+            command: "show tables from information_schema",
+            processPullCommand: false,
+            processPushCommand: false,
+            sqlCommandResultCache: [],
+            projectHistoryLocalCache: [],
+            error: undefined,
+            masterOpenDialogOnCommandResponse: true
         });
-        this.assembly = new Assembly();
         this.initAssembly();
         this.initProtocolHandlers();
         const data = App.app().shard<DBSessionCacheShard>("db-session-cache").currentInfoData;
@@ -142,6 +137,251 @@ export class Editor extends React.Component<DebugEditorProps, DebugEditorState> 
         this.createPullPushAssembly();
         this.createSqlCommandResultAssembly();
         this.createSqlCommandResultAssemblyV2();
+        this.createErrorAssembly();
+        this.createInputControlsAssembly();
+        this.createHeaderAssembly();
+        this.createEditorMainAssembly();
+        this.createInputAssembly();
+    }
+
+    private createInputAssembly() {
+        this.assembly.assembly("input", (theme, props) => {
+            return (
+                <FlexBox width={percent(100)} overflowYBehaviour={OverflowBehaviour.VISIBLE} gap={theme.gaps.smallGab} justifyContent={Justify.FLEX_END}>
+                    {/*<Box width={percent(100)} gapY={theme.gaps.defaultGab}>
+                            <Text text={"Edits"}/>
+                            <Task task={{}}/>
+                        </Box>*/}
+                    {/*<RenderExecutor
+                            id={v4()}
+                            channels={["*", "command"]}
+                            componentDidMountRelay={bridge => this.controller.register(bridge)}
+                            componentFactory={() => (
+                                <Text text={this.local.state.command}/>
+                            )}
+                        />*/}
+                    <Text text={"SQL input"} bold uppercase type={TextType.secondaryDescription}/>
+                    {this.component(local => {
+                        return this.assembly.render({
+                            component: "error"
+                        })
+                    }, "*", "error")}
+
+                    <FlexBox align={Align.CENTER} justifyContent={Justify.SPACE_BETWEEN} gap={theme.gaps.smallGab} flexDir={FlexDirection.ROW} width={percent(100)} height={percent(100)}>
+                        {this.component(local => {
+                            return this.assembly.render({
+                                component: "input-controls"
+                            })
+                        }, "*", "input-controls")}
+                        {this.component(local => {
+                            return this.assembly.render({
+                                component: "push-pull-button",
+                                param: ""
+                            })
+                        }, "*", "push-pull")}
+                    </FlexBox>
+
+                    <FlexBox flexDir={FlexDirection.ROW} width={percent(100)} gap={theme.gaps.smallGab}>
+                        <CodeEditor
+                            width={percent(100)}
+                            theme={oneDark}
+                            classnames={["cm"]}
+                            debounce={true}
+                            debounceMS={300}
+                            value={this.local.state.command}
+                            placeholder={"select * from Users"}
+                            extensions={[
+                                sql(),
+                                HighlightStyle.define([
+                                    {tag: tags.keyword, class: "keyword"},
+                                    {tag: tags.local, class: "local"},
+                                    {tag: tags.color, class: "color"},
+                                    {tag: tags.comment, class: "comment"},
+                                    {tag: tags.function, class: "function"},
+                                    {tag: tags.string, class: "string"},
+                                    {tag: tags.content, class: "content"},
+                                    {tag: tags.arithmeticOperator, class: "arithmeticOperator"},
+
+                                ])
+                            ]}
+                            upstreamHook={value => this.local.setState({
+                                command: value
+                            })}
+                        />
+
+                        {/*this.component(local => {
+                                return this.assembly.render({
+                                    component: "push-pull-button",
+                                    param: ""
+                                })
+                            }, "*", "push-pull")*/}
+                    </FlexBox>
+                </FlexBox>
+            );
+        })
+    }
+
+    private createEditorMainAssembly() {
+        this.assembly.assembly("main", (theme, props) => {
+            return (
+                <FlexBox height={percent(100)} width={percent(100)} gap={theme.gaps.smallGab} flexDir={FlexDirection.COLUMN}>
+                    <Text text={"Database output"} bold uppercase type={TextType.secondaryDescription}/>
+                    <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab} width={percent(100)} justifyContent={Justify.SPACE_BETWEEN} align={Align.CENTER}>
+                        <Group orientation={Orientation.HORIZONTAL} height={percent(100)} elements={[
+                            <Button
+                                cursor={Cursor.notAllowed}
+                                visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
+                                shrinkOnClick={true}
+                                children={
+                                    <CustomTooltip arrow noPadding noBorder title={
+                                        <Box gapY={theme.gaps.smallGab}>
+                                            <ElementHeader
+                                                icon={<CreateIcon/>}
+                                                appendix={
+                                                    <Button visualMeaning={ObjectVisualMeaning.BETA} shrinkOnClick opaque padding={px(4)}>
+                                                        <Text text={"View roadmap"}/>
+                                                    </Button>
+                                                }
+                                                wrapIcon
+                                                title={"Create"}
+                                                beta
+                                            />
+                                            <Separator/>
+                                            <Text text={"Create a new entry in your project. \nAn entry can be a: **internal database**, **table**, **row** etc."}/>
+                                            <InformationBox visualMeaning={ObjectVisualMeaning.BETA}>
+                                                <Text type={TextType.secondaryDescription} text={"As of subversion **v2.29-alpha.0** *(01. Mar 2022)*, the website is in it's development phase."}/>
+                                            </InformationBox>
+                                        </Box>
+                                    } children={
+                                        <span children={<Icon icon={<CreateIcon/>}/>}/>
+                                    }/>
+                                }
+                            />,
+
+                            <Button
+                                cursor={Cursor.notAllowed}
+                                visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
+                                shrinkOnClick={true}
+                                children={
+                                    <CustomTooltip arrow noPadding noBorder title={
+                                        <Box gapY={theme.gaps.smallGab}>
+                                            <ElementHeader
+                                                icon={<UploadIcon/>}
+                                                appendix={
+                                                    <Button visualMeaning={ObjectVisualMeaning.BETA} shrinkOnClick opaque padding={px(4)}>
+                                                        <Text text={"View roadmap"}/>
+                                                    </Button>
+                                                }
+                                                wrapIcon
+                                                title={"Upload data"}
+                                                beta
+                                            />
+                                            <Separator/>
+                                            <Text text={"Import data from your device. \nAllowed file formats: **.dat**, **.csv**, **.xls** *(Excel spreadsheet)*."}/>
+                                            <InformationBox visualMeaning={ObjectVisualMeaning.BETA}>
+                                                <Text type={TextType.secondaryDescription} text={"As of subversion **v2.29-alpha.0** *(01. Mar 2022)*, the website is in it's development phase."}/>
+                                            </InformationBox>
+                                        </Box>
+                                    } children={<span children={<Icon icon={<UploadIcon/>}/>}/>}/>
+                                }
+                            />,
+
+                            <Button
+                                cursor={Cursor.notAllowed}
+                                visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
+                                shrinkOnClick={true}
+                                children={
+                                    <CustomTooltip arrow noPadding noBorder title={
+                                        <Box gapY={theme.gaps.smallGab}>
+                                            <ElementHeader
+                                                icon={<DownloadIcon/>}
+                                                appendix={
+                                                    <Button visualMeaning={ObjectVisualMeaning.BETA} shrinkOnClick opaque padding={px(4)}>
+                                                        <Text text={"View roadmap"}/>
+                                                    </Button>
+                                                }
+                                                wrapIcon
+                                                title={"Download data"}
+                                                beta
+                                            />
+                                            <Separator/>
+                                            <Text text={"Export data to a downloadable file. \nAllowed file formats: **.dat**, **.csv**, **.xls** *(Excel spreadsheet)*."}/>
+                                            <InformationBox visualMeaning={ObjectVisualMeaning.BETA}>
+                                                <Text type={TextType.secondaryDescription} text={"As of subversion **v2.29-alpha.0** *(01. Mar 2022)*, the website is in it's development phase."}/>
+                                            </InformationBox>
+                                        </Box>
+                                    } children={
+                                        <span children={<Icon icon={<DownloadIcon/>}/>}/>
+                                    }/>
+                                }
+                            />
+                        ]}/>
+
+                        <Switch checked={this.local.state.masterOpenDialogOnCommandResponse} text={<Text text={"Auto dialog opening"} bold uppercase type={TextType.secondaryDescription} fontSize={px(12)}/>} onChange={(event, checked) => {
+                            this.local.setState({
+                                masterOpenDialogOnCommandResponse: checked
+                            });
+                        }}/>
+                    </FlexBox>
+                    <If condition={App.app().config.debugMode} ifTrue={this.renderDBHistory()} ifFalse={
+                        <FlexBox height={percent(100)}/>
+                    }/>
+                </FlexBox>
+            );
+        })
+    }
+
+    private createHeaderAssembly() {
+        this.assembly.assembly("header", (theme, props) => {
+            const session: ProjectInfoData = props;
+
+            return (
+                <FlexBox width={percent(100)} flexDir={FlexDirection.COLUMN} gap={theme.gaps.smallGab}>
+                    <FlexBox width={percent(100)}>
+                        <LiteGrid columns={3}>
+                            <FlexBox align={Align.START} justifyContent={Justify.CENTER}>
+                                <Icon icon={<MenuIcon/>} onClick={() => App.app().openMenu()}/>
+                            </FlexBox>
+                            <FlexBox align={Align.CENTER} justifyContent={Justify.CENTER}>
+                                <Text uppercase align={Align.CENTER} type={TextType.smallHeader} text={"DB Editor"} />
+                            </FlexBox>
+                            <FlexBox align={Align.CENTER} justifyContent={Justify.FLEX_END} flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab}>
+                                <Icon icon={<SettingsIcon/>}/>
+                                <Icon icon={<CloseIcon/>} onClick={() => this.closeSession()}/>
+                                <Separator orientation={Orientation.VERTICAL}/>
+                                <ServerConnectionIcon/>
+                            </FlexBox>
+                        </LiteGrid>
+                    </FlexBox>
+
+                    <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} gap={px(1)} width={percent(100)}>
+                        <Text text={`${App.app().config.connectorConfig.address}/`}/>
+                        <Box paddingY={px(2)} paddingX={px(4)} overflowXBehaviour={OverflowBehaviour.SCROLL} visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}>
+                            <Text text={`**${session.title}**`} whitespace={"nowrap"}/>
+                        </Box>
+                    </FlexBox>
+                </FlexBox>
+            );
+        });
+    }
+
+    private createErrorAssembly() {
+        this.assembly.assembly("error", (theme, props) => {
+            const error: EditorCommandError | undefined = this.local.state.error;
+            if (error !== undefined) {
+                return (
+                    <DBErrorDisplay error={error} deleteHook={() => {
+                        this.local.setStateWithChannels({
+                            error: undefined
+                        }, ["error"])
+                    }}/>
+                );
+            } else {
+                return (
+                    <></>
+                );
+            }
+        });
     }
 
     private createPullPushAssembly() {
@@ -149,48 +389,96 @@ export class Editor extends React.Component<DebugEditorProps, DebugEditorState> 
             const localState = this.local.state;
             const working: boolean = localState.processPushCommand || localState.processPullCommand;
             return (
-                <>
-                    <CustomTooltip noBorder arrow title={(
-                        <Text text={"**Update**\n Update something in the database"}/>
-                    )} TransitionComponent={Zoom}>
-                        <span>
-                            <Button visualMeaning={working ? ObjectVisualMeaning.UI_NO_HIGHLIGHT : ObjectVisualMeaning.INFO} opaque={true} onClick={() => {
-                                if (!working) {
-                                    this.sendCommand(SessionCommandType.PUSH);
-                                }
-                            }}>{
-                                localState.processPushCommand ? (
-                                    <CircularProgress variant={"indeterminate"} size={20} sx={{
+                <Group height={px(37)} opaque visualMeaning={working ? ObjectVisualMeaning.UI_NO_HIGHLIGHT : ObjectVisualMeaning.INFO} orientation={Orientation.HORIZONTAL} elements={[
+                    <Button visualMeaning={working ? ObjectVisualMeaning.UI_NO_HIGHLIGHT : ObjectVisualMeaning.INFO} opaque={true} onClick={() => {
+                        if (!working) {
+                            this.sendCommand(SessionCommandType.PUSH);
+                        }
+                    }}>{
+                        localState.processPushCommand ? (
+                                <Text text={"upd"} visualMeaning={ObjectVisualMeaning.INFO} coloredText bold uppercase fontSize={px(12)} type={TextType.secondaryDescription} enableLeftAppendix leftAppendix={
+                                    <FlexBox align={Align.CENTER} justifyContent={Justify.CENTER} width={px(20)} height={px(20)}>
+                                        <CircularProgress variant={"indeterminate"} size={16} sx={{
+                                            color: theme.colors.primaryHighlightColor.css()
+                                        }}/>
+                                    </FlexBox>
+                                }/>
+                        ) : (
+                            <CustomTooltip noBorder arrow title={(
+                                <Text text={"**Update**\n Update something in the database"}/>
+                            )} TransitionComponent={Zoom} children={
+                                <span>
+                                    <Text text={"upd"} visualMeaning={working ? ObjectVisualMeaning.UI_NO_HIGHLIGHT : ObjectVisualMeaning.INFO} coloredText bold uppercase fontSize={px(12)} type={TextType.secondaryDescription} enableLeftAppendix leftAppendix={
+                                        <Icon visualMeaning={working ? ObjectVisualMeaning.UI_NO_HIGHLIGHT : ObjectVisualMeaning.INFO} colored={true} icon={<PushIcon/>}/>
+                                    }/>
+                                </span>
+                            }/>
+                        )
+                    }</Button>,
+                    <Button visualMeaning={working ? ObjectVisualMeaning.UI_NO_HIGHLIGHT : ObjectVisualMeaning.INFO} opaque={true} onClick={() => {
+                        if (!working) {
+                            this.sendCommand(SessionCommandType.PULL);
+                        }
+                    }}>{
+                        localState.processPullCommand ? (
+                            <Text text={"qry"} visualMeaning={ObjectVisualMeaning.INFO} coloredText bold uppercase fontSize={px(12)} type={TextType.secondaryDescription} enableLeftAppendix leftAppendix={
+                                <FlexBox align={Align.CENTER} justifyContent={Justify.CENTER} width={px(20)} height={px(20)}>
+                                    <CircularProgress variant={"indeterminate"} size={16} sx={{
                                         color: theme.colors.primaryHighlightColor.css()
                                     }}/>
-                                ) : (
-                                    <Icon visualMeaning={working ? ObjectVisualMeaning.UI_NO_HIGHLIGHT : ObjectVisualMeaning.INFO} colored={true} icon={<PushIcon/>}/>
-                                )
-                            }</Button>
-                        </span>
-                    </CustomTooltip>
-                    <CustomTooltip noBorder arrow title={(
-                        <Text text={"**Query**\n Query data from the database"}/>
-                    )} TransitionComponent={Zoom}>
-                        <span>
-                            <Button visualMeaning={working ? ObjectVisualMeaning.UI_NO_HIGHLIGHT : ObjectVisualMeaning.INFO} opaque={true} onClick={() => {
-                                if (!working) {
-                                    this.sendCommand(SessionCommandType.PULL);
-                                }
-                            }}>{
-                                localState.processPullCommand ? (
-                                    <CircularProgress variant={"indeterminate"} size={20} sx={{
-                                        color: theme.colors.primaryHighlightColor.css()
-                                    }}/>
-                                ) : (
-                                    <Icon visualMeaning={working ? ObjectVisualMeaning.UI_NO_HIGHLIGHT : ObjectVisualMeaning.INFO} colored={true} icon={<PullIcon/>}/>
-                                )
-                            }</Button>
-                        </span>
-                    </CustomTooltip>
-                </>
+                                </FlexBox>
+                            }/>
+                        ) : (
+                            <CustomTooltip noBorder arrow title={(
+                                <Text text={"**Query**\n Query data from the database"}/>
+                            )} TransitionComponent={Zoom} children={
+                                <span>
+                                    <Text text={"qry"} visualMeaning={working ? ObjectVisualMeaning.UI_NO_HIGHLIGHT : ObjectVisualMeaning.INFO} coloredText bold uppercase fontSize={px(12)} type={TextType.secondaryDescription} enableLeftAppendix leftAppendix={
+                                        <Icon visualMeaning={working ? ObjectVisualMeaning.UI_NO_HIGHLIGHT : ObjectVisualMeaning.INFO} colored={true} icon={<PullIcon/>}/>
+                                    }/>
+                                </span>
+                            }/>
+                        )
+                    }</Button>
+                ]}/>
             )
         });
+    }
+
+    private createInputControlsAssembly() {
+        this.assembly.assembly("input-controls", (theme, props) => {
+            return (
+                <FlexBox flexDir={FlexDirection.ROW} overflowXBehaviour={OverflowBehaviour.SCROLL} gap={theme.gaps.smallGab} align={Align.CENTER} height={percent(100)}>
+                    {this.renderHistoryButton()}
+                    <Group orientation={Orientation.HORIZONTAL} opaque height={percent(100)} elements={[
+
+                        // Load previous command into the command input
+                        <Button
+                            cursor={Cursor.pointer}
+                            visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
+                            opaque={false}
+                            shrinkOnClick={true} children={<Icon icon={<LastIcon/>}/>}
+                        />,
+
+                        // Load next to current command into the command input
+                        <Button
+                            cursor={Cursor.pointer}
+                            visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
+                            opaque={false}
+                            shrinkOnClick={true} children={<Icon icon={<NextIcon/>}/>}
+                        />,
+
+                        // Copy command input's value into clipboard
+                        <Button
+                            cursor={Cursor.pointer}
+                            visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
+                            opaque={false}
+                            shrinkOnClick={true} children={<Icon icon={<CopyIcon/>}/>}
+                        />,
+                    ]}/>
+                </FlexBox>
+            );
+        })
     }
 
     private createSqlCommandResultAssemblyV2() {
@@ -232,7 +520,6 @@ export class Editor extends React.Component<DebugEditorProps, DebugEditorState> 
     }
 
     private initProtocolHandlers() {
-        // todo check if component has unmounted -> don't execute the code then
         App.app().getConnector().registerProtocolPacketHandler("main", "SQLCommandQueryResponsePacketData", {
             handle: (connector1, packet) => {
                 const data: SQLCommandQueryResponsePacketData = packet.data as SQLCommandQueryResponsePacketData;
@@ -244,13 +531,36 @@ export class Editor extends React.Component<DebugEditorProps, DebugEditorState> 
                 });
 
                 // this.openMainDialog("sql-command-result");
-                this.openMainDialog("sql-command-result-v2");
+                // todo maybe show this page, even if error is there?
+                if (data.success && this.local.state.masterOpenDialogOnCommandResponse) {
+                    this.openMainDialog("sql-command-result-v2");
+                }
+
+                let error = this.local.state.error;
+                if (data.error !== null && data.error !== undefined) {
+                    error = data.error;
+                }
 
                 this.local.setState({
                     processPullCommand: false,
-                }, new Map([["channels", ["push-pull"]]]));
+                    error: error
+                }, new Map([["channels", ["push-pull", "error"]]]));
             }
-        })
+        });
+
+        App.app().getConnector().registerProtocolPacketHandler("main", "SQLCommandUpdateResponsePacketData", {
+            handle: (connector1, packet) => {
+                const data: SQLCommandUpdateResponsePacketData = packet.data as SQLCommandUpdateResponsePacketData;
+                let error = this.local.state.error;
+                if (data.error !== null && data.error !== undefined) {
+                    error = data.error;
+                }
+                this.local.setState({
+                    processPushCommand: false,
+                    error: error
+                }, new Map([["channels", ["push-pull", "error"]]]));
+            }
+        });
     }
 
     /**
@@ -274,12 +584,12 @@ export class Editor extends React.Component<DebugEditorProps, DebugEditorState> 
         }
     }
 
-    private redirect(to: string) {
-        this.setState({
-            to: to,
-            redirect: true
-        });
-    }
+    // private redirect(to: string) {
+    //     this.setState({
+    //         to: to,
+    //         redirect: true
+    //     });
+    // }
 
     private openMainDialog(dialogComponent: string) {
         this.setState({
@@ -289,7 +599,7 @@ export class Editor extends React.Component<DebugEditorProps, DebugEditorState> 
     }
 
     private closeSession() {
-        this.redirect("/dashboard")
+        this.goto("dashboard/");
     }
 
     private async sendCommand(type: SessionCommandType) {
@@ -308,11 +618,9 @@ export class Editor extends React.Component<DebugEditorProps, DebugEditorState> 
                 } as SessionCommand,
                 callback: {
                     handle: (connector1, packet) => {
-                        // todo cast packet to useful d-type
-                        // todo set local working state to false
-                        this.local.setState({
-                            processPushCommand: false
-                        }, new Map([["channels", ["*", "push-pull"]]]));
+                        this.local.setStateWithChannels({
+                            processPushCommand: false,
+                        }, ["*", "push-pull"]);
                     }
                 }
             });
@@ -321,30 +629,32 @@ export class Editor extends React.Component<DebugEditorProps, DebugEditorState> 
         switch (type) {
             case SessionCommandType.PULL:
                 this.local.setState({
-                    processPullCommand: true
-                }, new Map([["channels", ["push-pull"]]]), () => apiRequest());
+                    processPullCommand: true,
+                    error: undefined
+                }, new Map([["channels", ["*", "push-pull", "error"]]]), () => apiRequest());
                 break;
             case SessionCommandType.PUSH:
                 this.local.setState({
-                    processPushCommand: true
-                }, new Map([["channels", ["*", "push-pull"]]]), () => apiRequest());
+                    processPushCommand: true,
+                    error: undefined
+                }, new Map([["channels", ["*", "push-pull", "error"]]]), () => apiRequest());
                 break;
         }
 
-        setTimeout(() => {
-            switch (type) {
-                case SessionCommandType.PULL:
-                    this.local.setState({
-                        processPullCommand: false
-                    }, new Map([["channels", ["*", "push-pull"]]]));
-                    break;
-                case SessionCommandType.PUSH:
-                    this.local.setState({
-                        processPushCommand: false
-                    }, new Map([["channels", ["*", "push-pull"]]]));
-                    break;
-            }
-        }, 10000);
+        // setTimeout(() => {
+        //     switch (type) {
+        //         case SessionCommandType.PULL:
+        //             this.local.setState({
+        //                 processPullCommand: false
+        //             }, new Map([["channels", ["*", "push-pull"]]]));
+        //             break;
+        //         case SessionCommandType.PUSH:
+        //             this.local.setState({
+        //                 processPushCommand: false
+        //             }, new Map([["channels", ["*", "push-pull"]]]));
+        //             break;
+        //     }
+        // }, 10000);
     }
 
     // noinspection JSMethodCanBeStatic
@@ -366,7 +676,7 @@ export class Editor extends React.Component<DebugEditorProps, DebugEditorState> 
                                       coloredText={true}
                                       highlight={true}
                                       enableLeftAppendix={true}
-                                      onClick={() => this.redirect("/dashboard")}
+                                      onClick={() => this.goto("/dashboard")}
                                       leftAppendix={<Icon icon={<RedirectIcon/>} visualMeaning={ObjectVisualMeaning.ERROR} colored={true}/>}
                                 />
                             </FlexBox>
@@ -410,11 +720,14 @@ export class Editor extends React.Component<DebugEditorProps, DebugEditorState> 
             }
         }}/>
          */
+        // height={percent(100)}
         return (
             <Box height={percent(100)} overflowYBehaviour={OverflowBehaviour.SCROLL} width={percent(100)}>
-                <FlexBox gap={theme.gaps.smallGab}>{arrayFactory(() => (
-                    <RoadmapEntry status={"completed"}/>
-                ), 0)}</FlexBox>
+                <FlexBox gap={theme.gaps.smallGab} overflowYBehaviour={OverflowBehaviour.SCROLL} children={arrayFactory(() => (
+                    <RoadmapEntry status={"completed"} children={
+                        <Text text={"Hallo world! this is a message."}/>
+                    }/>
+                ), 0)}/>
             </Box>
         );
     }
@@ -422,77 +735,44 @@ export class Editor extends React.Component<DebugEditorProps, DebugEditorState> 
     private renderHistoryButton(): JSX.Element {
         const theme = utilizeGlobalTheme();
 
-        return (
-            <If condition={App.app().config.debugMode} ifTrue={
+        return this.component(local => {
+            return (
                 <CustomTooltip arrow title={<Text text={"Show SQL result history **[v2]**"}/>}>
-                    <span>
-                        {
-                            this.local.state.sqlCommandResultCache.length > 0 ? (
-                                <Button
-                                    cursor={Cursor.pointer}
-                                    visualMeaning={ObjectVisualMeaning.BETA}
-                                    opaque
-                                    shrinkOnClick={true}
-                                    onClick={() => {
-                                        this.setState({
-                                            openMainDialog: true,
-                                            dialogComponent: "sql-command-result-v2"
-                                        })
-                                    }}>
-                                    <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab}>
-                                        <Icon visualMeaning={ObjectVisualMeaning.BETA} colored icon={<TableIcon/>}/>
-                                        <Text text={"v2"} bold visualMeaning={ObjectVisualMeaning.BETA} coloredText/>
-                                    </FlexBox>
-                                </Button>
-                            ) : (
-                                <Button
-                                    cursor={Cursor.notAllowed}
-                                    opaque
-                                    visualMeaning={ObjectVisualMeaning.BETA}>
-                                    <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab}>
-                                        <Icon visualMeaning={ObjectVisualMeaning.BETA} colored icon={<TableIcon/>}/>
-                                        <Text text={"v2"} bold visualMeaning={ObjectVisualMeaning.BETA} coloredText/>
-                                    </FlexBox>
-                                </Button>
-                            )
-                        }
-                    </span>
+                <span>
+                    {
+                        this.local.state.sqlCommandResultCache.length > 0 ? (
+                            <Button
+                                cursor={Cursor.pointer}
+                                visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
+                                opaque
+                                shrinkOnClick={true}
+                                onClick={() => {
+                                    this.setState({
+                                        openMainDialog: true,
+                                        dialogComponent: "sql-command-result-v2"
+                                    })
+                                }}>
+                                <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab}>
+                                    <Icon visualMeaning={ObjectVisualMeaning.INFO} colored icon={<TableIcon/>}/>
+                                    <Text text={`${this.local.state.sqlCommandResultCache.length}`} bold visualMeaning={ObjectVisualMeaning.INFO} coloredText/>
+                                </FlexBox>
+                            </Button>
+                        ) : (
+                            <Button
+                                cursor={Cursor.notAllowed}
+                                opaque
+                                visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}>
+                                <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab}>
+                                    <Icon visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} colored icon={<TableIcon/>}/>
+                                    <Text text={"v2"} bold visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} coloredText/>
+                                </FlexBox>
+                            </Button>
+                        )
+                    }
+                </span>
                 </CustomTooltip>
-            } ifFalse={
-                <CustomTooltip arrow title={<Text text={"Show SQL result history **[v1]**"}/>}>
-                    <span>
-                        {
-                            this.local.state.sqlCommandResultCache.length > 0 ? (
-                                <Button
-                                    cursor={Cursor.pointer}
-                                    visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
-                                    shrinkOnClick={true}
-                                    onClick={() => {
-                                        this.setState({
-                                            openMainDialog: true,
-                                            dialogComponent: "sql-command-result"
-                                        })
-                                    }}>
-                                    <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab}>
-                                        <Icon visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} icon={<TableIcon/>}/>
-                                        <Text text={"v1"} bold/>
-                                    </FlexBox>
-                                </Button>
-                            ) : (
-                                <Button
-                                    cursor={Cursor.notAllowed}
-                                    visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}>
-                                    <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab}>
-                                        <Icon visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} colored icon={<TableIcon/>}/>
-                                        <Text text={"v1"} bold visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} coloredText/>
-                                    </FlexBox>
-                                </Button>
-                            )
-                        }
-                    </span>
-                </CustomTooltip>
-            }/>
-        );
+            );
+        }, "error")
     }
 
     private renderEditor(session: ProjectInfoData) {
@@ -501,189 +781,15 @@ export class Editor extends React.Component<DebugEditorProps, DebugEditorState> 
         return (
             <PageV2>
                 {this.renderDialog()}
-
-                <FlexBox height={percent(100)} flexDir={FlexDirection.COLUMN} gap={theme.gaps.smallGab} overflowXBehaviour={OverflowBehaviour.VISIBLE} overflowYBehaviour={OverflowBehaviour.VISIBLE} justifyContent={Justify.SPACE_BETWEEN}>
-                    <FlexBox width={percent(100)}>
-                        <LiteGrid columns={3}>
-                            <FlexBox align={Align.START} justifyContent={Justify.CENTER}>
-                                <Icon icon={<MenuIcon/>} onClick={() => App.app().openMenu()}/>
-                            </FlexBox>
-                            <FlexBox align={Align.CENTER} justifyContent={Justify.CENTER}>
-                                <Text uppercase align={Align.CENTER} type={TextType.smallHeader} text={"DB Editor"} />
-                            </FlexBox>
-                            <FlexBox align={Align.CENTER} justifyContent={Justify.FLEX_END} flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab}>
-                                <Icon icon={<CloseIcon/>} onClick={() => this.closeSession()}/>
-                                <Separator orientation={Orientation.VERTICAL}/>
-                                <ServerConnectionIcon/>
-                            </FlexBox>
-                        </LiteGrid>
-                    </FlexBox>
-
-                    <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} gap={px(1)} width={percent(100)}>
-                        <Text text={`${App.app().config.connectorConfig.address}/`}/>
-                        <Box paddingY={px(2)} paddingX={px(4)} overflowXBehaviour={OverflowBehaviour.SCROLL} visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}>
-                            <Text text={`**${session.title}**`} whitespace={"nowrap"}/>
-                        </Box>
-                    </FlexBox>
-
+                <FlexBox height={percent(100)} flexDir={FlexDirection.COLUMN} gap={theme.gaps.defaultGab} overflowXBehaviour={OverflowBehaviour.VISIBLE} overflowYBehaviour={OverflowBehaviour.VISIBLE} justifyContent={Justify.SPACE_BETWEEN}>
+                    {this.component(local => this.assembly.render({
+                        component: "header",
+                        param: session
+                    }), "header")}
                     <Separator/>
-
-                    <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab}>
-                        <Debug>
-                            <CustomTooltip arrow noPadding noBorder title={
-                                <Box gapY={theme.gaps.smallGab}>
-                                    <ElementHeader
-                                        icon={<DownloadIcon/>}
-                                        appendix={
-                                            <Button visualMeaning={ObjectVisualMeaning.BETA} shrinkOnClick opaque padding={px(4)}>
-                                                <Text text={"View roadmap"}/>
-                                            </Button>
-                                        }
-                                        wrapIcon
-                                        title={"Download data"}
-                                        beta={false}
-                                    />
-                                    <Separator/>
-                                    <Text text={"Export data to a downloadable file. \nAllowed file formats: **.dat**, **.csv**, **.xls** *(Excel spreadsheet)*."}/>
-                                    <InformationBox visualMeaning={ObjectVisualMeaning.BETA}>
-                                        <Text type={TextType.secondaryDescription} text={"As of version **v16** *(19. Feb 2022)*, this feature is still in development and will be accessible to beta mode in a couple of weeks."}/>
-                                    </InformationBox>
-                                </Box>
-                            }>
-                            <span>
-                                <Button
-                                    cursor={Cursor.pointer}
-                                    visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
-                                    shrinkOnClick={true}>
-                                    <Icon icon={<CreateIcon/>}/>
-                                </Button>
-                            </span>
-                            </CustomTooltip>
-                        </Debug>
-
-                        {this.renderHistoryButton()}
-
-                        <Debug>
-                            <CustomTooltip arrow noPadding noBorder title={
-                                <Box gapY={theme.gaps.smallGab}>
-                                    <ElementHeader
-                                        icon={<UploadIcon/>}
-                                        appendix={
-                                            <Button visualMeaning={ObjectVisualMeaning.BETA} shrinkOnClick opaque padding={px(4)}>
-                                                <Text text={"View roadmap"}/>
-                                            </Button>
-                                        }
-                                        wrapIcon
-                                        title={"Upload data"}
-                                        beta={false}
-                                    />
-                                    <Separator/>
-                                    <Text text={"Import data from your device. \nAllowed file formats: **.dat**, **.csv**, **.xls** *(Excel spreadsheet)*."}/>
-                                    <InformationBox visualMeaning={ObjectVisualMeaning.BETA}>
-                                        <Text type={TextType.secondaryDescription} text={"As of version **v16** *(19. Feb 2022)*, this feature is still in development and will be accessible to beta mode in a couple of weeks."}/>
-                                    </InformationBox>
-                                </Box>
-                            }>
-                            <span>
-                                <Button
-                                    cursor={Cursor.pointer}
-                                    visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
-                                    shrinkOnClick={true}>
-                                     <Icon icon={<UploadIcon/>}/>
-                                </Button>
-                            </span>
-                            </CustomTooltip>
-
-                            <CustomTooltip arrow noPadding noBorder title={
-                                <Box gapY={theme.gaps.smallGab}>
-                                    <ElementHeader
-                                        icon={<DownloadIcon/>}
-                                        appendix={
-                                            <Button visualMeaning={ObjectVisualMeaning.BETA} shrinkOnClick opaque padding={px(4)}>
-                                                <Text text={"View roadmap"}/>
-                                            </Button>
-                                        }
-                                        wrapIcon
-                                        title={"Download data"}
-                                        beta={false}
-                                    />
-                                    <Separator/>
-                                    <Text text={"Export data to a downloadable file. \nAllowed file formats: **.dat**, **.csv**, **.xls** *(Excel spreadsheet)*."}/>
-                                    <InformationBox visualMeaning={ObjectVisualMeaning.BETA}>
-                                        <Text type={TextType.secondaryDescription} text={"As of version **v16** *(19. Feb 2022)*, this feature is still in development and will be accessible to beta mode in a couple of weeks."}/>
-                                    </InformationBox>
-                                </Box>
-                            }>
-                            <span>
-                                <Button
-                                    cursor={Cursor.pointer}
-                                    visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
-                                    shrinkOnClick={true}>
-                                     <Icon icon={<DownloadIcon/>}/>
-                                </Button>
-                            </span>
-                            </CustomTooltip>
-                        </Debug>
-                    </FlexBox>
-
-                    <If condition={App.app().config.debugMode} ifTrue={this.renderDBHistory()} ifFalse={
-                        <FlexBox height={percent(100)}/>
-                    }/>
-
-                    <FlexBox width={percent(100)} overflowYBehaviour={OverflowBehaviour.VISIBLE} justifyContent={Justify.FLEX_END}>
-                        {/*<Box width={percent(100)} gapY={theme.gaps.defaultGab}>
-                            <Text text={"Edits"}/>
-                            <Task task={{}}/>
-                        </Box>*/}
-
-                        {/*<RenderExecutor
-                            id={v4()}
-                            channels={["*", "command"]}
-                            componentDidMountRelay={bridge => this.controller.register(bridge)}
-                            componentFactory={() => (
-                                <Text text={this.local.state.command}/>
-                            )}
-                        />*/}
-
-                        <FlexBox flexDir={FlexDirection.ROW} width={percent(100)} gap={theme.gaps.smallGab}>
-                            <CodeEditor
-                                width={percent(100)}
-                                theme={oneDark}
-                                classnames={["cm"]}
-                                debounce={true}
-                                debounceMS={300}
-                                value={this.local.state.command}
-                                placeholder={"select * from Users"}
-                                extensions={[
-                                    sql(),
-                                    HighlightStyle.define([
-                                        {tag: tags.keyword, class: "keyword"},
-                                        {tag: tags.local, class: "local"},
-                                        {tag: tags.color, class: "color"},
-                                        {tag: tags.comment, class: "comment"},
-                                        {tag: tags.function, class: "function"},
-                                        {tag: tags.string, class: "string"},
-                                        {tag: tags.content, class: "content"},
-                                        {tag: tags.arithmeticOperator, class: "arithmeticOperator"},
-
-                                    ])
-                                ]}
-                                upstreamHook={value => this.local.setState({
-                                    command: value
-                                })}
-                            />
-
-                            <RenderExecutor
-                                id={v4()}
-                                componentDidMountRelay={bridge => this.controller.register(bridge)}
-                                channels={["*", "push-pull"]}
-                                componentFactory={() => this.assembly.render({
-                                    component: "push-pull-button",
-                                    param: ""
-                                })}
-                            />
-                        </FlexBox>
-                    </FlexBox>
+                    {this.component(local => this.assembly.liteRender("main"), "main")}
+                    <Separator orientation={Orientation.HORIZONTAL}/>
+                    {this.component(local => this.assembly.liteRender("input"), "input")}
                 </FlexBox>
             </PageV2>
         );
@@ -693,7 +799,7 @@ export class Editor extends React.Component<DebugEditorProps, DebugEditorState> 
         App.app().triggerLoginIfNotLoggedIn({});
     }
 
-    render() {
+    componentRender(p: DebugEditorProps, s: DebugEditorState, l: DebugEditorLocalState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         const session: ProjectInfoData | undefined = App.app().shard<DBSessionCacheShard>("db-session-cache").currentInfoData;
         return (
             <RedirectController redirect={this.state.redirect} data={{

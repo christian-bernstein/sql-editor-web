@@ -15,14 +15,13 @@ import {ReactComponent as LinkedinIcon} from "../assets/icons/ic-16/ic16-linkedi
 import {ReactComponent as ContextIcon} from "../assets/icons/ic-16/ic16-more-ver.svg";
 import {ObjectVisualMeaning} from "../logic/ObjectVisualMeaning";
 import {Badge} from "./Badge";
-import {Box} from "./Box";
-import {Assembly} from "../logic/Assembly";
-import {Themeable} from "../Themeable";
-import {OverflowBehaviour} from "../logic/style/OverflowBehaviour";
-
-import Banner from "../assets/images/img-4.gif";
-import ProfilePicture from "../assets/images/img-3.jpg";
 import {UserPublicProfileData} from "../logic/data/UserPublicProfileData";
+import {Separator} from "./Separator";
+import {Orientation} from "../logic/style/Orientation";
+import {Themeable} from "../Themeable";
+import {Assembly} from "../logic/Assembly";
+import {Box} from "./Box";
+import {OverflowBehaviour} from "../logic/style/OverflowBehaviour";
 
 export type ProfileShortViewProps = {
     profile: UserPublicProfileData,
@@ -143,7 +142,10 @@ export class ProfileShortView extends BernieComponent<ProfileShortViewProps, any
             const profile = this.props.profile;
             if (this.props.enableBanner === undefined || this.props.enableBanner) {
                 return (
-                    <Image src={profile.banner.src} pure width={percent(100)} height={px(200)} objPosY={px(-50)}/>
+                    <FlexBox width={percent(100)} gap={px()}>
+                        <Image src={profile.banner.src} pure width={percent(100)} height={px(200)} objPosY={px(-50)}/>
+                        <Separator orientation={Orientation.HORIZONTAL}/>
+                    </FlexBox>
                 );
             } else {
                 return (

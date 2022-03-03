@@ -30,7 +30,7 @@ export type TextProps = {
     onClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void,
     cursor?: Cursor,
     whitespace?: "normal" | "pre-wrap" | "nowrap",
-
+    renderMarkdown?: boolean,
     bold?: boolean
 }
 
@@ -54,6 +54,7 @@ export const Text: React.FC<TextProps> = props => {
     const theme: Themeable.Theme = utilizeGlobalTheme();
     const type: TextType = props.type === undefined ? TextType.defaultText : props.type;
     const margin: Margin = getOr(props.margin, createMargin(0, 0, 0, 0));
+    const renderMD = getOr(props.renderMarkdown, true);
     let style: CSSProperties = textTypeToThemeMapping.get(type)?.(theme) as CSSProperties;
     style = setMarginToCSSProperties(margin, style);
     if (props.fontSize !== undefined) {
@@ -103,13 +104,18 @@ export const Text: React.FC<TextProps> = props => {
     return (
         <Wrapper style={style} onClick={event => getOr(props.onClick, () => {})(event)}>
             {props.enableLeftAppendix ? props.leftAppendix : <></>}
-            <ReactMarkdown className={"md"} children={text} components={{
-                a: (mdProps, context) => {
-                    return (
-                        <Link showLinkIcon={false} visualMeaning={props.visualMeaning} href={getOr<string>(mdProps.href, "")}>{mdProps.children}</Link>
-                    );
-                }
-            }}/>
+
+            {renderMD ? (
+                <ReactMarkdown className={"md"} children={text} components={{
+                    a: (mdProps, context) => {
+                        return (
+                            <Link showLinkIcon={false} visualMeaning={props.visualMeaning} href={getOr<string>(mdProps.href, "")}>{mdProps.children}</Link>
+                        );
+                    }
+                }}/>
+            ) : (
+                <p>{text}</p>
+            )}
             {props.enableRightAppendix ? props.rightAppendix : <></>}
         </Wrapper>
     )

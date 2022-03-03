@@ -363,7 +363,7 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
                                             activeState: UserActiveState.DO_NOT_DISTURB,
                                             badges: [],
                                             deviceType: ClientDeviceType.MOBILE,
-                                            email: "christian.bernsteinde@gmail.com",
+                                            email: "christian-bernstein@gmail.com",
                                             id: v4(),
                                             firstname: "Christian",
                                             lastname: "Bernstein",
@@ -371,7 +371,7 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
                                             links: [],
                                             username: "Christian",
                                             viewedFromID: undefined,
-                                            biography: "My name is Christian and I'm kinda cute. It contains **basic information about the subject's life** — like their place of birth, education, and interests. A biography may also chronicle relationships with family members, as well as major events in the subject's childhood and how those influenced their upbringing.",
+                                            biography: "It contains **basic information about the subject's life** — like their place of birth, education, and interests. A biography may also chronicle relationships with family members, as well as major events in the subject's childhood and how those influenced their upbringing.",
                                             banner: {
                                                 type: "SRC",
                                                 src: Banner
@@ -408,7 +408,7 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
 
                                 <InformationBox visualMeaning={ObjectVisualMeaning.BETA} width={percent(100)}>
                                     <FlexBox flexDir={FlexDirection.COLUMN} align={Align.CENTER} width={percent(100)} justifyContent={Justify.SPACE_BETWEEN}>
-                                        <Text type={TextType.secondaryDescription} text={"As of subversion **v26** *(01. Mar 2022)*, the website is in it's development phase."}/>
+                                        <Text type={TextType.secondaryDescription} text={"As of subversion **v2.29-alpha.0** *(01. Mar 2022)*, the website is in it's development phase."}/>
                                     </FlexBox>
                                 </InformationBox>
                             </FlexBox>

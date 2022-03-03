@@ -68,7 +68,6 @@ export class BernieComponent<RProps, RState, LState extends object> extends Reac
         this.redirectTo = to;
         this.redirect = true;
         this.forceUpdate(() => {
-
             // todo make more performant solution
             // this doesn't rerender yet
             this.redirectTo = undefined;

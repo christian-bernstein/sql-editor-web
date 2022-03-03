@@ -44,6 +44,8 @@ import {ElementHeader} from "../../components/ElementHeader";
 import {ContextCompound} from "../../components/ContextCompound";
 import {Button} from "../../components/Button";
 import {ReactComponent as DashboardIcon} from "../../assets/icons/ic-16/ic16-open-in-browser.svg";
+import {DBErrorDisplay} from "../../components/DBErrorDisplay";
+import {EditorCommandError} from "../editor/EditorCommandError";
 
 export enum DatasetSwitchMode {
     FIRST = "first",
@@ -235,11 +237,18 @@ export class SQLQueryResultDialog extends BernieComponent<SQLQueryResultDialogPr
 
     private registerDatasetViewer() {
         this.assembly.assembly("dataset-viewer", (theme, props) => {
-            return (
-                <Box height={percent(100)} noPadding={true} overflowYBehaviour={OverflowBehaviour.HIDDEN} overflowXBehaviour={OverflowBehaviour.HIDDEN}>
-                    <TableDataDisplay data={this.dataset()}/>
-                </Box>
-            );
+            const dataset = this.dataset();
+            if (dataset.error !== null) {
+                return (
+                    <DBErrorDisplay height={percent(100)} error={dataset.error as EditorCommandError} deleteIcon={false}/>
+                );
+            } else {
+                return (
+                    <Box height={percent(100)} noPadding={true} overflowYBehaviour={OverflowBehaviour.HIDDEN} overflowXBehaviour={OverflowBehaviour.HIDDEN}>
+                        <TableDataDisplay data={dataset}/>
+                    </Box>
+                );
+            }
         });
     }
 
@@ -262,11 +271,12 @@ export class SQLQueryResultDialog extends BernieComponent<SQLQueryResultDialogPr
                         appendix={
                             <FlexBox flexDir={FlexDirection.ROW} height={percent(100)} align={Align.CENTER} gap={theme.gaps.smallGab}>
                                 {/*<ProfilePicture name={"root"}/>*/}
-                                <Text text={"root"} cursor={Cursor.pointer} type={TextType.secondaryDescription}/>
+                                {/*<Text text={"root"} cursor={Cursor.pointer} type={TextType.secondaryDescription}/>*/}
                                 <Box visualMeaning={ObjectVisualMeaning.BETA} opaque paddingY={px(0)} paddingX={px(4)}>
                                     <Text text={data.client.type.toString()} bold uppercase fontSize={px(12)}/>
                                 </Box>
-                                <Text text={`${dateFormat(data.timestamp, "HH:mm:ss")}`} whitespace={"nowrap"} type={TextType.secondaryDescription}/>
+                                {/*<Text text={`${dateFormat(data.timestamp, "HH:mm:ss")}`} whitespace={"nowrap"} type={TextType.secondaryDescription}/>*/}
+                                <Text text={`${data.timestamp}`} whitespace={"nowrap"} type={TextType.secondaryDescription}/>
                                 {/*<Separator orientation={Orientation.VERTICAL}/>
                                 <Icon icon={<RepeatIcon/>}/>*/}
                             </FlexBox>

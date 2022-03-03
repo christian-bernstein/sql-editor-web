@@ -7,9 +7,10 @@ import {FlexDirection} from "../logic/style/FlexDirection";
 import {Align} from "../logic/Align";
 import {Image} from "./Image";
 
-// import Banner from "../assets/images/img-4.gif";
-import ProfilePicture from "../assets/images/img-2.png";
-import Banner from "../assets/images/img-2.png";
+import Banner from "../assets/images/img-4.gif";
+import ProfilePicture from "../assets/images/img-4.gif";
+// import ProfilePicture from "../assets/images/img-2.png";
+// import Banner from "../assets/images/img-2.png";
 import {DimensionalMeasured, px} from "../logic/style/DimensionalMeasured";
 import {Text, TextType} from "./Text";
 import React from "react";
@@ -23,6 +24,7 @@ import {UserActiveState} from "../logic/data/UserActiveState";
 import {ClientDeviceType} from "../logic/data/ClientDeviceType";
 import {v4} from "uuid";
 import {InformationBox} from "./InformationBox";
+import {ImageData} from "../logic/data/ImageData";
 
 // todo add id
 export type ClientDisplayProps = {
@@ -59,7 +61,7 @@ export class ClientDisplay extends BernieComponent<ClientDisplayProps, any, Clie
                     links: [],
                     username: "Christian",
                     viewedFromID: undefined,
-                    biography: "My name is Christian and I'm kinda cute. It contains **basic information about the subject's life** — like their place of birth, education, and interests. A biography may also chronicle relationships with family members, as well as major events in the subject's childhood and how those influenced their upbringing.",
+                    biography: "It contains **basic information about the subject's life** — like their place of birth, education, and interests. A biography may also chronicle relationships with family members, as well as major events in the subject's childhood and how those influenced their upbringing.",
                     banner: {
                         type: "SRC",
                         src: Banner
@@ -95,6 +97,13 @@ export class ClientDisplay extends BernieComponent<ClientDisplayProps, any, Clie
         }
     }
 
+    /**
+     * todo currently only supports src data type, support all the others as well
+     */
+    private static loadImageData(data: ImageData): string {
+        return data.src;
+    }
+
     componentRender(p: ClientDisplayProps, s: any, l: ClientDisplayLocalState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return this.component((local) => {
             if (local.state.loading) {
@@ -112,7 +121,7 @@ export class ClientDisplay extends BernieComponent<ClientDisplayProps, any, Clie
                     return (
                         <ContextCompound wrapMenu={false} menu={this.renderMenu(profile)}>
                             <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} gap={t.gaps.smallGab}>
-                                <Image src={ProfilePicture} borderRadius={px(9999)} width={imageSize} height={imageSize}/>
+                                <Image src={ClientDisplay.loadImageData(profile.profilePicture)} borderRadius={px(9999)} width={imageSize} height={imageSize}/>
                                 <Text text={profile.username} cursor={Cursor.pointer} type={TextType.secondaryDescription}/>
                                 {enableClientBadge ? (
                                     <Box visualMeaning={ObjectVisualMeaning.BETA} opaque paddingY={px(0)} paddingX={px(4)}>

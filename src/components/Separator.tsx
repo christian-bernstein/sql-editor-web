@@ -11,7 +11,8 @@ import {utilizeGlobalTheme} from "../logic/App";
 export type SeparatorProps = {
     width?: DimensionalMeasured,
     orientation?: Orientation,
-    borderRadius?: DimensionalMeasured
+    borderRadius?: DimensionalMeasured,
+    // height?: DimensionalMeasured
 } & WithVisualMeaning
 
 export const Separator: React.FC<SeparatorProps> = React.memo(props => {

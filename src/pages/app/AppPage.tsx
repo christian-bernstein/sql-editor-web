@@ -128,7 +128,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                         // address: "ws://192.168.2.100:80",
                         address: "ws://192.168.2.104:25574",
                         id: "ton",
-                        maxConnectAttempts: 10,
+                        maxConnectAttempts: 1,
                         connectionRetryDelayFunc: () => 0,
                         packetInterceptor: this.getLogPacketInterceptor()
                     }
@@ -163,8 +163,8 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                 }
             },
             {
-                title: "SQL Editor Test-Version 23. FEB 2022",
-                description: "SQL Editor Panel test version (v21)",
+                title: "SQL Editor Test-Version 02. MAR 2022",
+                description: "SQL Editor Panel test version (v2.29-alpha.0)",
                 config: {
                     appTitle: "SQL Editor",
                     debugMode: true,
