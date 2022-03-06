@@ -18,6 +18,9 @@ import {Togglable} from "../../../components/Togglable";
 import {ObjectVisualMeaning} from "../../../logic/ObjectVisualMeaning";
 import {AppHeader} from "../../../components/AppHeader";
 import {FlexDirection} from "../../../logic/style/FlexDirection";
+import {LiteGrid} from "../../../components/LiteGrid";
+import {getOr} from "../../../logic/Utils";
+import {Environment} from "../../../logic/Environment";
 
 
 export type SelectAppConfigPageProps = {
@@ -26,27 +29,41 @@ export type SelectAppConfigPageProps = {
 }
 
 export type SelectAppConfigPageState = {
-    filter?: string
+    filter?: string,
+    viewDebugProfiles: boolean
 }
 
-function getConfigs(configs: AppConfigSelectionData[], filter: string): AppConfigSelectionData[] {
-    return configs.filter(config => config.title.toLocaleLowerCase().match(filter));
+function getConfigs(configs: AppConfigSelectionData[], filter: string, debug: boolean): AppConfigSelectionData[] {
+    const data = configs.filter(config => config.title.toLocaleLowerCase().match(filter));
+    if (!debug) {
+        return data.filter(config => !config.config.debugMode);
+    } else {
+        return data;
+    }
 }
 
 // <ProfilePicture name={"chris"}/>
 export const SelectAppConfigPageV2: React.FC<SelectAppConfigPageProps> = props => {
+    const [debug, setDebug] = Environment.usePersistent(false, "show-debug-configs", "debug");
     const [state, setState] = useState<SelectAppConfigPageState>({
-        filter: undefined
+        filter: undefined,
+        viewDebugProfiles: debug
     });
 
-    const debouncedOnChange = useMemo(() => _.debounce((filter?: string) => {
+    const debouncedOnChange = useMemo(() => _.debounce((filter?: string, viewDebugProfiles?: boolean) => {
+        if (viewDebugProfiles !== undefined) {
+            setDebug(viewDebugProfiles);
+        }
+
         setState({
-            filter: filter
+            filter: filter,
+            viewDebugProfiles: getOr(viewDebugProfiles, state.viewDebugProfiles)
         });
     }, 150), []);
 
     const renderConfigs: () => JSX.Element = () => {
-        const configs = getConfigs(props.configs, state.filter || ".");
+        const configs = getConfigs(props.configs, state.filter || ".", state.viewDebugProfiles);
+        const theme = utilizeGlobalTheme();
         if (configs.length === 0) {
             return (
                 <div style={{
@@ -64,7 +81,7 @@ export const SelectAppConfigPageV2: React.FC<SelectAppConfigPageProps> = props =
             );
         } else {
             return (
-                <>
+                <LiteGrid columns={3} gap={theme.gaps.smallGab} responsive minResponsiveWidth={px(300)}>
                     {configs.map(config => (
                         <AppConfigSelector
                             key={v4()}
@@ -72,7 +89,7 @@ export const SelectAppConfigPageV2: React.FC<SelectAppConfigPageProps> = props =
                             onSelection={data => props.onSelection(data)}
                         />
                     ))}
-                </>
+                </LiteGrid>
             );
         }
     }
@@ -113,11 +130,14 @@ export const SelectAppConfigPageV2: React.FC<SelectAppConfigPageProps> = props =
                 }
                 right={
                     <FlexBox flexDir={FlexDirection.ROW}>
-                        <Togglable active={
+                        <Togglable initialActiveState={state.viewDebugProfiles} active={
                             <Icon icon={<DebugIcon/>} visualMeaning={ObjectVisualMeaning.SUCCESS} colored/>
                         } inactive={
                             <Icon icon={<DebugIcon/>} visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} colored/>
-                        }/>
+                        } onChange={active => {
+                            console.log(active)
+                            debouncedOnChange(state.filter, active);
+                        }}/>
                     </FlexBox>
                 }
             />

@@ -5,15 +5,21 @@ import {Text, TextType} from "../../components/Text";
 import {ObjectJSONDisplay} from "../../components/ObjectJSONDisplay";
 import {Button} from "../../components/Button";
 import {Dimension} from "../../logic/style/Dimension";
-import {dimension, DimensionalMeasured, px} from "../../logic/style/DimensionalMeasured";
+import {dimension, DimensionalMeasured, percent, px} from "../../logic/style/DimensionalMeasured";
 import {ObjectVisualMeaning} from "../../logic/ObjectVisualMeaning";
 import {ReactComponent as ConfigIcon} from "../../assets/icons/ic-20/ic20-dns.svg";
-import {ReactComponent as DebugIcon} from "../../assets/icons/ic-16/ic16-bug.svg";
+import {ReactComponent as ExpandIcon} from "../../assets/icons/ic-20/ic20-chevron-down.svg";
 import {InformationBox} from "../../components/InformationBox";
 import {FlexBox} from "../../components/FlexBox";
 import {FlexDirection} from "../../logic/style/FlexDirection";
+import {Justify} from "../../logic/style/Justify";
 import {Icon} from "../../components/Icon";
+import {utilizeGlobalTheme} from "../../logic/App";
 import {Align} from "../../logic/Align";
+import {Separator} from "../../components/Separator";
+import {Orientation} from "../../logic/style/Orientation";
+import {OverflowBehaviour} from "../../logic/style/OverflowBehaviour";
+import {Accordion, AccordionDetails, AccordionSummary} from "@mui/material";
 
 export type AppConfigSelectionData = {
     config: AppConfig,
@@ -28,27 +34,111 @@ export type AppConfigSelectorProps = {
 
 export class AppConfigSelector extends React.Component<AppConfigSelectorProps, any> {
 
+    private static circle(): JSX.Element {
+        return (
+            <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="10" cy="10" r="5"/>
+            </svg>
+        );
+    }
+
     render() {
         const visualMeaning: ObjectVisualMeaning = ObjectVisualMeaning.INFO;
+        const theme = utilizeGlobalTheme();
         return (
             <Box width={DimensionalMeasured.of(100, Dimension.percentage)} gapY={px(10)}>
-                <FlexBox flexDir={FlexDirection.ROW} style={{justifyContent: "space-between"}}>
-                    <Text visualMeaning={visualMeaning}
-                          enableLeftAppendix
-                          leftAppendix={<ConfigIcon/>}
-                          type={TextType.smallHeader}
-                          text={this.props.data.title}
-                    />
+                <FlexBox justifyContent={Justify.SPACE_BETWEEN} width={percent(100)} flexDir={FlexDirection.COLUMN} height={percent(100)}>
+                    <FlexBox flexDir={FlexDirection.COLUMN} width={percent(100)}>
+                        <FlexBox width={percent(100)} gap={theme.gaps.smallGab} flexDir={FlexDirection.ROW}>
+                            <Icon icon={<ConfigIcon/>}/>
+                            <FlexBox overflowXBehaviour={OverflowBehaviour.SCROLL} width={percent(100)}>
+                                <FlexBox flexDir={FlexDirection.ROW} style={{justifyContent: "space-between"}}>
+                                    <Text visualMeaning={visualMeaning}
+                                          type={TextType.smallHeader}
+                                          text={this.props.data.title}
+                                          whitespace={"nowrap"}
+                                    />
+                                </FlexBox>
+                            </FlexBox>
+                        </FlexBox>
+
+                        <FlexBox flexDir={FlexDirection.COLUMN} gap={theme.gaps.smallGab} width={percent(100)}>
+                            <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} gap={theme.gaps.smallGab}>
+                                <Icon icon={AppConfigSelector.circle()} colored visualMeaning={this.props.data.config.connectorConfig.sll ? ObjectVisualMeaning.INFO : ObjectVisualMeaning.ERROR}/>
+                                <Separator orientation={Orientation.VERTICAL}/>
+                                <Text text={"SLL"} bold/>
+                            </FlexBox>
+
+                            <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} gap={theme.gaps.smallGab}>
+                                <Icon icon={<ConfigIcon/>}/>
+                                <Separator orientation={Orientation.VERTICAL}/>
+                                <Text text={this.props.data.config.connectorConfig.address}/>
+                            </FlexBox>
+                        </FlexBox>
+
+                        {this.renderSSLChecker()}
+
+                        <Text type={TextType.secondaryDescription} visualMeaning={visualMeaning} text={this.props.data.description}/>
+                    </FlexBox>
+
+                    <FlexBox flexDir={FlexDirection.COLUMN} gap={theme.gaps.smallGab} width={percent(100)}>
+                        {this.renderDebuggingHint()}
+                        <Button
+                            opaque={true}
+                            width={percent(100)}
+                            shrinkOnClick={true}
+                            visualMeaning={visualMeaning}
+                            onClick={() => this.props.onSelection(this.props.data)}
+                            children={<Text type={TextType.smallHeader} fontSize={dimension(14, Dimension.px)} text={"Select"}/>}
+                        />
+                    </FlexBox>
                 </FlexBox>
-                <Text type={TextType.secondaryDescription} visualMeaning={visualMeaning} text={this.props.data.description}/>
-                <ObjectJSONDisplay title={"**[DEBUG]** Data display"} pure={false} showControls={true} object={this.props.data.config}/>
-                {this.renderDebuggingHint()}
-                <Button opaque={true}
-                        shrinkOnClick={true}
-                        visualMeaning={visualMeaning}
-                        onClick={() => this.props.onSelection(this.props.data)}>
-                    <Text type={TextType.smallHeader} fontSize={dimension(14, Dimension.px)} text={"Select"}/>
-                </Button>
+            </Box>
+        );
+    }
+
+    private renderSSLChecker(): JSX.Element {
+        const theme = utilizeGlobalTheme();
+
+        return (
+            <Box noPadding overflowYBehaviour={OverflowBehaviour.HIDDEN} overflowXBehaviour={OverflowBehaviour.HIDDEN} width={percent(100)}>
+                <Accordion sx={{
+                    background: theme.colors.backgroundHighlightColor200.css(),
+                    '& .MuiAccordionSummary-root': {
+                        minHeight: "0 !important",
+                        paddingY: theme.paddings.defaultObjectPadding.css()
+                    }
+                }}>
+                    <AccordionSummary
+                        expandIcon={<Icon icon={<ExpandIcon/>} size={px(16)}/>}
+                        aria-controls="panel1a-content"
+                        id="panel1a-header"
+                        sx={{
+                            '.MuiAccordionSummary-content': {
+                                margin: "0 !important",
+                            }
+                        }}
+                    >
+                        <Text text={"Config details"} uppercase bold fontSize={px(12)}/>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <FlexBox flexDir={FlexDirection.COLUMN} gap={theme.gaps.smallGab} width={percent(100)}>
+                            <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} gap={theme.gaps.smallGab}>
+                                <Icon icon={AppConfigSelector.circle()} colored visualMeaning={this.props.data.config.connectorConfig.sll ? ObjectVisualMeaning.INFO : ObjectVisualMeaning.ERROR}/>
+                                <Separator orientation={Orientation.VERTICAL}/>
+                                <Text text={"SLL"} bold/>
+                            </FlexBox>
+
+                            <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} gap={theme.gaps.smallGab}>
+                                <Icon icon={<ConfigIcon/>}/>
+                                <Separator orientation={Orientation.VERTICAL}/>
+                                <Text text={this.props.data.config.connectorConfig.address}/>
+                            </FlexBox>
+
+                            <ObjectJSONDisplay title={"**[DEBUG]** Data display"} pure={false} showControls={true} object={this.props.data.config}/>
+                        </FlexBox>
+                    </AccordionDetails>
+                </Accordion>
             </Box>
         );
     }
