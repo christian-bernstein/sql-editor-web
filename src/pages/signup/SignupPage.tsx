@@ -365,7 +365,7 @@ export class SignupPage extends BernieComponent<SignupPageProps, any, SignupPage
                         </FlexBox>
                     );
                 })}
-                <Group orientation={Orientation.HORIZONTAL} elements={[
+                <Group width={percent(100)} orientation={Orientation.HORIZONTAL} elements={[
                     <Input
                         label={"Firstname"}
                         key={"firstname-component"}
@@ -456,7 +456,7 @@ export class SignupPage extends BernieComponent<SignupPageProps, any, SignupPage
         return (
             <>
                 {this._component(["password", "password-group"], state => <Text text={"Password"}/>)}
-                <Group orientation={Orientation.VERTICAL} enableSeparators={false} elements={[
+                <Group width={percent(100)} orientation={Orientation.VERTICAL} enableSeparators={false} elements={[
                     <Input
                         label={"Password"}
                         key={"password-component"}

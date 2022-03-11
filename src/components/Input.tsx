@@ -73,6 +73,8 @@ export class Input extends React.Component<InputProps, InputState> {
           padding: ${theme.paddings.defaultObjectPadding.css()};
           border: 1px solid ${meaningfulColors.lighter.css()};
           
+          transition: all ${theme.transitions.fastTime.css()};
+          
           &:hover {
             filter: brightness(${theme.hovers.hoverLightFilter.css()});
             // border: 1px solid ${meaningfulColors.lighter.css()} !important;

@@ -9,8 +9,9 @@ import {Text} from "./Text";
 import {DimensionalMeasured, percent} from "../logic/style/DimensionalMeasured";
 import {getOr} from "../logic/Utils";
 import {Skeleton} from "@mui/material";
-import styled from "styled-components";
+import styled, {CSSProp} from "styled-components";
 import {PuffLoader} from "react-spinners";
+import {Box} from "./Box";
 
 export type ImageProps = {
     width?: DimensionalMeasured,
@@ -36,8 +37,10 @@ export class Image extends BernieComponent<ImageProps, any, any> {
             height: getOr(p.height, percent(100)).css(),
             minHeight: getOr(p.height, percent(100)).css(),
 
+
             borderRadius: pure ? 0 : getOr(p.borderRadius, t.radii.defaultObjectRadius).css(),
             border: pure ? "none" : `1px solid ${t.colors.borderPrimaryColor.css()}`,
+
 
             overflow: "hidden",
             objectFit: "cover",
@@ -55,12 +58,22 @@ export class Image extends BernieComponent<ImageProps, any, any> {
             justifyContent: "center",
             alignItems: "center"
         };
+
+        const boxStyle: CSSProperties = {
+            width: getOr(p.width, percent(100)).css(),
+            minWidth: getOr(p.width, percent(100)).css(),
+            height: getOr(p.height, percent(100)).css(),
+            minHeight: getOr(p.height, percent(100)).css()
+        }
+
         return (
-            <Img onClick={p.onClick} style={style} src={p.src} loading={"lazy"} loader={(
-                <div style={loader}>
-                    <PuffLoader color={t.colors.backgroundHighlightColor200.css()} size={"16px"}/>
-                </div>
-            )}/>
+            <Box noPadding style={boxStyle} borderless>
+                <Img onClick={p.onClick} className={"react-image-component"} style={style} src={p.src} loading={"lazy"} loader={(
+                    <div style={loader}>
+                        <PuffLoader color={t.colors.backgroundHighlightColor200.css()} size={"16px"}/>
+                    </div>
+                )}/>
+            </Box>
         );
     }
 }

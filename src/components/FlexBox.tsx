@@ -36,7 +36,7 @@ export class FlexBox extends React.Component<FlexBoxProps, any> {
         const Wrapper = styled['div']`
           display: flex;
           
-          padding: ${!this.props.padding ? "0" : (getOr(this.props.paddingY, theme.paddings.defaultObjectPadding).css() + " " + getOr(this.props.paddingX, theme.paddings.defaultObjectPadding).css())};
+          padding: ${!this.props.padding ? "0" : ((getOr(this.props.paddingY, theme.paddings.defaultObjectPadding).css() + " " + getOr(this.props.paddingX, theme.paddings.defaultObjectPadding).css()))};
           
           flex-direction: ${getOr(this.props.flexDir, FlexDirection.COLUMN)};
           gap: ${getOr(this.props.gap?.css(), theme.gaps.defaultGab.css())};

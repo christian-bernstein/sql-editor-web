@@ -61,23 +61,7 @@ export class AppConfigSelector extends React.Component<AppConfigSelectorProps, a
                                 </FlexBox>
                             </FlexBox>
                         </FlexBox>
-
-                        <FlexBox flexDir={FlexDirection.COLUMN} gap={theme.gaps.smallGab} width={percent(100)}>
-                            <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} gap={theme.gaps.smallGab}>
-                                <Icon icon={AppConfigSelector.circle()} colored visualMeaning={this.props.data.config.connectorConfig.sll ? ObjectVisualMeaning.INFO : ObjectVisualMeaning.ERROR}/>
-                                <Separator orientation={Orientation.VERTICAL}/>
-                                <Text text={"SLL"} bold/>
-                            </FlexBox>
-
-                            <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} gap={theme.gaps.smallGab}>
-                                <Icon icon={<ConfigIcon/>}/>
-                                <Separator orientation={Orientation.VERTICAL}/>
-                                <Text text={this.props.data.config.connectorConfig.address}/>
-                            </FlexBox>
-                        </FlexBox>
-
                         {this.renderSSLChecker()}
-
                         <Text type={TextType.secondaryDescription} visualMeaning={visualMeaning} text={this.props.data.description}/>
                     </FlexBox>
 
@@ -89,7 +73,7 @@ export class AppConfigSelector extends React.Component<AppConfigSelectorProps, a
                             shrinkOnClick={true}
                             visualMeaning={visualMeaning}
                             onClick={() => this.props.onSelection(this.props.data)}
-                            children={<Text type={TextType.smallHeader} fontSize={dimension(14, Dimension.px)} text={"Select"}/>}
+                            children={<Text type={TextType.smallHeader} uppercase bold fontSize={dimension(14, Dimension.px)} text={"Select"}/>}
                         />
                     </FlexBox>
                 </FlexBox>
@@ -113,29 +97,26 @@ export class AppConfigSelector extends React.Component<AppConfigSelectorProps, a
                         expandIcon={<Icon icon={<ExpandIcon/>} size={px(16)}/>}
                         aria-controls="panel1a-content"
                         id="panel1a-header"
+                        children={<Text text={"Config details"} uppercase bold fontSize={px(12)}/>}
                         sx={{
                             '.MuiAccordionSummary-content': {
                                 margin: "0 !important",
                             }
                         }}
-                    >
-                        <Text text={"Config details"} uppercase bold fontSize={px(12)}/>
-                    </AccordionSummary>
+                    />
                     <AccordionDetails>
                         <FlexBox flexDir={FlexDirection.COLUMN} gap={theme.gaps.smallGab} width={percent(100)}>
                             <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} gap={theme.gaps.smallGab}>
-                                <Icon icon={AppConfigSelector.circle()} colored visualMeaning={this.props.data.config.connectorConfig.sll ? ObjectVisualMeaning.INFO : ObjectVisualMeaning.ERROR}/>
+                                <Icon icon={AppConfigSelector.circle()} colored visualMeaning={this.props.data.config.connectorConfig.ssl ? ObjectVisualMeaning.INFO : ObjectVisualMeaning.ERROR}/>
                                 <Separator orientation={Orientation.VERTICAL}/>
-                                <Text text={"SLL"} bold/>
+                                <Text text={"SSL"} bold/>
                             </FlexBox>
-
                             <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} gap={theme.gaps.smallGab}>
                                 <Icon icon={<ConfigIcon/>}/>
                                 <Separator orientation={Orientation.VERTICAL}/>
                                 <Text text={this.props.data.config.connectorConfig.address}/>
                             </FlexBox>
-
-                            <ObjectJSONDisplay title={"**[DEBUG]** Data display"} pure={false} showControls={true} object={this.props.data.config}/>
+                            <ObjectJSONDisplay title={"Data display"} pure={false} showControls={true} object={this.props.data.config}/>
                         </FlexBox>
                     </AccordionDetails>
                 </Accordion>

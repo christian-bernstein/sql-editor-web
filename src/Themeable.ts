@@ -322,7 +322,7 @@ export namespace Themeable {
             smallGab: px(8)
         },
         hovers: {
-            hoverLightFilter: DimensionalMeasured.of(120, Dimension.percentage)
+            hoverLightFilter: DimensionalMeasured.of(90, Dimension.percentage)
         },
         transitions: {
             mainTime: time(100, TimeUnit.ms),

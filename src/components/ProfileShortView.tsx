@@ -54,9 +54,11 @@ export class ProfileShortView extends BernieComponent<ProfileShortViewProps, any
             const profile = this.props.profile;
             return (
                 <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.defaultGab} align={Align.CENTER} height={percent(100)}>
+
                     <Image height={px(70)} src={profile.profilePicture.src} width={px(70)} onClick={() => {
                         this.goto("cdn/IMPLEMENT")
                     }}/>
+
                     <FlexBox flexDir={FlexDirection.COLUMN} gap={px()} justifyContent={Justify.CENTER}>
                         <Text text={profile.username} type={TextType.smallHeader} bold/>
                         <Text text={profile.email}/>

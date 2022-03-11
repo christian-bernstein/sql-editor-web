@@ -264,7 +264,7 @@ export default class DashboardPage extends BernieComponent<DashboardPageProps, D
                         </PosInCenter>
                     }/>
                 } ifFalse={
-                    <LiteGrid responsive minResponsiveWidth={px(300)} gap={em(1)}>{
+                    <LiteGrid columns={6} responsive minResponsiveWidth={px(300)} gap={em(1)}>{
                         this.getFilteredProjects().map(project => <ProjectInfo
                             key={project.id}
                             onSelect={data => this.onProjectSelect(data)}

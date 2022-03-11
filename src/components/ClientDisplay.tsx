@@ -6,11 +6,8 @@ import {FlexBox} from "./FlexBox";
 import {FlexDirection} from "../logic/style/FlexDirection";
 import {Align} from "../logic/Align";
 import {Image} from "./Image";
-
-import Banner from "../assets/images/img-4.gif";
-import ProfilePicture from "../assets/images/img-4.gif";
-// import ProfilePicture from "../assets/images/img-2.png";
-// import Banner from "../assets/images/img-2.png";
+import Banner from "../assets/images/img-2.png";
+import ProfilePicture from "../assets/images/img-2.png";
 import {DimensionalMeasured, px} from "../logic/style/DimensionalMeasured";
 import {Text, TextType} from "./Text";
 import React from "react";
@@ -121,7 +118,9 @@ export class ClientDisplay extends BernieComponent<ClientDisplayProps, any, Clie
                     return (
                         <ContextCompound wrapMenu={false} menu={this.renderMenu(profile)}>
                             <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} gap={t.gaps.smallGab}>
+
                                 <Image src={ClientDisplay.loadImageData(profile.profilePicture)} borderRadius={px(9999)} width={imageSize} height={imageSize}/>
+
                                 <Text text={profile.username} cursor={Cursor.pointer} type={TextType.secondaryDescription}/>
                                 {enableClientBadge ? (
                                     <Box visualMeaning={ObjectVisualMeaning.BETA} opaque paddingY={px(0)} paddingX={px(4)}>

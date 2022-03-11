@@ -17,16 +17,11 @@ import {Justify} from "../../logic/style/Justify";
 import {Align} from "../../logic/Align";
 import {ReactComponent as OpenDialogIcon} from "../../assets/icons/ic-20/ic20-open-in-browser.svg";
 import {ReactComponent as LogIcon} from "../../assets/icons/ic-20/ic20-bolt.svg";
-import {ReactComponent as RunIcon} from "../../assets/icons/ic-20/ic20-play.svg";
 import {Icon} from "../../components/Icon";
 import {CustomTooltip} from "../../components/CustomTooltip";
 import {ObjectJSONDisplay} from "../../components/ObjectJSONDisplay";
 import {Constants} from "../../Constants";
-import {createMargin} from "../../logic/Margin";
-import {Zoom} from "@mui/material";
 import {BadgedWrapper} from "../../components/BadgedWrapper";
-import {Input} from "../../components/Input";
-import {RedirectController} from "../../components/RedirectController";
 import {Jumper} from "../../components/Jumper";
 import {ClientDisplay} from "../../components/ClientDisplay";
 import {UserActiveState} from "../../logic/data/UserActiveState";
@@ -295,7 +290,7 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
 
                         {/*this.renderLogSection()*/}
 
-                        <FlexBox flexDir={FlexDirection.ROW}>
+                        <FlexBox flexDir={FlexDirection.ROW} overflowXBehaviour={OverflowBehaviour.SCROLL}>
                             <CustomTooltip title={"Open main dialog"} arrow>
                                 <span>
                                     <Button visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
@@ -315,11 +310,27 @@ export default class MenuPage extends React.Component<MenuPageProps, MenuPageSta
                                         visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
                                         opaque={true}
                                         shrinkOnClick={true}
-                                        children={<Text text={"cd-playground"} uppercase bold fontSize={px(12)} enableLeftAppendix leftAppendix={
+                                        children={<Text text={"cd-playground"} whitespace={"nowrap"} uppercase bold fontSize={px(12)} enableLeftAppendix leftAppendix={
                                             <Icon icon={<OpenDialogIcon/>}/>
                                         } />}
                                         onClick={() => {
                                             App.app().callDialog("client-display-playground-dialog");
+                                        }}
+                                    />
+                                </span>
+                            </CustomTooltip>
+
+                            <CustomTooltip title={<Text text={"**[DEBUG]**\nOpen **menu-debug**-dialog"}/>} arrow>
+                                <span>
+                                    <Button
+                                        visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
+                                        opaque={true}
+                                        shrinkOnClick={true}
+                                        children={<Text text={"menu"} uppercase bold fontSize={px(12)} enableLeftAppendix leftAppendix={
+                                            <Icon icon={<OpenDialogIcon/>}/>
+                                        } />}
+                                        onClick={() => {
+                                            App.app().callDialog("menu-debug-dialog");
                                         }}
                                     />
                                 </span>

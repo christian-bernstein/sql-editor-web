@@ -3,7 +3,6 @@ import React from "react";
 import {ReactComponent as LoadIcon} from "../assets/icons/ic-20/ic20-arrow-right.svg";
 import {ReactComponent as ContextIcon} from "../assets/icons/ic-20/ic20-more-ver.svg";
 import {ReactComponent as DeleteIcon} from "../assets/icons/ic-20/ic20-delete.svg";
-import {ReactComponent as MenuIcon} from "../assets/icons/ic-16/ic16-explore.svg";
 import {ProjectInfoData} from "../logic/ProjectInfoData";
 import {Box} from "./Box";
 import {Text, TextType} from "./Text";
@@ -28,15 +27,13 @@ import {Orientation} from "../logic/style/Orientation";
 import {ContextCompound} from "./ContextCompound";
 import {If} from "./If";
 import {Constants} from "../Constants";
-import {UserActiveState} from "../logic/data/UserActiveState";
-import {ClientDeviceType} from "../logic/data/ClientDeviceType";
-import {v4} from "uuid";
-import Banner from "../assets/images/img-2.png";
-import ProfilePicture from "../assets/images/img-2.png";
-import {ClientDisplay} from "./ClientDisplay";
 import {Align} from "../logic/Align";
 import {OverflowBehaviour} from "../logic/style/OverflowBehaviour";
 import {Debug} from "./Debug";
+import {Collapsible} from "./Collapsible";
+import {SVG} from "../SVG";
+import {ReactComponent as ConfigIcon} from "../assets/icons/ic-20/ic20-dns.svg";
+import {LoadState} from "../logic/LoadState";
 
 export type ProjectInfoProps = {
     data: ProjectInfoData,
@@ -145,6 +142,36 @@ export class ProjectInfo extends React.Component<ProjectInfoProps, any> {
         );
     }
 
+    private renderDetails(): JSX.Element {
+        const vm: ObjectVisualMeaning = (() => {
+            switch (this.props.data.state) {
+                case LoadState.ONLINE: return ObjectVisualMeaning.SUCCESS;
+                case LoadState.OFFLINE: return ObjectVisualMeaning.UI_NO_HIGHLIGHT;
+                case LoadState.STOPPING: return ObjectVisualMeaning.ERROR;
+                case LoadState.STARTING: return ObjectVisualMeaning.WARNING;
+                case undefined: return ObjectVisualMeaning.UI_NO_HIGHLIGHT;
+            }
+        })();
+
+        return (
+            <Collapsible header={(t, a) => (
+                <Text text={"Project details"} whitespace={"nowrap"} uppercase bold fontSize={px(12)}/>
+            )} content={(t, a) => (
+                <>
+                    <FlexBox height={percent(100)} flexDir={FlexDirection.ROW} width={percent(100)} align={Align.CENTER} gap={t.gaps.smallGab}>
+                        <Icon icon={SVG.circle()} colored visualMeaning={vm}/>
+                        <Separator orientation={Orientation.VERTICAL}/>
+                        <Text text={"online state"}/>
+                    </FlexBox>
+                    <FlexBox flexDir={FlexDirection.ROW} gap={t.gaps.smallGab}>
+                        <Text text={"Last edited: "} type={TextType.secondaryDescription}/>
+                        <Text text={String(this.props.data.lastEdited)}/>
+                    </FlexBox>
+                </>
+            )}/>
+        );
+    }
+
     render() {
         const theme: Themeable.Theme = utilizeGlobalTheme();
         const ChartGrid = styled.div`
@@ -154,36 +181,41 @@ export class ProjectInfo extends React.Component<ProjectInfoProps, any> {
         `;
         return (
             <Box width={percent(100)} gapY={px(10)}>
-                {this.renderHeader()}
-                <If condition={this.props.data.description !== null} ifTrue={
-                    <>
-                        {/*<Text text={"**Description**:"}/>*/}
-                        <Text text={this.props.data.description}/>
-                    </>
-                }/>
-                <FlexBox flexDir={FlexDirection.ROW}>
-                    <Text text={"Last edited: "} type={TextType.secondaryDescription}/>
-                    <Text text={String(this.props.data.lastEdited)}/>
-                </FlexBox>
-                {/* todo replace with flexbox handling */}
-                <div style={{
-                    height: "100%"
-                }}> </div>
-                <Debug>
-                    <ChartGrid>
-                        <AreaChartComponent
-                            title={"rows"}
-                            numIndicator={10}
-                            series={arrayFactory((i) => Math.abs(Math.sin(i) * 100), 15)}/>
-                        <AreaChartComponent title={"rows"} numIndicator={10} series={arrayFactory(() => Math.random() > .5 ? Math.random() * 100 : Math.random() * 50, 10)}/>
-                    </ChartGrid>
-                </Debug>
-                <Button visualMeaning={ObjectVisualMeaning.INFO} opaque={true} shrinkOnClick={true} onClick={event => this.onSelect(event)}>
-                    <FlexBox flexDir={FlexDirection.ROW} gap={px(10)}>
-                        <Text text={"**Load**"}/>
-                        <Icon icon={<LoadIcon/>}/>
+
+                <FlexBox padding={false} gap={theme.gaps.defaultGab} flexDir={FlexDirection.COLUMN} justifyContent={Justify.SPACE_BETWEEN} width={percent(100)} height={percent(100)}>
+                    <FlexBox width={percent(100)} gap={theme.gaps.defaultGab}>
+                        {this.renderHeader()}
+                        {this.renderDetails()}
+                        <If condition={this.props.data.description !== null} ifTrue={
+                            <>
+                                {/*<Text text={"**Description**:"}/>*/}
+                                <Text text={this.props.data.description}/>
+                            </>
+                        }/>
                     </FlexBox>
-                </Button>
+
+                    <FlexBox width={percent(100)} gap={theme.gaps.smallGab}>
+                        <Debug>
+                            <ChartGrid>
+                                <AreaChartComponent
+                                    title={"rows"}
+                                    numIndicator={10}
+                                    series={arrayFactory((i) => Math.abs(Math.sin(i) * 100), 15)}/>
+                                <AreaChartComponent title={"rows"} numIndicator={10} series={arrayFactory(() => Math.random() > .5 ? Math.random() * 100 : Math.random() * 50, 10)}/>
+                            </ChartGrid>
+                        </Debug>
+                        <Button width={percent(100)} visualMeaning={ObjectVisualMeaning.INFO} opaque={true} shrinkOnClick={true} onClick={event => this.onSelect(event)}>
+                            <FlexBox flexDir={FlexDirection.ROW} gap={px(10)}>
+                                <Text text={"**Load**"}/>
+                                <Icon icon={<LoadIcon/>}/>
+                            </FlexBox>
+                        </Button>
+                    </FlexBox>
+                </FlexBox>
+
+
+
+
             </Box>
         );
     }

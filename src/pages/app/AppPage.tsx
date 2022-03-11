@@ -48,6 +48,7 @@ import {OpenMainDialogWithParamsProps} from "../../logic/OpenMainDialogWithParam
 import {ServerInfoDialog} from "../serverInfo/ServerInfoDialog";
 import {RoadmapDialog} from "../roadmap/RoadmapDialog";
 import {ClientDisplayPlaygroundDialog} from "../../debug/pages/clientDisplay/ClientDisplayPlaygroundDialog";
+import {MenuPageV2} from "../menu/v2/MenuPageV2";
 
 export type AppPageProps = {
 }
@@ -156,7 +157,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                         // address: "ws://192.168.2.100:80",
                         address: "wss://192.168.2.104:25574",
                         id: "ton",
-                        sll: true,
+                        ssl: true,
                         maxConnectAttempts: 1,
                         connectionRetryDelayFunc: () => 0,
                         packetInterceptor: this.getLogPacketInterceptor()
@@ -186,6 +187,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                         // address: "ws://2.59.135.242:25574",
                         address: "ws://server3.cwies.de:25574",
                         id: "ton",
+                        ssl: false,
                         maxConnectAttempts: 1,
                         connectionRetryDelayFunc: () => 0,
                         packetInterceptor: this.getLogPacketInterceptor()
@@ -211,7 +213,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                     ]),
                     connectorConfig: {
                         protocol: "login",
-                        sll: true,
+                        ssl: true,
                         // address: "ws://192.168.2.100:80",
                         address: "wss://server3.cwies.de:25574",
                         id: "ton",
@@ -270,7 +272,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                         // address: "ws://192.168.2.100:80",
                         address: "wss://server3.cwies.de:25574",
                         id: "ton",
-                        sll: true,
+                        ssl: true,
                         maxConnectAttempts: 1,
                         connectionRetryDelayFunc: () => 0,
                         packetInterceptor: this.getLogPacketInterceptor()
@@ -449,6 +451,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
     private initDialogs(app: App) {
         if (app.config.debugMode) {
             this.assembly.assembly("client-display-playground-dialog", (theme, props) => <ClientDisplayPlaygroundDialog/>);
+            this.assembly.assembly("menu-debug-dialog", (theme, props) => <MenuPageV2/>);
         }
         this.assembly.assembly(Constants.createProjectDialog, (theme, props) => <ProjectCreationDialog/>);
         this.assembly.assembly(Constants.logDialog, (theme, props) => <LogPage/>);

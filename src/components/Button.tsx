@@ -60,14 +60,13 @@ export class Button extends React.Component<ButtonProps, any> {
           }
           
           &:hover {
-            filter: brightness(1.2);
+            filter: brightness(${theme.hovers.hoverLightFilter.css()});
             box-shadow: 0 0 0 4px ${meaningfulColors.lighter.withAlpha(.13).css()};
           }
 
           &:active {
             transform: ${this.props.shrinkOnClick ? "scale(.99)" : "scale(1)"};
           }
-          
           
           @keyframes hover-repeat {
             0%, 100% {

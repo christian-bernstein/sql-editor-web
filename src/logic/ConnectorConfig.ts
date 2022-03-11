@@ -10,5 +10,5 @@ export type ConnectorConfig = {
     onConnectionFailed?: () => void,
     packetInterceptor: (packet: Packet, connector: Environment.Connector) => void,
     onError?: () => void,
-    sll?: boolean
+    ssl?: boolean
 }
