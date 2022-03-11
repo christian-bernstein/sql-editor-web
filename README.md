@@ -1,3 +1,10 @@
+# SQL-Editor™
+
+## Community
+Ask questions, get developer information
+
+[![Support Server](https://img.shields.io/discord/948297053539299348.svg?label=Discord&logo=Discord&colorB=7289da&style=for-the-badge)](https://discord.gg/ag7G5HPkcF)
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
