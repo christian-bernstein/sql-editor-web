@@ -20,6 +20,7 @@ import {ObjectJSONDisplay} from "./ObjectJSONDisplay";
 import {Box} from "./Box";
 import React from "react";
 import {getOr} from "../logic/Utils";
+import {App} from "../logic/App";
 
 export type DBErrorDisplayProps = {
     error: EditorCommandError,
@@ -40,7 +41,7 @@ export class DBErrorDisplay extends BernieComponent<DBErrorDisplayProps, any, an
                         <Icon icon={<ErrorIcon/>} visualMeaning={ObjectVisualMeaning.ERROR} colored/>
                     } appendix={
                         <FlexBox height={percent(100)} align={Align.CENTER} flexDir={FlexDirection.ROW} overflowXBehaviour={OverflowBehaviour.SCROLL} gap={t.gaps.smallGab}>
-                            <ClientDisplay enableClientBadge={false}/>
+                            <ClientDisplay enableClientBadge={false} clientID={error.client.id}/>
                             {deleteIcon ? (
                                  <>
                                      <Separator orientation={Orientation.VERTICAL}/>

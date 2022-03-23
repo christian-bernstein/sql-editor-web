@@ -32,7 +32,7 @@ import {ObjectJSONDisplay} from "./ObjectJSONDisplay";
 import {percent} from "../logic/style/DimensionalMeasured";
 import {OverflowBehaviour} from "../logic/style/OverflowBehaviour";
 import styled from "styled-components";
-import {generateCSSBodyForInovuaReactDataGrid} from "./table/InovuaReactDataGridTheme";
+import {generateCSSBodyForInovuaReactDataGrid} from "./ho/table/InovuaReactDataGridTheme";
 
 export type TableDataDisplayProps = {
     data: SQLCommandQueryResponsePacketData,

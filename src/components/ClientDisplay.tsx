@@ -22,9 +22,11 @@ import {ClientDeviceType} from "../logic/data/ClientDeviceType";
 import {v4} from "uuid";
 import {InformationBox} from "./InformationBox";
 import {ImageData} from "../logic/data/ImageData";
+import {App} from "../logic/App";
 
 // todo add id
 export type ClientDisplayProps = {
+    clientID?: string,
     clientDataResolver?: (id: string, handler: (data: UserPublicProfileData) => void) => void,
     overwriteMenuRenderer?: (instance: ClientDisplay, profile: UserPublicProfileData) => JSX.Element,
     enableClientBadge?: boolean,
@@ -43,45 +45,70 @@ export class ClientDisplay extends BernieComponent<ClientDisplayProps, any, Clie
         super(props, undefined, {
             loading: true,
 
-            // todo reimplement feature!!
-            // getOr(props.clientDataResolver,
-            clientDataResolver: (id, handler: (data: UserPublicProfileData) => void) => {
-                handler({
-                    activeState: UserActiveState.DO_NOT_DISTURB,
-                    badges: [],
-                    deviceType: ClientDeviceType.MOBILE,
-                    email: "christian.bernsteinde@gmail.com",
-                    id: v4(),
-                    firstname: "Christian",
-                    lastname: "Bernstein",
-                    lastActive: new Date(),
-                    links: [],
-                    username: "Christian",
-                    viewedFromID: undefined,
-                    biography: "It contains **basic information about the subject's life** — like their place of birth, education, and interests. A biography may also chronicle relationships with family members, as well as major events in the subject's childhood and how those influenced their upbringing.",
-                    banner: {
-                        type: "SRC",
-                        src: Banner
-                    },
-                    profilePicture: {
-                        type: "SRC",
-                        src: ProfilePicture
-                    }
-                })
-            }
+            clientDataResolver: getOr(props.clientDataResolver, (id, handler: (data: UserPublicProfileData) => void) => {
+                if (id === undefined || id.length === 0) {
+                    throw new Error(`clientDataResolver: cannot resolve data with faulty id ${id}`);
+                } else {
+                    App.use(app => {
+                        const requestID = v4();
+                        app.cdn([{
+                            requestID: requestID,
+                            branch: "hotfix-upd",
+                            targetID: id,
+                            accessToken: undefined,
+                            attributes: new Map<string, any>()
+                        }], data => {
+                            const entries = data.response.entries.filter(res => res.requestID === requestID);
+                            if (entries.length != 1) {
+                                app.error(`Required 1 entry in hotfix-upd-response, but got ${entries.length}.`, entries);
+                            } else {
+                                const res = entries[0];
+                                handler(res.data as UserPublicProfileData);
+                            }
+                        })
+                    })
+                }
+
+                // handler({
+                //     activeState: UserActiveState.DO_NOT_DISTURB,
+                //     badges: [],
+                //     deviceType: ClientDeviceType.MOBILE,
+                //     email: "christian.bernsteinde@gmail.com",
+                //     id: v4(),
+                //     firstname: "Christian",
+                //     lastname: "Bernstein",
+                //     lastActive: new Date(),
+                //     links: [],
+                //     username: "Christian",
+                //     viewedFromID: undefined,
+                //     biography: "It contains **basic information about the subject's life** — like their place of birth, education, and interests. A biography may also chronicle relationships with family members, as well as major events in the subject's childhood and how those influenced their upbringing.",
+                //     banner: {
+                //         type: "SRC",
+                //         src: Banner
+                //     },
+                //     profilePicture: {
+                //         type: "SRC",
+                //         src: ProfilePicture
+                //     }
+                // })
+            })
         });
     }
 
     async componentDidMount() {
         super.componentDidMount();
-
         // todo pass real id value
-        this.local.state.clientDataResolver("", data => {
-            this.local.setStateWithChannels({
-                clientData: data,
-                loading: false
-            }, ["data"]);
-        });
+
+        if (this.props.clientID === undefined) {
+            App.app().error("Cannot load ClientDisplay-component, because the clientID is undefined. (This might indicate, that the component was written before Sat, 19.03.2022)", this.props)
+        } else {
+            this.local.state.clientDataResolver(this.props.clientID, data => {
+                this.local.setStateWithChannels({
+                    clientData: data,
+                    loading: false
+                }, ["data"]);
+            });
+        }
     }
 
     private renderMenu(profile: UserPublicProfileData): JSX.Element {

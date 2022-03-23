@@ -6,7 +6,6 @@ import "../styles/components/ContinueAs.scss";
 import {App, utilizeGlobalTheme} from "../logic/App";
 import {Redirect} from "react-router-dom";
 import {SimpleErrorBadge} from "./SimpleErrorBadge";
-import {ClientDisplay} from "./ClientDisplay";
 import {Text} from "./Text";
 import {FlexBox} from "./FlexBox";
 import {FlexDirection} from "../logic/style/FlexDirection";

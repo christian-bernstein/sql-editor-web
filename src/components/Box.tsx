@@ -32,7 +32,8 @@ export type BoxProps = {
     borderless?: boolean,
     style?: CSSProperties,
     cursor?: Cursor,
-    bgColor?: Color
+    bgColor?: Color,
+    noBGColor?: boolean
 }
 
 export class Box extends React.Component<BoxProps, any> {
@@ -53,7 +54,7 @@ export class Box extends React.Component<BoxProps, any> {
           // todo check if this causes issues along the board
           
           // position: relative;
-          background-color: ${bgColor.css()};
+          background-color: ${getOr(this.props.noBGColor, false) ? "none" : bgColor.css()};
           border-radius: ${theme.radii.defaultObjectRadius.css()};
           border: ${this.props.borderless ? "none" : `1px solid ${meaningfulColors.lighter.css()}`};
           padding: ${this.props.noPadding ? "0" : (getOr(this.props.paddingY, theme.paddings.defaultObjectPadding).css() + " " + getOr(this.props.paddingX, theme.paddings.defaultObjectPadding).css())};

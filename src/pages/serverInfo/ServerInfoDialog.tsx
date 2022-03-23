@@ -9,6 +9,10 @@ import {Icon} from "../../components/Icon";
 import {ReactComponent as CloseIcon} from "../../assets/icons/ic-20/ic20-close.svg";
 import React from "react";
 import {App} from "../../logic/App";
+import {CodeEditor} from "../../components/CodeEditor";
+import {percent} from "../../logic/style/DimensionalMeasured";
+import {Group} from "../../components/Group";
+import {Orientation} from "../../logic/style/Orientation";
 
 export class ServerInfoDialog extends BernieComponent<any, any, any> {
 
@@ -20,6 +24,12 @@ export class ServerInfoDialog extends BernieComponent<any, any, any> {
                         <Icon icon={<CloseIcon/>} onClick={() => App.app().toggleMainDialog("closed")}/>
                     </FlexBox>
                 }/>
+
+                <Group orientation={Orientation.VERTICAL} width={percent(100)} elements={[
+                    <CodeEditor width={percent(100)} theme={"dark"} classnames={["cm"]} upstreamHook={() => {}}/>,
+                    <CodeEditor width={percent(100)} placeholder={"Type your command"} theme={"dark"} classnames={["cm"]} upstreamHook={() => {}}/>
+                ]}/>
+
             </PageV2>
         );
     }

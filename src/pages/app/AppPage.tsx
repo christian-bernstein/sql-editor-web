@@ -2,7 +2,7 @@ import React, {ForwardedRef} from "react";
 import "../../styles/pages/AppPage.scss";
 import "../../utils.scss";
 import "react-tiger-transition/styles/main.min.css";
-import {BrowserRouter, Redirect, Route} from "react-router-dom";
+import {BrowserRouter, Redirect, Route, Switch} from "react-router-dom";
 import {DefaultSpecialPages} from "../../logic/DefaultSpecialPages";
 import {BoardingPage} from "../boarding/BoardingPage";
 import {LoginPage} from "../login/LoginPage";
@@ -49,6 +49,8 @@ import {ServerInfoDialog} from "../serverInfo/ServerInfoDialog";
 import {RoadmapDialog} from "../roadmap/RoadmapDialog";
 import {ClientDisplayPlaygroundDialog} from "../../debug/pages/clientDisplay/ClientDisplayPlaygroundDialog";
 import {MenuPageV2} from "../menu/v2/MenuPageV2";
+import {If} from "../../components/If";
+import {DashboardToolbox} from "../dashboard/DashboardToolbox";
 
 export type AppPageProps = {
 }
@@ -96,8 +98,6 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
             showDialog: false
         };
         this.assembly = new Assembly();
-
-        // this.init();
     }
 
     componentDidMount() {
@@ -357,41 +357,78 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
     private renderDialog(): JSX.Element {
         const theme: Themeable.Theme = utilizeGlobalTheme();
 
-        if (this.state.showDialog && this.state.dialogAssembly !== undefined) {
-            return (
-                <Dialog open={this.state.showDialog} onClose={() => this.setState({
-                    showDialog: false
-                })} TransitionComponent={this.DialogTransition} fullScreen sx={{
-                    '& .MuiDialog-paper': {
-                        // todo make configurable
-                        background: "transparent"
-                        // backgroundColor: theme.colors.backgroundColor.css()
-                    }
-                }}>
-                    {
-                        this.assembly.render({
-                            // todo create fallback
-                            component: this.state.dialogAssembly as string,
-                            param: this.state.dialogProps,
-                            errorComponent: e => {
-                                return (
-                                    <PageV2>
-                                        <FlexBox flexDir={FlexDirection.COLUMN} align={Align.CENTER} justifyContent={Justify.FLEX_END} height={percent(100)}>
-                                            <PosInCenter fullHeight>
-                                                <InformationBox visualMeaning={ObjectVisualMeaning.ERROR}>
-                                                    <Text text={`**[DEBUG]** No assembly found\n'${e}'`}/>
-                                                </InformationBox>
-                                            </PosInCenter>
-                                            <Icon icon={<CloseIcon/>} visualMeaning={ObjectVisualMeaning.ERROR} colored onClick={() => App.app().callAction("close-main-dialog")}/>
-                                        </FlexBox>
-                                    </PageV2>
-                                );
-                            }
-                        })
-                    }
-                </Dialog>
-            );
-        } else return <></>
+        return (
+            // id={"main-dialog"}
+            <Dialog open={this.state.showDialog} onClose={() => this.setState({
+                showDialog: false
+            })} TransitionComponent={this.DialogTransition} fullScreen={true} sx={{
+                '& .MuiDialog-paper': {
+                    // todo make configurable
+                    background: "transparent",
+                    // backgroundColor: theme.colors.backgroundColor.css()
+                }
+            }} children={
+                <If condition={this.state.showDialog && this.state.dialogAssembly !== undefined} ifTrue={
+                    this.assembly.render({
+                        // todo create fallback
+                        component: this.state.dialogAssembly as string,
+                        param: this.state.dialogProps,
+                        errorComponent: e => {
+                            return (
+                                <PageV2>
+                                    <FlexBox flexDir={FlexDirection.COLUMN} align={Align.CENTER} justifyContent={Justify.FLEX_END} height={percent(100)}>
+                                        <PosInCenter fullHeight>
+                                            <InformationBox visualMeaning={ObjectVisualMeaning.ERROR}>
+                                                <Text text={`**[DEBUG]** No assembly found\n'${e}'`}/>
+                                            </InformationBox>
+                                        </PosInCenter>
+                                        <Icon icon={<CloseIcon/>} visualMeaning={ObjectVisualMeaning.ERROR} colored onClick={() => App.app().callAction("close-main-dialog")}/>
+                                    </FlexBox>
+                                </PageV2>
+                            );
+                        }
+                    })
+                } ifFalse={<></>}
+                />
+            }/>
+        );
+
+        // if (this.state.showDialog && this.state.dialogAssembly !== undefined) {
+        //     return (
+        //         <Dialog keepMounted={true} id={"main-dialog"} open={this.state.showDialog} onClose={() => this.setState({
+        //             showDialog: false
+        //         })} TransitionComponent={this.DialogTransition} fullScreen={true} sx={{
+        //             '& .MuiDialog-paper': {
+        //                 // todo make configurable
+        //                 background: "transparent"
+        //                 // backgroundColor: theme.colors.backgroundColor.css()
+        //             }
+        //         }} children={
+        //             <If condition={this.state.showDialog && this.state.dialogAssembly !== undefined} ifTrue={
+        //                 this.assembly.render({
+        //                     // todo create fallback
+        //                     component: this.state.dialogAssembly as string,
+        //                     param: this.state.dialogProps,
+        //                     errorComponent: e => {
+        //                         return (
+        //                             <PageV2>
+        //                                 <FlexBox flexDir={FlexDirection.COLUMN} align={Align.CENTER} justifyContent={Justify.FLEX_END} height={percent(100)}>
+        //                                     <PosInCenter fullHeight>
+        //                                         <InformationBox visualMeaning={ObjectVisualMeaning.ERROR}>
+        //                                             <Text text={`**[DEBUG]** No assembly found\n'${e}'`}/>
+        //                                         </InformationBox>
+        //                                     </PosInCenter>
+        //                                     <Icon icon={<CloseIcon/>} visualMeaning={ObjectVisualMeaning.ERROR} colored onClick={() => App.app().callAction("close-main-dialog")}/>
+        //                                 </FlexBox>
+        //                             </PageV2>
+        //                         );
+        //                     }
+        //                 })
+        //             } ifFalse={<></>}
+        //             />
+        //         }/>
+        //     );
+        // } else return <></>
     }
 
     public rerender() {
@@ -417,7 +454,13 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
             return (
                 <BrowserRouter>
                     <MenuPage showMenuInitially={false} doubleClickMenuOpen={false}>
-                        {this.getRouts()}
+                        <MenuPageV2 children={
+                            <Switch>
+                                {this.getRouts()}
+
+                                {App.app().screenManager.renderRoutes()}
+                            </Switch>
+                        }/>
                     </MenuPage>
                 </BrowserRouter>
             );
@@ -427,8 +470,8 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
     private getRouts(): JSX.Element[] {
         const config: AppConfig = App.app().config;
         const routs: JSX.Element[] = [
-            <Route path={"/"} exact={false} render={() => <Redirect push to={config.debugMode ? config.defaultDebugAppRoute : config.defaultAppRoute}/>}/>,
-            <Route path={"/boarding"} render={() => <BoardingPage/>}/>,
+            // <Route path={"/"} exact={false} render={() => <Redirect push to={config.debugMode ? config.defaultDebugAppRoute : config.defaultAppRoute}/>}/>,
+            // <Route path={"/boarding"} render={() => <BoardingPage/>}/>,
             <Route path={"/register"} render={() => <SignupPage callingFrom={"/boarding"}/>}/>,
             <Route path={"/login"} render={() => <LoginPage/>}/>,
             <Route path={"/dashboard"} render={() => <DashboardPage/>}/>,
@@ -451,7 +494,6 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
     private initDialogs(app: App) {
         if (app.config.debugMode) {
             this.assembly.assembly("client-display-playground-dialog", (theme, props) => <ClientDisplayPlaygroundDialog/>);
-            this.assembly.assembly("menu-debug-dialog", (theme, props) => <MenuPageV2/>);
         }
         this.assembly.assembly(Constants.createProjectDialog, (theme, props) => <ProjectCreationDialog/>);
         this.assembly.assembly(Constants.logDialog, (theme, props) => <LogPage/>);

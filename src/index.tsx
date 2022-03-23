@@ -5,6 +5,8 @@ import './fonts.scss'
 import reportWebVitals from './reportWebVitals';
 import {AppPage} from "./pages/app/AppPage";
 import {RegexPage} from "./tests/regex/RegexPage";
+import {MenuPageV2} from "./pages/menu/v2/MenuPageV2";
+import {DashboardToolbox} from "./pages/dashboard/DashboardToolbox";
 
 // <AppPage/>
 // <RegexPageFC/>

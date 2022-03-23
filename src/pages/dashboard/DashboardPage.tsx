@@ -32,10 +32,11 @@ import {ProfilePicture} from "../../components/ProfilePicture";
 import {Badge} from "../../components/Badge";
 import {PuffLoader} from "react-spinners";
 import {If} from "../../components/If";
-import {CockpitButton} from "../../components/cockpitButton/CockpitButton";
-import {CockpitButtonType} from "../../components/cockpitButton/CockpitButtonType";
+import {CockpitButton} from "../../components/ho/cockpitButton/CockpitButton";
+import {CockpitButtonType} from "../../components/ho/cockpitButton/CockpitButtonType";
 import {ProjectFilter} from "./ProjectFilter";
 import {BernieComponent} from "../../logic/BernieComponent";
+import {DashboardToolbox} from "./DashboardToolbox";
 
 export type DashboardPageProps = {
 }
@@ -281,6 +282,9 @@ export default class DashboardPage extends BernieComponent<DashboardPageProps, D
             <If condition={this.state.loading} ifFalse={
                 <FlexBox flexDir={FlexDirection.COLUMN} align={Align.CENTER} width={percent(100)}>
                     {this.renderFilterButtons()}
+
+                    <DashboardToolbox/>
+
                     {this.component(() => (
                         <If condition={this.getFilter("name").active && !this.getFilter("all").active} ifTrue={
                             <Input opaque label={"Search for name"} visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} onChange={ev => {

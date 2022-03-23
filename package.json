@@ -70,7 +70,8 @@
     "typescript-debounce-decorator": "^0.0.18",
     "use-lodash-debounce": "^1.2.0",
     "uuid": "^8.3.2",
-    "web-vitals": "^1.1.2"
+    "web-vitals": "^1.1.2",
+    "xterm-for-react": "^1.0.4"
   },
   "scripts": {
     "start": "react-scripts start",

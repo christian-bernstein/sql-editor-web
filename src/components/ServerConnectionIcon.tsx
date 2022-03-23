@@ -1,14 +1,13 @@
 import React from "react";
-import {BadgedWrapper} from "./BadgedWrapper";
 import {ReactComponent as ServerIcon} from "../assets/icons/ic-20/ic20-dns.svg";
+import {ReactComponent as ProtocolIcon} from "../assets/icons/ic-20/ic20-chat.svg";
+import {ReactComponent as PluginIcon} from "../assets/icons/ic-20/ic20-plugin.svg";
 import {Icon} from "./Icon";
 import {App, utilizeGlobalTheme} from "../logic/App";
 import {ObjectVisualMeaning} from "../logic/ObjectVisualMeaning";
 import {Environment} from "../logic/Environment";
 import {getMeaningfulColors, Themeable} from "../Themeable";
-import {BounceLoader} from "react-spinners";
-import {Badge} from "./Badge";
-import {px} from "../logic/style/DimensionalMeasured";
+import {percent, px} from "../logic/style/DimensionalMeasured";
 import {getOr} from "../logic/Utils";
 import {CustomTooltip} from "./CustomTooltip";
 import {FlexBox} from "./FlexBox";
@@ -17,9 +16,17 @@ import {Separator} from "./Separator";
 import {Text} from "./Text";
 import {Box} from "./Box";
 import {Constants} from "../Constants";
+import {Orientation} from "../logic/style/Orientation";
+import {Align} from "../logic/Align";
+import {Button} from "./Button";
+import {FlexDirection} from "../logic/style/FlexDirection";
+import {BadgedWrapper} from "./BadgedWrapper";
+import {Badge} from "./Badge";
+import {BounceLoader} from "react-spinners";
 
 export type ServerConnectionIconProps = {
-    openConnectionMetricsDialog?: boolean
+    openConnectionMetricsDialog?: boolean,
+    pulse?: boolean
 }
 
 export const ServerConnectionIcon: React.FC<ServerConnectionIconProps> = props => {
@@ -37,9 +44,9 @@ export const ServerConnectionIcon: React.FC<ServerConnectionIconProps> = props =
             {(() => {
                 switch (conState) {
                     case 0:
-                        return renderConnecting(theme, connector);
+                        return renderConnecting(props, theme, connector);
                     case 1:
-                        return renderOnline(theme, connector);
+                        return renderOnline(props, theme, connector);
                     case 2:
                         return <>Stopping</>;
                     case 3:
@@ -56,16 +63,28 @@ export const ServerConnectionIcon: React.FC<ServerConnectionIconProps> = props =
 export const renderTooltip: (props: ServerConnectionIconProps, theme: Themeable.Theme, con: Environment.Connector) => JSX.Element = (props, theme, con) => {
     return (
         <Box gapY={theme.gaps.smallGab}>
-            <ElementHeader icon={<ServerIcon/>} title={"Server connection telemetry"} beta/>
+            <ElementHeader icon={<ServerIcon/>} title={"Server connection telemetry"}/>
             <Separator/>
-            <Text text={"Hello world from another not useful component!"}/>
+            <Text text={`Current protocol: '**${con.currentProtocol}**'`} enableLeftAppendix leftAppendix={
+                <FlexBox height={percent(100)} flexDir={FlexDirection.ROW} align={Align.CENTER}>
+                    <Icon icon={<ProtocolIcon/>}/>
+                    <span/>
+                </FlexBox>
+            }/>
+
+            <Button visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} opaque children={
+                <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER}>
+                    <Icon icon={<PluginIcon/>}/>
+                    <Text text={"Connect"}/>
+                </FlexBox>
+            }/>
         </Box>
     );
 }
 
-export const renderOnline: (theme: Themeable.Theme, con: Environment.Connector) => JSX.Element = (theme, con) => {
+export const renderOnline: (props: ServerConnectionIconProps, theme: Themeable.Theme, con: Environment.Connector) => JSX.Element = (props, theme, con) => {
     return (
-        <BadgedWrapper showBadgeInitially badge={
+        <BadgedWrapper showBadgeInitially={getOr(props.pulse, true)} badge={
             <Badge padding={false} shadow={true}>
                 <BounceLoader color={getMeaningfulColors(ObjectVisualMeaning.SUCCESS, theme).lighter.css()}
                               size={10}/>
@@ -75,9 +94,9 @@ export const renderOnline: (theme: Themeable.Theme, con: Environment.Connector) 
         </BadgedWrapper>
     );
 }
-export const renderConnecting: (theme: Themeable.Theme, con: Environment.Connector) => JSX.Element = (theme, con) => {
+export const renderConnecting: (props: ServerConnectionIconProps, theme: Themeable.Theme, con: Environment.Connector) => JSX.Element = (props, theme, con) => {
     return (
-        <BadgedWrapper showBadgeInitially badge={
+        <BadgedWrapper showBadgeInitially={getOr(props.pulse, true)} badge={
             <Badge padding={false} shadow={true}>
                 <BounceLoader color={getMeaningfulColors(ObjectVisualMeaning.WARNING, theme).lighter.css()}
                               size={10}/>

@@ -44,7 +44,8 @@ export class Button extends React.Component<ButtonProps, any> {
           font-family: ${theme.texts.fontFamily};
           width: ${getOr(this.props.width?.css(), "auto")};
           height: ${getOr(this.props.height?.css(), "auto")};
-          display: flex;
+          display: flex;         
+          
           align-content: center;
           justify-content: center;
           cursor: ${getOr(this.props.cursor, Cursor.pointer)};
@@ -57,6 +58,10 @@ export class Button extends React.Component<ButtonProps, any> {
           
           & * {
             cursor: ${getOr(this.props.cursor, Cursor.pointer)};
+          }
+          
+          * {
+            user-select: none;
           }
           
           &:hover {

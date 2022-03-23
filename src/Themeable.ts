@@ -77,6 +77,7 @@ export namespace Themeable {
 
     export type ColorPallet = {
         backgroundColor: Color,
+        backgroundColorOuter: Color,
         backgroundHighlightColor: Color,
         backgroundHighlightColor200: Color,
         backgroundHighlightInputColor: Color,
@@ -150,6 +151,7 @@ export namespace Themeable {
 
     export const defaultThemePallet: ColorPallet = {
         backgroundColor: Color.ofHex("#171717"),
+        backgroundColorOuter: Color.ofHex("#080808"),
         backgroundHighlightColor: Color.ofHex("#222429"),
         backgroundHighlightColor200: Color.ofHex("#282c34"),
         backgroundHighlightInputColor: Color.ofHex("#282c34"),

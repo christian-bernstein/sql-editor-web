@@ -8,11 +8,17 @@ import {getOr} from "../logic/Utils";
 import styled from "styled-components";
 import {Color} from "../Color";
 import {FontWeight} from "../logic/style/FontWeight";
-import {DimensionalMeasured} from "../logic/style/DimensionalMeasured";
+import {DimensionalMeasured, px} from "../logic/style/DimensionalMeasured";
 import {If} from "./If";
 
 // todo remove
 import {ReactComponent as EditIcon} from "../assets/icons/ic-16/ic16-edit.svg";
+import {FlexBox} from "./FlexBox";
+import {Align} from "../logic/Align";
+import {Justify} from "../logic/style/Justify";
+import {Icon} from "./Icon";
+import {CircularProgress} from "@mui/material";
+import {ReactComponent as QuickIcon} from "../assets/icons/ic-20/ic20-bolt.svg";
 
 export type InputProps = {
     id?: string,
@@ -28,8 +34,13 @@ export type InputProps = {
     placeholder?: string,
     fontWeight?: FontWeight,
     height?: DimensionalMeasured,
+    width?: DimensionalMeasured
     hideLabel?: boolean,
-    minHeightBoundary?: boolean
+    minHeightBoundary?: boolean,
+    bgColor?: Color,
+    styledBorder?: boolean,
+    paddingLeft?: boolean,
+    fontSize?: DimensionalMeasured
 }
 
 export type InputState = {
@@ -60,7 +71,10 @@ export class Input extends React.Component<InputProps, InputState> {
     render() {
         const theme: Themeable.Theme = utilizeGlobalTheme();
         const meaningfulColors: MeaningfulColors = getMeaningfulColors(getOr(this.props.visualMeaning, ObjectVisualMeaning.UI_NO_HIGHLIGHT), theme);
-        const bgColor: Color = this.props.opaque ? meaningfulColors.main.withAlpha(getOr(this.props.opaqueValue, .1)): meaningfulColors.main;
+        const baseColor: Color = getOr(this.props.bgColor, meaningfulColors.main);
+        const bgColor: Color = this.props.opaque ? baseColor.withAlpha(getOr(this.props.opaqueValue, .1)): baseColor;
+        const styledBorder = getOr(this.props.styledBorder, true);
+        const paddingLeft = getOr(this.props.paddingLeft, true);
 
         const Wrapper = styled.div`
           width: 100%;
@@ -69,9 +83,9 @@ export class Input extends React.Component<InputProps, InputState> {
           position: relative;
           background-color: ${theme.colors.backgroundHighlightColor.css()};
           box-sizing: border-box;
-          border-radius: ${theme.radii.defaultObjectRadius.css()};
+          border-radius: ${styledBorder ? theme.radii.defaultObjectRadius.css() : 0};
           padding: ${theme.paddings.defaultObjectPadding.css()};
-          border: 1px solid ${meaningfulColors.lighter.css()};
+          border: ${styledBorder ? "1px" : 0} solid ${meaningfulColors.lighter.css()};
           
           transition: all ${theme.transitions.fastTime.css()};
           
@@ -87,6 +101,7 @@ export class Input extends React.Component<InputProps, InputState> {
             color: ${theme.colors.fontPrimaryColor.css()};
             font-family: "${theme.texts.fontFamily}", "Consolas", monospace !important;
             font-weight: ${getOr(this.props.fontWeight, "normal")};
+            font-size: ${getOr(this.props.fontSize, px(12)).css()};
             position: absolute;
             top: 0;
             left: 0;
@@ -96,7 +111,7 @@ export class Input extends React.Component<InputProps, InputState> {
             height: 100%;
             outline: none;
             box-sizing: border-box;
-            padding: ${theme.paddings.defaultObjectPadding.css()};
+            padding: ${paddingLeft ? theme.paddings.defaultObjectPadding.css() : 0};
             border-radius: ${theme.radii.defaultObjectRadius.withPlus(-2).css()};
             z-index: 1;
             
@@ -137,6 +152,7 @@ export class Input extends React.Component<InputProps, InputState> {
 
         return (
             <Wrapper className={"input-container"} key={this.state.id}>
+
                 <input key={this.state.id}
                        type={getOr(this.props.type, "input")}
                        autoFocus={getOr(this.props.autoFocus, false)}

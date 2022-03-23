@@ -95,7 +95,7 @@ export class BoardingPage extends BernieComponent<BoardingPageProps, BoardingPag
           background-color: ${theme.colors.backgroundColor.css()};
 
           width: 100%;
-          height: 100vh;
+          height: 100%;
           color: ${theme.colors.fontPrimaryColor.css()};
           box-sizing: border-box;
           position: relative;

@@ -34,15 +34,16 @@ export class Media extends BernieComponent<MediaProps, any, any> {
     }
 
     componentRender(p: MediaProps, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
-        if (useMediaQuery({ minWidth: 992 })) {
-            return this.props.isDesktop?.(p, s, l, t, a);
-        } else if (useMediaQuery({ minWidth: 768, maxWidth: 991 })) {
-            return this.props.isTablet?.(p, s, l, t, a);
-        } else if (useMediaQuery({ maxWidth: 767 })) {
-            return this.props.isMobile?.(p, s, l, t, a);
-        } else {
-            return this.props.isDefault?.(p, s, l, t, a);
-        }
+        // if (useMediaQuery({ minWidth: 992 })) {
+        //     return this.props.isDesktop?.(p, s, l, t, a);
+        // } else if (useMediaQuery({ minWidth: 768, maxWidth: 991 })) {
+        //     return this.props.isTablet?.(p, s, l, t, a);
+        // } else if (useMediaQuery({ maxWidth: 767 })) {
+        //     return this.props.isMobile?.(p, s, l, t, a);
+        // } else {
+        //     return this.props.isDefault?.(p, s, l, t, a);
+        // }
+        return <>error implement..</>
     }
 }
 
@@ -51,17 +52,17 @@ export const Desktop: React.FC<any> = props => {
     return isDesktop ? props.children : null;
 }
 
-const Tablet: React.FC<any> = props => {
+export const Tablet: React.FC<any> = props => {
     const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 991 })
     return isTablet ? props.children : null
 }
 
-const Mobile: React.FC<any> = props => {
+export const Mobile: React.FC<any> = props => {
     const isMobile = useMediaQuery({ maxWidth: 767 })
     return isMobile ? props.children : null
 }
 
-const Default: React.FC<any> = props => {
+export const Default: React.FC<any> = props => {
     const isNotMobile = useMediaQuery({ minWidth: 768 })
     return isNotMobile ? props.children : null
 }

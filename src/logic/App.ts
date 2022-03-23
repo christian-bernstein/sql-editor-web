@@ -19,6 +19,10 @@ import {LogEntry} from "./data/LogEntry";
 import {v4} from "uuid";
 import {UserProfileData} from "./data/UserProfileData";
 import {getOr} from "./Utils";
+import {CDNRequestPacketData} from "../packets/out/CDNRequestPacketData";
+import {CDNResponsePacketData} from "../packets/in/CDNResponsePacketData";
+import {CDNRequestBranch} from "./data/cdn/CDNRequestBranch";
+import {ScreenManager} from "./screen/ScreenManager";
 
 export function utilizeApp(): App {
     return App.app();
@@ -48,6 +52,9 @@ export function utilizeGlobalTheme(defTheme: Themeable.Theme = Themeable.default
 }
 
 export class App {
+    get screenManager(): ScreenManager {
+        return this._screenManager;
+    }
 
     get logEntryAddListeners(): Map<string, (entry: LogEntry) => void> {
         return this._logEntryAddListeners;
@@ -101,6 +108,8 @@ export class App {
 
     private readonly actions: Map<String, Array<(parameters?: any) => void>> = new Map<String, Array<(parameters?: any) => void>>();
 
+    private readonly _screenManager: ScreenManager = new ScreenManager();
+
     private globalTheme: string;
 
     private _config: AppConfig;
@@ -123,6 +132,22 @@ export class App {
         this.themes = config.themes;
         this._dialogAssembly = config.appAssembly;
         this.init();
+    }
+
+    public cdn<T>(branches: CDNRequestBranch[], handler: (data: CDNResponsePacketData) => void): void {
+        App.app().getConnector().call({
+            protocol: "base",
+            packetID: "CDNRequestPacketData",
+            data: {
+                branches: branches
+            } as CDNRequestPacketData,
+            callback: {
+                handle: (connector, packet) => {
+                    const data = packet.data as CDNResponsePacketData;
+                    handler(data);
+                }
+            }
+        });
     }
 
     public shard<T extends Shard>(id: string, shard: T | undefined = undefined): T {
