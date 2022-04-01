@@ -10,6 +10,8 @@ import ReactMarkdown from 'react-markdown'
 import {Link} from "./Link";
 import {Align} from "../logic/Align";
 import {Cursor} from "../logic/style/Cursor";
+import {LinkPreview} from "@dhaiwat10/react-link-preview";
+import {CustomTooltip} from "./CustomTooltip";
 
 export type TextProps = {
     text: string,
@@ -109,7 +111,15 @@ export const Text: React.FC<TextProps> = props => {
                 <ReactMarkdown className={"md"} children={text} components={{
                     a: (mdProps, context) => {
                         return (
-                            <Link showLinkIcon={false} visualMeaning={props.visualMeaning} href={getOr<string>(mdProps.href, "")}>{mdProps.children}</Link>
+                            <Link linkTooltip showLinkIcon={false} visualMeaning={props.visualMeaning} href={getOr<string>(mdProps.href, "")}>{mdProps.children}</Link>
+
+                            // <CustomTooltip title={
+                            //     <LinkPreview url={getOr<string>(mdProps.href, "")}/>
+                            // } children={
+                            //     <Link showLinkIcon={false} visualMeaning={props.visualMeaning} href={getOr<string>(mdProps.href, "")}>{mdProps.children}</Link>
+                            // }/>
+
+                            // <LinkPreview url={getOr<string>(mdProps.href, "")}/>
                         );
                     }
                 }}/>

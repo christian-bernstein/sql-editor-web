@@ -1,5 +1,5 @@
 import {ScreenConfig} from "./ScreenConfig";
-import {App} from "../App";
+import {App, utilizeGlobalTheme} from "../App";
 import {Redirect, Route, Switch} from "react-router-dom";
 import React from "react";
 import {ViewConfig} from "./ViewConfig";
@@ -7,20 +7,30 @@ import {ViewRenderContext} from "./ViewRenderContext";
 import {BoardingPage} from "../../pages/boarding/BoardingPage";
 import {FlexBox} from "../../components/FlexBox";
 import {Icon} from "../../components/Icon";
-import {ReactComponent as SettingsIcon} from "../../assets/icons/ic-20/ic20-settings.svg";
 import {ReactComponent as TestIcon} from "../../assets/icons/ic-20/ic20-alert.svg";
+import {ReactComponent as HubIcon} from "../../assets/icons/ic-20/ic20-home.svg";
+import {ReactComponent as InformationIcon} from "../../assets/icons/ic-20/ic20-info.svg";
+import {ReactComponent as MapIcon} from "../../assets/icons/ic-20/ic20-map.svg";
 import {Box} from "../../components/Box";
 import {FlexDirection} from "../style/FlexDirection";
-import {percent} from "../style/DimensionalMeasured";
+import {percent, px} from "../style/DimensionalMeasured";
 import {Align} from "../Align";
 import {Cursor} from "../style/Cursor";
 import {getOr} from "../Utils";
+import {ObjectVisualMeaning} from "../ObjectVisualMeaning";
+import {CustomTooltip} from "../../components/CustomTooltip";
+import {ElementHeader} from "../../components/ElementHeader";
+import {Separator} from "../../components/Separator";
+import {Orientation} from "../style/Orientation";
+import {Text} from "../../components/Text";
+import {If} from "../../components/If";
+import {LinkPreview} from "@dhaiwat10/react-link-preview";
 
 export class ScreenManager {
 
     private readonly screens: Array<ScreenConfig> = new Array<ScreenConfig>({
         defaultView: "def",
-        routeExact: false,
+        routeExact: true,
         id: "/",
         location: "/",
         debug: false,
@@ -35,7 +45,7 @@ export class ScreenManager {
                     render(ctx: ViewRenderContext): JSX.Element {
                         return (
                             <Box borderless cursor={Cursor.pointer} noBGColor={!ctx.active}>
-                                <Icon icon={<TestIcon/>}/>
+                                <Icon icon={<TestIcon/>} visualMeaning={ObjectVisualMeaning.ERROR} colored/>
                             </Box>
                         );
                     }
@@ -43,7 +53,6 @@ export class ScreenManager {
                 renderer: {
                     render(ctx: ViewRenderContext): JSX.Element {
                         const appConfig = App.app().config;
-                        console.log("render redirect!!")
                         return (
                             <Redirect push to={appConfig.debugMode ? appConfig.defaultDebugAppRoute : appConfig.defaultAppRoute}/>
                         );
@@ -59,7 +68,7 @@ export class ScreenManager {
         viewFactory: config => {
             return [{
                 id: "def",
-                description: "Boarding page",
+                description: "Sign up, log-in using shortcut-login *(Continue as)* or log-in using your credentials.",
                 accessible: (config) => true,
                 displayName: "Boarding page",
                 tags: [],
@@ -67,7 +76,7 @@ export class ScreenManager {
                     render(ctx: ViewRenderContext): JSX.Element {
                         return (
                             <Box highlight cursor={Cursor.pointer} noBGColor={!ctx.active}>
-                                <Icon icon={<SettingsIcon/>}/>
+                                <Icon icon={<HubIcon/>}/>
                             </Box>
                         );
                     }
@@ -80,16 +89,17 @@ export class ScreenManager {
                     }
                 }
             } as ViewConfig, {
-                id: "test",
-                description: "Test page",
+                id: "about",
+                beta: true,
+                description: "Shows details about the project, like the author & contributors. [Project's GitHub repo](https://github.com/christian-bernstein/sql-editor-web)",
                 accessible: (config) => true,
-                displayName: "Test page",
+                displayName: "About page",
                 tags: [],
                 iconRenderer: {
                     render(ctx: ViewRenderContext): JSX.Element {
                         return (
                             <Box highlight cursor={Cursor.pointer} width={percent(100)} noBGColor={!ctx.active}>
-                                <Icon icon={<TestIcon/>}/>
+                                <Icon icon={<InformationIcon/>}/>
                             </Box>
                         );
                     }
@@ -146,27 +156,42 @@ export class ScreenManager {
                     {
                         screen.viewFactory(screen).map(view => {
                             let loc = this.viewLocations.get(screen.location);
-                            if (loc === undefined || loc === null) {
-                                loc = screen.defaultView;
-                            }
-
+                            if (loc === undefined || loc === null) loc = screen.defaultView;
                             const active = view.id === loc;
+                            const theme = utilizeGlobalTheme();
+
                             return (
                                 <span style={{
                                     boxSizing: "content-box",
                                     width: percent(100).css()
-                                }} onClick={() => {
-                                    if (loc != null) {
-                                        this.viewLocations.set(screen.location, view.id);
-                                        App.app().rerenderGlobally();
-                                    }
                                 }} children={
-                                    view.iconRenderer.render({
-                                        screenConfig: screen,
-                                        viewConfig: view,
-                                        viewLocation: loc,
-                                        active: active
-                                    })
+                                    <CustomTooltip placement={"right"} arrow noPadding noBorder title={
+                                        <Box gapY={theme.gaps.smallGab} maxWidth={px(500)}>
+                                            <ElementHeader icon={<MapIcon/>} title={`${view.displayName} *(${screen.id} **@** ${view.id})*`} beta={getOr(view.beta, false)} appendix={
+                                                <If condition={active} ifTrue={
+                                                    <Box opaque visualMeaning={ObjectVisualMeaning.INFO} paddingX={theme.paddings.defaultButtonPadding} paddingY={theme.paddings.defaultBadgePadding} children={
+                                                        <Text text={"current"} uppercase bold fontSize={px(12)}/>
+                                                    }/>
+                                                }/>
+                                            }/>
+                                            <Separator orientation={Orientation.HORIZONTAL}/>
+                                            <Text text={view.description} whitespace={"pre-wrap"}/>
+                                        </Box>
+                                    } children={
+                                        <span onClick={() => {
+                                            if (loc != null && !active) {
+                                                this.viewLocations.set(screen.location, view.id);
+                                                App.app().rerenderGlobally();
+                                            }
+                                        }} children={
+                                            view.iconRenderer.render({
+                                                screenConfig: screen,
+                                                viewConfig: view,
+                                                viewLocation: loc,
+                                                active: active
+                                            })
+                                        }/>
+                                    }/>
                                 }/>
                             );
                         })
@@ -174,6 +199,15 @@ export class ScreenManager {
                 </FlexBox>
             )}/>
         ));
+
+        // <CustomTooltip arrow noPadding noBorder title={<Text text={screen.location}/>} children={
+        //                                         view.iconRenderer.render({
+        //                                             screenConfig: screen,
+        //                                             viewConfig: view,
+        //                                             viewLocation: loc,
+        //                                             active: active
+        //                                         })
+        //                                     }/>
     }
 
     public renderMenuIcons(): JSX.Element {
@@ -182,6 +216,12 @@ export class ScreenManager {
                 {this.loadAndRenderMenuIcons()}
             </Switch>
         );
+
+        // return (
+        //     <>
+        //         {this.loadAndRenderMenuIcons()}
+        //     </>
+        // );
     }
 
     public renderRoutes(): JSX.Element {

@@ -7,5 +7,6 @@ export type ViewConfig = {
     displayName: string,
     iconRenderer: ContextRenderer,
     renderer: ContextRenderer,
-    accessible: (config: ViewConfig) => boolean
+    accessible: (config: ViewConfig) => boolean,
+    beta?: boolean
 }

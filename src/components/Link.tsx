@@ -7,6 +7,8 @@ import {getOr} from "../logic/Utils";
 import {ReactComponent as LinkIcon} from "../assets/icons/ic-16/ic16-link.svg";
 import ReactTooltip from "react-tooltip";
 import {LinkPreview} from "@dhaiwat10/react-link-preview";
+import {CustomTooltip} from "./CustomTooltip";
+import {If} from "./If";
 
 export type LinkProps = {
     href: string,
@@ -42,10 +44,39 @@ export class Link extends React.Component<LinkProps, any> {
           }
         `;
         return (
-            <Wrapper href={this.props.href}>
-                {this.props.children}
-                {!this.props.showLinkIcon ? <></> : <LinkIcon/>}
-            </Wrapper>
+
+            <If condition={getOr(this.props.linkTooltip, false)} ifTrue={
+                <CustomTooltip enterDelay={500} noBorder arrow noPadding title={
+                    <LinkPreview
+                        fallback={null}
+                        fallbackImageSrc={""}
+                        backgroundColor={theme.colors.backgroundHighlightColor200.css()}
+                        primaryTextColor={theme.colors.fontPrimaryColor.css()}
+                        secondaryTextColor={theme.colors.fontSecondaryColor.css()}
+                        borderColor={theme.colors.borderPrimaryColor.css()}
+                        borderRadius={theme.radii.defaultObjectRadius.css()}
+                        imageHeight={"250px"}
+                        showLoader
+                        openInNewTab
+                        width={"400px"}
+                        url={this.props.href}
+                    />
+                } children={
+                    <Wrapper href={this.props.href}>
+                        {this.props.children}
+                        {!this.props.showLinkIcon ? <></> : <LinkIcon/>}
+                    </Wrapper>
+                }/>
+            } ifFalse={
+                <Wrapper href={this.props.href}>
+                    {this.props.children}
+                    {!this.props.showLinkIcon ? <></> : <LinkIcon/>}
+                </Wrapper>
+            }/>
+            // <Wrapper href={this.props.href}>
+            //     {this.props.children}
+            //     {!this.props.showLinkIcon ? <></> : <LinkIcon/>}
+            // </Wrapper>
 
         );
     }

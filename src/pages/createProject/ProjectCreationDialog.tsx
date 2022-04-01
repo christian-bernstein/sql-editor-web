@@ -34,6 +34,7 @@ import {handleProxy} from "../../logic/net/ConditionalPacketHandlingUtils";
 import {Environment} from "../../logic/Environment";
 import {If} from "../../components/If";
 import {Cursor} from "../../logic/style/Cursor";
+import {Switch} from "../../components/Switch";
 
 export type ProjectCreationDialogLocalState = {
     title: string,
@@ -273,12 +274,12 @@ export class ProjectCreationDialog extends React.Component<any, any> {
 
                             <TextArea fontWeight={"lighter"} label={"Description"} placeholder={"Add a description"} onChange={ev => this.local.state.updateDescriptionDebouncedFunc(ev.target.value)}/>
 
-                            {/*<Text text={"Project is stator"}/>
+                            <Text text={"Project is stator"}/>
                             <RenderExecutor id={v4()} channels={["stator"]} componentDidMountRelay={bridge => this.controller.register(bridge)} componentFactory={() => (
                                 <Switch checked={this.local.state.stator} onChange={(event, checked) => this.local.setState({
                                     stator: checked
-                                }, new Map([["channels", ["stator"]]]))}/>
-                            )}/>*/}
+                                }, new Map([["channels", ["stator"]]]))} text={"Stator"}/>
+                            )}/>
 
                             <RenderExecutor id={v4()} channels={["*", "can-send"]} componentDidMountRelay={bridge => this.controller.register(bridge)} componentFactory={() => (
                                 <If condition={this.local.state.canSend} ifTrue={

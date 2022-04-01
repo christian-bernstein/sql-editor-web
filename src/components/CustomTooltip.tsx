@@ -1,5 +1,5 @@
 import React from "react";
-import {Tooltip, tooltipClasses, TooltipProps} from "@mui/material";
+import {Tooltip, tooltipClasses, TooltipProps, Zoom} from "@mui/material";
 import styled from "styled-components";
 import {Themeable} from "../Themeable";
 import {utilizeGlobalTheme} from "../logic/App";
@@ -13,7 +13,7 @@ export type CustomTooltipProps = {
 // noinspection RequiredAttributes
 export const CustomTooltip = styled(({ className, ...props }: TooltipProps & CustomTooltipProps) => (
     <ContextCompound clickType={"double"} wrapMenu={false} menu={<>{props.title}</>}>
-        <Tooltip {...props} classes={{ popper: className }}/>
+        <Tooltip {...props} classes={{ popper: className }} TransitionComponent={Zoom}/>
     </ContextCompound>
 ))((props) => {
     const theme: Themeable.Theme = utilizeGlobalTheme();

@@ -117,6 +117,7 @@ export namespace Themeable {
             smallTextVerticalMargin: DimensionalMeasured
         },
         paddings: {
+            defaultBadgePadding: DimensionalMeasured,
             defaultObjectPadding: DimensionalMeasured,
             defaultButtonPadding: DimensionalMeasured,
             defaultTextIconPadding: DimensionalMeasured,
@@ -218,6 +219,7 @@ export namespace Themeable {
             smallTextVerticalMargin: px(3)
         },
         paddings: {
+            defaultBadgePadding: px(2),
             defaultObjectPadding: px(16),
             defaultButtonPadding: px(8),
             defaultTextIconPadding: px(4)
@@ -315,6 +317,7 @@ export namespace Themeable {
             smallTextVerticalMargin: px(3)
         },
         paddings: {
+            defaultBadgePadding: px(2),
             defaultObjectPadding: px(16),
             defaultButtonPadding: px(8),
             defaultTextIconPadding: px(4)
