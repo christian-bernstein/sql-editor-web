@@ -1,4 +1,4 @@
-import React from "react";
+import React, {CSSProperties} from "react";
 import {Tooltip, tooltipClasses, TooltipProps, Zoom} from "@mui/material";
 import styled from "styled-components";
 import {Themeable} from "../Themeable";
@@ -8,11 +8,12 @@ import {ContextCompound} from "./ContextCompound";
 export type CustomTooltipProps = {
     noPadding?: boolean,
     noBorder?: boolean,
+    wrapperStyle?: CSSProperties
 }
 
 // noinspection RequiredAttributes
 export const CustomTooltip = styled(({ className, ...props }: TooltipProps & CustomTooltipProps) => (
-    <ContextCompound clickType={"double"} wrapMenu={false} menu={<>{props.title}</>}>
+    <ContextCompound wrapperStyle={props.wrapperStyle} clickType={"double"} wrapMenu={false} menu={<>{props.title}</>}>
         <Tooltip {...props} classes={{ popper: className }} TransitionComponent={Zoom}/>
     </ContextCompound>
 ))((props) => {

@@ -23,6 +23,7 @@ import {CDNRequestPacketData} from "../packets/out/CDNRequestPacketData";
 import {CDNResponsePacketData} from "../packets/in/CDNResponsePacketData";
 import {CDNRequestBranch} from "./data/cdn/CDNRequestBranch";
 import {ScreenManager} from "./screen/ScreenManager";
+import {AppShortcuts} from "./AppShortcuts";
 
 export function utilizeApp(): App {
     return App.app();
@@ -52,6 +53,11 @@ export function utilizeGlobalTheme(defTheme: Themeable.Theme = Themeable.default
 }
 
 export class App {
+
+    get shortcuts(): AppShortcuts {
+        return this._shortcuts;
+    }
+
     get screenManager(): ScreenManager {
         return this._screenManager;
     }
@@ -89,6 +95,8 @@ export class App {
     public static isInitiated(): boolean {
         return App.instance !== undefined && App.app().initiated;
     }
+
+    private readonly _shortcuts: AppShortcuts = new AppShortcuts(this);
 
     private readonly flowAccessPoint: FlowAccessPoint = new FlowAccessPoint(this);
 
@@ -382,11 +390,28 @@ export class App {
         // Create the console interception
         this.initLogInterceptor();
 
+        this.initShards();
+
         // Set the modals attachment element
         Modal.setAppElement("#root");
 
         // Try to load the default theme, set in the browser
         this.loadDefaultBrowserTheme();
+    }
+
+    private initShards() {
+        this.config.shards?.forEach((shardFactory, id) => {
+            this.shard(id, shardFactory(this));
+        });
+
+        this.shards.forEach((shard, id) => {
+            if (shard.canInit()) {
+                if (this.config.debugMode) {
+                    console.log(`Loading shard '${id}..'`, shard);
+                }
+                shard.load(this);
+            }
+        })
     }
 
     private loadDefaultBrowserTheme() {

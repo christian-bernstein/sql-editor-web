@@ -50,7 +50,8 @@ import {RoadmapDialog} from "../roadmap/RoadmapDialog";
 import {ClientDisplayPlaygroundDialog} from "../../debug/pages/clientDisplay/ClientDisplayPlaygroundDialog";
 import {MenuPageV2} from "../menu/v2/MenuPageV2";
 import {If} from "../../components/If";
-import {DashboardToolbox} from "../dashboard/DashboardToolbox";
+import {Shard} from "../../logic/Shard";
+import {QuickActionShard} from "../../shards/QuickActionShard";
 
 export type AppPageProps = {
 }
@@ -136,65 +137,6 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                 }
             },
             {
-                title: "SQL Editor - Local debug **(wss protocol)**",
-                description: "Profile used for local debugging. (This profile can only be used, if the browser is running on the same device as the server is running.)",
-                config: {
-                    appTitle: "SQL Editor",
-                    debugMode: true,
-                    defaultAppRoute: "/boarding",
-                    defaultDebugAppRoute: "/boarding",
-                    rootRerenderHook: (callback) => this.rerender.bind(this)(),
-                    logInterceptors: [],
-                    logSaveSize: 1000,
-                    defaultTheme: "dark-green",
-                    appAssembly: this.assembly,
-                    themes: new Map<string, Themeable.Theme>([
-                        ["dark-green", Themeable.defaultTheme],
-                        ["light-green", Themeable.lightTheme]
-                    ]),
-                    connectorConfig: {
-                        protocol: "login",
-                        // address: "ws://192.168.2.100:80",
-                        address: "wss://192.168.2.104:25574",
-                        id: "ton",
-                        ssl: true,
-                        maxConnectAttempts: 1,
-                        connectionRetryDelayFunc: () => 0,
-                        packetInterceptor: this.getLogPacketInterceptor()
-                    }
-                }
-            },
-            {
-                title: "SQL Editor",
-                description: "SQL Editor Panel live version",
-                config: {
-                    appTitle: "SQL Editor",
-                    debugMode: false,
-                    defaultAppRoute: "/boarding",
-                    defaultDebugAppRoute: "/boarding",
-                    rootRerenderHook: (callback) => this.rerender.bind(this)(),
-                    logInterceptors: [],
-                    logSaveSize: 1000,
-                    defaultTheme: "dark-green",
-                    appAssembly: this.assembly,
-                    themes: new Map<string, Themeable.Theme>([
-                        ["dark-green", Themeable.defaultTheme],
-                        ["light-green", Themeable.lightTheme]
-                    ]),
-                    connectorConfig: {
-                        protocol: "login",
-                        // address: "ws://192.168.2.100:80",
-                        // address: "ws://2.59.135.242:25574",
-                        address: "ws://server3.cwies.de:25574",
-                        id: "ton",
-                        ssl: false,
-                        maxConnectAttempts: 1,
-                        connectionRetryDelayFunc: () => 0,
-                        packetInterceptor: this.getLogPacketInterceptor()
-                    }
-                }
-            },
-            {
                 title: "SQL Editor **(wss protocol)**",
                 description: "SQL Editor Panel live version with *wss* protocol",
                 config: {
@@ -224,33 +166,6 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                 }
             },
             {
-                title: "SQL Editor Test-Version 02. MAR 2022",
-                description: "SQL Editor Panel test version (v2.29-alpha.0)",
-                config: {
-                    appTitle: "SQL Editor",
-                    debugMode: true,
-                    defaultAppRoute: "/boarding",
-                    defaultDebugAppRoute: "/boarding",
-                    rootRerenderHook: (callback) => this.rerender.bind(this)(),
-                    logInterceptors: [],
-                    logSaveSize: 1000,
-                    defaultTheme: "dark-green",
-                    appAssembly: this.assembly,
-                    themes: new Map<string, Themeable.Theme>([
-                        ["dark-green", Themeable.defaultTheme],
-                        ["light-green", Themeable.lightTheme]
-                    ]),
-                    connectorConfig: {
-                        protocol: "login",
-                        address: "ws://server3.cwies.de:25574",
-                        id: "ton",
-                        maxConnectAttempts: 1,
-                        connectionRetryDelayFunc: () => 0,
-                        packetInterceptor: this.getLogPacketInterceptor()
-                    }
-                }
-            },
-            {
                 title: "SQL Editor Test-Version 03. MAR 2022 **(wss protocol)**",
                 description: "SQL Editor Panel test version (v2.29-alpha.0) with *wss* protocol",
                 config: {
@@ -258,18 +173,21 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                     debugMode: true,
                     defaultAppRoute: "/boarding",
                     defaultDebugAppRoute: "/boarding",
-                    rootRerenderHook: (callback) => this.rerender.bind(this)(),
+                    rootRerenderHook: () => this.rerender.bind(this)(),
                     logInterceptors: [],
                     logSaveSize: 1000,
                     defaultTheme: "dark-green",
                     appAssembly: this.assembly,
+                    shards: new Map<string, (app: App) => Shard>([
+                        ["db-session-cache", () => new DBSessionCacheShard()],
+                        ["quick-actions-shard", () => new QuickActionShard()]
+                    ]),
                     themes: new Map<string, Themeable.Theme>([
                         ["dark-green", Themeable.defaultTheme],
                         ["light-green", Themeable.lightTheme]
                     ]),
                     connectorConfig: {
                         protocol: "login",
-                        // address: "ws://192.168.2.100:80",
                         address: "wss://server3.cwies.de:25574",
                         id: "ton",
                         ssl: true,
@@ -527,7 +445,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                 packetInterceptor: this.getLogPacketInterceptor()
             }
         }, app => {
-            app.shard("db-session-cache", new DBSessionCacheShard());
+            // app.shard("db-session-cache", new DBSessionCacheShard());
 
             this.initDialogs(app);
 

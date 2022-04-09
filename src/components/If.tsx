@@ -6,7 +6,7 @@ import {getOr} from "../logic/Utils";
 import {App} from "../logic/App";
 
 export type IfProps = {
-    condition: boolean,
+    condition?: boolean,
     ifTrue?: JSX.Element,
     ifTrueGen?: () => JSX.Element,
     ifFalse?: JSX.Element,

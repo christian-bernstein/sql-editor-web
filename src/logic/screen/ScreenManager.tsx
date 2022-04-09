@@ -24,7 +24,8 @@ import {Separator} from "../../components/Separator";
 import {Orientation} from "../style/Orientation";
 import {Text} from "../../components/Text";
 import {If} from "../../components/If";
-import {LinkPreview} from "@dhaiwat10/react-link-preview";
+import {BadgedWrapper} from "../../components/BadgedWrapper";
+import {Badge} from "../../components/Badge";
 
 export class ScreenManager {
 
@@ -184,12 +185,18 @@ export class ScreenManager {
                                                 App.app().rerenderGlobally();
                                             }
                                         }} children={
-                                            view.iconRenderer.render({
-                                                screenConfig: screen,
-                                                viewConfig: view,
-                                                viewLocation: loc,
-                                                active: active
-                                            })
+                                            <BadgedWrapper badge={
+                                                <Badge visualMeaning={ObjectVisualMeaning.INFO} children={
+                                                    <Text text={"1"}/>
+                                                }/>
+                                            } showBadgeInitially={false} children={
+                                                view.iconRenderer.render({
+                                                    screenConfig: screen,
+                                                    viewConfig: view,
+                                                    viewLocation: loc,
+                                                    active: active
+                                                })
+                                            }/>
                                         }/>
                                     }/>
                                 }/>
@@ -199,15 +206,6 @@ export class ScreenManager {
                 </FlexBox>
             )}/>
         ));
-
-        // <CustomTooltip arrow noPadding noBorder title={<Text text={screen.location}/>} children={
-        //                                         view.iconRenderer.render({
-        //                                             screenConfig: screen,
-        //                                             viewConfig: view,
-        //                                             viewLocation: loc,
-        //                                             active: active
-        //                                         })
-        //                                     }/>
     }
 
     public renderMenuIcons(): JSX.Element {
@@ -216,12 +214,6 @@ export class ScreenManager {
                 {this.loadAndRenderMenuIcons()}
             </Switch>
         );
-
-        // return (
-        //     <>
-        //         {this.loadAndRenderMenuIcons()}
-        //     </>
-        // );
     }
 
     public renderRoutes(): JSX.Element {

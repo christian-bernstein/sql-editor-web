@@ -44,9 +44,8 @@ export class Link extends React.Component<LinkProps, any> {
           }
         `;
         return (
-
             <If condition={getOr(this.props.linkTooltip, false)} ifTrue={
-                <CustomTooltip enterDelay={500} noBorder arrow noPadding title={
+                <CustomTooltip enterDelay={2000} noBorder arrow noPadding title={
                     <LinkPreview
                         fallback={null}
                         fallbackImageSrc={""}
@@ -77,7 +76,6 @@ export class Link extends React.Component<LinkProps, any> {
             //     {this.props.children}
             //     {!this.props.showLinkIcon ? <></> : <LinkIcon/>}
             // </Wrapper>
-
         );
     }
 }

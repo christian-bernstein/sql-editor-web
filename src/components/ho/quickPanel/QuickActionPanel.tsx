@@ -5,17 +5,18 @@ import {Box} from "../../Box";
 import React, {useState} from "react";
 import {FlexBox} from "../../FlexBox";
 import {LiteGrid} from "../../LiteGrid";
-import {getOr, Utils} from "../../../logic/Utils";
+import {array, getOr} from "../../../logic/Utils";
 import {Icon} from "../../Icon";
 import {ElementHeader} from "../../ElementHeader";
 import {CustomTooltip} from "../../CustomTooltip";
 import {ObjectVisualMeaning} from "../../../logic/ObjectVisualMeaning";
 import {Button} from "../../Button";
 import {ReactComponent as ChatIcon} from "../../../assets/icons/ic-20/ic20-chat.svg";
-import {ReactComponent as LogIcon, ReactComponent as QuickIcon} from "../../../assets/icons/ic-20/ic20-bolt.svg";
+import {ReactComponent as QuickIcon} from "../../../assets/icons/ic-20/ic20-bolt.svg";
 import {ReactComponent as HelpIcon} from "../../../assets/icons/ic-20/ic20-help.svg";
-import {percent, px} from "../../../logic/style/DimensionalMeasured";
-import {Text} from "../../Text";
+import {ReactComponent as RunIcon} from "../../../assets/icons/ic-20/ic20-play.svg";
+import {DimensionalMeasured, percent, px} from "../../../logic/style/DimensionalMeasured";
+import {Text, TextType} from "../../Text";
 import {Separator} from "../../Separator";
 import {QuickActionConfig} from "../../../logic/data/quick/QuickActionConfig";
 import {App, utilizeGlobalTheme} from "../../../logic/App";
@@ -24,13 +25,11 @@ import {BounceLoader} from "react-spinners";
 import {Input} from "../../Input";
 import {FlexDirection} from "../../../logic/style/FlexDirection";
 import {Align} from "../../../logic/Align";
-import {CircularProgress, Zoom} from "@mui/material";
+import {CircularProgress} from "@mui/material";
 import {Justify} from "../../../logic/style/Justify";
-import {Constants} from "../../../Constants";
-import {BadgedWrapper} from "../../BadgedWrapper";
-import {Cursor} from "../../../logic/style/Cursor";
-import {ReactComponent as FullscreenEnterIcon} from "../../../assets/icons/ic-20/ic20-fullscreen.svg";
-import {ReactComponent as FullscreenExitIcon} from "../../../assets/icons/ic-20/ic20-fullscreen-exit.svg";
+import {Orientation} from "../../../logic/style/Orientation";
+import {OverflowBehaviour} from "../../../logic/style/OverflowBehaviour";
+import {Dimension} from "../../../logic/style/Dimension";
 
 export type QuickActionPanelLocalState = {
     updating: boolean
@@ -48,16 +47,16 @@ export class QuickActionPanel extends BernieComponent<any, any, QuickActionPanel
 
         const Test: React.FC<{panel: QuickActionPanel}> = props => {
             const [working, setWorking] = useState(false);
+            const theme = utilizeGlobalTheme();
 
             return (
                 <If condition={working} ifTrue={
-                    <Button padding={utilizeGlobalTheme().paddings.defaultObjectPadding} shrinkOnClick visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} children={
-                        <BounceLoader size={"20px"} color={utilizeGlobalTheme().colors.warnColor.css()}/>
+                    <Button padding={theme.paddings.defaultObjectPadding} shrinkOnClick visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} children={
+                        <BounceLoader size={"20px"} color={theme.colors.warnColor.css()}/>
                     }/>
                 } ifFalse={
-                    <Button padding={utilizeGlobalTheme().paddings.defaultObjectPadding} shrinkOnClick opaque visualMeaning={ObjectVisualMeaning.BETA} onClick={() => {
+                    <Button padding={theme.paddings.defaultObjectPadding} shrinkOnClick opaque visualMeaning={ObjectVisualMeaning.BETA} onClick={() => {
                         setWorking(true);
-
                         setTimeout(() => {
                             props.panel.ifActive(() => setWorking(false));
                         }, 2000);
@@ -69,67 +68,95 @@ export class QuickActionPanel extends BernieComponent<any, any, QuickActionPanel
         }
 
         return [
-            {
-                tags: [],
+            ...array({
+                // todo add onClick
+                tags: ["asd", "asdasd", "hellow", "asd", "asdasd", "hellow", "asd", "asdasd", "hellow"],
+                displayName: "Hello world",
+                description: "Description of the hello world action",
                 render(theme: Themeable.Theme, panel: QuickActionPanel): JSX.Element {
                     return (
                         <Test panel={panel}/>
                     );
-                },
-                renderHover(theme: Themeable.Theme, panel: QuickActionPanel): JSX.Element {
-                    return (
-                        <Text text={"Hello world"}/>
-                    );
                 }
-            },
-            {
-                tags: ["Open logs"],
-                render(theme: Themeable.Theme, panel: QuickActionPanel): JSX.Element {
-                    return (
-                        <Box cursor={Cursor.pointer} highlight bgColor={theme.colors.backgroundHighlightColor200} children={
-                            <CustomTooltip noBorder arrow title={"Open log dialog"} TransitionComponent={Zoom} onClick={() => {
-                                App.app().callAction("open-main-dialog", Constants.logDialog)
-                            }} children={
-                                <span children={
-                                    <BadgedWrapper badge={
-                                        <Text text={`${App.app().sophisticatedLogHistory.length}`} fontSize={px(12)}/>
-                                    } showBadgeInitially>
-                                        <Icon icon={<LogIcon/>}/>
-                                    </BadgedWrapper>
-                                }/>
-                            }/>
-                        }/>
-                    );
-                }
-            },
-            {
-                tags: ["Toggle fullscreen"],
-                render(theme: Themeable.Theme, panel: QuickActionPanel): JSX.Element {
-                    return (
-                        <CustomTooltip noBorder arrow title={"Toggle fullscreen"} TransitionComponent={Zoom} children={
-                            <span children={
-                                <Box cursor={Cursor.pointer} highlight bgColor={theme.colors.backgroundHighlightColor200} children={
-                                    <Icon icon={(() => {
-                                        if (document.fullscreenElement === null) {
-                                            return <FullscreenEnterIcon/>
-                                        } else {
-                                            return <FullscreenExitIcon/>
-                                        }
-                                    })()} onClick={() => Utils.toggleFullScreen(() => {
-                                        App.app().rerenderGlobally();
-                                    })}/>
-                                }/>
-                            }/>
-                        }/>
-                    );
-                }
-            }
+            } as QuickActionConfig, 11)
         ];
+    }
+
+    private renderBody(): JSX.Element {
+        const t = utilizeGlobalTheme();
+
+        return (
+            <>{
+                App.app().shortcuts.quickActionsShard().quickActionsCategories?.map(qac => {
+                    const actions = qac.getQuickActions();
+                    const theme = utilizeGlobalTheme();
+
+                    const renderBase = (config: QuickActionConfig) => {
+                        return (
+                            <If condition={getOr(config.wrapInDefaultButton, true)} ifTrue={
+                                <Button padding={theme.paddings.defaultObjectPadding} shrinkOnClick opaque={config.beta} visualMeaning={config.visualMeaning ? config.visualMeaning : (config.beta ? ObjectVisualMeaning.BETA : ObjectVisualMeaning.UI_NO_HIGHLIGHT)} children={
+                                    config.render(t, this, config)
+                                }/>
+                            } ifFalse={
+                                config.render(t, this, config)
+                            }/>
+                        );
+                    }
+
+                    return (
+                        <>
+                            <ElementHeader title={qac.config.displayName} appendix={
+                                <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} width={percent(100)}>
+                                    <Separator orientation={Orientation.HORIZONTAL}/>
+                                    <Text text={`${actions.length}`} uppercase type={TextType.smallHeader} coloredText fontSize={px(10)}/>
+                                </FlexBox>
+                            }/>
+
+                            <LiteGrid gap={t.gaps.smallGab} columns={8} rows={1}>
+                                {qac.getQuickActions().filter(config => getOr(config.shouldShow, () => true)()).map(config => {
+                                    if (config.renderHover !== undefined) {
+                                        return (
+                                            <CustomTooltip wrapperStyle={config.wrapperStyleOverwrite} arrow title={config.renderHover(t, this)} children={
+                                                <span children={renderBase(config)}/>
+                                            }/>
+                                        );
+                                    } else {
+                                        return (
+                                            <CustomTooltip wrapperStyle={config.wrapperStyleOverwrite} arrow noPadding noBorder enterDelay={2000} title={
+                                                <Box width={percent(100)} gapY={theme.gaps.defaultGab}>
+                                                    <ElementHeader title={config.displayName} boldHeader icon={<
+                                                        Icon icon={<RunIcon/>}/>
+                                                    } beta={getOr(config.beta, false)} appendix={
+                                                        <FlexBox width={percent(100)} gap={theme.gaps.smallGab} overflowXBehaviour={OverflowBehaviour.SCROLL} flexDir={FlexDirection.ROW} children={config.tags.map(tag => {
+                                                            return (
+                                                                <Button padding={theme.paddings.defaultBadgePadding} visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} children={
+                                                                    <Text text={tag} fontSize={px(12)} uppercase type={TextType.secondaryDescription}/>
+                                                                }/>
+                                                            );
+                                                        })}/>
+                                                    }/>
+
+                                                    <If condition={config.description !== undefined} ifTrue={
+                                                        <Text text={config.description as string}/>
+                                                    }/>
+                                                </Box>
+                                            } children={
+                                                <span children={renderBase(config)}/>
+                                            }/>
+                                        );
+                                    }
+                                })}
+                            </LiteGrid>
+                        </>
+                    );
+                })
+            }</>
+        );
     }
 
     componentRender(p: any, s: any, l: QuickActionPanelLocalState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
-            <Box width={percent(100)} borderless gapY={t.gaps.defaultGab}>
+            <Box width={percent(100)} maxHeight={DimensionalMeasured.of(100, Dimension.vw)} borderless gapY={t.gaps.defaultGab}>
                 <ElementHeader title={"Quick actions"} icon={
                     this.component(local => {
                         return (
@@ -141,7 +168,6 @@ export class QuickActionPanel extends BernieComponent<any, any, QuickActionPanel
                                         }}/>
                                     }/>
                                 }/>
-
                             } ifFalse={
                                 <Icon icon={<QuickIcon/>}/>
                             }/>
@@ -163,27 +189,18 @@ export class QuickActionPanel extends BernieComponent<any, any, QuickActionPanel
                             }
                         }}/>
                         <CustomTooltip arrow title={<Text text={"This panel shows you some quick actions. \nThese are actions, which don't require multiple steps to complete."}/>} children={
-                            <Icon icon={<HelpIcon/>}/>
+                            <span children={
+                                <Icon icon={<HelpIcon/>}/>
+                            }/>
                         }/>
                     </FlexBox>
                 }/>
-                <Separator/>
-                <FlexBox height={percent(100)} width={percent(100)}>
+
+                <FlexBox overflowYBehaviour={OverflowBehaviour.SCROLL} width={percent(100)}>
                     <FlexBox>
-                        <ElementHeader title={"App actions"}/>
-                        <LiteGrid gap={t.gaps.smallGab} columns={8} rows={1}>
-                            {this.getQuickActionConfigs().filter(config => getOr(config.shouldShow, () => true)()).map(config => {
-                                if (config.renderHover !== undefined) {
-                                    return (
-                                        <CustomTooltip title={config.renderHover(t, this)} children={
-                                            config.render(t, this)
-                                        }/>
-                                    );
-                                } else {
-                                    return config.render(t, this);
-                                }
-                            })}
-                        </LiteGrid>
+                        <FlexBox height={percent(100)}>
+                            {this.renderBody()}
+                        </FlexBox>
                     </FlexBox>
                 </FlexBox>
             </Box>

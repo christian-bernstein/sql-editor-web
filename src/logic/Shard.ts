@@ -1,5 +1,11 @@
+import {App} from "./App";
+
 export class Shard {
 
-    public load(): void {
+    public canInit(): boolean {
+        return true;
+    }
+
+    public load(app: App): void {
     }
 }

@@ -72,7 +72,8 @@ export const Text: React.FC<TextProps> = props => {
       align-items: center;
       gap: ${theme.paddings.defaultTextIconPadding.css()};
       cursor: ${getOr(props.cursor, Cursor.default)};
-      color: ${props.coloredText ? meaningfulColors.lighter.css() : theme.colors.fontPrimaryColor.css()} !important;
+      // color: ${props.coloredText ? meaningfulColors.lighter.css() : theme.colors.fontPrimaryColor.css()} !important;
+      color: ${props.coloredText ? meaningfulColors.lighter.css() + "!important" : ""};
       transition: all ${theme.transitions.fastTime.css()};
 
       text-overflow: ellipsis;

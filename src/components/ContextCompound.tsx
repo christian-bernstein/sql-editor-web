@@ -1,4 +1,4 @@
-import React from "react";
+import React, {CSSProperties} from "react";
 import {Menu} from "@mui/material";
 import {Button} from "./Button";
 import {ObjectVisualMeaning} from "../logic/ObjectVisualMeaning";
@@ -6,7 +6,7 @@ import {percent} from "../logic/style/DimensionalMeasured";
 import {Themeable} from "../Themeable";
 import {utilizeGlobalTheme} from "../logic/App";
 import {FlexBox} from "./FlexBox";
-import styled from "styled-components";
+import styled, {CSSProp} from "styled-components";
 import {Separator} from "./Separator";
 import {Text} from "./Text";
 import {Cursor} from "../logic/style/Cursor";
@@ -16,7 +16,8 @@ import {If} from "./If";
 export type ContextMenuProps = {
     menu?: JSX.Element,
     clickType?: "single" | "double",
-    wrapMenu?: boolean
+    wrapMenu?: boolean,
+    wrapperStyle?: CSSProperties
 }
 
 export type ContextMenuState = {
@@ -56,7 +57,7 @@ export class ContextCompound extends React.Component<ContextMenuProps, ContextMe
           padding: ${theme.paddings.defaultButtonPadding.css()};
         `;
         return (
-            <div>
+            <div style={getOr(this.props.wrapperStyle, {})}>
                 <div
                     onDoubleClick={event => {
                         if (clickType === "double") {

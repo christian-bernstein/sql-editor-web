@@ -12,12 +12,14 @@ import {Themeable} from "../../../Themeable";
 import {Assembly} from "../../../logic/Assembly";
 import {WithVisualMeaning} from "../../../logic/WithVisualMeaning";
 import {CockpitButtonType} from "./CockpitButtonType";
+import {percent} from "../../../logic/style/DimensionalMeasured";
 
 export type CockpitButtonProps = WithVisualMeaning & {
     initialActiveState: boolean,
     onActiveChange: (props: CockpitButtonProps, active: boolean) => void,
     title: string,
     value: string,
+    valueFactory?: (instance: CockpitButton) => string,
     variant: CockpitButtonType,
     multiColorMode: boolean
 }
@@ -55,7 +57,7 @@ export class CockpitButton extends BernieComponent<CockpitButtonPropsPartial, an
                                 </PosInCenter>
                                 <Separator visualMeaning={vm}/>
                                 <PosInCenter fullHeight>
-                                    <Text text={`${p.value}`} uppercase cursor={Cursor.pointer}/>
+                                    <Text text={`${p.valueFactory ? p.valueFactory(this) : p.value}`} uppercase cursor={Cursor.pointer}/>
                                 </PosInCenter>
                             </Box>
                         );
@@ -70,7 +72,7 @@ export class CockpitButton extends BernieComponent<CockpitButtonPropsPartial, an
                                 </PosInCenter>
                                 <Separator visualMeaning={vm}/>
                                 <PosInCenter fullHeight>
-                                    <Text text={`${p.value}`} uppercase cursor={Cursor.pointer}/>
+                                    <Text text={`${p.valueFactory ? p.valueFactory(this) : p.value}`} uppercase cursor={Cursor.pointer}/>
                                 </PosInCenter>
                             </Box>
                         );

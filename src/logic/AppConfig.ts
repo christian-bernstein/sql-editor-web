@@ -1,6 +1,8 @@
 import {ConnectorConfig} from "./ConnectorConfig";
 import {Themeable} from "../Themeable";
 import {Assembly} from "./Assembly";
+import {Shard} from "./Shard";
+import {App} from "./App";
 
 export type AppConfig = {
     rootRerenderHook?: (callback?: () => void) => void,
@@ -13,5 +15,6 @@ export type AppConfig = {
     defaultTheme: string,
     logInterceptors?: ((...data: any[]) => void)[]
     logSaveSize: number,
-    appAssembly: Assembly
+    appAssembly: Assembly,
+    shards?: Map<string, (app: App) => Shard>
 }

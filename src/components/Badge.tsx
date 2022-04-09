@@ -55,9 +55,12 @@ export class Badge extends React.Component<BadgeProps, any>{
           // border: 1px solid ${theme.colors.borderPrimaryColor.css()};
           cursor: ${cursor};
           border: 1px solid ${mc.lighter.css()};
-          border-radius: 9999px;
+          
+          // border-radius: 9999px;
+          border-radius: ${theme.radii.defaultObjectRadius.css()};
+          
           font-size: 13px;
-          display: flex;
+          display: inline-flex;
           justify-content: center;
           align-items: center;
           box-shadow: 0 0 0 ${shadow ? "2px" : "0"} ${theme.colors.backgroundColor.css()};
