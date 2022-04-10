@@ -282,9 +282,6 @@ export default class DashboardPage extends BernieComponent<DashboardPageProps, D
             <If condition={this.state.loading} ifFalse={
                 <FlexBox flexDir={FlexDirection.COLUMN} align={Align.CENTER} width={percent(100)}>
                     {this.renderFilterButtons()}
-
-                    <DashboardToolbox/>
-
                     {this.component(() => (
                         <If condition={this.getFilter("name").active && !this.getFilter("all").active} ifTrue={
                             <Input opaque label={"Search for name"} visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} onChange={ev => {

@@ -337,6 +337,11 @@ export namespace Environment {
                     this._socket.onmessage = ev => {
                         const packet: Packet = JSON.parse(ev.data) as Packet;
                         this._config.packetInterceptor(packet, this);
+
+
+                        console.log(packet)
+
+
                         if (packet.type === PacketType.RESPONSE) {
                             // It's a return packet
                             const callback: Handler | undefined = this._responseMap.get(packet.id);

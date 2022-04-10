@@ -1,4 +1,3 @@
-// import "../styles/components/ProjectInfo.scss";
 import React from "react";
 import {ReactComponent as LoadIcon} from "../assets/icons/ic-20/ic20-arrow-right.svg";
 import {ReactComponent as ContextIcon} from "../assets/icons/ic-20/ic20-more-ver.svg";
@@ -18,7 +17,6 @@ import {Themeable} from "../Themeable";
 import {App, utilizeGlobalTheme} from "../logic/App";
 import {Justify} from "../logic/style/Justify";
 import {ProjectInfoOnlineIcon} from "./ProjectInfoOnlineIcon";
-import {arrayFactory} from "../logic/Utils";
 import {Zoom} from "@mui/material";
 import {CustomTooltip} from "./CustomTooltip";
 import {ObjectJSONDisplay} from "./ObjectJSONDisplay";
@@ -32,18 +30,51 @@ import {OverflowBehaviour} from "../logic/style/OverflowBehaviour";
 import {Debug} from "./Debug";
 import {Collapsible} from "./Collapsible";
 import {SVG} from "../SVG";
-import {ReactComponent as ConfigIcon} from "../assets/icons/ic-20/ic20-dns.svg";
 import {LoadState} from "../logic/LoadState";
+import {BernieComponent} from "../logic/BernieComponent";
+import {Assembly} from "../logic/Assembly";
+import {ProjectFileSizeRequestPacketData} from "../packets/out/ProjectFileSizeRequestPacketData";
+import {ProjectFileSizeResponsePacketData} from "../packets/in/ProjectFileSizeResponsePacketData";
+import {array, Utils} from "../logic/Utils";
 
 export type ProjectInfoProps = {
     data: ProjectInfoData,
     onSelect?: (data: ProjectInfoData) => void
 }
 
-export class ProjectInfo extends React.Component<ProjectInfoProps, any> {
+export type ProjectInfoLocalState = {
+    projectFileSize?: number
+}
+
+export class ProjectInfo extends BernieComponent<ProjectInfoProps, any, ProjectInfoLocalState> {
 
     constructor(props: ProjectInfoProps) {
-        super(props);
+        super(props, undefined, {
+
+        });
+    }
+
+    componentDidMount() {
+        super.componentDidMount();
+        App.use(app => {
+            app.connector(connector => {
+                connector.call({
+                    packetID: "ProjectFileSizeRequestPacketData",
+                    protocol: "main",
+                    data: {
+                        projectID: this.props.data.id
+                    } as ProjectFileSizeRequestPacketData,
+                    callback: {
+                        handle: (connector1, packet) => {
+                            const data: ProjectFileSizeResponsePacketData = packet.data;
+                            this.local.setStateWithChannels({
+                                projectFileSize: data.fileSize
+                            }, ["file_size"]);
+                        }
+                    }
+                })
+            })
+        })
     }
 
     private onSelect(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
@@ -72,21 +103,6 @@ export class ProjectInfo extends React.Component<ProjectInfoProps, any> {
                 </Button>
             </FlexBox>
         );
-        // return (
-        //     <FlexBox gap={theme.gaps.smallGab}>
-        //         <ElementHeader title={"Options…"} boldHeader icon={<MenuIcon/>}/>
-        //         <Separator/>
-        //         <Button visualMeaning={ObjectVisualMeaning.ERROR} opaque width={percent(100)} onClick={() => this.toggleProjectDeleteDialog()}>
-        //             <FlexBox flexDir={FlexDirection.ROW} justifyContent={Justify.FLEX_START} width={percent(100)}>
-        //                 <Icon icon={<DeleteIcon/>}/>
-        //                 <Text text={`Delete`}/>
-        //             </FlexBox>
-        //         </Button>
-        //         <Debug>
-        //             <ObjectJSONDisplay object={this.props.data} title={"Project representation"} pure={false} showControls={true}/>
-        //         </Debug>
-        //     </FlexBox>
-        // );
     }
 
     private renderContextMenu(): JSX.Element {
@@ -102,16 +118,6 @@ export class ProjectInfo extends React.Component<ProjectInfoProps, any> {
         return (
             <FlexBox flexDir={FlexDirection.ROW} justifyContent={Justify.SPACE_BETWEEN} width={percent(100)}>
                 <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab} overflowXBehaviour={OverflowBehaviour.SCROLL}>
-                    {/*<Icon icon={(
-                        <CustomTooltip noBorder noPadding arrow title={(
-                            <ObjectJSONDisplay object={this.props.data} title={"**[DEBUG]** Project JSON Representation"} pure={false} showControls={true}/>
-                        )} TransitionComponent={Zoom}>
-                                <span>
-                                    <Icon icon={<ProjectIcon/>}/>
-                                </span>
-                        </CustomTooltip>
-                    )}/>*/}
-
                     <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} gap={px(1)} overflowXBehaviour={OverflowBehaviour.SCROLL}>
                         {/* todo put username here */}
                         {/*<Text text={`${this.props.data.creatorUserID}/`}/>*/}
@@ -172,12 +178,13 @@ export class ProjectInfo extends React.Component<ProjectInfoProps, any> {
         );
     }
 
-    render() {
+    componentRender(p: ProjectInfoProps, s: any, l: ProjectInfoLocalState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         const theme: Themeable.Theme = utilizeGlobalTheme();
         const ChartGrid = styled.div`
           display: grid;
           grid-template-columns: repeat(2, 1fr);
           gap: ${theme.gaps.defaultGab.css()};
+          width: inherit;  
         `;
         return (
             <Box width={percent(100)} gapY={px(10)}>
@@ -198,10 +205,21 @@ export class ProjectInfo extends React.Component<ProjectInfoProps, any> {
                         <Debug>
                             <ChartGrid>
                                 <AreaChartComponent
-                                    title={"rows"}
-                                    numIndicator={10}
-                                    series={arrayFactory((i) => Math.abs(Math.sin(i) * 100), 15)}/>
-                                <AreaChartComponent title={"rows"} numIndicator={10} series={arrayFactory(() => Math.random() > .5 ? Math.random() * 100 : Math.random() * 50, 10)}/>
+                                    title={"edits"}
+                                    numIndicator={0}
+                                    series={[0, 0]}
+                                />
+                                {this.component(local => {
+                                    const fileSize = local.state.projectFileSize !== undefined ? local.state.projectFileSize : 0;
+                                    const [size, unit] = Utils.humanFileSize(fileSize).split(' ');
+                                    return (
+                                        <AreaChartComponent
+                                            title={unit}
+                                            numIndicator={Number(size)}
+                                            series={array(fileSize, 2)}
+                                        />
+                                    );
+                                }, "file_size")}
                             </ChartGrid>
                         </Debug>
                         <Button width={percent(100)} visualMeaning={ObjectVisualMeaning.INFO} opaque={true} shrinkOnClick={true} onClick={event => this.onSelect(event)}>
@@ -212,10 +230,6 @@ export class ProjectInfo extends React.Component<ProjectInfoProps, any> {
                         </Button>
                     </FlexBox>
                 </FlexBox>
-
-
-
-
             </Box>
         );
     }

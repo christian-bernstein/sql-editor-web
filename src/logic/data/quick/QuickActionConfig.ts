@@ -1,17 +1,15 @@
 import {QuickActionPanel} from "../../../components/ho/quickPanel/QuickActionPanel";
 import {Themeable} from "../../../Themeable";
 import {ObjectVisualMeaning} from "../../ObjectVisualMeaning";
-import {CSSProperties} from "react";
+import React, {CSSProperties} from "react";
 
 export interface QuickActionConfig {
     tags: string[],
     description?: string,
     displayName: string,
-
+    opaque?: boolean,
     visualMeaning?: ObjectVisualMeaning,
-
-    // todo add onClick
-
+    onClick?: (event: React.MouseEvent<HTMLSpanElement, MouseEvent>, config: QuickActionConfig) => void,
     wrapperStyleOverwrite?: CSSProperties,
     wrapInDefaultButton?: boolean,
     render(theme: Themeable.Theme, panel: QuickActionPanel, config: QuickActionConfig): JSX.Element,

@@ -1,11 +1,8 @@
 import {Shard} from "../logic/Shard";
 import {App} from "../logic/App";
 import {QuickActionCategory} from "../logic/data/quick/QuickActionCategory";
-import {Themeable} from "../Themeable";
-import {QuickActionPanel} from "../components/ho/quickPanel/QuickActionPanel";
-import {Text} from "../components/Text";
 import React from "react";
-import {ObjectVisualMeaning} from "../logic/ObjectVisualMeaning";
+import {DefaultQuickActions} from "../logic/data/quick/DefaultQuickActions";
 
 export class QuickActionShard extends Shard {
 
@@ -16,35 +13,26 @@ export class QuickActionShard extends Shard {
         this._quickActionsCategories = new Array<QuickActionCategory>();
 
         this.addCategory(new QuickActionCategory({
-            id: "debug",
-            displayName: "Debug category"
+            id: "utilities",
+            displayName: "Utilities & debugging"
         }), qac => {
-            qac.registerQuickAction({
-                beta: true,
-                tags: ["Debug"],
-                description: "Debug action",
-                displayName: "Debug",
-                wrapInDefaultButton: true,
-                render(theme: Themeable.Theme, panel: QuickActionPanel, config): JSX.Element {
-                    return <Text text={"D!"}/>;
-                }
-            })
+            qac.registerQuickAction(
+                DefaultQuickActions.fullscreenQA,
+                DefaultQuickActions.logQA,
+                DefaultQuickActions.rerenderQA,
+                DefaultQuickActions.reloadQA,
+            );
+        });
 
-            qac.registerQuickAction({
-                beta: false,
-                tags: ["Debug"],
-                description: "Debug action",
-                displayName: "Debug",
-                wrapInDefaultButton: true,
-                visualMeaning: ObjectVisualMeaning.INFO,
-                wrapperStyleOverwrite: {
-                    gridColumnStart: "span 2"
-                },
-                render(theme: Themeable.Theme, panel: QuickActionPanel, config): JSX.Element {
-                    return <Text text={"HI!"}/>
-                }
-            })
-        })
+        this.addCategory(new QuickActionCategory({
+            id: "themes",
+            displayName: "Themes"
+        }), qac => {
+            qac.registerQuickAction(
+                DefaultQuickActions.lightThemeQA,
+                DefaultQuickActions.darkThemeQA
+            );
+        });
     }
 
     public addCategory(category: QuickActionCategory, initHandler?: (qac: QuickActionCategory) => void) {

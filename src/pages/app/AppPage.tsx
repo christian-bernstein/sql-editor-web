@@ -121,6 +121,10 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                     logSaveSize: 1000,
                     defaultTheme: "dark-green",
                     appAssembly: this.assembly,
+                    shards: new Map<string, (app: App) => Shard>([
+                        ["db-session-cache", () => new DBSessionCacheShard()],
+                        ["quick-actions-shard", () => new QuickActionShard()]
+                    ]),
                     themes: new Map<string, Themeable.Theme>([
                         ["dark-green", Themeable.defaultTheme],
                         ["light-green", Themeable.lightTheme]
@@ -128,7 +132,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                     connectorConfig: {
                         protocol: "login",
                         // address: "ws://192.168.2.100:80",
-                        address: "ws://192.168.2.104:25574",
+                        address: "ws://192.168.178.20:25574",
                         id: "ton",
                         maxConnectAttempts: 1,
                         connectionRetryDelayFunc: () => 0,
@@ -149,6 +153,10 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                     logSaveSize: 1000,
                     defaultTheme: "dark-green",
                     appAssembly: this.assembly,
+                    shards: new Map<string, (app: App) => Shard>([
+                        ["db-session-cache", () => new DBSessionCacheShard()],
+                        ["quick-actions-shard", () => new QuickActionShard()]
+                    ]),
                     themes: new Map<string, Themeable.Theme>([
                         ["dark-green", Themeable.defaultTheme],
                         ["light-green", Themeable.lightTheme]

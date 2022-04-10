@@ -40,7 +40,8 @@ export type InputProps = {
     bgColor?: Color,
     styledBorder?: boolean,
     paddingLeft?: boolean,
-    fontSize?: DimensionalMeasured
+    fontSize?: DimensionalMeasured,
+    minWidth?: DimensionalMeasured
 }
 
 export type InputState = {
@@ -77,6 +78,7 @@ export class Input extends React.Component<InputProps, InputState> {
         const paddingLeft = getOr(this.props.paddingLeft, true);
 
         const Wrapper = styled.div`
+          min-width: ${getOr(this.props.minWidth, px()).css()};
           width: 100%;
           min-height: ${getOr(this.props.minHeightBoundary, true) ? "3.5rem" : "0"};
           height: ${this.props.height === undefined ? "auto" : this.props.height?.css()} !important;

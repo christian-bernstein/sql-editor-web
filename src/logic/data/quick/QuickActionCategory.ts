@@ -11,8 +11,14 @@ export class QuickActionCategory {
         this._config = config;
     }
 
-    public getQuickActions(): Array<QuickActionConfig> {
-        return this.quickActions;
+    public getQuickActions(sortOutNotVisibleActions: boolean = false): Array<QuickActionConfig> {
+        if (sortOutNotVisibleActions) {
+            return this.quickActions.filter(qac => {
+                if (qac.shouldShow) {
+                    return qac.shouldShow();
+                } else return true;
+            })
+        } else return this.quickActions;
     }
 
     public registerQuickAction(...qa: Array<QuickActionConfig>) {
