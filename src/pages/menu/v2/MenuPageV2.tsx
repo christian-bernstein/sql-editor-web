@@ -32,6 +32,7 @@ import {Orientation} from "../../../logic/style/Orientation";
 import {If} from "../../../components/If";
 import {ContextCompound} from "../../../components/ContextCompound";
 import {QuickActionPanel} from "../../../components/ho/quickPanel/QuickActionPanel";
+import {Default, Desktop} from "../../../components/Media";
 
 export type MenuPageV2Props = {
     children: JSX.Element
@@ -108,32 +109,35 @@ export class MenuPageV2 extends BernieComponent<MenuPageV2Props, any, MenuPageV2
             `;
 
             return (
-                <Wrapper>
-                    <FlexBox height={percent(100)} flexDir={FlexDirection.COLUMN} justifyContent={Justify.SPACE_BETWEEN}>
-                        <FlexBox width={percent(100)} align={Align.CENTER} justifyContent={Justify.CENTER} flexDir={FlexDirection.COLUMN}>
-                            <Box noPadding borderless noBGColor>
-                                <If condition={App.app().config.debugMode} ifTrue={
-                                    <Icon colored visualMeaning={ObjectVisualMeaning.BETA} size={px(28)} icon={<AppLogo/>}/>
-                                } ifFalse={
-                                    <Icon size={px(28)} icon={<AppLogo/>}/>
-                                }/>
-                            </Box>
-                            <Separator orientation={Orientation.HORIZONTAL}/>
-                            {App.app().screenManager.renderMenuIcons()}
-                        </FlexBox>
-
-                        <Box borderless>
-                            <FlexBox flexDir={FlexDirection.COLUMN} gap={theme.gaps.smallGab} align={Align.CENTER} justifyContent={Justify.CENTER} width={percent(100)} height={percent(100)}>
-                                <ServerConnectionIcon openConnectionMetricsDialog pulse={false}/>
+                <Default>
+                    <Wrapper>
+                        <FlexBox height={percent(100)} flexDir={FlexDirection.COLUMN} justifyContent={Justify.SPACE_BETWEEN}>
+                            <FlexBox width={percent(100)} align={Align.CENTER} justifyContent={Justify.CENTER} flexDir={FlexDirection.COLUMN}>
+                                <Box noPadding borderless noBGColor>
+                                    <If condition={App.app().config.debugMode} ifTrue={
+                                        <Icon colored visualMeaning={ObjectVisualMeaning.BETA} size={px(28)} icon={<AppLogo/>}/>
+                                    } ifFalse={
+                                        <Icon size={px(28)} icon={<AppLogo/>}/>
+                                    }/>
+                                </Box>
                                 <Separator orientation={Orientation.HORIZONTAL}/>
-
-                                <ContextCompound wrapMenu={false} menu={<QuickActionPanel/>} children={
-                                    <Icon icon={<QuickPanelIcon/>}/>
-                                }/>
+                                {App.app().screenManager.renderMenuIcons()}
                             </FlexBox>
-                        </Box>
-                    </FlexBox>
-                </Wrapper>
+
+                            <Box borderless>
+                                <FlexBox flexDir={FlexDirection.COLUMN} gap={theme.gaps.smallGab} align={Align.CENTER} justifyContent={Justify.CENTER} width={percent(100)} height={percent(100)}>
+                                    <ServerConnectionIcon openConnectionMetricsDialog pulse={false}/>
+                                    <Separator orientation={Orientation.HORIZONTAL}/>
+
+                                    <ContextCompound wrapMenu={false} menu={<QuickActionPanel/>} children={
+                                        <Icon icon={<QuickPanelIcon/>}/>
+                                    }/>
+                                </FlexBox>
+                            </Box>
+                        </FlexBox>
+                    </Wrapper>
+                </Default>
+
             );
         });
     }
@@ -169,6 +173,7 @@ export class MenuPageV2 extends BernieComponent<MenuPageV2Props, any, MenuPageV2
                     <MenuWrapper children={this.assembly.render({
                         component: "menu-small"
                     })}/>
+
                     <BodyWrapper id={"menu-body-container"}>
                         {this.props.children}
                     </BodyWrapper>

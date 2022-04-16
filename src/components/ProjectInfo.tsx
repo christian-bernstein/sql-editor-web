@@ -2,6 +2,8 @@ import React from "react";
 import {ReactComponent as LoadIcon} from "../assets/icons/ic-20/ic20-arrow-right.svg";
 import {ReactComponent as ContextIcon} from "../assets/icons/ic-20/ic20-more-ver.svg";
 import {ReactComponent as DeleteIcon} from "../assets/icons/ic-20/ic20-delete.svg";
+import {ReactComponent as CalenderIcon} from "../assets/icons/ic-20/ic20-calendar-edit.svg";
+import {ReactComponent as FileIcon} from "../assets/icons/ic-20/ic20-file-add.svg";
 import {ProjectInfoData} from "../logic/ProjectInfoData";
 import {Box} from "./Box";
 import {Text, TextType} from "./Text";
@@ -27,7 +29,6 @@ import {If} from "./If";
 import {Constants} from "../Constants";
 import {Align} from "../logic/Align";
 import {OverflowBehaviour} from "../logic/style/OverflowBehaviour";
-import {Debug} from "./Debug";
 import {Collapsible} from "./Collapsible";
 import {SVG} from "../SVG";
 import {LoadState} from "../logic/LoadState";
@@ -166,13 +167,37 @@ export class ProjectInfo extends BernieComponent<ProjectInfoProps, any, ProjectI
                 <>
                     <FlexBox height={percent(100)} flexDir={FlexDirection.ROW} width={percent(100)} align={Align.CENTER} gap={t.gaps.smallGab}>
                         <Icon icon={SVG.circle()} colored visualMeaning={vm}/>
-                        <Separator orientation={Orientation.VERTICAL}/>
-                        <Text text={"online state"}/>
+                        <Text text={"Lifecycle state: "} type={TextType.secondaryDescription}/>
+                        {/* todo: load a real value & make this a component */}
+                        <Text text={"N/A"} bold coloredText visualMeaning={ObjectVisualMeaning.WARNING}/>
                     </FlexBox>
                     <FlexBox flexDir={FlexDirection.ROW} gap={t.gaps.smallGab}>
+                        <Icon icon={<CalenderIcon/>}/>
                         <Text text={"Last edited: "} type={TextType.secondaryDescription}/>
                         <Text text={String(this.props.data.lastEdited)}/>
                     </FlexBox>
+                    {this.component(local => {
+                        const fileSize = local.state.projectFileSize;
+                        if (fileSize === undefined) {
+                            return  (
+                                <FlexBox flexDir={FlexDirection.ROW} gap={t.gaps.smallGab}>
+                                    <Icon icon={<FileIcon/>}/>
+                                    <Text text={"File size: "} type={TextType.secondaryDescription}/>
+                                    <Text text={"N/A"} bold coloredText visualMeaning={ObjectVisualMeaning.WARNING}/>
+                                </FlexBox>
+                            );
+                        } else {
+                            const [size, unit] = Utils.humanFileSize(fileSize).split(' ');
+                            return (
+                                <FlexBox flexDir={FlexDirection.ROW} gap={t.gaps.smallGab}>
+                                    <Icon icon={<FileIcon/>}/>
+                                    <Text text={"File size: "} type={TextType.secondaryDescription}/>
+                                    <Text text={`${size} ${unit}`}/>
+                                </FlexBox>
+                            );
+                        }
+
+                    }, "file_size")}
                 </>
             )}/>
         );
@@ -202,26 +227,24 @@ export class ProjectInfo extends BernieComponent<ProjectInfoProps, any, ProjectI
                     </FlexBox>
 
                     <FlexBox width={percent(100)} gap={theme.gaps.smallGab}>
-                        <Debug>
-                            <ChartGrid>
-                                <AreaChartComponent
-                                    title={"edits"}
-                                    numIndicator={0}
-                                    series={[0, 0]}
-                                />
-                                {this.component(local => {
-                                    const fileSize = local.state.projectFileSize !== undefined ? local.state.projectFileSize : 0;
-                                    const [size, unit] = Utils.humanFileSize(fileSize).split(' ');
-                                    return (
-                                        <AreaChartComponent
-                                            title={unit}
-                                            numIndicator={Number(size)}
-                                            series={array(fileSize, 2)}
-                                        />
-                                    );
-                                }, "file_size")}
-                            </ChartGrid>
-                        </Debug>
+                        <ChartGrid>
+                            <AreaChartComponent
+                                title={"edits"}
+                                numIndicator={0}
+                                series={[0, 0]}
+                            />
+                            {this.component(local => {
+                                const fileSize = local.state.projectFileSize !== undefined ? local.state.projectFileSize : 0;
+                                const [size, unit] = Utils.humanFileSize(fileSize).split(' ');
+                                return (
+                                    <AreaChartComponent
+                                        title={unit}
+                                        numIndicator={Number(size)}
+                                        series={array(fileSize, 2)}
+                                    />
+                                );
+                            }, "file_size")}
+                        </ChartGrid>
                         <Button width={percent(100)} visualMeaning={ObjectVisualMeaning.INFO} opaque={true} shrinkOnClick={true} onClick={event => this.onSelect(event)}>
                             <FlexBox flexDir={FlexDirection.ROW} gap={px(10)}>
                                 <Text text={"**Load**"}/>

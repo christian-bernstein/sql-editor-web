@@ -46,7 +46,7 @@ export class DeleteProjectDialog extends BernieComponent<DeleteProjectDialogProp
     private renderHeader(): JSX.Element {
         return (
             <AppHeader title={"Delete project"} right={(
-                <Icon icon={<CloseIcon/>} onClick={() => App.app().toggleMainDialog("closed")}/>
+                <Icon icon={<CloseIcon/>} onClick={() => App.app().callAction("close-main-dialog")}/>
             )}/>
         );
     }

@@ -21,7 +21,7 @@ export class ServerInfoDialog extends BernieComponent<any, any, any> {
             <PageV2>
                 <AppHeader title={"Server information"} right={
                     <FlexBox flexDir={FlexDirection.ROW}>
-                        <Icon icon={<CloseIcon/>} onClick={() => App.app().toggleMainDialog("closed")}/>
+                        <Icon icon={<CloseIcon/>} onClick={() => App.app().callAction("close-main-dialog")}/>
                     </FlexBox>
                 }/>
 

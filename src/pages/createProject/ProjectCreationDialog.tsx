@@ -127,7 +127,7 @@ export class ProjectCreationDialog extends React.Component<any, any> {
                 }, {
                     id: "ProjectCreateResponsePacketData",
                     handle: (connector1, packet1) => {
-                        App.app().toggleMainDialog("closed");
+                        App.app().callAction("close-main-dialog");
                     }
                 })
             }
@@ -237,7 +237,7 @@ export class ProjectCreationDialog extends React.Component<any, any> {
                                 <Text text={"Choose a title"}/>
                                 {this.renderTitleAnnotation()}
                             </FlexBox>
-                            <Input fontWeight={"lighter"} label={"Title"} placeholder={"SQL-Editor"} onChange={ev => this.local.setState({
+                            <Input fontWeight={"lighter"} label={"Title"} defaultValue={" "} placeholder={"SQL-Editor"} onChange={ev => this.local.setState({
                                 title: ev.target.value
                             }, new Map([["channels", ["*", "title"]]]), () => {
                                 this.local.state.canSendEvaluateDebouncedFunc();
@@ -274,12 +274,12 @@ export class ProjectCreationDialog extends React.Component<any, any> {
 
                             <TextArea fontWeight={"lighter"} label={"Description"} placeholder={"Add a description"} onChange={ev => this.local.state.updateDescriptionDebouncedFunc(ev.target.value)}/>
 
-                            <Text text={"Project is stator"}/>
+                            {/*<Text text={"Project is stator"}/>
                             <RenderExecutor id={v4()} channels={["stator"]} componentDidMountRelay={bridge => this.controller.register(bridge)} componentFactory={() => (
                                 <Switch checked={this.local.state.stator} onChange={(event, checked) => this.local.setState({
                                     stator: checked
                                 }, new Map([["channels", ["stator"]]]))} text={"Stator"}/>
-                            )}/>
+                            )}/>*/}
 
                             <RenderExecutor id={v4()} channels={["*", "can-send"]} componentDidMountRelay={bridge => this.controller.register(bridge)} componentFactory={() => (
                                 <If condition={this.local.state.canSend} ifTrue={

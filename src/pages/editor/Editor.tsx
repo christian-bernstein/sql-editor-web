@@ -34,7 +34,7 @@ import {sql} from "@codemirror/lang-sql";
 import {OverflowBehaviour} from "../../logic/style/OverflowBehaviour";
 import {Themeable} from "../../Themeable";
 import {SessionCommand} from "../../logic/data/SessionCommand";
-import {arrayFactory} from "../../logic/Utils";
+import {array, arrayFactory} from "../../logic/Utils";
 import {Button} from "../../components/Button";
 import {LoadState} from "../../logic/LoadState";
 import {CircularProgress, Dialog, Slide, Zoom} from "@mui/material";
@@ -61,6 +61,7 @@ import {DBErrorDisplay} from "../../components/DBErrorDisplay";
 import {Assembly} from "../../logic/Assembly";
 import {Switch} from "../../components/Switch";
 import {SQLCommandUpdateResponsePacketData} from "../../packets/in/SQLCommandUpdateResponsePacketData";
+import {DBTaskCard} from "../../components/DBTaskCard";
 
 export type DebugEditorProps = {
 }
@@ -323,8 +324,10 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                             });
                         }}/>
                     </FlexBox>
+
                     <If condition={App.app().config.debugMode} ifTrue={this.renderDBHistory()} ifFalse={
-                        <FlexBox height={percent(100)}/>
+                        <FlexBox height={percent(100)}>
+                        </FlexBox>
                     }/>
                 </FlexBox>
             );
@@ -722,7 +725,10 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
          */
         // height={percent(100)}
         return (
-            <Box height={percent(100)} overflowYBehaviour={OverflowBehaviour.SCROLL} width={percent(100)}>
+            <Box height={percent(100)} gapY={theme.gaps.smallGab} overflowYBehaviour={OverflowBehaviour.SCROLL} width={percent(100)}>
+                <DBTaskCard/>
+                <DBTaskCard/>
+                <DBTaskCard/>
                 <FlexBox gap={theme.gaps.smallGab} overflowYBehaviour={OverflowBehaviour.SCROLL} children={arrayFactory(() => (
                     <RoadmapEntry status={"completed"} children={
                         <Text text={"Hallo world! this is a message."}/>
