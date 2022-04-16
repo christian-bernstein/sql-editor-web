@@ -1,5 +1,5 @@
 import {Client} from "../../logic/data/Client";
-import {SerializedException} from "../../logic/SerializedException";
+import {SerializedException} from "../../logic/misc/SerializedException";
 
 export type EditorCommandError = {
     message: string,

@@ -1,17 +1,17 @@
 import {BernieComponent} from "../../logic/BernieComponent";
-import {Themeable} from "../../Themeable";
-import {Assembly} from "../../logic/Assembly";
-import {PageV2} from "../../components/Page";
-import {AppHeader} from "../../components/AppHeader";
-import {FlexBox} from "../../components/FlexBox";
+import {Themeable} from "../../logic/style/Themeable";
+import {Assembly} from "../../logic/assembly/Assembly";
+import {PageV2} from "../../components/lo/Page";
+import {AppHeader} from "../../components/lo/AppHeader";
+import {FlexBox} from "../../components/lo/FlexBox";
 import {FlexDirection} from "../../logic/style/FlexDirection";
-import {Icon} from "../../components/Icon";
+import {Icon} from "../../components/lo/Icon";
 import {ReactComponent as CloseIcon} from "../../assets/icons/ic-20/ic20-close.svg";
 import React from "react";
-import {App} from "../../logic/App";
-import {CodeEditor} from "../../components/CodeEditor";
+import {App} from "../../logic/app/App";
+import {CodeEditor} from "../../components/lo/CodeEditor";
 import {percent} from "../../logic/style/DimensionalMeasured";
-import {Group} from "../../components/Group";
+import {Group} from "../../components/lo/Group";
 import {Orientation} from "../../logic/style/Orientation";
 
 export class ServerInfoDialog extends BernieComponent<any, any, any> {

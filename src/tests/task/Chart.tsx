@@ -1,15 +1,15 @@
 import React from "react";
-import {Box} from "../../components/Box";
-import {Text, TextType} from "../../components/Text";
-import {createMargin} from "../../logic/Margin";
+import {Box} from "../../components/lo/Box";
+import {Text, TextType} from "../../components/lo/Text";
+import {createMargin} from "../../logic/style/Margin";
 import styled, {StyledComponent} from "styled-components";
-import {Themeable} from "../../Themeable";
-import {App} from "../../logic/App";
+import {Themeable} from "../../logic/style/Themeable";
+import {App} from "../../logic/app/App";
 import {DimensionalMeasured} from "../../logic/style/DimensionalMeasured";
 import {Dimension} from "../../logic/style/Dimension";
 import {ReactComponent as PlayIcon} from "../../assets/icons/ic-16/ic16-play.svg";
-import {TaskInformation} from "../../logic/TaskInformation";
-import {TaskPiece} from "../../logic/TaskPiece";
+import {TaskInformation} from "../../logic/misc/TaskInformation";
+import {TaskPiece} from "../../logic/misc/TaskPiece";
 
 export type ChartProps = {
 

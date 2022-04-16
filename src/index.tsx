@@ -1,18 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.scss';
-import './fonts.scss'
+import './styles/index.scss';
+import './styles/fonts.scss'
 import reportWebVitals from './reportWebVitals';
 import {AppPage} from "./pages/app/AppPage";
-import {RegexPage} from "./tests/regex/RegexPage";
-import {MenuPageV2} from "./pages/menu/v2/MenuPageV2";
-import {DashboardToolbox} from "./pages/dashboard/DashboardToolbox";
 
-// <AppPage/>
-// <RegexPageFC/>
-// <React.StrictMode>
-//     <RegexPage/>
-// </React.StrictMode>
 ReactDOM.render(
     <AppPage/>,
     document.getElementById('root')

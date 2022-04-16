@@ -1,27 +1,27 @@
 import {BernieComponent} from "../../logic/BernieComponent";
-import {Themeable} from "../../Themeable";
-import {Assembly} from "../../logic/Assembly";
+import {Themeable} from "../../logic/style/Themeable";
+import {Assembly} from "../../logic/assembly/Assembly";
 import React from "react";
-import {PageV2} from "../../components/Page";
-import {AppHeader} from "../../components/AppHeader";
-import {FlexBox} from "../../components/FlexBox";
+import {PageV2} from "../../components/lo/Page";
+import {AppHeader} from "../../components/lo/AppHeader";
+import {FlexBox} from "../../components/lo/FlexBox";
 import {FlexDirection} from "../../logic/style/FlexDirection";
 import {ReactComponent as CloseIcon} from "../../assets/icons/ic-20/ic20-close.svg";
-import {Icon} from "../../components/Icon";
-import {App} from "../../logic/App";
+import {Icon} from "../../components/lo/Icon";
+import {App} from "../../logic/app/App";
 import {percent, px} from "../../logic/style/DimensionalMeasured";
 import {OverflowBehaviour} from "../../logic/style/OverflowBehaviour";
-import {RoadmapEntry} from "../../components/RoadmapEntry";
+import {RoadmapEntry} from "../../components/ho/roadmapEntry/RoadmapEntry";
 import {ReactComponent as Logo} from "../../assets/logo.svg";
-import {ElementHeader} from "../../components/ElementHeader";
+import {ElementHeader} from "../../components/lo/ElementHeader";
 import {ReactComponent as DownloadIcon} from "../../assets/icons/ic-16/ic16-download.svg";
-import {Button} from "../../components/Button";
-import {ObjectVisualMeaning} from "../../logic/ObjectVisualMeaning";
-import {Text, TextType} from "../../components/Text";
-import {Separator} from "../../components/Separator";
-import {InformationBox} from "../../components/InformationBox";
+import {Button} from "../../components/lo/Button";
+import {ObjectVisualMeaning} from "../../logic/style/ObjectVisualMeaning";
+import {Text, TextType} from "../../components/lo/Text";
+import {Separator} from "../../components/lo/Separator";
+import {InformationBox} from "../../components/ho/informationBox/InformationBox";
 import {arrayFactory} from "../../logic/Utils";
-import {Image} from "../../components/Image";
+import {Image} from "../../components/lo/Image";
 
 export class RoadmapDialog extends BernieComponent<any, any, any> {
 

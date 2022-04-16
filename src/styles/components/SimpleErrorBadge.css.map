@@ -1,1 +1,1 @@
-{"version":3,"sourceRoot":"","sources":["SimpleErrorBadge.scss","../../themes.scss"],"names":[],"mappings":"AAEA;EACE;EACA;EACA;EACA;EACA;EACA;EACA;EACA;EACA,OCHY;EDIZ;EACA;;AAEA;EACE,MCRU;;ADWZ;EACE;EACA;EACA","file":"SimpleErrorBadge.css"}
+{"version":3,"sourceRoot":"","sources":["SimpleErrorBadge.scss","../themes.scss"],"names":[],"mappings":"AAEA;EACE;EACA;EACA;EACA;EACA;EACA;EACA;EACA;EACA,OCHY;EDIZ;EACA;;AAEA;EACE,MCRU;;ADWZ;EACE;EACA;EACA","file":"SimpleErrorBadge.css"}

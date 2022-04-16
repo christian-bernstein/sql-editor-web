@@ -1,6 +1,6 @@
 import {QuickActionConfig} from "./QuickActionConfig";
 import {QuickActionPanel} from "../../../components/ho/quickPanel/QuickActionPanel";
-import {Themeable} from "../../../Themeable";
+import {Themeable} from "../../style/Themeable";
 import {ReactComponent as FullscreenEnterIcon} from "../../../assets/icons/ic-20/ic20-fullscreen.svg";
 import {ReactComponent as FullscreenExitIcon} from "../../../assets/icons/ic-20/ic20-fullscreen-exit.svg";
 import {ReactComponent as LightThemeIcon} from "../../../assets/icons/ic-20/ic20-brightness-high.svg";
@@ -8,14 +8,14 @@ import {ReactComponent as DarkThemeIcon} from "../../../assets/icons/ic-20/ic20-
 import {ReactComponent as ReloadIcon} from "../../../assets/icons/ic-20/ic20-refresh.svg";
 import {ReactComponent as BrowserIcon} from "../../../assets/icons/ic-20/ic20-globe.svg";
 import {Utils} from "../../Utils";
-import {App} from "../../App";
-import {Icon} from "../../../components/Icon";
+import {App} from "../../app/App";
+import {Icon} from "../../../components/lo/Icon";
 import React from "react";
-import {Text} from "../../../components/Text";
+import {Text} from "../../../components/lo/Text";
 import {px} from "../../style/DimensionalMeasured";
 import {ReactComponent as LogIcon} from "../../../assets/icons/ic-20/ic20-bolt.svg";
-import {BadgedWrapper} from "../../../components/BadgedWrapper";
-import {Constants} from "../../../Constants";
+import {BadgedWrapper} from "../../../components/lo/BadgedWrapper";
+import {Constants} from "../../misc/Constants";
 
 export namespace DefaultQuickActions {
 

@@ -9,11 +9,11 @@ import Typography from '@mui/material/Typography';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import {LightDarkThemeSwitch} from "./Learning";
 import {Divider, Grid, Input, Stack, Switch, Tab, Tabs, useTheme} from "@mui/material";
-import Store from "../logic/Store";
+import Store from "../logic/misc/Store";
 import {Environment} from "../logic/Environment";
 import SwipeableViews from "react-swipeable-views";
-import {TabPanel} from "../logic/TabPanel";
-import {App} from "../App";
+import {TabPanel} from "../logic/misc/TabPanel";
+import {App} from "../deprecated/App";
 
 const drawerBleeding = 56;
 

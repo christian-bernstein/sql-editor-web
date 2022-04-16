@@ -1,4 +1,4 @@
-import {ClientType} from "../ClientType";
+import {ClientType} from "../misc/ClientType";
 
 export type Client = {
     username: string,

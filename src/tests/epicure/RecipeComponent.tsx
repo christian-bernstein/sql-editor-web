@@ -1,13 +1,13 @@
 import {BernieComponent} from "../../logic/BernieComponent";
 import {Recipe} from "./Recipe";
-import {Themeable} from "../../Themeable";
-import {Assembly} from "../../logic/Assembly";
-import {Box} from "../../components/Box";
-import {Text, TextType} from "../../components/Text";
+import {Themeable} from "../../logic/style/Themeable";
+import {Assembly} from "../../logic/assembly/Assembly";
+import {Box} from "../../components/lo/Box";
+import {Text, TextType} from "../../components/lo/Text";
 import React from "react";
 import {percent} from "../../logic/style/DimensionalMeasured";
-import {Separator} from "../../components/Separator";
-import {FlexBox} from "../../components/FlexBox";
+import {Separator} from "../../components/lo/Separator";
+import {FlexBox} from "../../components/lo/FlexBox";
 import {FlexDirection} from "../../logic/style/FlexDirection";
 import {Justify} from "../../logic/style/Justify";
 

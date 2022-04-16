@@ -1,5 +1,5 @@
-import {Attributed} from "../Attributed";
-import {Themeable} from "../../Themeable";
+import {Attributed} from "../misc/Attributed";
+import {Themeable} from "../style/Themeable";
 
 export type DialogData = Attributed<any> & {
     route: string,

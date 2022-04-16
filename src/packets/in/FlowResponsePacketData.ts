@@ -1,4 +1,4 @@
-import {FlowExecutionResultType} from "../../logic/FlowExecutionResultType";
+import {FlowExecutionResultType} from "../../logic/misc/FlowExecutionResultType";
 
 // todo make exception not any
 export type FlowResponsePacketData = {

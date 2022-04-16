@@ -1,12 +1,12 @@
 import React, {useMemo, useState} from "react";
-import {Input} from "../../components/Input";
-import {ObjectVisualMeaning} from "../../logic/ObjectVisualMeaning";
+import {Input} from "../../components/lo/Input";
+import {ObjectVisualMeaning} from "../../logic/style/ObjectVisualMeaning";
 import {AppConfigSelectionData, AppConfigSelector} from "../../debug/components/AppConfigSelector";
 import {v4} from "uuid";
-import {Themeable} from "../../Themeable";
+import {Themeable} from "../../logic/style/Themeable";
 import {arrayFactory} from "../../logic/Utils";
 import _ from "lodash";
-import {Assembly} from "../../logic/Assembly";
+import {Assembly} from "../../logic/assembly/Assembly";
 
 function getConfigs(fil: string): AppConfigSelectionData[] {
     return arrayFactory<AppConfigSelectionData>(i => {

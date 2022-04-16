@@ -1,8 +1,8 @@
 import React from "react";
 import Editor, {useMonaco} from "@monaco-editor/react";
 import styled from "styled-components";
-import {Themeable} from "../../Themeable";
-import {utilizeApp, App} from "../../logic/App";
+import {Themeable} from "../../logic/style/Themeable";
+import {utilizeApp, App} from "../../logic/app/App";
 import {PositionDeltaMoveParams} from "./PositionDeltaMoveParams";
 import {v4} from "uuid";
 import {Button} from "./Button";

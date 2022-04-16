@@ -11,42 +11,42 @@ import {ReactComponent as DiscordWhiteIcon} from "../../assets/discord/Discord-L
 // todo remove completely
 // import "../../styles/pages/BoardingPage.scss";
 
-import {_Button} from "../../components/_Button";
-import {ComponentStyle} from "../../ComponentStyle";
-import {ContinueAs} from "../../components/ContinueAs";
-import {App} from "../../logic/App";
-import {SessionHistoryEntry} from "../../logic/SessionHistoryEntry";
+import {_Button} from "../../components/deprecated/_Button";
+import {ComponentStyle} from "../../logic/style/ComponentStyle";
+import {ContinueAs} from "../../components/ho/continueAs/ContinueAs";
+import {App} from "../../logic/app/App";
+import {SessionHistoryEntry} from "../../logic/misc/SessionHistoryEntry";
 import {FlexDirection} from "../../logic/style/FlexDirection";
-import {Align} from "../../logic/Align";
-import {Text, TextType} from "../../components/Text";
-import {FlexBox} from "../../components/FlexBox";
+import {Align} from "../../logic/style/Align";
+import {Text, TextType} from "../../components/lo/Text";
+import {FlexBox} from "../../components/lo/FlexBox";
 import styled from "styled-components";
-import {Themeable} from "../../Themeable";
-import {ServerConnectionIcon} from "../../components/ServerConnectionIcon";
-import {Button} from "../../components/Button";
-import {ObjectVisualMeaning} from "../../logic/ObjectVisualMeaning";
+import {Themeable} from "../../logic/style/Themeable";
+import {ServerConnectionIcon} from "../../components/ho/serverConnectionIcon/ServerConnectionIcon";
+import {Button} from "../../components/lo/Button";
+import {ObjectVisualMeaning} from "../../logic/style/ObjectVisualMeaning";
 import {percent, px} from "../../logic/style/DimensionalMeasured";
-import {PosInCenter} from "../../components/PosInCenter";
+import {PosInCenter} from "../../components/lo/PosInCenter";
 import {Cursor} from "../../logic/style/Cursor";
-import {Icon} from "../../components/Icon";
+import {Icon} from "../../components/lo/Icon";
 import {Utils} from "../../logic/Utils";
-import {Separator} from "../../components/Separator";
+import {Separator} from "../../components/lo/Separator";
 import {Orientation} from "../../logic/style/Orientation";
 import {Justify} from "../../logic/style/Justify";
 import {Zoom} from "@mui/material";
-import {CustomTooltip} from "../../components/CustomTooltip";
-import {createMargin} from "../../logic/Margin";
-import {Constants} from "../../Constants";
-import {BadgedWrapper} from "../../components/BadgedWrapper";
+import {CustomTooltip} from "../../components/lo/CustomTooltip";
+import {createMargin} from "../../logic/style/Margin";
+import {Constants} from "../../logic/misc/Constants";
+import {BadgedWrapper} from "../../components/lo/BadgedWrapper";
 import {v4} from "uuid";
 import {BernieComponent} from "../../logic/BernieComponent";
-import {Assembly} from "../../logic/Assembly";
-import {If} from "../../components/If";
-import {LiteGrid} from "../../components/LiteGrid";
+import {Assembly} from "../../logic/assembly/Assembly";
+import {If} from "../../components/logic/If";
+import {LiteGrid} from "../../components/lo/LiteGrid";
 import {ReactComponent as OpenDialogIcon} from "../../assets/icons/ic-20/ic20-open-in-browser.svg";
 import {ReactComponent as LogoutIcon} from "../../assets/icons/ic-16/ic16-turn-off.svg";
 import {ReactComponent as DashboardIcon} from "../../assets/icons/ic-16/ic16-open-in-browser.svg";
-import {Debug} from "../../components/Debug";
+import {Debug} from "../../components/logic/Debug";
 
 export type BoardingPageProps = {}
 

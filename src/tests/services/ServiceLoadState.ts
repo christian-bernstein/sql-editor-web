@@ -1,4 +1,4 @@
-import {Color} from "../../Color";
+import {Color} from "../../logic/style/Color";
 
 export enum ServiceLoadState {
     RUNNING = ("running"),

@@ -1,4 +1,4 @@
-import {Attributed} from "../Attributed";
+import {Attributed} from "../misc/Attributed";
 import {SessionCommandType} from "./SessionCommandType";
 
 export type SessionCommand = Attributed<string> & {

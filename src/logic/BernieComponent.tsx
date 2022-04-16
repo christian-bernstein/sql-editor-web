@@ -3,11 +3,11 @@ import {cs, State} from "./state/State";
 import {RenderController} from "../tests/regex/RenderController";
 import {RenderExecutor} from "../tests/regex/RenderExecutor";
 import {v4} from "uuid";
-import {Themeable} from "../Themeable";
-import {App, utilizeGlobalTheme} from "./App";
+import {Themeable} from "./style/Themeable";
+import {App, utilizeGlobalTheme} from "./app/App";
 import {Redirect} from "react-router-dom";
 import {getOr} from "./Utils";
-import {Assembly} from "./Assembly";
+import {Assembly} from "./assembly/Assembly";
 
 export class BernieComponent<RProps, RState, LState extends object> extends React.Component<RProps, RState> {
 

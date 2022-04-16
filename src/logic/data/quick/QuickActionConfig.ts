@@ -1,6 +1,6 @@
 import {QuickActionPanel} from "../../../components/ho/quickPanel/QuickActionPanel";
-import {Themeable} from "../../../Themeable";
-import {ObjectVisualMeaning} from "../../ObjectVisualMeaning";
+import {Themeable} from "../../style/Themeable";
+import {ObjectVisualMeaning} from "../../style/ObjectVisualMeaning";
 import React, {CSSProperties} from "react";
 
 export interface QuickActionConfig {

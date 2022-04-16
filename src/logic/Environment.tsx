@@ -1,7 +1,7 @@
 import React, {Dispatch, SetStateAction} from "react";
 import {v4} from "uuid";
-import {ConnectorConfig} from "./ConnectorConfig";
-import {App} from "./App";
+import {ConnectorConfig} from "./network/ConnectorConfig";
+import {App} from "./app/App";
 import {SocketSwitchProtocolDataPacket} from "../packets/in/SocketSwitchProtocolDataPacket";
 
 export namespace Environment {

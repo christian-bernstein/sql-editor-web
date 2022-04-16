@@ -8,7 +8,7 @@ import {
 } from "react-router-dom";
 import {Button, Input, Typography} from "@mui/material";
 import "./ReactRoutingTest.scss";
-import {App} from "../../App";
+import {App} from "../../deprecated/App";
 
 export class Main extends React.Component {
 

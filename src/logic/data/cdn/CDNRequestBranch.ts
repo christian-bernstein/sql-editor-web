@@ -1,4 +1,4 @@
-import {Attributed} from "../../Attributed";
+import {Attributed} from "../../misc/Attributed";
 
 export type CDNRequestBranch = Attributed<any> & {
     branch: string,

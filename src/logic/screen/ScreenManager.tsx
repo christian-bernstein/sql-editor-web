@@ -1,31 +1,31 @@
 import {ScreenConfig} from "./ScreenConfig";
-import {App, utilizeGlobalTheme} from "../App";
+import {App, utilizeGlobalTheme} from "../app/App";
 import {Redirect, Route, Switch} from "react-router-dom";
 import React from "react";
 import {ViewConfig} from "./ViewConfig";
 import {ViewRenderContext} from "./ViewRenderContext";
 import {BoardingPage} from "../../pages/boarding/BoardingPage";
-import {FlexBox} from "../../components/FlexBox";
-import {Icon} from "../../components/Icon";
+import {FlexBox} from "../../components/lo/FlexBox";
+import {Icon} from "../../components/lo/Icon";
 import {ReactComponent as TestIcon} from "../../assets/icons/ic-20/ic20-alert.svg";
 import {ReactComponent as HubIcon} from "../../assets/icons/ic-20/ic20-home.svg";
 import {ReactComponent as InformationIcon} from "../../assets/icons/ic-20/ic20-info.svg";
 import {ReactComponent as MapIcon} from "../../assets/icons/ic-20/ic20-map.svg";
-import {Box} from "../../components/Box";
+import {Box} from "../../components/lo/Box";
 import {FlexDirection} from "../style/FlexDirection";
 import {percent, px} from "../style/DimensionalMeasured";
-import {Align} from "../Align";
+import {Align} from "../style/Align";
 import {Cursor} from "../style/Cursor";
 import {getOr} from "../Utils";
-import {ObjectVisualMeaning} from "../ObjectVisualMeaning";
-import {CustomTooltip} from "../../components/CustomTooltip";
-import {ElementHeader} from "../../components/ElementHeader";
-import {Separator} from "../../components/Separator";
+import {ObjectVisualMeaning} from "../style/ObjectVisualMeaning";
+import {CustomTooltip} from "../../components/lo/CustomTooltip";
+import {ElementHeader} from "../../components/lo/ElementHeader";
+import {Separator} from "../../components/lo/Separator";
 import {Orientation} from "../style/Orientation";
-import {Text} from "../../components/Text";
-import {If} from "../../components/If";
-import {BadgedWrapper} from "../../components/BadgedWrapper";
-import {Badge} from "../../components/Badge";
+import {Text} from "../../components/lo/Text";
+import {If} from "../../components/logic/If";
+import {BadgedWrapper} from "../../components/lo/BadgedWrapper";
+import {Badge} from "../../components/lo/Badge";
 
 export class ScreenManager {
 
