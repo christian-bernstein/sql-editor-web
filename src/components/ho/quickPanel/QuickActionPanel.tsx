@@ -30,7 +30,7 @@ import {Orientation} from "../../../logic/style/Orientation";
 import {OverflowBehaviour} from "../../../logic/style/OverflowBehaviour";
 import {Dimension} from "../../../logic/style/Dimension";
 import {QuickActionCategory} from "../../../logic/data/quick/QuickActionCategory";
-import {PosInCenter} from "../../lo/PosInCenter";
+import {Centered} from "../../lo/PosInCenter";
 import {Default, Mobile} from "../../logic/Media";
 import {createMargin} from "../../../logic/style/Margin";
 
@@ -112,7 +112,7 @@ export class QuickActionPanel extends BernieComponent<any, any, QuickActionPanel
                                             );
                                         } else {
                                             return (
-                                                <CustomTooltip wrapperStyle={config.wrapperStyleOverwrite} arrow noPadding noBorder enterDelay={2000} title={
+                                                <CustomTooltip wrapperStyle={config.wrapperStyleOverwrite} arrow noPadding noBorder title={
                                                     <Box width={percent(100)} gapY={theme.gaps.defaultGab}>
                                                         <ElementHeader title={config.displayName} boldHeader icon={<
                                                             Icon icon={<RunIcon/>}/>
@@ -142,12 +142,12 @@ export class QuickActionPanel extends BernieComponent<any, any, QuickActionPanel
             );
         } else {
             return (
-                <PosInCenter>
+                <Centered>
                     <FlexBox width={percent(100)} align={Align.CENTER} flexDir={FlexDirection.COLUMN}>
                         <Icon icon={<FilterIcon/>} size={px(30)}/>
                         <Text text={"No quick action was found"} align={Align.CENTER} type={TextType.secondaryDescription}/>
                     </FlexBox>
-                </PosInCenter>
+                </Centered>
             );
         }
     }

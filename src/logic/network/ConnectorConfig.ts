@@ -10,5 +10,8 @@ export type ConnectorConfig = {
     onConnectionFailed?: () => void,
     packetInterceptor: (packet: Packet, connector: Environment.Connector) => void,
     onError?: () => void,
-    ssl?: boolean
+    ssl?: boolean,
+    pingInterval?: number,
+    recordLatency?: boolean
+    latencyRecordCacheSize?: number
 }

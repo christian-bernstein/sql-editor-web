@@ -1,4 +1,4 @@
-import {PageV2} from "../../components/lo/Page";
+import {Screen} from "../../components/lo/Page";
 import {AppHeader} from "../../components/lo/AppHeader";
 import {BernieComponent} from "../../logic/BernieComponent";
 import {getMeaningfulColors, Themeable} from "../../logic/style/Themeable";
@@ -36,7 +36,7 @@ import {ServerConnectionIcon} from "../../components/ho/serverConnectionIcon/Ser
 import {Separator} from "../../components/lo/Separator";
 import {CreateUserRequestPacketData} from "../../packets/out/CreateUserRequestPacketData";
 import {CreateUserResponsePacketData} from "../../packets/in/CreateUserResponsePacketData";
-import {PosInCenter} from "../../components/lo/PosInCenter";
+import {Centered} from "../../components/lo/PosInCenter";
 import {UserCreationResult} from "../../logic/data/UserCreationResult";
 
 export type SignupPageProps = {
@@ -323,7 +323,7 @@ export class SignupPage extends BernieComponent<SignupPageProps, any, SignupPage
 
     componentRender(p: SignupPageProps, s: any, l: SignupPageLocalState, t: Themeable.Theme): JSX.Element | undefined {
         return (
-            <PageV2>
+            <Screen>
                 <FlexBox flexDir={FlexDirection.COLUMN} justifyContent={Justify.SPACE_BETWEEN} height={percent(100)}
                          width={percent(100)}>
                     <AppHeader
@@ -333,7 +333,7 @@ export class SignupPage extends BernieComponent<SignupPageProps, any, SignupPage
                     />
                     {this.renderLoginForm()}
                 </FlexBox>
-            </PageV2>
+            </Screen>
         );
     }
 
@@ -599,18 +599,18 @@ export class SignupPage extends BernieComponent<SignupPageProps, any, SignupPage
                 if (response.success) {
                     return (
                         <Box visualMeaning={ObjectVisualMeaning.SUCCESS} opaque width={percent(100)}>
-                            <PosInCenter>
+                            <Centered>
                                 <Text text={`🎉 Congrats ${ls.username}, your account is online!`} bold/>
-                            </PosInCenter>
+                            </Centered>
                         </Box>
                     );
                 } else {
                     const meta = SignupPage.userCreationResultToDisplayRegister.get(response.result) as UserCreationResultDisplayMeta;
                     return (
                         <Box visualMeaning={meta.visualMeaning} opaque width={percent(100)}>
-                            <PosInCenter>
+                            <Centered>
                                 <Text text={meta.text.replaceAll("$name", ls.username)} bold/>
-                            </PosInCenter>
+                            </Centered>
                         </Box>
                     );
                 }

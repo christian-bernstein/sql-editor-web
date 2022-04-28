@@ -2,12 +2,12 @@ import {BernieComponent} from "../../logic/BernieComponent";
 import {Themeable} from "../../logic/style/Themeable";
 import {Assembly} from "../../logic/assembly/Assembly";
 import {ProjectInfoData} from "../../logic/data/ProjectInfoData";
-import {PageV2} from "../../components/lo/Page";
+import {Screen} from "../../components/lo/Page";
 import {AppHeader} from "../../components/lo/AppHeader";
 import {Icon} from "../../components/lo/Icon";
 import {ReactComponent as CloseIcon} from "../../assets/icons/ic-20/ic20-close.svg";
 import React from "react";
-import {PosInCenter} from "../../components/lo/PosInCenter";
+import {Centered} from "../../components/lo/PosInCenter";
 import {FlexBox} from "../../components/lo/FlexBox";
 import {FlexDirection} from "../../logic/style/FlexDirection";
 import {Justify} from "../../logic/style/Justify";
@@ -83,7 +83,7 @@ export class DeleteProjectDialog extends BernieComponent<DeleteProjectDialogProp
 
     private renderBody(): JSX.Element {
         return (
-            <PosInCenter fullHeight>
+            <Centered fullHeight>
                 <FlexBox height={percent(100)} width={percent(100)} flexDir={FlexDirection.COLUMN} justifyContent={Justify.SPACE_BETWEEN}>
                     <FlexBox width={percent(100)} justifyContent={Justify.CENTER} align={Align.CENTER}>
                         <InformationBox visualMeaning={ObjectVisualMeaning.WARNING}>
@@ -109,16 +109,16 @@ export class DeleteProjectDialog extends BernieComponent<DeleteProjectDialogProp
                         ), "confirmation")}
                     </FlexBox>
                 </FlexBox>
-            </PosInCenter>
+            </Centered>
         );
     }
 
     componentRender(p: any, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
-            <PageV2>
+            <Screen>
                 {this.renderHeader()}
                 {this.renderBody()}
-            </PageV2>
+            </Screen>
         );
     }
 }

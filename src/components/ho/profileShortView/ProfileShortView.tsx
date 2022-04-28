@@ -79,7 +79,7 @@ export class ProfileShortView extends BernieComponent<ProfileShortViewProps, any
                 return (
                     <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab} width={percent(100)}>
                         <Button width={percent(100)}>
-                            <Text text={"View profile"}/>
+                            <Text text={"View profile"} whitespace={"nowrap"}/>
                         </Button>
                         <Button width={percent(100)}>
                             <Text text={"Message"}/>

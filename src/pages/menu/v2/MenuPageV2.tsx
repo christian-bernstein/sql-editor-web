@@ -1,7 +1,7 @@
 import {BernieComponent} from "../../../logic/BernieComponent";
 import {Assembly} from "../../../logic/assembly/Assembly";
 import {Themeable} from "../../../logic/style/Themeable";
-import {PageV2} from "../../../components/lo/Page";
+import {Screen} from "../../../components/lo/Page";
 import {LiteGrid} from "../../../components/lo/LiteGrid";
 import React from "react";
 import {FlexBox} from "../../../components/lo/FlexBox";
@@ -57,13 +57,13 @@ export class MenuPageV2 extends BernieComponent<MenuPageV2Props, any, MenuPageV2
     private mainAssembly() {
         this.assembly.assembly("main", theme => {
             return (
-                <PageV2 deactivatePadding>
+                <Screen deactivatePadding>
                     <LiteGrid rows={3} height={percent(100)}>
                         {this.assembly.render({
                             component: "header"
                         })}
                     </LiteGrid>
-                </PageV2>
+                </Screen>
             );
         })
     }
@@ -88,7 +88,7 @@ export class MenuPageV2 extends BernieComponent<MenuPageV2Props, any, MenuPageV2
                         }}/>}/>
                         <FlexBox flexDir={FlexDirection.COLUMN} gap={px()} justifyContent={Justify.CENTER}>
                             <Text text={"Christian"} type={TextType.smallHeader} bold/>
-                            <Text text={"christian.bernsteinde@gmail.com"}/>
+                            <Text text={"xyz@gmail.com"}/>
                             <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab}>
                                 <Badge visualMeaning={ObjectVisualMeaning.BETA} opaque>
                                     <Text text={"team"} uppercase bold/>

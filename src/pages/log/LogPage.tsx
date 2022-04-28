@@ -1,6 +1,6 @@
 import {BernieComponent} from "../../logic/BernieComponent";
 import {Themeable} from "../../logic/style/Themeable";
-import {PageV2} from "../../components/lo/Page";
+import {Screen} from "../../components/lo/Page";
 import {AppHeader} from "../../components/lo/AppHeader";
 import React from "react";
 import {ReactComponent as CloseIcon} from "../../assets/icons/ic-20/ic20-close.svg";
@@ -25,7 +25,7 @@ import {Align} from "../../logic/style/Align";
 import {percent, px} from "../../logic/style/DimensionalMeasured";
 import {OverflowBehaviour} from "../../logic/style/OverflowBehaviour";
 import {LogEntry} from "../../logic/data/LogEntry";
-import {PosInCenter} from "../../components/lo/PosInCenter";
+import {Centered} from "../../components/lo/PosInCenter";
 import {Assembly} from "../../logic/assembly/Assembly";
 import {Environment} from "../../logic/Environment";
 import {LogEntryAppendix} from "../../logic/data/LogEntryAppendix";
@@ -198,13 +198,13 @@ export class LogPage extends BernieComponent<any, any, LogPageLocalState> {
     private renderEmptySophisticatedLogHistory(): JSX.Element {
         return (
             <If condition={(App.app().sophisticatedLogHistory.length === 0)} ifTrue={
-                <PosInCenter fullHeight>
+                <Centered fullHeight>
                     <Text text={"No logs recorded yet"}/>
-                </PosInCenter>
+                </Centered>
             } ifFalse={
-                <PosInCenter fullHeight>
+                <Centered fullHeight>
                     <Text align={Align.CENTER} text={"No logs to show, change filter settings to see them.\nIf you want to see all log entries change filter setting to '**ALL**'"}/>
-                </PosInCenter>
+                </Centered>
             }/>
         );
     }
@@ -294,13 +294,13 @@ export class LogPage extends BernieComponent<any, any, LogPageLocalState> {
                             const vm: ObjectVisualMeaning = this.local.state.filterMultiColorMode ? getOr(p.visualMeaning, ObjectVisualMeaning.INFO) : ObjectVisualMeaning.INFO;
                             return (
                                 <Box noPadding highlight cursor={Cursor.pointer} visualMeaning={vm} opaque={!this.local.state.filterMultiColorMode}>
-                                    <PosInCenter fullHeight>
+                                    <Centered fullHeight>
                                         <Text text={`**${p.id}**`} uppercase cursor={Cursor.pointer} visualMeaning={vm} coloredText={false}/>
-                                    </PosInCenter>
+                                    </Centered>
                                     <Separator visualMeaning={vm}/>
-                                    <PosInCenter fullHeight>
+                                    <Centered fullHeight>
                                         <Text text={`${p.amount}`} uppercase cursor={Cursor.pointer}/>
-                                    </PosInCenter>
+                                    </Centered>
                                 </Box>
                             );
                         })()
@@ -309,13 +309,13 @@ export class LogPage extends BernieComponent<any, any, LogPageLocalState> {
                             const vm: ObjectVisualMeaning = this.local.state.filterMultiColorMode ? getOr(p.visualMeaning, ObjectVisualMeaning.UI_NO_HIGHLIGHT) : ObjectVisualMeaning.UI_NO_HIGHLIGHT;
                             return (
                                 <Box noPadding highlight cursor={Cursor.pointer} visualMeaning={vm} opaque={true}>
-                                    <PosInCenter fullHeight>
+                                    <Centered fullHeight>
                                         <Text text={`**${p.id}**`} uppercase cursor={Cursor.pointer} visualMeaning={vm} coloredText/>
-                                    </PosInCenter>
+                                    </Centered>
                                     <Separator visualMeaning={vm}/>
-                                    <PosInCenter fullHeight>
+                                    <Centered fullHeight>
                                         <Text text={`${p.amount}`} uppercase cursor={Cursor.pointer}/>
-                                    </PosInCenter>
+                                    </Centered>
                                 </Box>
                             );
                         })()
@@ -528,11 +528,11 @@ export class LogPage extends BernieComponent<any, any, LogPageLocalState> {
 
     componentRender(p: any, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
-            <PageV2>
+            <Screen>
                 {this.renderPageHeader()}
                 {this.component(() => (this.renderFilterSelector(t)), "filter", "log-related", "filter-button")}
                 {this.component(() => (this.renderSophisticatedLogHistory(t)), "filter", "log-related")}
-            </PageV2>
+            </Screen>
         );
     }
 }

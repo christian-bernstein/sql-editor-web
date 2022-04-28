@@ -1,6 +1,6 @@
 import React from "react";
 import {Text} from "../../components/lo/Text";
-import {PageV2} from "../../components/lo/Page";
+import {Screen} from "../../components/lo/Page";
 import {AppHeader} from "../../components/lo/AppHeader";
 import {FlexBox} from "../../components/lo/FlexBox";
 import {percent, px} from "../../logic/style/DimensionalMeasured";
@@ -216,7 +216,7 @@ export class ProjectCreationDialog extends React.Component<any, any> {
         `;
 
         return (
-            <PageV2>
+            <Screen>
                 <LiteGrid rows={4} height={percent(100)}>
                     <AppHeader
                         left={(
@@ -297,7 +297,7 @@ export class ProjectCreationDialog extends React.Component<any, any> {
                         </Form>
                     </FlexBox>
                 </LiteGrid>
-            </PageV2>
+            </Screen>
         );
     }
 }

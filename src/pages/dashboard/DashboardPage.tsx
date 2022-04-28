@@ -4,7 +4,7 @@ import {ProjectInfo} from "../../components/ho/projectInfo/ProjectInfo";
 import {App, utilizeGlobalTheme} from "../../logic/app/App";
 import {ProjectInfoData} from "../../logic/data/ProjectInfoData";
 import {FlexBox} from "../../components/lo/FlexBox";
-import {PageV2} from "../../components/lo/Page";
+import {Screen} from "../../components/lo/Page";
 import {Text, TextType} from "../../components/lo/Text";
 import {Align} from "../../logic/style/Align";
 import {Justify} from "../../logic/style/Justify";
@@ -14,7 +14,7 @@ import {ReactComponent as CreateIcon} from "../../assets/icons/ic-20/ic20-plus.s
 import {ReactComponent as SyncIcon} from "../../assets/icons/ic-20/ic20-refresh.svg";
 import {Icon} from "../../components/lo/Icon";
 import {getOr} from "../../logic/Utils";
-import {PosInCenter} from "../../components/lo/PosInCenter";
+import {Centered} from "../../components/lo/PosInCenter";
 import {em, percent, px} from "../../logic/style/DimensionalMeasured";
 import {DBSessionCacheShard} from "../../shards/dbSessionCache/DBSessionCacheShard";
 import {Redirect} from "react-router-dom";
@@ -256,13 +256,13 @@ export default class DashboardPage extends BernieComponent<DashboardPageProps, D
             return (
                 <If condition={filtered.length === 0} ifTrue={
                     <If condition={projectsSize > 0} ifTrue={
-                        <PosInCenter fullHeight>
+                        <Centered fullHeight>
                             <Text text={"No projects to show, select filter option '**ALL**' to see all projects"} align={Align.CENTER}/>
-                        </PosInCenter>
+                        </Centered>
                     } ifFalse={
-                        <PosInCenter fullHeight>
+                        <Centered fullHeight>
                             <Text text={"No project created yet."} align={Align.CENTER}/>
-                        </PosInCenter>
+                        </Centered>
                     }/>
                 } ifFalse={
                     <LiteGrid columns={6} responsive minResponsiveWidth={px(300)} gap={em(1)}>{
@@ -302,7 +302,7 @@ export default class DashboardPage extends BernieComponent<DashboardPageProps, D
         return (
             <>
                 <If condition={this.state.loading} ifFalse={this.renderSpeedDial()}/>
-                <PageV2>
+                <Screen>
                     <LiteGrid columns={3}>
                         <FlexBox align={Align.START} justifyContent={Justify.CENTER}>
                             <Icon icon={(
@@ -348,23 +348,23 @@ export default class DashboardPage extends BernieComponent<DashboardPageProps, D
                             </CustomTooltip>
                         </FlexBox>
                     </LiteGrid>
-                    <PosInCenter>
+                    <Centered>
                         {this.renderSubtitle()}
-                    </PosInCenter>
+                    </Centered>
 
                     <If condition={this.state.loading} ifTrue={
-                        <PosInCenter fullHeight>
+                        <Centered fullHeight>
                             <FlexBox gap={theme.gaps.defaultGab} align={Align.CENTER} justifyContent={Justify.CENTER}>
                                 <PuffLoader color={theme.colors.warnHighlightColor.css()}/>
                                 <Text text={"Loading from server"} bold uppercase coloredText visualMeaning={ObjectVisualMeaning.WARNING}/>
                             </FlexBox>
-                        </PosInCenter>
+                        </Centered>
                     } ifFalse={
                         <FlexBox height={percent(100)} width={percent(100)} overflowYBehaviour={OverflowBehaviour.SCROLL}>
                             {this.renderProjects()}
                         </FlexBox>
                     }/>
-                </PageV2>
+                </Screen>
             </>
         );
     }

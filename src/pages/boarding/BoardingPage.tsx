@@ -26,7 +26,7 @@ import {ServerConnectionIcon} from "../../components/ho/serverConnectionIcon/Ser
 import {Button} from "../../components/lo/Button";
 import {ObjectVisualMeaning} from "../../logic/style/ObjectVisualMeaning";
 import {percent, px} from "../../logic/style/DimensionalMeasured";
-import {PosInCenter} from "../../components/lo/PosInCenter";
+import {Centered} from "../../components/lo/PosInCenter";
 import {Cursor} from "../../logic/style/Cursor";
 import {Icon} from "../../components/lo/Icon";
 import {Utils} from "../../logic/Utils";
@@ -47,6 +47,7 @@ import {ReactComponent as OpenDialogIcon} from "../../assets/icons/ic-20/ic20-op
 import {ReactComponent as LogoutIcon} from "../../assets/icons/ic-16/ic16-turn-off.svg";
 import {ReactComponent as DashboardIcon} from "../../assets/icons/ic-16/ic16-open-in-browser.svg";
 import {Debug} from "../../components/logic/Debug";
+import {LatencyDisplay} from "../../tests/chart/LatencyDisplay";
 
 export type BoardingPageProps = {}
 
@@ -398,9 +399,9 @@ export class BoardingPage extends BernieComponent<BoardingPageProps, BoardingPag
                                     <span className={"separator"}>/</span>
                                     <Link to={"/register"} style={{width: "100%", height: "100%", textDecoration: "none"}}>
                                         <Button width={percent(100)} height={percent(100)} visualMeaning={ObjectVisualMeaning.INFO} shrinkOnClick opaque>
-                                            <PosInCenter fullHeight>
+                                            <Centered fullHeight>
                                                 <Text cursor={Cursor.pointer} text={"Sign up"} type={TextType.smallHeader}/>
-                                            </PosInCenter>
+                                            </Centered>
                                         </Button>
                                         {/*<_Button onClick={() => {}} internalStyling={true} theme={ComponentStyle.PRIMARY}>
                                         Sign up

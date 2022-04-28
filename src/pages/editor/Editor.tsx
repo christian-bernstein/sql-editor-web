@@ -1,5 +1,5 @@
 import React, {ForwardedRef} from "react";
-import {PageV2} from "../../components/lo/Page";
+import {Screen} from "../../components/lo/Page";
 import {LiteGrid} from "../../components/lo/LiteGrid";
 import {FlexBox} from "../../components/lo/FlexBox";
 import {Align} from "../../logic/style/Align";
@@ -15,7 +15,6 @@ import {ReactComponent as TableIcon} from "../../assets/icons/ic-20/ic20-view-ta
 import {ReactComponent as CreateIcon} from "../../assets/icons/ic-16/ic16-plus.svg";
 import {ReactComponent as LastIcon} from "../../assets/icons/ic-20/ic20-chevron-up.svg";
 import {ReactComponent as NextIcon} from "../../assets/icons/ic-20/ic20-chevron-down.svg";
-import {ReactComponent as CopyIcon} from "../../assets/icons/ic-20/ic20-copy.svg";
 import {ReactComponent as SettingsIcon} from "../../assets/icons/ic-20/ic20-settings.svg";
 import {App, utilizeGlobalTheme} from "../../logic/app/App";
 import {Text, TextType} from "../../components/lo/Text";
@@ -26,7 +25,7 @@ import {ObjectVisualMeaning} from "../../logic/style/ObjectVisualMeaning";
 import {Cursor} from "../../logic/style/Cursor";
 import {RedirectController} from "../../components/logic/RedirectController";
 import {ProjectInfoData} from "../../logic/data/ProjectInfoData";
-import {PosInCenter} from "../../components/lo/PosInCenter";
+import {Centered} from "../../components/lo/PosInCenter";
 import {FlexDirection} from "../../logic/style/FlexDirection";
 import {CodeEditor} from "../../components/lo/CodeEditor";
 import {v4} from "uuid";
@@ -62,6 +61,7 @@ import {Assembly} from "../../logic/assembly/Assembly";
 import {Switch} from "../../components/lo/Switch";
 import {SQLCommandUpdateResponsePacketData} from "../../packets/in/SQLCommandUpdateResponsePacketData";
 import {DBTaskCard} from "../../components/indev/DBTaskCard";
+import {CopyIcon} from "../../components/ho/copyIcon/CopyIcon";
 
 export type DebugEditorProps = {
 }
@@ -123,7 +123,8 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                     stator: false,
                     lastEdited: new Date(),
                     state: LoadState.ONLINE,
-                    description: "For debugging purposes"
+                    description: "For debugging purposes",
+                    internalTags: []
                 };
             } else {
                 console.error("currentInfoData is undefined & app not in debugging mode -> This is an error");
@@ -352,7 +353,7 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                                 <Icon icon={<SettingsIcon/>}/>
                                 <Icon icon={<CloseIcon/>} onClick={() => this.closeSession()}/>
                                 <Separator orientation={Orientation.VERTICAL}/>
-                                <ServerConnectionIcon/>
+                                <ServerConnectionIcon openConnectionMetricsDialog/>
                             </FlexBox>
                         </LiteGrid>
                     </FlexBox>
@@ -476,7 +477,9 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                             cursor={Cursor.pointer}
                             visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
                             opaque={false}
-                            shrinkOnClick={true} children={<Icon icon={<CopyIcon/>}/>}
+                            shrinkOnClick={true} children={
+                                <CopyIcon copyValueProducer={() => this.local.state.command} displayValueAsHover={false}/>
+                            }
                         />,
                     ]}/>
                 </FlexBox>
@@ -663,8 +666,8 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
     // noinspection JSMethodCanBeStatic
     private renderSessionUndefinedErrorPage() {
         return (
-            <PageV2>
-                <PosInCenter fullHeight={true}>
+            <Screen>
+                <Centered fullHeight={true}>
                     <Box visualMeaning={ObjectVisualMeaning.ERROR} opaque={true}>
                         <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} justifyContent={Justify.CENTER}>
                             <Icon icon={<ErrorIcon/>} visualMeaning={ObjectVisualMeaning.ERROR} colored={true}/>
@@ -685,8 +688,8 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                             </FlexBox>
                         </FlexBox>
                     </Box>
-                </PosInCenter>
-            </PageV2>
+                </Centered>
+            </Screen>
         );
     }
 
@@ -785,7 +788,7 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
         const theme: Themeable.Theme = utilizeGlobalTheme();
 
         return (
-            <PageV2>
+            <Screen>
                 {this.renderDialog()}
                 <FlexBox height={percent(100)} flexDir={FlexDirection.COLUMN} gap={theme.gaps.defaultGab} overflowXBehaviour={OverflowBehaviour.VISIBLE} overflowYBehaviour={OverflowBehaviour.VISIBLE} justifyContent={Justify.SPACE_BETWEEN}>
                     {this.component(local => this.assembly.render({
@@ -797,7 +800,7 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                     <Separator orientation={Orientation.HORIZONTAL}/>
                     {this.component(local => this.assembly.liteRender("input"), "input")}
                 </FlexBox>
-            </PageV2>
+            </Screen>
         );
     }
 

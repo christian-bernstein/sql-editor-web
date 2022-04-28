@@ -21,7 +21,10 @@ export type ButtonProps = {
     enableBaseAnimation?: boolean,
     baseAnimation?: "hover-repeat",
     padding?: DimensionalMeasured,
-    zIndex?: number
+    zIndex?: number,
+    border?: boolean,
+    bgColorOnDefault?: boolean,
+    highlight?: boolean
 }
 
 export class Button extends React.Component<ButtonProps, any> {
@@ -37,8 +40,10 @@ export class Button extends React.Component<ButtonProps, any> {
 
         const Button = styled.div`
           border-radius: ${theme.radii.defaultObjectRadius.css()};
-          background-color: ${bgColor.css()};
-          border: 1px solid ${meaningfulColors.lighter.css()};
+          
+          background-color: ${getOr(this.props.bgColorOnDefault, true) ? bgColor.css() : "transparent"};
+          
+          border: ${getOr(this.props.border, true) ? `1px solid ${meaningfulColors.lighter.css()}` : "none"};
           padding: ${getOr(this.props.padding, theme.paddings.defaultButtonPadding).css()};
           color: ${theme.colors.fontPrimaryColor.css()};
           font-family: ${theme.texts.fontFamily};
@@ -65,8 +70,9 @@ export class Button extends React.Component<ButtonProps, any> {
           }
           
           &:hover {
+            background-color: ${bgColor.css()};
             filter: brightness(${theme.hovers.hoverLightFilter.css()});
-            box-shadow: 0 0 0 4px ${meaningfulColors.lighter.withAlpha(.13).css()};
+            box-shadow: ${this.props.highlight ? `0 0 0 4px ${meaningfulColors.lighter.withAlpha(.13).css()}` : "none"};
           }
 
           &:active {

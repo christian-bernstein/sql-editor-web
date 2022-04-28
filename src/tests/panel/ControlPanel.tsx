@@ -310,17 +310,17 @@ export class ControlPanelComponent extends React.Component<ControlPanelProps, Co
             }
         });
 
-        this.state.connector.registerSocketEventHandler(Environment.SocketEventTypes.ONOPEN, {
+        this.state.connector.registerSocketEventHandler(Environment.SocketEventTypes.ON_OPEN, {
             stator: true,
             handle: ev => this.forceUpdate()
         })
 
-        this.state.connector.registerSocketEventHandler(Environment.SocketEventTypes.ONCLOSE, {
+        this.state.connector.registerSocketEventHandler(Environment.SocketEventTypes.ON_CLOSE, {
             stator: true,
             handle: ev => this.forceUpdate()
         })
 
-        this.state.connector.registerSocketEventHandler(Environment.SocketEventTypes.ONOPEN, {
+        this.state.connector.registerSocketEventHandler(Environment.SocketEventTypes.ON_OPEN, {
             stator: true,
             handle: ev => {
                 this.state.connector.call({

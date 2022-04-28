@@ -1,5 +1,5 @@
 import React, {ForwardedRef} from "react";
-import {PageV2} from "../../../components/lo/Page";
+import {Screen} from "../../../components/lo/Page";
 import {LiteGrid} from "../../../components/lo/LiteGrid";
 import {FlexBox} from "../../../components/lo/FlexBox";
 import {Align} from "../../../logic/style/Align";
@@ -21,7 +21,7 @@ import {ObjectVisualMeaning} from "../../../logic/style/ObjectVisualMeaning";
 import {Cursor} from "../../../logic/style/Cursor";
 import {RedirectController} from "../../../components/logic/RedirectController";
 import {ProjectInfoData} from "../../../logic/data/ProjectInfoData";
-import {PosInCenter} from "../../../components/lo/PosInCenter";
+import {Centered} from "../../../components/lo/PosInCenter";
 import {FlexDirection} from "../../../logic/style/FlexDirection";
 import {CodeEditor} from "../../../components/lo/CodeEditor";
 import {cs} from "../../../logic/state/State";
@@ -109,6 +109,7 @@ export class DebugEditor extends React.Component<DebugEditorProps, DebugEditorSt
         if (data === undefined) {
             if (App.app().config.debugMode) {
                 App.app().shard<DBSessionCacheShard>("db-session-cache").currentInfoData = {
+                    internalTags: new Array("simulation"),
                     id: v4(),
                     creatorUserID: v4(),
                     title: "Debug session",
@@ -315,8 +316,8 @@ export class DebugEditor extends React.Component<DebugEditorProps, DebugEditorSt
     // noinspection JSMethodCanBeStatic
     private renderSessionUndefinedErrorPage() {
         return (
-            <PageV2>
-                <PosInCenter fullHeight={true}>
+            <Screen>
+                <Centered fullHeight={true}>
                     <Box visualMeaning={ObjectVisualMeaning.ERROR} opaque={true}>
                         <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} justifyContent={Justify.CENTER}>
                             <Icon icon={<ErrorIcon/>} visualMeaning={ObjectVisualMeaning.ERROR} colored={true}/>
@@ -337,8 +338,8 @@ export class DebugEditor extends React.Component<DebugEditorProps, DebugEditorSt
                             </FlexBox>
                         </FlexBox>
                     </Box>
-                </PosInCenter>
-            </PageV2>
+                </Centered>
+            </Screen>
         );
     }
 
@@ -369,7 +370,7 @@ export class DebugEditor extends React.Component<DebugEditorProps, DebugEditorSt
         const theme: Themeable.Theme = utilizeGlobalTheme();
 
         return (
-            <PageV2>
+            <Screen>
                 {this.renderDialog()}
 
                 <FlexBox height={percent(100)} flexDir={FlexDirection.COLUMN} overflowXBehaviour={OverflowBehaviour.VISIBLE} overflowYBehaviour={OverflowBehaviour.VISIBLE} justifyContent={Justify.SPACE_BETWEEN}>
@@ -481,7 +482,7 @@ export class DebugEditor extends React.Component<DebugEditorProps, DebugEditorSt
                         </FlexBox>
                     </FlexBox>
                 </FlexBox>
-            </PageV2>
+            </Screen>
         );
     }
 

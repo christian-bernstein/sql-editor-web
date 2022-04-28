@@ -1,11 +1,14 @@
 import React from "react";
-import {ReactComponent as LoadIcon} from "../../../assets/icons/ic-20/ic20-arrow-right.svg";
 import {ReactComponent as ContextIcon} from "../../../assets/icons/ic-20/ic20-more-ver.svg";
 import {ReactComponent as DeleteIcon} from "../../../assets/icons/ic-20/ic20-delete.svg";
 import {ReactComponent as CalenderIcon} from "../../../assets/icons/ic-20/ic20-calendar-edit.svg";
 import {ReactComponent as FileIcon} from "../../../assets/icons/ic-20/ic20-file-add.svg";
+import {ReactComponent as LoadIcon} from "../../../assets/icons/ic-20/ic20-arrow-right.svg";
+import {ReactComponent as TagsIcon} from "../../../assets/icons/ic-20/ic20-tag.svg";
+import {ReactComponent as UserIcon} from "../../../assets/icons/ic-20/ic20-user.svg";
+import {ReactComponent as EditIcon} from "../../../assets/icons/ic-20/ic20-edit.svg";
+import {ReactComponent as RightIcon} from "../../../assets/icons/ic-20/ic20-chevron-right.svg";
 import {ProjectInfoData} from "../../../logic/data/ProjectInfoData";
-import {Box} from "../../lo/Box";
 import {Text, TextType} from "../../lo/Text";
 import {percent, px} from "../../../logic/style/DimensionalMeasured";
 import {Icon} from "../../lo/Icon";
@@ -13,9 +16,6 @@ import {Button} from "../../lo/Button";
 import {ObjectVisualMeaning} from "../../../logic/style/ObjectVisualMeaning";
 import {FlexBox} from "../../lo/FlexBox";
 import {FlexDirection} from "../../../logic/style/FlexDirection";
-import {AreaChartComponent} from "../areaChart/AreaChartComponent";
-import styled from "styled-components";
-import {Themeable} from "../../../logic/style/Themeable";
 import {App, utilizeGlobalTheme} from "../../../logic/app/App";
 import {Justify} from "../../../logic/style/Justify";
 import {ProjectInfoOnlineIcon} from "../../lo/ProjectInfoOnlineIcon";
@@ -33,10 +33,19 @@ import {Collapsible} from "../../lo/Collapsible";
 import {SVG} from "../../../logic/misc/SVG";
 import {LoadState} from "../../../logic/misc/LoadState";
 import {BernieComponent} from "../../../logic/BernieComponent";
-import {Assembly} from "../../../logic/assembly/Assembly";
 import {ProjectFileSizeRequestPacketData} from "../../../packets/out/ProjectFileSizeRequestPacketData";
 import {ProjectFileSizeResponsePacketData} from "../../../packets/in/ProjectFileSizeResponsePacketData";
 import {array, Utils} from "../../../logic/Utils";
+import {InformationBox} from "../informationBox/InformationBox";
+import {Themeable} from "../../../logic/style/Themeable";
+import {Assembly} from "../../../logic/assembly/Assembly";
+import styled from "styled-components";
+import {Box} from "../../lo/Box";
+import {AreaChartComponent} from "../areaChart/AreaChartComponent";
+import {ClientDisplay} from "../clientDisplay/ClientDisplay";
+import {CopyIcon} from "../copyIcon/CopyIcon";
+import {ContextMenuElement} from "../../lo/ContextMenuElement";
+import {Switch} from "../../lo/Switch";
 
 export type ProjectInfoProps = {
     data: ProjectInfoData,
@@ -44,7 +53,7 @@ export type ProjectInfoProps = {
 }
 
 export type ProjectInfoLocalState = {
-    projectFileSize?: number
+    projectFileSize?: number,
 }
 
 export class ProjectInfo extends BernieComponent<ProjectInfoProps, any, ProjectInfoLocalState> {
@@ -95,15 +104,36 @@ export class ProjectInfo extends BernieComponent<ProjectInfoProps, any, ProjectI
         const theme = utilizeGlobalTheme();
 
         return (
-            <FlexBox gap={theme.gaps.smallGab}>
-                <Button visualMeaning={ObjectVisualMeaning.ERROR} opaque width={percent(100)} onClick={() => this.toggleProjectDeleteDialog()}>
-                    <FlexBox flexDir={FlexDirection.ROW} justifyContent={Justify.FLEX_START} width={percent(100)}>
-                        <Icon icon={<DeleteIcon/>}/>
-                        <Text text={`Delete`}/>
-                    </FlexBox>
-                </Button>
+            <FlexBox gap={px(1)}>
+                <CopyIcon copyValueProducer={() => this.props.data.id}/>
+                <Separator orientation={Orientation.HORIZONTAL}/>
+
+                <ContextMenuElement title={"Als gelesen markieren"}/>
+                <Separator orientation={Orientation.HORIZONTAL}/>
+                <ContextMenuElement title={"Leute einladen"}/>
+                <Separator orientation={Orientation.HORIZONTAL}/>
+                <ContextMenuElement title={"Server stummschalten"} icon={() => <Icon icon={<RightIcon/>} size={px(16)}/>}/>
+                <ContextMenuElement title={"Benachrichtigungseinstellungen"} icon={() => <Icon icon={<RightIcon/>} size={px(16)}/>}/>
+                <ContextMenuElement title={"Stummgeschaltete Kanäle ausblenden"} icon={() => <Switch basicIconColor/>}/>
+                <Separator orientation={Orientation.HORIZONTAL}/>
+                <ContextMenuElement title={"Servereinstellungen"} icon={() => <Icon icon={<RightIcon/>} size={px(16)}/>}/>
+                <ContextMenuElement title={"Privatsphäreeinstellungen"}/>
+                <ContextMenuElement title={"Serverprofil bearbeiten"}/>
+                <Separator orientation={Orientation.HORIZONTAL}/>
+                <ContextMenuElement title={"Kanal erstellen"}/>
+                <ContextMenuElement title={"Kategorie erstellen"}/>
+                <ContextMenuElement title={"Event erstellen"}/>
+                <Separator orientation={Orientation.HORIZONTAL}/>
+                <ContextMenuElement title={"Projekt bearbeiten"} icon={() => <Icon icon={<EditIcon/>} size={px(16)}/>}/>
+                <ContextMenuElement title={"Projekt löschen"} icon={() => <Icon icon={<DeleteIcon/>} size={px(16)}/>} onClick={() => this.toggleProjectDeleteDialog()}/>
+                <Separator orientation={Orientation.HORIZONTAL}/>
+                <ContextMenuElement title={"Copy project ID"} onClick={() => this.copyIDToClipboard()}/>
             </FlexBox>
         );
+    }
+
+    private copyIDToClipboard() {
+        Utils.copyTextToClipboard(this.props.data.id);
     }
 
     private renderContextMenu(): JSX.Element {
@@ -129,6 +159,7 @@ export class ProjectInfo extends BernieComponent<ProjectInfoProps, any, ProjectI
                 </FlexBox>
 
                 <FlexBox flexDir={FlexDirection.ROW} height={percent(100)} gap={theme.gaps.smallGab}>
+
                     <CustomTooltip noBorder title={(
                         <FlexBox>
                             <Text text={
@@ -196,8 +227,19 @@ export class ProjectInfo extends BernieComponent<ProjectInfoProps, any, ProjectI
                                 </FlexBox>
                             );
                         }
-
                     }, "file_size")}
+
+                    <FlexBox flexDir={FlexDirection.ROW} gap={t.gaps.smallGab}>
+                        <Icon icon={<TagsIcon/>}/>
+                        <Text text={"Internal tags: "} type={TextType.secondaryDescription}/>
+                        <Text text={String(this.props.data.internalTags.join(", "))}/>
+                    </FlexBox>
+
+                    <FlexBox flexDir={FlexDirection.ROW} gap={t.gaps.smallGab}>
+                        <Icon icon={<UserIcon/>}/>
+                        <Text text={"Creator: "} type={TextType.secondaryDescription}/>
+                        <ClientDisplay clientID={this.props.data.creatorUserID} enableClientBadge={false}/>
+                    </FlexBox>
                 </>
             )}/>
         );
@@ -223,6 +265,12 @@ export class ProjectInfo extends BernieComponent<ProjectInfoProps, any, ProjectI
                                 {/*<Text text={"**Description**:"}/>*/}
                                 <Text text={this.props.data.description}/>
                             </>
+                        }/>
+
+                        <If condition={this.props.data.internalTags.includes("ses-infrastructure")} ifTrue={
+                            <InformationBox visualMeaning={ObjectVisualMeaning.WARNING} width={percent(100)} children={
+                                <Text text={"Internal infrastructure database."}/>
+                            }/>
                         }/>
                     </FlexBox>
 

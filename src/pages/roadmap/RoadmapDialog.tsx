@@ -2,7 +2,7 @@ import {BernieComponent} from "../../logic/BernieComponent";
 import {Themeable} from "../../logic/style/Themeable";
 import {Assembly} from "../../logic/assembly/Assembly";
 import React from "react";
-import {PageV2} from "../../components/lo/Page";
+import {Screen} from "../../components/lo/Page";
 import {AppHeader} from "../../components/lo/AppHeader";
 import {FlexBox} from "../../components/lo/FlexBox";
 import {FlexDirection} from "../../logic/style/FlexDirection";
@@ -40,7 +40,7 @@ export class RoadmapDialog extends BernieComponent<any, any, any> {
     componentRender(p: any, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
 
         return (
-            <PageV2>
+            <Screen>
                 {this.renderHeader()}
                 <FlexBox height={percent(100)} width={percent(100)} overflowYBehaviour={OverflowBehaviour.SCROLL}>
                     <FlexBox gap={t.gaps.defaultGab} width={percent(100)}>
@@ -88,7 +88,7 @@ export class RoadmapDialog extends BernieComponent<any, any, any> {
                         </RoadmapEntry>, 2)}
                     </FlexBox>
                 </FlexBox>
-            </PageV2>
+            </Screen>
         );
     }
 }

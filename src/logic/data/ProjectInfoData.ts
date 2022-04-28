@@ -9,5 +9,6 @@ export type ProjectInfoData = {
     creatorUserID: string,
     lastEdited: Date,
     description: string
-    edits: number
+    edits: number,
+    internalTags: string[]
 }

@@ -355,7 +355,7 @@ export namespace Themeable {
                     display: "flex",
                     alignItems: "center",
                     letterSpacing: "0.03em",
-                    color: `${defaultThemePallet.fontPrimaryColor.css()}`
+                    color: `${lightThemePallet.fontPrimaryColor.css()}`
                 },
                 defaultText: {
                     margin: 0,
@@ -367,7 +367,7 @@ export namespace Themeable {
                     display: "flex",
                     alignItems: "center",
                     letterSpacing: "0.03em",
-                    color: `${defaultThemePallet.fontPrimaryColor.css()}`
+                    color: `${lightThemePallet.fontPrimaryColor.css()}`
                 },
                 boldSmallHeaderDeactivated: {
                     margin: 0,
@@ -379,7 +379,7 @@ export namespace Themeable {
                     display: "flex",
                     alignItems: "center",
                     letterSpacing: "0.03em",
-                    color: `${defaultThemePallet.fontDeactivatedColor.css()}`
+                    color: `${lightThemePallet.fontDeactivatedColor.css()}`
                 },
                 secondaryDescription: {
                     margin: 0,
@@ -391,7 +391,7 @@ export namespace Themeable {
                     display: "flex",
                     alignItems: "center",
                     letterSpacing: "0.03em",
-                    color: `${defaultThemePallet.fontSecondaryColor.css()}`
+                    color: `${lightThemePallet.fontSecondaryColor.css()}`
                 }
             }
         },

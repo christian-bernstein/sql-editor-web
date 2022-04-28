@@ -3,7 +3,7 @@ import {Assembly} from "../../logic/assembly/Assembly";
 import {Themeable} from "../../logic/style/Themeable";
 import {Recipe} from "./Recipe";
 import {UnitOfMeasure} from "./UnitOfMeasure";
-import {PageV2} from "../../components/lo/Page";
+import {Screen} from "../../components/lo/Page";
 import React from "react";
 import {AppHeader} from "../../components/lo/AppHeader";
 import {Input} from "../../components/lo/Input";
@@ -41,13 +41,13 @@ export class EpicureSearchPage extends BernieComponent<any, any, EpicureSearchPa
 
     componentRender(p: any, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
-            <PageV2>
+            <Screen>
                 <AppHeader title={"Recipes"}/>
                 <Input label={"Search"}/>
                 <FlexBox flexDir={FlexDirection.COLUMN} height={percent(100)} overflowYBehaviour={OverflowBehaviour.SCROLL}>
                     {this.local.state.recipes.map(recipe => <RecipeComponent recipe={recipe}/>)}
                 </FlexBox>
-            </PageV2>
+            </Screen>
         );
     }
 }

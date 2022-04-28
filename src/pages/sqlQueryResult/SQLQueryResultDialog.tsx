@@ -12,7 +12,7 @@ import {ReactComponent as DeleteIcon} from "../../assets/icons/ic-16/ic16-delete
 import {Icon} from "../../components/lo/Icon";
 import React from "react";
 import {Text, TextType} from "../../components/lo/Text";
-import {PageV2} from "../../components/lo/Page";
+import {Screen} from "../../components/lo/Page";
 import {LinearProgress} from "@mui/material";
 import {percent, px} from "../../logic/style/DimensionalMeasured";
 import {ObjectVisualMeaning} from "../../logic/style/ObjectVisualMeaning";
@@ -33,19 +33,19 @@ import {CodeEditor} from "../../components/lo/CodeEditor";
 import {oneDark} from "@codemirror/theme-one-dark";
 import {sql} from "@codemirror/lang-sql";
 import {HighlightStyle, tags} from "@codemirror/highlight";
-import {ProfilePicture} from "../../components/lo/ProfilePicture";
-import {Cursor} from "../../logic/style/Cursor";
-import dateFormat from "dateformat";
-import {ReactComponent as RepeatIcon} from "../../assets/icons/ic-16/ic16-refresh.svg";
 import {If} from "../../components/logic/If";
 import {ReactComponent as SuccessIcon} from "../../assets/icons/ic-16/ic16-check.svg";
 import {ReactComponent as ErrorIcon} from "../../assets/icons/ic-16/ic16-close.svg";
 import {ElementHeader} from "../../components/lo/ElementHeader";
 import {ContextCompound} from "../../components/ho/contextCompound/ContextCompound";
 import {Button} from "../../components/lo/Button";
-import {ReactComponent as DashboardIcon} from "../../assets/icons/ic-16/ic16-open-in-browser.svg";
 import {DBErrorDisplay} from "../../components/ho/dbErrorDisplay/DBErrorDisplay";
 import {EditorCommandError} from "../editor/EditorCommandError";
+import {ContextMenuElement} from "../../components/lo/ContextMenuElement";
+import {ClientDisplay} from "../../components/ho/clientDisplay/ClientDisplay";
+import dateFormat from "dateformat";
+import {Collapsible} from "../../components/lo/Collapsible";
+import {ReactComponent as TagsIcon} from "../../assets/icons/ic-20/ic20-tag.svg";
 
 export enum DatasetSwitchMode {
     FIRST = "first",
@@ -150,31 +150,21 @@ export class SQLQueryResultDialog extends BernieComponent<SQLQueryResultDialogPr
     private registerContextMenu() {
         this.assembly.assembly("ctx-menu", (theme, props) => {
             return (
-                <FlexBox gap={theme.gaps.smallGab}>
-                    <Button width={percent(100)} visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} opaque onClick={() => {
+                <FlexBox gap={px(1)}>
+
+                    <ContextMenuElement title={"Delete current result"} icon={() => <Icon icon={<DeleteIcon/>} size={px(16)}/>} onClick={() => {
                         this.props.deleteCurrentSelectionBridge?.([this.dataset()]);
                         if (this.tryToMovePointerToNextSavePosition()) {
                             this.controller.rerender("data");
                         } else {
-                            App.app().toggleMainDialog("closed");
+                            this.props.onClose?.();
                         }
-                    }}>
-                        <FlexBox width={percent(100)}>
-                            <Text text={"Delete current result"} uppercase bold fontSize={px(12)} enableLeftAppendix leftAppendix={
-                                <Icon icon={<DeleteIcon/>}/>
-                            }/>
-                        </FlexBox>
-                    </Button>
-                    <Button width={percent(100)} visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} opaque onClick={() => {
+                    }}/>
+
+                    <ContextMenuElement title={"Clear results"} icon={() => <Icon icon={<DeleteIcon/>} size={px(16)}/>} onClick={() => {
                         this.props.deleteCurrentSelectionBridge?.(this.props.data);
-                        App.app().toggleMainDialog("closed");
-                    }}>
-                        <FlexBox width={percent(100)}>
-                            <Text text={"Delete"} uppercase bold fontSize={px(12)} enableLeftAppendix leftAppendix={
-                                <Icon icon={<DeleteIcon/>}/>
-                            }/>
-                        </FlexBox>
-                    </Button>
+                        this.props.onClose?.();
+                    }}/>
                 </FlexBox>
             );
         });
@@ -272,11 +262,12 @@ export class SQLQueryResultDialog extends BernieComponent<SQLQueryResultDialogPr
                             <FlexBox flexDir={FlexDirection.ROW} height={percent(100)} align={Align.CENTER} gap={theme.gaps.smallGab}>
                                 {/*<ProfilePicture name={"root"}/>*/}
                                 {/*<Text text={"root"} cursor={Cursor.pointer} type={TextType.secondaryDescription}/>*/}
-                                <Box visualMeaning={ObjectVisualMeaning.BETA} opaque paddingY={px(0)} paddingX={px(4)}>
+                                {/*<Box visualMeaning={ObjectVisualMeaning.BETA} opaque paddingY={px(0)} paddingX={px(4)}>
                                     <Text text={data.client.type.toString()} bold uppercase fontSize={px(12)}/>
-                                </Box>
+                            </Box>*/}
+                                <ClientDisplay clientID={data.client.id} enableClientBadge={false}/>
                                 {/*<Text text={`${dateFormat(data.timestamp, "HH:mm:ss")}`} whitespace={"nowrap"} type={TextType.secondaryDescription}/>*/}
-                                <Text text={`${data.timestamp}`} whitespace={"nowrap"} type={TextType.secondaryDescription}/>
+                                <Text text={`${data.timestamp}`} whitespace={"nowrap"} type={TextType.secondaryDescription} fontSize={px(12)}/>
                                 {/*<Separator orientation={Orientation.VERTICAL}/>
                                 <Icon icon={<RepeatIcon/>}/>*/}
                             </FlexBox>
@@ -341,12 +332,12 @@ export class SQLQueryResultDialog extends BernieComponent<SQLQueryResultDialogPr
 
     componentRender(p: SQLQueryResultDialogProps, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
-            <PageV2>
+            <Screen>
                 {this.component(() => this.assembly.render({component: "header"}), "header")}
                 {this.component(() => this.assembly.render({component: "dataset-viewer"}), "data")}
                 {this.component(() => this.assembly.render({component: "telemetry"}), "data")}
                 {this.component(() => this.assembly.render({component: "result-switcher"}), "data")}
-            </PageV2>
+            </Screen>
         );
     }
 }

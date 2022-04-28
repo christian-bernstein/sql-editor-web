@@ -3,17 +3,20 @@ import {Box} from "../../lo/Box";
 import {utilizeGlobalTheme} from "../../../logic/app/App";
 import ReactApexChart from "react-apexcharts";
 import {OverflowBehaviour} from "../../../logic/style/OverflowBehaviour";
-import {array, arrayFactory} from "../../../logic/Utils";
+import {array, getOr} from "../../../logic/Utils";
 import {Dimension} from "../../../logic/style/Dimension";
 import {DimensionalMeasured, px} from "../../../logic/style/DimensionalMeasured";
 import {Text, TextType} from "../../lo/Text";
 import styled from "styled-components";
-import {Themeable} from "../../../logic/style/Themeable";
+import {getMeaningfulColors, MeaningfulColors, Themeable} from "../../../logic/style/Themeable";
+import {WithVisualMeaning} from "../../../logic/style/WithVisualMeaning";
+import {ObjectVisualMeaning} from "../../../logic/style/ObjectVisualMeaning";
 
-export type AreaChartComponentProps = {
+export type AreaChartComponentProps = WithVisualMeaning & {
     series: number[],
     title: string,
-    numIndicator: number
+    numIndicator: number,
+    animated?: boolean
 }
 
 export class AreaChartComponent extends React.Component<AreaChartComponentProps, any> {
@@ -24,6 +27,10 @@ export class AreaChartComponent extends React.Component<AreaChartComponentProps,
 
     render() {
         const theme: Themeable.Theme = utilizeGlobalTheme();
+        const mc: MeaningfulColors = getMeaningfulColors(getOr(this.props.visualMeaning, ObjectVisualMeaning.INFO), theme);
+        const colors: any[] = array(mc.lighter.css(), 2);
+
+
         const FrontWrapper = styled.div`
           z-index: 200;
           position: absolute;
@@ -55,6 +62,9 @@ export class AreaChartComponent extends React.Component<AreaChartComponentProps,
                                 ]}
                                 options={{
                                     chart: {
+                                        animations: {
+                                            enabled: this.props.animated
+                                        },
                                         toolbar: {
                                             show: false
                                         },
@@ -98,7 +108,7 @@ export class AreaChartComponent extends React.Component<AreaChartComponentProps,
                                     },
                                     fill: {
                                         type: "gradient",
-                                        colors: [utilizeGlobalTheme().colors.primaryHighlightColor.css(), utilizeGlobalTheme().colors.primaryHighlightColor.css()],
+                                        colors: colors,
                                         gradient: {
                                             shadeIntensity: .10,
                                             opacityFrom: 0.002,
@@ -106,7 +116,7 @@ export class AreaChartComponent extends React.Component<AreaChartComponentProps,
                                             // stops: [50, 80, 40]
                                         }
                                     },
-                                    colors: [utilizeGlobalTheme().colors.primaryHighlightColor.css(), utilizeGlobalTheme().colors.primaryHighlightColor.css()],
+                                    colors: colors,
                                     yaxis: {
                                         max: 100,
                                         axisBorder: {

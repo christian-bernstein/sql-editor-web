@@ -8,7 +8,7 @@ export type PosInCenterProps = {
     classnames?: string[]
 }
 
-export const PosInCenter: React.FC<PosInCenterProps> = React.memo(props => {
+export const Centered: React.FC<PosInCenterProps> = React.memo(props => {
     const Wrapper = styled.div`
       height: ${props.fullHeight ? "100%" : "auto"};
       width: 100%;

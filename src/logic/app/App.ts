@@ -24,6 +24,7 @@ import {CDNResponsePacketData} from "../../packets/in/CDNResponsePacketData";
 import {CDNRequestBranch} from "../data/cdn/CDNRequestBranch";
 import {ScreenManager} from "../screen/ScreenManager";
 import {AppShortcuts} from "./AppShortcuts";
+import {Cache} from "../cache/Cache";
 
 export function utilizeApp(): App {
     return App.app();
@@ -117,6 +118,8 @@ export class App {
     private readonly actions: Map<String, Array<(parameters?: any) => void>> = new Map<String, Array<(parameters?: any) => void>>();
 
     private readonly _screenManager: ScreenManager = new ScreenManager();
+
+    private centralMemoryCache?: Cache;
 
     private globalTheme: string;
 
@@ -343,7 +346,7 @@ export class App {
     private createConnectorFactory(): () => Environment.Connector {
         return () => {
             return new Environment.Connector(this.config.connectorConfig)
-                .registerSocketEventHandler(Environment.SocketEventTypes.ONOPEN, {
+                .registerSocketEventHandler(Environment.SocketEventTypes.ON_OPEN, {
                     stator: true,
                     usagesLeft: 10000,
                     handle: ev => {
@@ -351,7 +354,7 @@ export class App {
                         this.callAction("connection-established");
                     }
                 })
-                .registerSocketEventHandler(Environment.SocketEventTypes.ONCLOSE, {
+                .registerSocketEventHandler(Environment.SocketEventTypes.ON_CLOSE, {
                     stator: true,
                     usagesLeft: 10000,
                     handle: ev => {
@@ -383,12 +386,21 @@ export class App {
         this.config.rootRerenderHook?.();
     }
 
+    /**
+     * Returns the central-memory-cache
+     */
+    public cmc(): Cache {
+        return this.centralMemoryCache as Cache;
+    }
+
     private init() {
         document.title = this.config.appTitle + (this.config.debugMode ? " (Debug mode)" : "");
         this._initiated = true;
 
         // Create the console interception
         this.initLogInterceptor();
+
+        this.initCaches();
 
         this.initShards();
 
@@ -397,6 +409,13 @@ export class App {
 
         // Try to load the default theme, set in the browser
         this.loadDefaultBrowserTheme();
+    }
+
+    private initCaches() {
+        this.centralMemoryCache = new Cache({
+            id: "central-memory-cache",
+            adapter: Cache.memory("cmc")
+        });
     }
 
     private initShards() {

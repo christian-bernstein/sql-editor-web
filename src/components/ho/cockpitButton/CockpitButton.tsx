@@ -3,7 +3,7 @@ import {ObjectVisualMeaning} from "../../../logic/style/ObjectVisualMeaning";
 import {getOr} from "../../../logic/Utils";
 import {Box} from "../../lo/Box";
 import {Cursor} from "../../../logic/style/Cursor";
-import {PosInCenter} from "../../lo/PosInCenter";
+import {Centered} from "../../lo/PosInCenter";
 import {Text} from "../../lo/Text";
 import {Separator} from "../../lo/Separator";
 import {Togglable} from "../../logic/Togglable";
@@ -52,13 +52,13 @@ export class CockpitButton extends BernieComponent<CockpitButtonPropsPartial, an
                         const vm: ObjectVisualMeaning = p.multiColorMode ? getOr(p.visualMeaning, ObjectVisualMeaning.INFO) : ObjectVisualMeaning.INFO;
                         return (
                             <Box noPadding highlight cursor={Cursor.pointer} visualMeaning={vm} opaque={!p.multiColorMode}>
-                                <PosInCenter fullHeight>
+                                <Centered fullHeight>
                                     <Text text={`**${p.title}**`} uppercase cursor={Cursor.pointer} visualMeaning={vm} coloredText={false}/>
-                                </PosInCenter>
+                                </Centered>
                                 <Separator visualMeaning={vm}/>
-                                <PosInCenter fullHeight>
+                                <Centered fullHeight>
                                     <Text text={`${p.valueFactory ? p.valueFactory(this) : p.value}`} uppercase cursor={Cursor.pointer}/>
-                                </PosInCenter>
+                                </Centered>
                             </Box>
                         );
                     })()
@@ -67,13 +67,13 @@ export class CockpitButton extends BernieComponent<CockpitButtonPropsPartial, an
                         const vm: ObjectVisualMeaning = p.multiColorMode ? getOr(p.visualMeaning, ObjectVisualMeaning.UI_NO_HIGHLIGHT) : ObjectVisualMeaning.UI_NO_HIGHLIGHT;
                         return (
                             <Box noPadding highlight cursor={Cursor.pointer} visualMeaning={vm} opaque={true}>
-                                <PosInCenter fullHeight>
+                                <Centered fullHeight>
                                     <Text text={`**${p.title}**`} uppercase cursor={Cursor.pointer} visualMeaning={vm} coloredText/>
-                                </PosInCenter>
+                                </Centered>
                                 <Separator visualMeaning={vm}/>
-                                <PosInCenter fullHeight>
+                                <Centered fullHeight>
                                     <Text text={`${p.valueFactory ? p.valueFactory(this) : p.value}`} uppercase cursor={Cursor.pointer}/>
-                                </PosInCenter>
+                                </Centered>
                             </Box>
                         );
                     })()

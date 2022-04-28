@@ -4,7 +4,7 @@ import {utilizeGlobalTheme} from "../../logic/app/App";
 import styled from "styled-components";
 import {FlexDirection} from "../../logic/style/FlexDirection";
 import {getOr} from "../../logic/Utils";
-import {DimensionalMeasured} from "../../logic/style/DimensionalMeasured";
+import {DimensionalMeasured, px} from "../../logic/style/DimensionalMeasured";
 import {Align} from "../../logic/style/Align";
 import {Justify} from "../../logic/style/Justify";
 import {OverflowBehaviour} from "../../logic/style/OverflowBehaviour";
@@ -17,6 +17,7 @@ export type FlexBoxProps = {
     align?: Align,
     justifyContent?: Justify,
     width?: DimensionalMeasured,
+    minWidth?: DimensionalMeasured,
     height?: DimensionalMeasured,
     overflowXBehaviour?: OverflowBehaviour,
     overflowYBehaviour?: OverflowBehaviour
@@ -35,14 +36,13 @@ export class FlexBox extends React.Component<FlexBoxProps, any> {
         const margin: Margin = getOr(this.props.margin, createMargin(0, 0, 0, 0));
         const Wrapper = styled['div']`
           display: flex;
-          
           padding: ${!this.props.padding ? "0" : ((getOr(this.props.paddingY, theme.paddings.defaultObjectPadding).css() + " " + getOr(this.props.paddingX, theme.paddings.defaultObjectPadding).css()))};
-          
           flex-direction: ${getOr(this.props.flexDir, FlexDirection.COLUMN)};
           gap: ${getOr(this.props.gap?.css(), theme.gaps.defaultGab.css())};
           align-items: ${this.props.align || Align.START};
           justify-content: ${getOr(this.props.justifyContent, Justify.FLEX_START)};
           width: ${getOr(this.props.width?.css(), "auto")};
+          min-width: ${getOr(this.props.minWidth, px()).css()};
           height: ${getOr(this.props.height?.css(), "auto")};
           overflow-x: ${getOr<OverflowBehaviour>(this.props.overflowXBehaviour, OverflowBehaviour.VISIBLE)};
           overflow-y: ${getOr<OverflowBehaviour>(this.props.overflowYBehaviour, OverflowBehaviour.VISIBLE)};

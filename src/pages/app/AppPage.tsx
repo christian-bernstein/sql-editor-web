@@ -2,9 +2,8 @@ import React, {ForwardedRef} from "react";
 import "../../styles/pages/AppPage.scss";
 import "../../styles/utils.scss";
 import "react-tiger-transition/styles/main.min.css";
-import {BrowserRouter, Redirect, Route, Switch} from "react-router-dom";
+import {BrowserRouter, Route, Switch} from "react-router-dom";
 import {DefaultSpecialPages} from "../../logic/misc/DefaultSpecialPages";
-import {BoardingPage} from "../boarding/BoardingPage";
 import {LoginPage} from "../login/LoginPage";
 import DashboardPage from "../dashboard/DashboardPage";
 import MenuPage from "../menu/MenuPage";
@@ -24,14 +23,14 @@ import {RegexPage} from "../../tests/regex/RegexPage";
 import {Assembly} from "../../logic/assembly/Assembly";
 import {Dialog, Slide} from "@mui/material";
 import {TransitionProps} from "@mui/material/transitions";
-import {PageV2} from "../../components/lo/Page";
+import {Screen} from "../../components/lo/Page";
 import {FlexBox} from "../../components/lo/FlexBox";
 import {FlexDirection} from "../../logic/style/FlexDirection";
 import {percent} from "../../logic/style/DimensionalMeasured";
 import {Icon} from "../../components/lo/Icon";
 import {ReactComponent as CloseIcon} from "../../assets/icons/ic-20/ic20-close.svg";
 import {ObjectVisualMeaning} from "../../logic/style/ObjectVisualMeaning";
-import {PosInCenter} from "../../components/lo/PosInCenter";
+import {Centered} from "../../components/lo/PosInCenter";
 import {InformationBox} from "../../components/ho/informationBox/InformationBox";
 import {Text} from "../../components/lo/Text";
 import {Align} from "../../logic/style/Align";
@@ -52,6 +51,7 @@ import {MenuPageV2} from "../menu/v2/MenuPageV2";
 import {If} from "../../components/logic/If";
 import {Shard} from "../../logic/misc/Shard";
 import {QuickActionShard} from "../../shards/quickAction/QuickActionShard";
+import {BoardingPage} from "../boarding/BoardingPage";
 
 export type AppPageProps = {
 }
@@ -82,6 +82,13 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
     private readonly assembly: Assembly;
 
     private readonly specialPageRenderers: Map<string, (params: any) => JSX.Element> = new Map<string, (params: any) => JSX.Element>([
+        [DefaultSpecialPages.UNIT_TEST, () => (
+            <Screen children={
+                <Centered fullHeight children={
+                    <Text text={"Unit test screen"} bold uppercase visualMeaning={ObjectVisualMeaning.BETA} coloredText/>
+                }/>
+            }/>
+        )],
         [DefaultSpecialPages.BOARDING, () => <></>],
         [DefaultSpecialPages.SELECT_APP_CONFIG, (params) => <SelectAppConfigPageV2 onSelection={data => {
             this.init(data.config);
@@ -234,6 +241,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
             //     }
             // }
         ] as AppConfigSelectionData[]);
+        // this.activateSpecialPage(DefaultSpecialPages.UNIT_TEST, () => undefined);
     }
 
     componentWillUnmount() {
@@ -301,16 +309,16 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                         param: this.state.dialogProps,
                         errorComponent: e => {
                             return (
-                                <PageV2>
+                                <Screen>
                                     <FlexBox flexDir={FlexDirection.COLUMN} align={Align.CENTER} justifyContent={Justify.FLEX_END} height={percent(100)}>
-                                        <PosInCenter fullHeight>
+                                        <Centered fullHeight>
                                             <InformationBox visualMeaning={ObjectVisualMeaning.ERROR}>
                                                 <Text text={`**[DEBUG]** No assembly found\n'${e}'`}/>
                                             </InformationBox>
-                                        </PosInCenter>
+                                        </Centered>
                                         <Icon icon={<CloseIcon/>} visualMeaning={ObjectVisualMeaning.ERROR} colored onClick={() => App.app().callAction("close-main-dialog")}/>
                                     </FlexBox>
-                                </PageV2>
+                                </Screen>
                             );
                         }
                     })

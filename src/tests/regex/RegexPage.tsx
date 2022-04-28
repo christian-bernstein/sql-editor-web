@@ -5,7 +5,7 @@ import styled from "styled-components";
 import {Themeable} from "../../logic/style/Themeable";
 import {utilizeGlobalTheme} from "../../logic/app/App";
 import {FlexBox} from "../../components/lo/FlexBox";
-import {PosInCenter} from "../../components/lo/PosInCenter";
+import {Centered} from "../../components/lo/PosInCenter";
 import {FlexDirection} from "../../logic/style/FlexDirection";
 import {em, percent, px} from "../../logic/style/DimensionalMeasured";
 import {Box} from "../../components/lo/Box";
@@ -271,7 +271,7 @@ export class RegexPage extends React.PureComponent {
                             }}/>
                         </FlexBox>*/}
                     </FlexBox>
-                    <PosInCenter classnames={["editor-view"]}>
+                    <Centered classnames={["editor-view"]}>
                         <LiteGrid columns={2}
                                   gap={theme.gaps.defaultGab}
                                   // height={percent(100)}
@@ -294,7 +294,7 @@ export class RegexPage extends React.PureComponent {
                                 )}
                             />*/}
 
-                            <PosInCenter>
+                            <Centered>
                                 <FlexBox flexDir={FlexDirection.COLUMN} width={percent(100)}>
                                     <Box width={percent(100)} gapY={em(.5)}>
                                         <Text text={"Search string"} type={TextType.smallHeaderDeactivated}/>
@@ -378,9 +378,9 @@ export class RegexPage extends React.PureComponent {
                                         />
                                     </Box>
                                 </FlexBox>
-                            </PosInCenter>
+                            </Centered>
                         </LiteGrid>
-                    </PosInCenter>
+                    </Centered>
                 </div>
             </Wrapper>
         );

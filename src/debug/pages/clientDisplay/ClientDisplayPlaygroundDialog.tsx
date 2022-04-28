@@ -1,5 +1,5 @@
 import {BernieComponent} from "../../../logic/BernieComponent";
-import {PageV2} from "../../../components/lo/Page";
+import {Screen} from "../../../components/lo/Page";
 import {Themeable} from "../../../logic/style/Themeable";
 import {Assembly} from "../../../logic/assembly/Assembly";
 import {AppHeader} from "../../../components/lo/AppHeader";
@@ -9,7 +9,7 @@ import React from "react";
 import {App, utilizeGlobalTheme} from "../../../logic/app/App";
 import {ReactComponent as Logo} from "../../../assets/logo.svg";
 import {percent, px} from "../../../logic/style/DimensionalMeasured";
-import {PosInCenter} from "../../../components/lo/PosInCenter";
+import {Centered} from "../../../components/lo/PosInCenter";
 import {Box} from "../../../components/lo/Box";
 import {ClientDisplay} from "../../../components/ho/clientDisplay/ClientDisplay";
 import {Text} from "../../../components/lo/Text";
@@ -70,7 +70,7 @@ export class ClientDisplayPlaygroundDialog extends BernieComponent<any, any, Cli
     private displayAssembly() {
         this.assembly.assembly("display", (t, props) => (
             <Box gapY={t.gaps.smallGab} width={percent(100)}>
-                <PosInCenter>
+                <Centered>
                     <ClientDisplay clientDataResolver={() => ClientDisplayPlaygroundDialog.profile} overwriteMenuRenderer={(instance, profile) => {
                         const ls = this.local.state;
                         return (
@@ -83,7 +83,7 @@ export class ClientDisplayPlaygroundDialog extends BernieComponent<any, any, Cli
                             />
                         );
                     }}/>
-                </PosInCenter>
+                </Centered>
             </Box>
         ))
     }
@@ -107,13 +107,13 @@ export class ClientDisplayPlaygroundDialog extends BernieComponent<any, any, Cli
 
     componentRender(p: any, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
-            <PageV2>
+            <Screen>
                 <AppHeader title={"ClientDisplay-Playground"} left={
                     <Icon icon={<Logo/>} size={px(20)}/>
                 } right={
                     <Icon icon={<CloseIcon/>} onClick={() => App.app().toggleMainDialog("closed")}/>
                 }/>
-                <PosInCenter fullHeight>
+                <Centered fullHeight>
                     <FlexBox gap={t.gaps.smallGab} width={percent(100)}>
                         {this.createCheckbox("Banner", "banner")}
                         {this.createCheckbox("Biography", "biography")}
@@ -123,8 +123,8 @@ export class ClientDisplayPlaygroundDialog extends BernieComponent<any, any, Cli
                             component: "display"
                         }), "display")}
                     </FlexBox>
-                </PosInCenter>
-            </PageV2>
+                </Centered>
+            </Screen>
         );
     }
 }

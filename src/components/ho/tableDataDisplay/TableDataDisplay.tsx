@@ -1,5 +1,5 @@
 import React, {CSSProperties} from "react";
-import {PageV2} from "../../lo/Page";
+import {Screen} from "../../lo/Page";
 import ReactDataGrid from '@inovua/reactdatagrid-community';
 import '@inovua/reactdatagrid-community/index.css';
 import '@inovua/reactdatagrid-community/theme/green-dark.css';
@@ -111,7 +111,7 @@ export class DebugTableDataDisplayPage extends React.Component<DebugTableDataDis
     render() {
         const theme: Themeable.Theme = utilizeGlobalTheme();
         return (
-            <PageV2>
+            <Screen>
                 <LiteGrid columns={3}>
                     <FlexBox align={Align.START} justifyContent={Justify.CENTER} gap={theme.gaps.smallGab}>
 
@@ -164,7 +164,7 @@ export class DebugTableDataDisplayPage extends React.Component<DebugTableDataDis
                 <Box height={percent(100)} noPadding={true} overflowYBehaviour={OverflowBehaviour.HIDDEN} overflowXBehaviour={OverflowBehaviour.HIDDEN}>
                     <TableDataDisplay data={this.props.data}/>
                 </Box>
-            </PageV2>
+            </Screen>
         );
     }
 }

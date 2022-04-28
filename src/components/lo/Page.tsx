@@ -20,7 +20,7 @@ export type PageProps = {
 /**
  * todo rename to screen
  */
-export const PageV2: React.FC<PageProps> = React.memo(props => {
+export const Screen: React.FC<PageProps> = React.memo(props => {
     const theme: Themeable.Theme = utilizeGlobalTheme();
     const Wrapper = styled.div`
       padding: ${props.deactivatePadding ? 0 : theme.paddings.defaultObjectPadding.css()};

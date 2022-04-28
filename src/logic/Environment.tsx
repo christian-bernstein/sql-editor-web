@@ -3,6 +3,10 @@ import {v4} from "uuid";
 import {ConnectorConfig} from "./network/ConnectorConfig";
 import {App} from "./app/App";
 import {SocketSwitchProtocolDataPacket} from "../packets/in/SocketSwitchProtocolDataPacket";
+import {LatencySnapshot} from "./network/LatencySnapshot";
+import {PingPacketData} from "../packets/out/PingPacketData";
+import {PongPacketData} from "../packets/in/PongPacketData";
+import {getOr} from "./Utils";
 
 export namespace Environment {
 
@@ -83,15 +87,16 @@ export namespace Environment {
     }
 
     export enum SocketEventTypes {
-        ONOPEN, ONCLOSE
+        ON_OPEN, ON_CLOSE, ON_INBOUND_MESSAGE, ON_OUTBOUND_MESSAGE
     }
 
     export class Connector {
-        get connectionAttempts(): number {
-            return this._connectionAttempts;
+
+        get latencyCacheUpdateCallbacks(): Array<(con: Environment.Connector) => void> {
+            return this._latencyCacheUpdateCallbacks;
         }
-        get config(): ConnectorConfig {
-            return this._config;
+        get latencyRecords(): Array<LatencySnapshot> {
+            return this._latencyRecords;
         }
 
         private static connectors: Array<Connector> = new Array<Environment.Connector>();
@@ -149,9 +154,17 @@ export namespace Environment {
         private readonly _baseProtocols: Array<Protocol> = new Array<Environment.Protocol>(Connector.coreProtocol);
 
         private readonly socketEventHandlers: Map<SocketEventTypes, Array<SocketEventHandler>> = new Map<SocketEventTypes, Array<SocketEventHandler>>([
-            [SocketEventTypes.ONOPEN, new Array<SocketEventHandler>()],
-            [SocketEventTypes.ONCLOSE, new Array<SocketEventHandler>()]
+            [SocketEventTypes.ON_OPEN, new Array<SocketEventHandler>()],
+            [SocketEventTypes.ON_CLOSE, new Array<SocketEventHandler>()],
+            [SocketEventTypes.ON_INBOUND_MESSAGE, new Array<SocketEventHandler>()],
+            [SocketEventTypes.ON_OUTBOUND_MESSAGE, new Array<SocketEventHandler>()],
         ]);
+
+        private readonly _config: ConnectorConfig;
+
+        private readonly _latencyRecords: Array<LatencySnapshot>;
+
+        private readonly _latencyCacheUpdateCallbacks: Array<(con: Connector) => void>
 
         private _socket: WebSocket | undefined;
 
@@ -165,16 +178,57 @@ export namespace Environment {
 
         private _currentProtocol: string;
 
-        private _config: ConnectorConfig;
-
         private _connectionAttempts: number;
+
+        private latencyRecordTimeout: any
 
         constructor(config: ConnectorConfig) {
             this._config = config;
             this._reconnectLock = false;
             this._connectionAttempts = 0;
             this._currentProtocol = config.protocol;
+            this._latencyRecords = new Array<LatencySnapshot>();
+            this._latencyCacheUpdateCallbacks = new Array<(con: Environment.Connector) => void>();
             Connector.connectors.push(this);
+            this.init();
+        }
+
+        public stop() {
+            if (this.latencyRecordTimeout !== undefined) {
+                clearInterval(this.latencyRecordTimeout);
+            }
+        }
+
+        private init() {
+            if (getOr(this.config.recordLatency, true)) {
+                this.latencyRecordTimeout = setInterval(() => {
+                    this.call({
+                        protocol: "core",
+                        packetID: "PingPacketData",
+                        data: {
+                            outboundTimestamp: Date.now()
+                        } as PingPacketData,
+                        callback: {
+                            handle: (connector1, packet) => {
+                                const pong: PongPacketData = packet.data as PongPacketData;
+                                const latency = Math.max(0, pong.inboundTimestamp - pong.outboundTimestamp);
+                                this.latencyRecords.push({
+                                    latency: latency,
+                                    timestamp: new Date()
+                                });
+                                if (this.latencyRecords.length > getOr(this.config.latencyRecordCacheSize, 30)) {
+                                    this.latencyRecords.splice(0, 1);
+                                }
+                                this._latencyCacheUpdateCallbacks.forEach(callback => callback(this));
+                            }
+                        }
+                    });
+                }, getOr(this.config.pingInterval, 1500))
+            }
+        }
+
+        public getLatestLatencyRecord(): LatencySnapshot | undefined {
+            return this.latencyRecords.length > 0 ? this.latencyRecords[this.latencyRecords.length - 1] : undefined;
         }
 
         public registerOnProtocolChangeHandler(id: string, handler: (connector: Environment.Connector, switchData: SocketSwitchProtocolDataPacket) => void) {
@@ -220,7 +274,7 @@ export namespace Environment {
             } else {
                 // Websocket is still loading
                 try {
-                    this.registerSocketEventHandler(SocketEventTypes.ONOPEN, {
+                    this.registerSocketEventHandler(SocketEventTypes.ON_OPEN, {
                         stator: false,
                         handle: ev => {
                             (ev.target as WebSocket).send(payload);
@@ -310,11 +364,11 @@ export namespace Environment {
                         this._connectionAttempts = 0;
                         this._reconnectLock = false;
                         // Fire 'open' event
-                        this.fireSocketEvent(SocketEventTypes.ONOPEN, ev);
+                        this.fireSocketEvent(SocketEventTypes.ON_OPEN, ev);
                         App.app().rerenderGlobally();
                     };
                     this._socket.onclose = ev => {
-                        this.fireSocketEvent(SocketEventTypes.ONCLOSE, ev)
+                        this.fireSocketEvent(SocketEventTypes.ON_CLOSE, ev)
                         if (this._connectionAttempts < this._config.maxConnectAttempts) {
                             if (!this._reconnectLock){
                                 let timeout: number = 0;
@@ -337,11 +391,8 @@ export namespace Environment {
                     this._socket.onmessage = ev => {
                         const packet: Packet = JSON.parse(ev.data) as Packet;
                         this._config.packetInterceptor(packet, this);
-
-
-                        console.log(packet)
-
-
+                        // console.log(packet)
+                        // this.fireSocketEvent(SocketEventTypes.ON_INBOUND_MESSAGE, ev);
                         if (packet.type === PacketType.RESPONSE) {
                             // It's a return packet
                             const callback: Handler | undefined = this._responseMap.get(packet.id);
@@ -422,6 +473,13 @@ export namespace Environment {
 
         public getCurrentProtocol(): Protocol {
             return this.protocols.get(this._config.protocol) as Protocol;
+        }
+
+        get connectionAttempts(): number {
+            return this._connectionAttempts;
+        }
+        get config(): ConnectorConfig {
+            return this._config;
         }
 
         get baseProtocols(): Array<Environment.Protocol> {

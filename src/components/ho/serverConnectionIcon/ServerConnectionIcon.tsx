@@ -1,27 +1,25 @@
 import React from "react";
 import {ReactComponent as ServerIcon} from "../../../assets/icons/ic-20/ic20-dns.svg";
 import {ReactComponent as ProtocolIcon} from "../../../assets/icons/ic-20/ic20-chat.svg";
-import {ReactComponent as PluginIcon} from "../../../assets/icons/ic-20/ic20-plugin.svg";
 import {Icon} from "../../lo/Icon";
 import {App, utilizeGlobalTheme} from "../../../logic/app/App";
 import {ObjectVisualMeaning} from "../../../logic/style/ObjectVisualMeaning";
 import {Environment} from "../../../logic/Environment";
 import {getMeaningfulColors, Themeable} from "../../../logic/style/Themeable";
-import {percent, px} from "../../../logic/style/DimensionalMeasured";
+import {px} from "../../../logic/style/DimensionalMeasured";
 import {getOr} from "../../../logic/Utils";
 import {CustomTooltip} from "../../lo/CustomTooltip";
 import {FlexBox} from "../../lo/FlexBox";
 import {ElementHeader} from "../../lo/ElementHeader";
 import {Separator} from "../../lo/Separator";
-import {Text} from "../../lo/Text";
+import {Text, TextType} from "../../lo/Text";
 import {Box} from "../../lo/Box";
 import {Constants} from "../../../logic/misc/Constants";
-import {Align} from "../../../logic/style/Align";
-import {Button} from "../../lo/Button";
 import {FlexDirection} from "../../../logic/style/FlexDirection";
 import {BadgedWrapper} from "../../lo/BadgedWrapper";
 import {Badge} from "../../lo/Badge";
 import {BounceLoader} from "react-spinners";
+import {LatencyDisplay} from "../../../tests/chart/LatencyDisplay";
 
 export type ServerConnectionIconProps = {
     openConnectionMetricsDialog?: boolean,
@@ -34,7 +32,7 @@ export const ServerConnectionIcon: React.FC<ServerConnectionIconProps> = props =
     const conState = connector.socket?.readyState;
 
     return (
-        <CustomTooltip noBorder noPadding title={renderTooltip(props, theme, connector)}>
+        <CustomTooltip noBorder arrow noPadding title={renderTooltip(props, theme, connector)}>
             <span onClick={() => {
                 if (getOr(props.openConnectionMetricsDialog, false)) {
                     App.app().callAction("open-main-dialog", Constants.serverConnectionDialog);
@@ -62,21 +60,27 @@ export const ServerConnectionIcon: React.FC<ServerConnectionIconProps> = props =
 export const renderTooltip: (props: ServerConnectionIconProps, theme: Themeable.Theme, con: Environment.Connector) => JSX.Element = (props, theme, con) => {
     return (
         <Box gapY={theme.gaps.smallGab}>
-            <ElementHeader icon={<ServerIcon/>} title={"Server connection telemetry"}/>
+            <ElementHeader icon={<ServerIcon/>} title={"Server connection telemetry"} appendix={
+                <Box opaque visualMeaning={ObjectVisualMeaning.INFO} paddingX={theme.paddings.defaultButtonPadding} paddingY={theme.paddings.defaultBadgePadding} children={
+                    <Text text={"healthy"} uppercase bold fontSize={px(12)}/>
+                }/>
+            }/>
             <Separator/>
-            <Text text={`Current protocol: '**${con.currentProtocol}**'`} enableLeftAppendix leftAppendix={
-                <FlexBox height={percent(100)} flexDir={FlexDirection.ROW} align={Align.CENTER}>
-                    <Icon icon={<ProtocolIcon/>}/>
-                    <span/>
-                </FlexBox>
-            }/>
 
-            <Button visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} opaque children={
-                <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER}>
-                    <Icon icon={<PluginIcon/>}/>
-                    <Text text={"Connect"}/>
-                </FlexBox>
-            }/>
+            <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab}>
+                <Icon icon={<ProtocolIcon/>}/>
+                <Text text={"Current protocol: "} type={TextType.secondaryDescription}/>
+                <Text text={con.currentProtocol}/>
+            </FlexBox>
+
+            <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab}>
+                <Icon icon={<ServerIcon/>}/>
+                <Text text={"Address: "} type={TextType.secondaryDescription}/>
+                <Text text={con.config.address}/>
+            </FlexBox>
+
+            <LatencyDisplay/>
+
         </Box>
     );
 }
