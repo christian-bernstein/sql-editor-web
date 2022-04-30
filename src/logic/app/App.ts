@@ -55,6 +55,8 @@ export function utilizeGlobalTheme(defTheme: Themeable.Theme = Themeable.default
 
 export class App {
 
+    public static readonly enablePacketLogging: boolean = false;
+
     get shortcuts(): AppShortcuts {
         return this._shortcuts;
     }

@@ -2,11 +2,12 @@ import {BernieComponent} from "../../logic/BernieComponent";
 import {Themeable} from "../../logic/style/Themeable";
 import {Screen} from "../../components/lo/Page";
 import {AppHeader} from "../../components/lo/AppHeader";
-import React from "react";
+import React, {CSSProperties} from "react";
 import {ReactComponent as CloseIcon} from "../../assets/icons/ic-20/ic20-close.svg";
 import {ReactComponent as ReloadIcon} from "../../assets/icons/ic-20/ic20-refresh.svg";
 import {ReactComponent as DeleteIcon} from "../../assets/icons/ic-20/ic20-delete.svg";
 import {ReactComponent as PacketIcon} from "../../assets/icons/ic-20/ic20-archive.svg";
+import {ReactComponent as TextIcon} from "../../assets/icons/ic-20/ic20-text-fields.svg";
 import {ReactComponent as ColorToggleIcon} from "../../assets/icons/ic-20/ic20-brightness-medium.svg";
 import {App} from "../../logic/app/App";
 import {Icon} from "../../components/lo/Icon";
@@ -17,7 +18,6 @@ import {FlexBox} from "../../components/lo/FlexBox";
 import {FlexDirection} from "../../logic/style/FlexDirection";
 import {getOr} from "../../logic/Utils";
 import ReactJson from "react-json-view";
-import {Justify} from "../../logic/style/Justify";
 import dateFormat from "dateformat";
 import {Separator} from "../../components/lo/Separator";
 import {Orientation} from "../../logic/style/Orientation";
@@ -37,6 +37,19 @@ import {Togglable} from "../../components/logic/Togglable";
 import {v4} from "uuid";
 import {FilterProps} from "./FilterProps";
 import {If} from "../../components/logic/If";
+import ReactDataGrid from "@inovua/reactdatagrid-community";
+import {CustomTooltip} from "../../components/lo/CustomTooltip";
+import {ElementHeader} from "../../components/lo/ElementHeader";
+import DateFilter from "@inovua/reactdatagrid-community/DateFilter";
+import {Justify} from "../../logic/style/Justify";
+import {CopyIcon} from "../../components/ho/copyIcon/CopyIcon";
+import {LogPageDisplayVersion} from "./LogPageDisplayVersion";
+import {LogBodyRenderer} from "./LogBodyRenderer";
+
+export type LogPageProps = {
+    version: LogPageDisplayVersion,
+    enableClipboard: boolean
+}
 
 export type LogPageLocalState = {
     filters: Map<"all" | "trc" | "deb" | "inf" | "wrn" | "err", boolean>,
@@ -46,7 +59,8 @@ export type LogPageLocalState = {
     filterMultiColorMode: boolean
 }
 
-export class LogPage extends BernieComponent<any, any, LogPageLocalState> {
+// noinspection ALL
+export class LogPage extends BernieComponent<LogPageProps, any, LogPageLocalState> {
 
     private static readonly levelMapper: Map<string, "trc" | "deb" | "inf" | "wrn" | "err"> = new Map<string, "trc" | "deb" | "inf" | "wrn" | "err">([
         ["TRACE", "trc"],
@@ -65,8 +79,21 @@ export class LogPage extends BernieComponent<any, any, LogPageLocalState> {
         ["any", "any-appendix-asm"],
     ])
 
-    constructor() {
-        super(undefined, undefined, {
+    private static readonly versionMap: Map<LogPageDisplayVersion, LogBodyRenderer> = new Map<LogPageDisplayVersion, LogBodyRenderer>([
+        [LogPageDisplayVersion.V1, {
+            render(instance: LogPage, history: Array<LogEntry>, t: Themeable.Theme): JSX.Element {
+                return instance.renderLogBodyV1(history, t);
+            }
+        }],
+        [LogPageDisplayVersion.V2, {
+            render(instance: LogPage, history: Array<LogEntry>, t: Themeable.Theme): JSX.Element {
+                return instance.renderLogBodyV2(history, t);
+            }
+        }]
+    ]);
+
+    constructor(props: LogPageProps) {
+        super(props, undefined, {
             filters: new Map<"all" | "trc" | "deb" | "inf" | "wrn" | "err", boolean>([
                 ["all", true],
                 ["trc", false],
@@ -87,12 +114,14 @@ export class LogPage extends BernieComponent<any, any, LogPageLocalState> {
             live: false,
             filterMultiColorMode: false
         });
+
         this.assembly.assembly("string-appendix-asm", (theme, props) => {
             const c: string = String(props);
             return (
                 <Text text={c} type={TextType.secondaryDescription}/>
             );
         });
+
         this.assembly.assembly("object-appendix-asm", (theme, props) => {
             const c: object = props;
             return (
@@ -113,9 +142,9 @@ export class LogPage extends BernieComponent<any, any, LogPageLocalState> {
                 />
             );
         });
+
         this.assembly.assembly("packet-appendix-asm", (theme, props) => {
             const c: Environment.Packet = props;
-
             return (
                 <FlexBox width={percent(100)} gap={theme.gaps.smallGab}>
                     <Text leftAppendix={
@@ -158,6 +187,7 @@ export class LogPage extends BernieComponent<any, any, LogPageLocalState> {
             //     </Box>
             // );
         });
+
         this.assembly.assembly("any-appendix-asm", (theme, props) => {
             try {
                 return (
@@ -191,10 +221,170 @@ export class LogPage extends BernieComponent<any, any, LogPageLocalState> {
                 );
             }
         });
+
         this.recalculateLogQuantities();
     }
 
-    // noinspection JSMethodCanBeStatic
+    private renderLogBodyV1(history: Array<LogEntry>, t: Themeable.Theme): JSX.Element {
+        return (
+            <FlexBox height={percent(100)} width={percent(100)} overflowYBehaviour={OverflowBehaviour.SCROLL}>
+                <Box gapY={t.gaps.smallGab} width={percent(100)}>{
+                    history.map(log => {
+                        let vm: ObjectVisualMeaning;
+                        switch (log.level) {
+                            case "ERROR": {
+                                vm = ObjectVisualMeaning.ERROR;
+                                break;
+                            }
+                            case "WARN": {
+                                vm = ObjectVisualMeaning.WARNING;
+                                break;
+                            }
+                            default: {
+                                vm = ObjectVisualMeaning.UI_NO_HIGHLIGHT;
+                                break;
+                            }
+                        }
+                        return (
+                            <Box width={percent(100)} overflowXBehaviour={OverflowBehaviour.SCROLL} visualMeaning={vm} gapY={t.gaps.smallGab} opaque>
+                                <FlexBox flexDir={FlexDirection.COLUMN} justifyContent={Justify.SPACE_BETWEEN}>
+                                    <FlexBox width={percent(100)} flexDir={FlexDirection.ROW} justifyContent={Justify.SPACE_BETWEEN}>
+                                        <FlexBox gap={t.gaps.smallGab} height={percent(100)} flexDir={FlexDirection.ROW}>
+                                            {this.component(() => <Text text={`**${dateFormat(log.timestamp, "h:MM:ss:l TT")}**`} visualMeaning={vm}/>, "log-related")}
+                                            <Separator orientation={Orientation.VERTICAL}/>
+                                            <Text text={`**${log.level}**`} visualMeaning={vm} coloredText/>
+                                        </FlexBox>
+                                        <Text text={`*${log.creator}*`} type={TextType.secondaryDescription}/>
+                                    </FlexBox>
+                                    <Text text={log.message} visualMeaning={vm}/>
+                                </FlexBox>
+                                <FlexBox gap={percent(0)} overflowXBehaviour={OverflowBehaviour.SCROLL} width={percent(100)}>
+                                    {
+                                        log.appendices.length > 0 ? (
+                                            log.appendices.map(appendix => this.renderAppendix(appendix))
+                                        ) : (
+                                            <></>
+                                        )
+                                    }
+                                </FlexBox>
+                            </Box>
+                        );
+                    })
+                }</Box>
+            </FlexBox>
+        );
+    }
+
+    private renderLogBodyV2(history: Array<LogEntry>, t: Themeable.Theme): JSX.Element {
+        const gridStyle: CSSProperties = {
+            minHeight: 550 ,
+            borderRadius: t.radii.defaultObjectRadius.withPlus(-1).css(),
+            overflow: "hidden",
+        };
+
+        const defaultFilterValue = [
+            {name: 'level', operator: 'startsWith', type: 'string', value: ''},
+            {name: 'timestamp', operator: 'after', type: 'date', value: ''}
+        ];
+
+        return (
+            <ReactDataGrid
+                onCellClick={event => event.preventDefault()}
+                enableKeyboardNavigation
+                pagination={"local"}
+                style={gridStyle as {[p: string]: string | number}}
+                theme={t.mode === "dark" ? "green-dark" : "green-light"}
+                idProperty="id"
+                columns={[
+                    {
+                        name: "level",
+                        header: "level",
+                        width: 80,
+                        minWidth: 80,
+                        render: ({value}) => {
+                            let vm: ObjectVisualMeaning;
+                            switch (value) {
+                                case "ERROR": {
+                                    vm = ObjectVisualMeaning.ERROR;
+                                    break;
+                                }
+                                case "WARN": {
+                                    vm = ObjectVisualMeaning.WARNING;
+                                    break;
+                                }
+                                default: {
+                                    vm = ObjectVisualMeaning.UI_NO_HIGHLIGHT;
+                                    break;
+                                }
+                            }
+
+                            return (
+                                <Text text={value} uppercase visualMeaning={vm} coloredText={vm !== ObjectVisualMeaning.UI_NO_HIGHLIGHT} bold/>
+                            );
+                        }
+                    },
+                    {
+                        name: "timestamp",
+                        header: "timestamp",
+                        dateFormat: "h:MM:ss:l TT",
+                        filterEditor: DateFilter,
+                        render: ({value}) => {
+                            return (
+                                dateFormat(value, "h:MM:ss:l TT")
+                            );
+                        }
+                    },
+                    {
+                        name: "creator",
+                        header: "creator",
+                    },
+                    {
+                        name: "message",
+                        header: "message",
+                        defaultFlex: 2,
+                        minWidth: 400,
+                        render: ({value}) => {
+                            return (
+                                <CustomTooltip arrow noBorder noPadding title={
+                                    <Box borderless>
+                                        <FlexBox flexDir={FlexDirection.COLUMN}>
+                                            <ElementHeader icon={<TextIcon/>} title={"Expanded message"} boldHeader appendix={
+                                                <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER}>
+                                                    <CopyIcon displayValueAsHover={false} copyValueProducer={() => String(value)}/>
+                                                    <Text text={`${String(value).length} chars`} fontSize={px(10)} type={TextType.secondaryDescription}/>
+                                                </FlexBox>
+                                            }/>
+                                            <Text text={value}/>
+                                        </FlexBox>
+                                    </Box>
+                                } children={
+                                    <span children={String(value)}/>
+                                }/>
+                            );
+                        }
+                    },
+                    {
+                        name: "appendices",
+                        header: "appendices",
+                        textAlign: "center",
+                        width: 60,
+                        minWidth: 60,
+                        render: ({value}) => {
+                            return (
+                                <FlexBox width={percent(100)} justifyContent={Justify.CENTER} align={Align.CENTER}>
+                                    <Text text={String((value as any[]).length)}/>
+                                </FlexBox>
+                            );
+                        }
+                    }
+                ]}
+                autoCheckboxColumn
+                defaultFilterValue={defaultFilterValue}
+                dataSource={[...history]}
+            />
+        );
+    }
+
     private renderEmptySophisticatedLogHistory(): JSX.Element {
         return (
             <If condition={(App.app().sophisticatedLogHistory.length === 0)} ifTrue={
@@ -211,12 +401,7 @@ export class LogPage extends BernieComponent<any, any, LogPageLocalState> {
 
     private recalculateLogQuantities() {
         const newQuantities = new Map<"all" | "trc" | "deb" | "inf" | "wrn" | "err", number>([
-            ["all", 0],
-            ["trc", 0],
-            ["deb", 0],
-            ["inf", 0],
-            ["wrn", 0],
-            ["err", 0]
+            ["all", 0], ["trc", 0], ["deb", 0], ["inf", 0], ["wrn", 0], ["err", 0]
         ]);
         App.app().sophisticatedLogHistory.forEach(entry => {
             const level = LogPage.levelMapper.get(entry.level) as "trc" | "deb" | "inf" | "wrn" | "err";
@@ -339,9 +524,9 @@ export class LogPage extends BernieComponent<any, any, LogPageLocalState> {
         }
     }
 
-    private renderSophisticatedLogHistory(t: Themeable.Theme): JSX.Element {
-        let history: Array<LogEntry> = [];
 
+    private getFilteredLogHistory(): Array<LogEntry> {
+        let history: Array<LogEntry> = [];
         const filters = this.local.state.filters;
         if (filters.get("all")) {
             history = App.app().sophisticatedLogHistory;
@@ -354,96 +539,52 @@ export class LogPage extends BernieComponent<any, any, LogPageLocalState> {
             App.app().sophisticatedLogHistory.forEach(entry => {
                 switch (entry.level) {
                     case "TRACE": {
-                        if (trc) {
-                            history.push(entry);
-                        }
+                        if (trc) history.push(entry);
                         break;
                     }
                     case "DEBUG": {
-                        if (deb) {
-                            history.push(entry);
-                        }
+                        if (deb) history.push(entry);
                         break;
                     }
                     case "INFO": {
-                        if (inf) {
-                            history.push(entry);
-                        }
+                        if (inf) history.push(entry);
                         break;
                     }
                     case "WARN": {
-                        if (wrn) {
-                            history.push(entry);
-                        }
+                        if (wrn) history.push(entry);
                         break;
                     }
                     case "ERROR": {
-                        if (err) {
-                            history.push(entry);
-                        }
+                        if (err) history.push(entry);
                         break;
                     }
                     case "SEVERE": {
-                        if (err) {
-                            history.push(entry);
-                        }
+                        if (err) history.push(entry);
                         break;
                     }
                 }
             });
         }
+        return history;
+    }
+
+    private renderSophisticatedLogHistory(t: Themeable.Theme): JSX.Element {
+        const history: Array<LogEntry> = this.getFilteredLogHistory();
 
         if (history.length < 1) {
             return this.renderEmptySophisticatedLogHistory();
         }
 
-        return (
-            <FlexBox height={percent(100)} width={percent(100)} overflowYBehaviour={OverflowBehaviour.SCROLL}>
-                <Box gapY={t.gaps.smallGab} width={percent(100)}>{
-                    history.map(log => {
-                        let vm: ObjectVisualMeaning;
-                        switch (log.level) {
-                            case "ERROR": {
-                                vm = ObjectVisualMeaning.ERROR;
-                                break;
-                            }
-                            case "WARN": {
-                                vm = ObjectVisualMeaning.WARNING;
-                                break;
-                            }
-                            default: {
-                                vm = ObjectVisualMeaning.UI_NO_HIGHLIGHT;
-                                break;
-                            }
-                        }
-                        return (
-                            <Box width={percent(100)} overflowXBehaviour={OverflowBehaviour.SCROLL} visualMeaning={vm} gapY={t.gaps.smallGab} opaque>
-                                <FlexBox flexDir={FlexDirection.COLUMN} justifyContent={Justify.SPACE_BETWEEN}>
-                                    <FlexBox width={percent(100)} flexDir={FlexDirection.ROW} justifyContent={Justify.SPACE_BETWEEN}>
-                                        <FlexBox gap={t.gaps.smallGab} height={percent(100)} flexDir={FlexDirection.ROW}>
-                                            {this.component(() => <Text text={`**${dateFormat(log.timestamp, "h:MM:ss:l TT")}**`} visualMeaning={vm}/>, "log-related")}
-                                            <Separator orientation={Orientation.VERTICAL}/>
-                                            <Text text={`**${log.level}**`} visualMeaning={vm} coloredText/>
-                                        </FlexBox>
-                                        <Text text={`*${log.creator}*`} type={TextType.secondaryDescription}/>
-                                    </FlexBox>
-                                    <Text text={log.message} visualMeaning={vm}/>
-                                </FlexBox>
-                                <FlexBox gap={percent(0)} overflowXBehaviour={OverflowBehaviour.SCROLL} width={percent(100)}>
-                                    {
-                                        log.appendices.length > 0 ? (
-                                            log.appendices.map(appendix => this.renderAppendix(appendix))
-                                        ) : (
-                                            <></>
-                                        )
-                                    }
-                                </FlexBox>
-                            </Box>
-                        );
-                    })
-                }</Box>
-            </FlexBox>
-        );
+        const historyRenderer = LogPage.versionMap.get(this.props.version);
+        if (historyRenderer !== undefined) {
+            return historyRenderer.render(this, history, t);
+        } else {
+            return (
+                <InformationBox visualMeaning={ObjectVisualMeaning.ERROR} children={
+                    <Text text={`No history-renderer mapped to version '${this.props.version}'`}/>
+                }/>
+            );
+        }
     }
 
     private renderPageHeader(): JSX.Element {

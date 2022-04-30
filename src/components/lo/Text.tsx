@@ -75,7 +75,8 @@ export const Text: React.FC<TextProps> = props => {
       // color: ${props.coloredText ? meaningfulColors.lighter.css() : theme.colors.fontPrimaryColor.css()} !important;
       color: ${props.coloredText ? meaningfulColors.lighter.css() + "!important" : ""};
       transition: all ${theme.transitions.fastTime.css()};
-
+      // flex-grow: 0;
+      // flex-shrink: 0;
       text-overflow: ellipsis;
       
       &:hover {

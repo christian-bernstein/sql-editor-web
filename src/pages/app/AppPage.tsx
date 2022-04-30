@@ -51,7 +51,7 @@ import {MenuPageV2} from "../menu/v2/MenuPageV2";
 import {If} from "../../components/logic/If";
 import {Shard} from "../../logic/misc/Shard";
 import {QuickActionShard} from "../../shards/quickAction/QuickActionShard";
-import {BoardingPage} from "../boarding/BoardingPage";
+import {LogPageDisplayVersion} from "../log/LogPageDisplayVersion";
 
 export type AppPageProps = {
 }
@@ -430,7 +430,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
             this.assembly.assembly("client-display-playground-dialog", (theme, props) => <ClientDisplayPlaygroundDialog/>);
         }
         this.assembly.assembly(Constants.createProjectDialog, (theme, props) => <ProjectCreationDialog/>);
-        this.assembly.assembly(Constants.logDialog, (theme, props) => <LogPage/>);
+        this.assembly.assembly(Constants.logDialog, (theme, props) => <LogPage enableClipboard={false} version={LogPageDisplayVersion.V2}/>);
         this.assembly.assembly(Constants.deleteProjectDialog, (theme, props) => <DeleteProjectDialog project={props}/>);
         this.assembly.assembly(Constants.serverConnectionDialog, (theme, props) => <ServerInfoDialog/>);
         this.assembly.assembly(Constants.roadmapDialog, (theme, props) => <RoadmapDialog/>);
@@ -556,17 +556,19 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
 
     private getLogPacketInterceptor(): (packet: Environment.Packet, connector: Environment.Connector) => void {
         return (packet, connector) => {
-            App.app().baseLog({
-                id: v4(),
-                creator: "network",
-                level: "TRACE",
-                timestamp: new Date(),
-                message: `Received packet from server '*${connector.config.address}*' in protocol '*${connector.currentProtocol}*'`,
-                appendices: [{
-                    type: "packet",
-                    data: packet
-                }]
-            })
+            if (App.enablePacketLogging) {
+                App.app().baseLog({
+                    id: v4(),
+                    creator: "network",
+                    level: "TRACE",
+                    timestamp: new Date(),
+                    message: `Received packet from server '*${connector.config.address}*' in protocol '*${connector.currentProtocol}*'`,
+                    appendices: [{
+                        type: "packet",
+                        data: packet
+                    }]
+                });
+            }
         }
     }
 }

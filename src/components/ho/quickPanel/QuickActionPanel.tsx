@@ -117,7 +117,7 @@ export class QuickActionPanel extends BernieComponent<any, any, QuickActionPanel
                                                         <ElementHeader title={config.displayName} boldHeader icon={<
                                                             Icon icon={<RunIcon/>}/>
                                                         } beta={getOr(config.beta, false)} appendix={
-                                                            <FlexBox width={percent(100)} gap={theme.gaps.smallGab} overflowXBehaviour={OverflowBehaviour.SCROLL} flexDir={FlexDirection.ROW} children={config.tags.map(tag => {
+                                                            <FlexBox gap={theme.gaps.smallGab} overflowXBehaviour={OverflowBehaviour.SCROLL} flexDir={FlexDirection.ROW} children={config.tags.map(tag => {
                                                                 return (
                                                                     <Button padding={theme.paddings.defaultBadgePadding} visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} children={
                                                                         <Text text={tag} fontSize={px(12)} uppercase type={TextType.secondaryDescription}/>
@@ -173,7 +173,6 @@ export class QuickActionPanel extends BernieComponent<any, any, QuickActionPanel
                     }, "updating")
                 } appendix={
                     <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} width={percent(100)}>
-
                         <Mobile>
                             <Input fontWeight={"lighter"} minWidth={percent(100)} bgColor={t.colors.backgroundHighlightColor200} minHeightBoundary={false} height={percent(100)} placeholder={"Search action"} onChange={ev => {
                                 if (!this.local.state.updating) {
@@ -185,12 +184,11 @@ export class QuickActionPanel extends BernieComponent<any, any, QuickActionPanel
                                             this.local.setStateWithChannels({
                                                 updating: false
                                             }, ["updating", "updating_finished"])
-                                        }, 2000)
+                                        }, 1200)
                                     });
                                 }
                             }}/>
                         </Mobile>
-
                         <Default>
                             <Input fontWeight={"lighter"} minWidth={px(200)} bgColor={t.colors.backgroundHighlightColor200} minHeightBoundary={false} height={percent(100)} placeholder={"Search action"} onChange={ev => {
                                 if (!this.local.state.updating) {
@@ -202,7 +200,7 @@ export class QuickActionPanel extends BernieComponent<any, any, QuickActionPanel
                                             this.local.setStateWithChannels({
                                                 updating: false
                                             }, ["updating", "updating_finished"])
-                                        }, 2000)
+                                        }, 1200)
                                     });
                                 }
                             }}/>

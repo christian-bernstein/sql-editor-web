@@ -48,6 +48,9 @@ import {ReactComponent as LogoutIcon} from "../../assets/icons/ic-16/ic16-turn-o
 import {ReactComponent as DashboardIcon} from "../../assets/icons/ic-16/ic16-open-in-browser.svg";
 import {Debug} from "../../components/logic/Debug";
 import {LatencyDisplay} from "../../tests/chart/LatencyDisplay";
+import {QuickActionPanel} from "../../components/ho/quickPanel/QuickActionPanel";
+import {ReactComponent as QuickPanelIcon} from "../../assets/icons/ic-20/ic20-view-boxes.svg";
+import {ContextCompound} from "../../components/ho/contextCompound/ContextCompound";
 
 export type BoardingPageProps = {}
 
@@ -331,6 +334,14 @@ export class BoardingPage extends BernieComponent<BoardingPageProps, BoardingPag
                                         </span>
                                     </CustomTooltip>
                                 </FlexBox>
+
+                                <FlexBox align={Align.CENTER} justifyContent={Justify.CENTER} height={percent(100)} children={
+                                    <ContextCompound wrapMenu={false} menu={<QuickActionPanel/>} children={
+                                        <Icon icon={<QuickPanelIcon/>}/>
+                                    }/>
+                                }/>
+
+
                             </FlexBox>
                         </div>
                     </div>
