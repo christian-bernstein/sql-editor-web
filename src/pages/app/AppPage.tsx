@@ -52,6 +52,10 @@ import {If} from "../../components/logic/If";
 import {Shard} from "../../logic/misc/Shard";
 import {QuickActionShard} from "../../shards/quickAction/QuickActionShard";
 import {LogPageDisplayVersion} from "../log/LogPageDisplayVersion";
+import {
+    SQLCommandBookmarksDialog,
+    SQLCommandBookmarksDialogProps
+} from "../sqlCommandBookmarks/SQLCommandBookmarksDialog";
 
 export type AppPageProps = {
 }

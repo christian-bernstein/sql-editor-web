@@ -11,11 +11,14 @@ import {ReactComponent as RedirectIcon} from "../../assets/icons/ic-20/ic20-arro
 import {ReactComponent as PushIcon, ReactComponent as UploadIcon} from "../../assets/icons/ic-16/ic16-upload.svg";
 import {ReactComponent as PullIcon, ReactComponent as DownloadIcon} from "../../assets/icons/ic-16/ic16-download.svg";
 import {ReactComponent as CloseIcon} from "../../assets/icons/ic-20/ic20-close.svg";
+import {ReactComponent as DeleteIcon} from "../../assets/icons/ic-20/ic20-delete.svg";
+import {ReactComponent as HistoryIcon} from "../../assets/icons/ic-20/ic20-book.svg";
+import {ReactComponent as ContextIcon} from "../../assets/icons/ic-20/ic20-more-ver.svg";
 import {ReactComponent as TableIcon} from "../../assets/icons/ic-20/ic20-view-table.svg";
 import {ReactComponent as CreateIcon} from "../../assets/icons/ic-16/ic16-plus.svg";
-import {ReactComponent as LastIcon} from "../../assets/icons/ic-20/ic20-chevron-up.svg";
-import {ReactComponent as NextIcon} from "../../assets/icons/ic-20/ic20-chevron-down.svg";
 import {ReactComponent as SettingsIcon} from "../../assets/icons/ic-20/ic20-settings.svg";
+import {ReactComponent as OptionsIcon} from "../../assets/icons/ic-20/ic20-play.svg";
+import {ReactComponent as SaveIcon} from "../../assets/icons/ic-20/ic20-bookmark-add.svg";
 import {App, utilizeGlobalTheme} from "../../logic/app/App";
 import {Text, TextType} from "../../components/lo/Text";
 import {DBSessionCacheShard} from "../../shards/dbSessionCache/DBSessionCacheShard";
@@ -33,7 +36,7 @@ import {sql} from "@codemirror/lang-sql";
 import {OverflowBehaviour} from "../../logic/style/OverflowBehaviour";
 import {Themeable} from "../../logic/style/Themeable";
 import {SessionCommand} from "../../logic/data/SessionCommand";
-import {array, arrayFactory} from "../../logic/Utils";
+import {arrayFactory} from "../../logic/Utils";
 import {Button} from "../../components/lo/Button";
 import {LoadState} from "../../logic/misc/LoadState";
 import {CircularProgress, Dialog, Slide, Zoom} from "@mui/material";
@@ -62,6 +65,14 @@ import {Switch} from "../../components/lo/Switch";
 import {SQLCommandUpdateResponsePacketData} from "../../packets/in/SQLCommandUpdateResponsePacketData";
 import {DBTaskCard} from "../../components/indev/DBTaskCard";
 import {CopyIcon} from "../../components/ho/copyIcon/CopyIcon";
+import {ContextCompound} from "../../components/ho/contextCompound/ContextCompound";
+import {ContextMenuElement} from "../../components/lo/ContextMenuElement";
+import {Badge} from "../../components/lo/Badge";
+import {SavedCommand} from "./SavedCommand";
+import {CommandHistoryElement} from "../../components/ho/commandHistoryElement/CommandHistoryElement";
+import {SavedCommandType} from "./SavedCommandType";
+import {Default, Mobile} from "../../components/logic/Media";
+import {SQLCommandBookmarksDialog} from "../sqlCommandBookmarks/SQLCommandBookmarksDialog";
 
 export type DebugEditorProps = {
 }
@@ -77,11 +88,13 @@ export type DebugEditorLocalState = {
     command: string,
     processPushCommand: boolean,
     processPullCommand: boolean,
+    processSQLResultOpening: boolean,
     // todo SQLCommandQueryResponsePacketData | SQLCommandUpdateResponsePacketData
     sqlCommandResultCache: (SQLCommandQueryResponsePacketData)[],
     projectHistoryLocalCache: HistoryEntry[],
     error?: EditorCommandError,
-    masterOpenDialogOnCommandResponse: boolean
+    masterOpenDialogOnCommandResponse: boolean,
+    savedCommands: SavedCommand[]
 }
 
 /**
@@ -105,10 +118,12 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
             command: "show tables from information_schema",
             processPullCommand: false,
             processPushCommand: false,
+            processSQLResultOpening: false,
             sqlCommandResultCache: [],
             projectHistoryLocalCache: [],
             error: undefined,
-            masterOpenDialogOnCommandResponse: true
+            masterOpenDialogOnCommandResponse: true,
+            savedCommands: []
         });
         this.initAssembly();
         this.initProtocolHandlers();
@@ -136,6 +151,7 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
     }
 
     private initAssembly() {
+        this.createBookmarksAssembly();
         this.createPullPushAssembly();
         this.createSqlCommandResultAssembly();
         this.createSqlCommandResultAssemblyV2();
@@ -144,6 +160,39 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
         this.createHeaderAssembly();
         this.createEditorMainAssembly();
         this.createInputAssembly();
+    }
+
+    private createBookmarksAssembly() {
+        this.assembly.assembly("sql-bookmarks", (theme, props) => {
+            return (
+                <SQLCommandBookmarksDialog bookmarks={() => this.local.state.savedCommands} onClose={() => {
+                    this.setState({
+                        openMainDialog: false
+                    });
+                }} onSelect={command => {
+                    this.setSQLInput(command.command);
+                    this.setState({
+                        openMainDialog: false
+                    });
+                }} onDelete={command => this.deleteSavedCommand(command)}/>
+            );
+        });
+    }
+
+    private deleteSavedCommand(command: SavedCommand): void {
+        const commands = this.local.state.savedCommands;
+        const index = commands.indexOf(command);
+        if (index > -1) {
+            commands.splice(index, 1);
+            this.local.setStateWithChannels({
+                savedCommands: commands
+            }, ["bookmarks"]);
+
+            // todo remove this
+            this.setState({
+                openMainDialog: false
+            });
+        }
     }
 
     private createInputAssembly() {
@@ -229,95 +278,7 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                 <FlexBox height={percent(100)} width={percent(100)} gap={theme.gaps.smallGab} flexDir={FlexDirection.COLUMN}>
                     <Text text={"Database output"} bold uppercase type={TextType.secondaryDescription}/>
                     <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab} width={percent(100)} justifyContent={Justify.SPACE_BETWEEN} align={Align.CENTER}>
-                        <Group orientation={Orientation.HORIZONTAL} height={percent(100)} elements={[
-                            <Button
-                                cursor={Cursor.notAllowed}
-                                visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
-                                shrinkOnClick={true}
-                                children={
-                                    <CustomTooltip arrow noPadding noBorder title={
-                                        <Box gapY={theme.gaps.smallGab}>
-                                            <ElementHeader
-                                                icon={<CreateIcon/>}
-                                                appendix={
-                                                    <Button visualMeaning={ObjectVisualMeaning.BETA} shrinkOnClick opaque padding={px(4)}>
-                                                        <Text text={"View roadmap"}/>
-                                                    </Button>
-                                                }
-                                                wrapIcon
-                                                title={"Create"}
-                                                beta
-                                            />
-                                            <Separator/>
-                                            <Text text={"Create a new entry in your project. \nAn entry can be a: **internal database**, **table**, **row** etc."}/>
-                                            <InformationBox visualMeaning={ObjectVisualMeaning.BETA}>
-                                                <Text type={TextType.secondaryDescription} text={"As of subversion **v2.29-alpha.0** *(01. Mar 2022)*, the website is in it's development phase."}/>
-                                            </InformationBox>
-                                        </Box>
-                                    } children={
-                                        <span children={<Icon icon={<CreateIcon/>}/>}/>
-                                    }/>
-                                }
-                            />,
-
-                            <Button
-                                cursor={Cursor.notAllowed}
-                                visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
-                                shrinkOnClick={true}
-                                children={
-                                    <CustomTooltip arrow noPadding noBorder title={
-                                        <Box gapY={theme.gaps.smallGab}>
-                                            <ElementHeader
-                                                icon={<UploadIcon/>}
-                                                appendix={
-                                                    <Button visualMeaning={ObjectVisualMeaning.BETA} shrinkOnClick opaque padding={px(4)}>
-                                                        <Text text={"View roadmap"}/>
-                                                    </Button>
-                                                }
-                                                wrapIcon
-                                                title={"Upload data"}
-                                                beta
-                                            />
-                                            <Separator/>
-                                            <Text text={"Import data from your device. \nAllowed file formats: **.dat**, **.csv**, **.xls** *(Excel spreadsheet)*."}/>
-                                            <InformationBox visualMeaning={ObjectVisualMeaning.BETA}>
-                                                <Text type={TextType.secondaryDescription} text={"As of subversion **v2.29-alpha.0** *(01. Mar 2022)*, the website is in it's development phase."}/>
-                                            </InformationBox>
-                                        </Box>
-                                    } children={<span children={<Icon icon={<UploadIcon/>}/>}/>}/>
-                                }
-                            />,
-
-                            <Button
-                                cursor={Cursor.notAllowed}
-                                visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
-                                shrinkOnClick={true}
-                                children={
-                                    <CustomTooltip arrow noPadding noBorder title={
-                                        <Box gapY={theme.gaps.smallGab}>
-                                            <ElementHeader
-                                                icon={<DownloadIcon/>}
-                                                appendix={
-                                                    <Button visualMeaning={ObjectVisualMeaning.BETA} shrinkOnClick opaque padding={px(4)}>
-                                                        <Text text={"View roadmap"}/>
-                                                    </Button>
-                                                }
-                                                wrapIcon
-                                                title={"Download data"}
-                                                beta
-                                            />
-                                            <Separator/>
-                                            <Text text={"Export data to a downloadable file. \nAllowed file formats: **.dat**, **.csv**, **.xls** *(Excel spreadsheet)*."}/>
-                                            <InformationBox visualMeaning={ObjectVisualMeaning.BETA}>
-                                                <Text type={TextType.secondaryDescription} text={"As of subversion **v2.29-alpha.0** *(01. Mar 2022)*, the website is in it's development phase."}/>
-                                            </InformationBox>
-                                        </Box>
-                                    } children={
-                                        <span children={<Icon icon={<DownloadIcon/>}/>}/>
-                                    }/>
-                                }
-                            />
-                        ]}/>
+                        {this.renderHistoryButton()}
 
                         <Switch checked={this.local.state.masterOpenDialogOnCommandResponse} text={<Text text={"Auto dialog opening"} bold uppercase type={TextType.secondaryDescription} fontSize={px(12)}/>} onChange={(event, checked) => {
                             this.local.setState({
@@ -449,29 +410,189 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
         });
     }
 
+    private setSQLInput(value: string): void {
+        this.local.setStateWithChannels({
+            command: value
+        }, ["input"]);
+    }
+
     private createInputControlsAssembly() {
         this.assembly.assembly("input-controls", (theme, props) => {
             return (
                 <FlexBox flexDir={FlexDirection.ROW} overflowXBehaviour={OverflowBehaviour.SCROLL} gap={theme.gaps.smallGab} align={Align.CENTER} height={percent(100)}>
-                    {this.renderHistoryButton()}
+                    <Group orientation={Orientation.HORIZONTAL} height={percent(100)} elements={[
+                        <Button
+                            cursor={Cursor.notAllowed}
+                            visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
+                            shrinkOnClick={true}
+                            children={
+                                <CustomTooltip arrow noPadding noBorder title={
+                                    <Box gapY={theme.gaps.smallGab}>
+                                        <ElementHeader
+                                            icon={<CreateIcon/>}
+                                            appendix={
+                                                <Button visualMeaning={ObjectVisualMeaning.BETA} shrinkOnClick opaque padding={px(4)}>
+                                                    <Text text={"View roadmap"}/>
+                                                </Button>
+                                            }
+                                            wrapIcon
+                                            title={"Create"}
+                                            beta
+                                        />
+                                        <Separator/>
+                                        <Text text={"Create a new entry in your project. \nAn entry can be a: **internal database**, **table**, **row** etc."}/>
+                                        <InformationBox visualMeaning={ObjectVisualMeaning.BETA}>
+                                            <Text type={TextType.secondaryDescription} text={"As of subversion **v2.29-alpha.0** *(01. Mar 2022)*, the website is in it's development phase."}/>
+                                        </InformationBox>
+                                    </Box>
+                                } children={
+                                    <span children={<Icon icon={<CreateIcon/>}/>}/>
+                                }/>
+                            }
+                        />,
+                        <span>
+                            <Mobile children={
+                                <Button
+                                    border={false}
+                                    style={{borderRadius: "0 !important"}}
+                                    children={<span children={<Icon icon={<HistoryIcon/>}/>}/>}
+                                    onClick={() => this.openMainDialog("sql-bookmarks")}
+                                />
+                            }/>
+                            <Default children={
+                                <ContextCompound width={percent(100)} menu={
+                                    <FlexBox width={percent(100)} padding paddingX={theme.gaps.smallGab} paddingY={theme.gaps.smallGab}>
+                                        <ElementHeader icon={<HistoryIcon/>} wrapIcon title={"Saved commands"} boldHeader/>
+                                        <Separator/>
+                                        <LiteGrid responsive minResponsiveWidth={percent(30)} gap={theme.gaps.smallGab}>
+                                            {this.local.state.savedCommands.map(saved => {
+                                                return (
+                                                    <CommandHistoryElement command={saved} onSelect={(command, element) => {
+                                                        this.setSQLInput(command.command);
+                                                    }} onDelete={command => this.deleteSavedCommand(command)}/>
+                                                );
+                                            })}
+                                        </LiteGrid>
+                                    </FlexBox>
+                                } children={
+                                    <Button
+                                        shrinkOnClick
+                                        border={false}
+                                        visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
+                                        children={<span children={<Icon icon={<HistoryIcon/>}/>}/>}
+                                    />
+                                }/>
+                            }/>
+                        </span>,
+                        <ContextCompound width={percent(100)} menu={
+                            <FlexBox width={percent(100)} padding paddingY={theme.gaps.smallGab} paddingX={theme.gaps.smallGab}>
+                                <ElementHeader
+                                    title={"Input options"}
+                                    icon={<OptionsIcon/>}
+                                    wrapIcon
+                                    appendix={
+                                        <Button visualMeaning={ObjectVisualMeaning.BETA} shrinkOnClick opaque padding={px(4)}>
+                                            <Text text={"View roadmap"}/>
+                                        </Button>
+                                    }
+                                />
+                                <Separator/>
+                                <FlexBox gap={px(1)} width={percent(100)}>
+                                    <ContextMenuElement onClick={() => this.createCommandSnapshot(SavedCommandType.BOOKMARK)} title={"Save input"} icon={() => (
+                                        <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.defaultGab} align={Align.CENTER}>
+                                            {Badge.beta(theme)}
+                                            <Icon icon={<SaveIcon/>}/>
+                                        </FlexBox>
+                                    )}/>
+                                    <ContextMenuElement title={"Upload data"} icon={() => <Icon icon={<UploadIcon/>}/>}/>
+                                    <ContextMenuElement title={"Download data"} icon={() => (
+                                        <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.defaultGab} align={Align.CENTER}>
+                                            <Icon icon={<DownloadIcon/>}/>
+                                        </FlexBox>
+                                    )}/>
+                                </FlexBox>
+                                {/*<Text text={"Import data from your device. \nAllowed file formats: **.dat**, **.csv**, **.xls** *(Excel spreadsheet)*."}/>
+                                <InformationBox visualMeaning={ObjectVisualMeaning.BETA}>
+                                    <Text type={TextType.secondaryDescription} text={"As of subversion **v2.29-alpha.0** *(01. Mar 2022)*, the website is in it's development phase."}/>
+                                </InformationBox>*/}
+                            </FlexBox>
+                        } children={
+                            <Button
+                                shrinkOnClick
+                                border={false}
+                                visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
+                                children={<span children={<Icon icon={<ContextIcon/>}/>}/>}
+                            />
+                        }/>,
+                        // <Button
+                        //     cursor={Cursor.notAllowed}
+                        //     visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
+                        //     shrinkOnClick={true}
+                        //     children={
+                        //         <CustomTooltip arrow noPadding noBorder title={
+                        //             <Box gapY={theme.gaps.smallGab}>
+                        //                 <ElementHeader
+                        //                     icon={<UploadIcon/>}
+                        //                     appendix={
+                        //                         <Button visualMeaning={ObjectVisualMeaning.BETA} shrinkOnClick opaque padding={px(4)}>
+                        //                             <Text text={"View roadmap"}/>
+                        //                         </Button>
+                        //                     }
+                        //                     wrapIcon
+                        //                     title={"Upload data"}
+                        //                     beta
+                        //                 />
+                        //                 <Separator/>
+                        //                 <Text text={"Import data from your device. \nAllowed file formats: **.dat**, **.csv**, **.xls** *(Excel spreadsheet)*."}/>
+                        //                 <InformationBox visualMeaning={ObjectVisualMeaning.BETA}>
+                        //                     <Text type={TextType.secondaryDescription} text={"As of subversion **v2.29-alpha.0** *(01. Mar 2022)*, the website is in it's development phase."}/>
+                        //                 </InformationBox>
+                        //             </Box>
+                        //         } children={<span children={<Icon icon={<UploadIcon/>}/>}/>}/>
+                        //     }
+                        // />,
+                        // <Button
+                        //     cursor={Cursor.notAllowed}
+                        //     visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
+                        //     shrinkOnClick={true}
+                        //     children={
+                        //         <CustomTooltip arrow noPadding noBorder title={
+                        //             <Box gapY={theme.gaps.smallGab}>
+                        //                 <ElementHeader
+                        //                     icon={<DownloadIcon/>}
+                        //                     appendix={
+                        //                         <Button visualMeaning={ObjectVisualMeaning.BETA} shrinkOnClick opaque padding={px(4)}>
+                        //                             <Text text={"View roadmap"}/>
+                        //                         </Button>
+                        //                     }
+                        //                     wrapIcon
+                        //                     title={"Download data"}
+                        //                     beta
+                        //                 />
+                        //                 <Separator/>
+                        //                 <Text text={"Export data to a downloadable file. \nAllowed file formats: **.dat**, **.csv**, **.xls** *(Excel spreadsheet)*."}/>
+                        //                 <InformationBox visualMeaning={ObjectVisualMeaning.BETA}>
+                        //                     <Text type={TextType.secondaryDescription} text={"As of subversion **v2.29-alpha.0** *(01. Mar 2022)*, the website is in it's development phase."}/>
+                        //                 </InformationBox>
+                        //             </Box>
+                        //         } children={
+                        //             <span children={<Icon icon={<DownloadIcon/>}/>}/>
+                        //         }/>
+                        //     }
+                        // />
+                    ]}/>
+
                     <Group orientation={Orientation.HORIZONTAL} opaque height={percent(100)} elements={[
-
-                        // Load previous command into the command input
+                        // Clear the sql input
                         <Button
                             cursor={Cursor.pointer}
                             visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
                             opaque={false}
-                            shrinkOnClick={true} children={<Icon icon={<LastIcon/>}/>}
+                            shrinkOnClick={true} children={<Icon icon={<DeleteIcon/>}/>}
+                            onClick={() => {
+                                this.setSQLInput("");
+                            }}
                         />,
-
-                        // Load next to current command into the command input
-                        <Button
-                            cursor={Cursor.pointer}
-                            visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
-                            opaque={false}
-                            shrinkOnClick={true} children={<Icon icon={<NextIcon/>}/>}
-                        />,
-
                         // Copy command input's value into clipboard
                         <Button
                             cursor={Cursor.pointer}
@@ -589,13 +710,6 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
             console.error("Cannot request server db streaming because editor holds no project data (Editor is wrongly mapped)")
         }
     }
-
-    // private redirect(to: string) {
-    //     this.setState({
-    //         to: to,
-    //         redirect: true
-    //     });
-    // }
 
     private openMainDialog(dialogComponent: string) {
         this.setState({
@@ -756,13 +870,37 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                                 opaque
                                 shrinkOnClick={true}
                                 onClick={() => {
-                                    this.setState({
-                                        openMainDialog: true,
-                                        dialogComponent: "sql-command-result-v2"
+
+                                    this.local.setStateWithChannels({
+                                        processSQLResultOpening: true
+                                    }, ["history-button"], () => {
+                                        setTimeout(() => {
+                                            this.setState({
+                                                openMainDialog: true,
+                                                dialogComponent: "sql-command-result-v2"
+                                            }, () => {
+                                                this.local.setStateWithChannels({
+                                                    processSQLResultOpening: false
+                                                }, ["history-button"]);
+                                            });
+                                        }, 1);
                                     })
+
+                                    // this.setState({
+                                    //     openMainDialog: true,
+                                    //     dialogComponent: "sql-command-result-v2"
+                                    // })
                                 }}>
                                 <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab}>
-                                    <Icon visualMeaning={ObjectVisualMeaning.INFO} colored icon={<TableIcon/>}/>
+                                    <If condition={this.local.state.processSQLResultOpening} ifTrue={
+                                        <FlexBox align={Align.CENTER} justifyContent={Justify.CENTER} width={px(20)} height={px(20)}>
+                                            <CircularProgress variant={"indeterminate"} size={16} sx={{
+                                                color: theme.colors.primaryHighlightColor.css()
+                                            }}/>
+                                        </FlexBox>
+                                    } ifFalse={
+                                        <Icon visualMeaning={ObjectVisualMeaning.INFO} colored icon={<TableIcon/>}/>
+                                    }/>
                                     <Text text={`${this.local.state.sqlCommandResultCache.length}`} bold visualMeaning={ObjectVisualMeaning.INFO} coloredText/>
                                 </FlexBox>
                             </Button>
@@ -781,7 +919,7 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                 </span>
                 </CustomTooltip>
             );
-        }, "error")
+        }, "error", "history-button")
     }
 
     private renderEditor(session: ProjectInfoData) {
@@ -802,6 +940,16 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                 </FlexBox>
             </Screen>
         );
+    }
+
+    private createCommandSnapshot(type: SavedCommandType): void {
+        const cmd = this.local.state.command;
+        if (cmd.trim().length > 0) {
+            this.local.state.savedCommands.push({
+                command: cmd,
+                type: type
+            });
+        }
     }
 
     componentDidMount() {

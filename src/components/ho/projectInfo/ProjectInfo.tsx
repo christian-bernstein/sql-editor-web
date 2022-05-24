@@ -105,16 +105,14 @@ export class ProjectInfo extends BernieComponent<ProjectInfoProps, any, ProjectI
 
         return (
             <FlexBox gap={px(1)}>
-                <CopyIcon copyValueProducer={() => this.props.data.id}/>
-                <Separator orientation={Orientation.HORIZONTAL}/>
-
+                {/*<CopyIcon copyValueProducer={() => this.props.data.id}/>
+                <Separator orientation={Orientation.HORIZONTAL}/>*/}
                 <ContextMenuElement title={"Als gelesen markieren"}/>
                 <Separator orientation={Orientation.HORIZONTAL}/>
                 <ContextMenuElement title={"Leute einladen"}/>
                 <Separator orientation={Orientation.HORIZONTAL}/>
                 <ContextMenuElement title={"Server stummschalten"} icon={() => <Icon icon={<RightIcon/>} size={px(16)}/>}/>
                 <ContextMenuElement title={"Benachrichtigungseinstellungen"} icon={() => <Icon icon={<RightIcon/>} size={px(16)}/>}/>
-                <ContextMenuElement title={"Stummgeschaltete Kanäle ausblenden"} icon={() => <Switch basicIconColor/>}/>
                 <Separator orientation={Orientation.HORIZONTAL}/>
                 <ContextMenuElement title={"Servereinstellungen"} icon={() => <Icon icon={<RightIcon/>} size={px(16)}/>}/>
                 <ContextMenuElement title={"Privatsphäreeinstellungen"}/>
@@ -124,8 +122,8 @@ export class ProjectInfo extends BernieComponent<ProjectInfoProps, any, ProjectI
                 <ContextMenuElement title={"Kategorie erstellen"}/>
                 <ContextMenuElement title={"Event erstellen"}/>
                 <Separator orientation={Orientation.HORIZONTAL}/>
-                <ContextMenuElement title={"Projekt bearbeiten"} icon={() => <Icon icon={<EditIcon/>} size={px(16)}/>}/>
-                <ContextMenuElement title={"Projekt löschen"} icon={() => <Icon icon={<DeleteIcon/>} size={px(16)}/>} onClick={() => this.toggleProjectDeleteDialog()}/>
+                <ContextMenuElement title={"Edit project"} icon={() => <Icon icon={<EditIcon/>} size={px(16)}/>}/>
+                <ContextMenuElement title={"Delete project"} visualMeaning={ObjectVisualMeaning.ERROR} icon={() => <Icon icon={<DeleteIcon/>} size={px(16)}/>} onClick={() => this.toggleProjectDeleteDialog()}/>
                 <Separator orientation={Orientation.HORIZONTAL}/>
                 <ContextMenuElement title={"Copy project ID"} onClick={() => this.copyIDToClipboard()}/>
             </FlexBox>

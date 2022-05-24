@@ -28,6 +28,12 @@ import bg from "../assets/filaments/profile.gif";
 import logo from "../assets/retired_logo_v2.svg";
 import {v4} from "uuid";
 
+function createGreetingTextElement(name: string): JSX.Element {
+    return (
+        <p className={"title"}>Hello {name}!</p>
+    );
+}
+
 export const Counter: React.FC = ({}) => {
     const [count, setCount] = Environment.usePersistent(0, "count");
     const changeCountBy = (off: number) => {

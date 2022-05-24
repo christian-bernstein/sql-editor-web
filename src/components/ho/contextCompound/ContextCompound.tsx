@@ -5,12 +5,14 @@ import {utilizeGlobalTheme} from "../../../logic/app/App";
 import styled from "styled-components";
 import {getOr} from "../../../logic/Utils";
 import {If} from "../../logic/If";
+import {DimensionalMeasured} from "../../../logic/style/DimensionalMeasured";
 
 export type ContextMenuProps = {
     menu?: JSX.Element,
     clickType?: "single" | "double",
     wrapMenu?: boolean,
-    wrapperStyle?: CSSProperties
+    wrapperStyle?: CSSProperties,
+    width?: DimensionalMeasured
 }
 
 export type ContextMenuState = {
@@ -66,10 +68,19 @@ export class ContextCompound extends React.Component<ContextMenuProps, ContextMe
                 </div>
                 <Menu
                     id="basic-menu"
+
+                    anchorOrigin={{
+                        horizontal: "right",
+                        vertical: "bottom"
+                    }}
+
+                    anchorReference={"anchorEl"}
                     anchorEl={this.state.anchorEl}
                     open={this.state.open}
                     sx={{
                         '& .MuiPaper-root': {
+                            width: this.props.width?.css(),
+
                             backgroundColor: theme.colors.backgroundHighlightColor.css() + " !important",
                             borderRadius: theme.radii.defaultObjectRadius.css(),
                             border: "1px solid " + theme.colors.borderPrimaryColor.css(),

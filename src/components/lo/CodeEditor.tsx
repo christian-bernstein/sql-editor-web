@@ -145,6 +145,7 @@ export class CodeEditor extends React.PureComponent<CodeEditorProps, any> {
         return (
             <Editor>
                 <ReactCodeMirror
+
                     value={getOr(this.props.value, "")}
                     editable={getOr(this.props.editable, true)}
                     indentWithTab={true}

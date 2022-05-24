@@ -114,6 +114,13 @@ export class BernieComponent<RProps, RState, LState extends object> extends Reac
         }
     }
 
+    a(assembly: string, param?: any): JSX.Element {
+        return this.assembly.render({
+            component: assembly,
+            param: param
+        });
+    }
+
     componentDidMount() {
         this.componentActive = true;
     }
