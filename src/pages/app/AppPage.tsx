@@ -56,6 +56,7 @@ import {
     SQLCommandBookmarksDialog,
     SQLCommandBookmarksDialogProps
 } from "../sqlCommandBookmarks/SQLCommandBookmarksDialog";
+import {ServiceMonitorOverview} from "../../components/ho/serviceMonitorOverview/ServiceMonitorOverview";
 
 export type AppPageProps = {
 }
@@ -89,7 +90,8 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
         [DefaultSpecialPages.UNIT_TEST, () => (
             <Screen children={
                 <Centered fullHeight children={
-                    <Text text={"Unit test screen"} bold uppercase visualMeaning={ObjectVisualMeaning.BETA} coloredText/>
+                    // <Text text={"Unit test screen"} bold uppercase visualMeaning={ObjectVisualMeaning.BETA} coloredText/>
+                    <ServiceMonitorOverview/>
                 }/>
             }/>
         )],
@@ -117,6 +119,9 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
             updateSlave: this.state.updateSlave + 1
         });
         this.mounted = true;
+
+        this.activateSpecialPage(DefaultSpecialPages.UNIT_TEST, () => undefined);
+        return;
 
         this.activateSpecialPage(DefaultSpecialPages.SELECT_APP_CONFIG, () => [
             {

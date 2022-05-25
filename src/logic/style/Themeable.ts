@@ -127,7 +127,8 @@ export namespace Themeable {
             smallGab: DimensionalMeasured,
         },
         hovers: {
-            hoverLightFilter: DimensionalMeasured
+            hoverLightFilter: DimensionalMeasured,
+            clickLightFilter: DimensionalMeasured,
         },
         transitions: {
             mainTime: TimeMeasured,
@@ -229,7 +230,8 @@ export namespace Themeable {
             smallGab: px(8)
         },
         hovers: {
-            hoverLightFilter: DimensionalMeasured.of(120, Dimension.percentage)
+            hoverLightFilter: DimensionalMeasured.of(120, Dimension.percentage),
+            clickLightFilter: DimensionalMeasured.of(130, Dimension.percentage),
         },
         transitions: {
             mainTime: time(100, TimeUnit.ms),
@@ -327,7 +329,8 @@ export namespace Themeable {
             smallGab: px(8)
         },
         hovers: {
-            hoverLightFilter: DimensionalMeasured.of(90, Dimension.percentage)
+            hoverLightFilter: DimensionalMeasured.of(90, Dimension.percentage),
+            clickLightFilter: DimensionalMeasured.of(80, Dimension.percentage),
         },
         transitions: {
             mainTime: time(100, TimeUnit.ms),

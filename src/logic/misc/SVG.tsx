@@ -1,4 +1,5 @@
 import React from "react";
+import {ObjectVisualMeaning} from "../style/ObjectVisualMeaning";
 
 export namespace SVG {
 

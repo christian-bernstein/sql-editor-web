@@ -19,7 +19,8 @@ export type ContextMenuElementProps = WithVisualMeaning & {
     customTitleRenderer?: () => JSX.Element,
     onClick?: () => void,
     icon?: () => JSX.Element,
-    opaque?: boolean
+    opaque?: boolean,
+    highlight?: boolean
 }
 
 export class ContextMenuElement extends BernieComponent<ContextMenuElementProps, any, any> {
@@ -30,7 +31,7 @@ export class ContextMenuElement extends BernieComponent<ContextMenuElementProps,
 
     componentRender(p: ContextMenuElementProps, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
-            <Button highlight={false} bgColorOnDefault={false} border={false} opaque={getOr(p.opaque, false)} visualMeaning={getOr(p.visualMeaning, ObjectVisualMeaning.UI_NO_HIGHLIGHT)} width={percent(100)} onClick={p.onClick}>
+            <Button highlight={getOr(p.highlight, false)} bgColorOnDefault={false} border={false} opaque={getOr(p.opaque, false)} visualMeaning={getOr(p.visualMeaning, ObjectVisualMeaning.UI_NO_HIGHLIGHT)} width={percent(100)} onClick={p.onClick}>
                 <FlexBox gap={t.gaps.defaultGab} flexDir={FlexDirection.ROW} align={Align.CENTER} justifyContent={Justify.SPACE_BETWEEN} width={percent(100)}>
                     <If condition={p.customTitleRenderer === undefined} ifFalse={p.customTitleRenderer?.()} ifTrue={
                         <Text text={String(p.title)}/>

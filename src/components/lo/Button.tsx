@@ -77,6 +77,7 @@ export class Button extends React.Component<ButtonProps, any> {
 
           &:active {
             transform: ${this.props.shrinkOnClick ? "scale(.99)" : "scale(1)"};
+            filter: brightness(${theme.hovers.clickLightFilter.css()});
           }
           
           @keyframes hover-repeat {
