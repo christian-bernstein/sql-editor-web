@@ -311,7 +311,6 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                                 <Text uppercase align={Align.CENTER} type={TextType.smallHeader} text={"DB Editor"} />
                             </FlexBox>
                             <FlexBox align={Align.CENTER} justifyContent={Justify.FLEX_END} flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab}>
-                                <Icon icon={<SettingsIcon/>}/>
                                 <Icon icon={<CloseIcon/>} onClick={() => this.closeSession()}/>
                                 <Separator orientation={Orientation.VERTICAL}/>
                                 <ServerConnectionIcon openConnectionMetricsDialog/>

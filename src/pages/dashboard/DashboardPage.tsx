@@ -37,6 +37,7 @@ import {CockpitButtonType} from "../../components/ho/cockpitButton/CockpitButton
 import {ProjectFilter} from "./ProjectFilter";
 import {BernieComponent} from "../../logic/BernieComponent";
 import {DashboardToolbox} from "./DashboardToolbox";
+import {ClientDisplay} from "../../components/ho/clientDisplay/ClientDisplay";
 
 export type DashboardPageProps = {
 }
@@ -313,6 +314,7 @@ export default class DashboardPage extends BernieComponent<DashboardPageProps, D
                                 </CustomTooltip>
                             )} onClick={() => App.app().openMenu()}/>
                         </FlexBox>
+
                         <FlexBox align={Align.CENTER} justifyContent={Justify.CENTER}>
                             <Text uppercase align={Align.CENTER} type={TextType.smallHeader} text={"Dashboard"} />
                         </FlexBox>
@@ -339,13 +341,15 @@ export default class DashboardPage extends BernieComponent<DashboardPageProps, D
                                     <Icon icon={<CreateIcon/>} visualMeaning={ObjectVisualMeaning.INFO} colored={true} onClick={() => this.createProject()}/>
                                 </span>
                             </CustomTooltip>*/}
-                            <CustomTooltip title={(
+                            {/*<CustomTooltip title={(
                                 <Text text={"Implement.."} rightAppendix={Badge.beta()} enableRightAppendix/>
                             )} arrow noBorder>
                                 <span>
                                     <ProfilePicture name={"username"}/>
                                 </span>
-                            </CustomTooltip>
+                            </CustomTooltip>*/}
+
+                            <ClientDisplay clientID={App.app().userData?.id} onlyImage/>
                         </FlexBox>
                     </LiteGrid>
                     <Centered>

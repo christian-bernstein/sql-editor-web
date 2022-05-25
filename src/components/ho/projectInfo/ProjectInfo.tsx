@@ -46,6 +46,7 @@ import {ClientDisplay} from "../clientDisplay/ClientDisplay";
 import {CopyIcon} from "../copyIcon/CopyIcon";
 import {ContextMenuElement} from "../../lo/ContextMenuElement";
 import {Switch} from "../../lo/Switch";
+import {Badge} from "../../lo/Badge";
 
 export type ProjectInfoProps = {
     data: ProjectInfoData,
@@ -106,7 +107,7 @@ export class ProjectInfo extends BernieComponent<ProjectInfoProps, any, ProjectI
         return (
             <FlexBox gap={px(1)}>
                 {/*<CopyIcon copyValueProducer={() => this.props.data.id}/>
-                <Separator orientation={Orientation.HORIZONTAL}/>*/}
+                <Separator orientation={Orientation.HORIZONTAL}/>*
                 <ContextMenuElement title={"Als gelesen markieren"}/>
                 <Separator orientation={Orientation.HORIZONTAL}/>
                 <ContextMenuElement title={"Leute einladen"}/>
@@ -121,8 +122,8 @@ export class ProjectInfo extends BernieComponent<ProjectInfoProps, any, ProjectI
                 <ContextMenuElement title={"Kanal erstellen"}/>
                 <ContextMenuElement title={"Kategorie erstellen"}/>
                 <ContextMenuElement title={"Event erstellen"}/>
-                <Separator orientation={Orientation.HORIZONTAL}/>
-                <ContextMenuElement title={"Edit project"} icon={() => <Icon icon={<EditIcon/>} size={px(16)}/>}/>
+                <Separator orientation={Orientation.HORIZONTAL}/>*/}
+                <ContextMenuElement title={"Edit project"} titleAppendix={() => Badge.beta(theme)} icon={() => <Icon icon={<EditIcon/>} size={px(16)}/>}/>
                 <ContextMenuElement title={"Delete project"} visualMeaning={ObjectVisualMeaning.ERROR} icon={() => <Icon icon={<DeleteIcon/>} size={px(16)}/>} onClick={() => this.toggleProjectDeleteDialog()}/>
                 <Separator orientation={Orientation.HORIZONTAL}/>
                 <ContextMenuElement title={"Copy project ID"} onClick={() => this.copyIDToClipboard()}/>

@@ -23,6 +23,8 @@ import {v4} from "uuid";
 import {InformationBox} from "../informationBox/InformationBox";
 import {ImageData} from "../../../logic/data/ImageData";
 import {App} from "../../../logic/app/App";
+import {Icon} from "../../lo/Icon";
+import {BounceLoader} from "react-spinners";
 
 // todo add id
 export type ClientDisplayProps = {
@@ -30,7 +32,8 @@ export type ClientDisplayProps = {
     clientDataResolver?: (id: string, handler: (data: UserPublicProfileData) => void) => void,
     overwriteMenuRenderer?: (instance: ClientDisplay, profile: UserPublicProfileData) => JSX.Element,
     enableClientBadge?: boolean,
-    imageSize?: DimensionalMeasured
+    imageSize?: DimensionalMeasured,
+    onlyImage?: boolean
 }
 
 export type ClientDisplayLocalState = {
@@ -130,10 +133,13 @@ export class ClientDisplay extends BernieComponent<ClientDisplayProps, any, Clie
 
     componentRender(p: ClientDisplayProps, s: any, l: ClientDisplayLocalState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return this.component((local) => {
+            const imageSize = getOr(p.imageSize, px(20));
             if (local.state.loading) {
                 // Data is still loading
                 return (
-                    <Text text={"loading…"}/>
+                    <Icon icon={
+                        <BounceLoader size={imageSize.css()}/>
+                    } size={imageSize}/>
                 );
             } else {
                 // Currently not loading
@@ -141,15 +147,15 @@ export class ClientDisplay extends BernieComponent<ClientDisplayProps, any, Clie
                 if (profile !== undefined) {
                     // Not loading & data is present
                     const enableClientBadge = getOr(p.enableClientBadge, true);
-                    const imageSize = getOr(p.imageSize, px(20));
+                    const onlyImage = getOr(p.onlyImage, false);
                     return (
                         <ContextCompound wrapMenu={false} menu={this.renderMenu(profile)}>
                             <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} gap={t.gaps.smallGab}>
-
                                 <Image src={ClientDisplay.loadImageData(profile.profilePicture)} borderRadius={px(9999)} width={imageSize} height={imageSize}/>
 
-                                <Text text={profile.username} cursor={Cursor.pointer} type={TextType.secondaryDescription}/>
-                                {enableClientBadge ? (
+                                {onlyImage ? undefined : <Text text={profile.username} cursor={Cursor.pointer} type={TextType.secondaryDescription}/>}
+
+                                {!onlyImage && enableClientBadge ? (
                                     <Box visualMeaning={ObjectVisualMeaning.BETA} opaque paddingY={px(0)} paddingX={px(4)}>
                                         <Text text={"user"} bold uppercase fontSize={px(12)}/>
                                     </Box>

@@ -20,7 +20,8 @@ export type ContextMenuElementProps = WithVisualMeaning & {
     onClick?: () => void,
     icon?: () => JSX.Element,
     opaque?: boolean,
-    highlight?: boolean
+    highlight?: boolean,
+    titleAppendix?: () => JSX.Element
 }
 
 export class ContextMenuElement extends BernieComponent<ContextMenuElementProps, any, any> {
@@ -33,9 +34,13 @@ export class ContextMenuElement extends BernieComponent<ContextMenuElementProps,
         return (
             <Button highlight={getOr(p.highlight, false)} bgColorOnDefault={false} border={false} opaque={getOr(p.opaque, false)} visualMeaning={getOr(p.visualMeaning, ObjectVisualMeaning.UI_NO_HIGHLIGHT)} width={percent(100)} onClick={p.onClick}>
                 <FlexBox gap={t.gaps.defaultGab} flexDir={FlexDirection.ROW} align={Align.CENTER} justifyContent={Justify.SPACE_BETWEEN} width={percent(100)}>
-                    <If condition={p.customTitleRenderer === undefined} ifFalse={p.customTitleRenderer?.()} ifTrue={
-                        <Text text={String(p.title)}/>
-                    }/>
+
+                    <FlexBox gap={t.gaps.defaultGab} flexDir={FlexDirection.ROW} align={Align.CENTER} justifyContent={Justify.SPACE_BETWEEN}>
+                        <If condition={p.customTitleRenderer === undefined} ifFalse={p.customTitleRenderer?.()} ifTrue={
+                            <Text text={String(p.title)}/>
+                        }/>
+                        {p.titleAppendix?.()}
+                    </FlexBox>
                     <If condition={p.icon === undefined} ifFalse={p.icon?.()} ifTrue={
                         <span style={{width: "16px", height: "16px"}}/>
                     }/>

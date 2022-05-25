@@ -34,7 +34,6 @@ export function utilizeUserProfile(defUser: UserData = {
     id: v4(),
     username: "sample",
     userEntrySetupDate: new Date(),
-    Date: new Date(),
     firstname: "sample",
     lastname: "sample"
 }): UserData {
@@ -129,7 +128,7 @@ export class App {
 
     private _sessionID?: string;
 
-    private _userData: UserData | undefined;
+    private _userData: UserProfileData | undefined;
 
     private _initiated: boolean = false;
 
@@ -279,6 +278,7 @@ export class App {
                                 case SessionIDCheckResultType.OK:
                                     // Login was successful, app considered to be logged in
                                     this.sessionID = config.sessionID as string;
+                                    this.userData = data.profileData;
                                     (config.onLoginSuccess)?.();
                                     break;
                                 case SessionIDCheckResultType.NO_SESSION_PRESENT:
@@ -307,6 +307,7 @@ export class App {
                                 case CredentialsCheckResultType.OK:
                                     // Login was successful, app considered to be logged in
                                     this.sessionID = data.newSessionID;
+                                    this.userData = data.profileData;
                                     this.addSessionHistoryEntry({
                                         sessionID: data.newSessionID as string,
                                         profileData: data.profileData
@@ -529,11 +530,11 @@ export class App {
     }
 
     // todo implement
-    set userData(value: UserData | undefined) {
+    set userData(value: UserProfileData | undefined) {
         this._userData = value;
     }
 
-    get userData(): UserData | undefined {
+    get userData(): UserProfileData | undefined {
         return this._userData;
     }
 
