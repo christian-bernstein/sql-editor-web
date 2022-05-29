@@ -3,11 +3,10 @@ import {ReactComponent as ContextIcon} from "../../../assets/icons/ic-20/ic20-mo
 import {ReactComponent as DeleteIcon} from "../../../assets/icons/ic-20/ic20-delete.svg";
 import {ReactComponent as CalenderIcon} from "../../../assets/icons/ic-20/ic20-calendar-edit.svg";
 import {ReactComponent as FileIcon} from "../../../assets/icons/ic-20/ic20-file-add.svg";
-import {ReactComponent as LoadIcon} from "../../../assets/icons/ic-20/ic20-arrow-right.svg";
+import {ReactComponent as LoadIcon} from "../../../assets/icons/ic-20/ic20-play.svg";
 import {ReactComponent as TagsIcon} from "../../../assets/icons/ic-20/ic20-tag.svg";
 import {ReactComponent as UserIcon} from "../../../assets/icons/ic-20/ic20-user.svg";
 import {ReactComponent as EditIcon} from "../../../assets/icons/ic-20/ic20-edit.svg";
-import {ReactComponent as RightIcon} from "../../../assets/icons/ic-20/ic20-chevron-right.svg";
 import {ProjectInfoData} from "../../../logic/data/ProjectInfoData";
 import {Text, TextType} from "../../lo/Text";
 import {percent, px} from "../../../logic/style/DimensionalMeasured";
@@ -43,10 +42,9 @@ import styled from "styled-components";
 import {Box} from "../../lo/Box";
 import {AreaChartComponent} from "../areaChart/AreaChartComponent";
 import {ClientDisplay} from "../clientDisplay/ClientDisplay";
-import {CopyIcon} from "../copyIcon/CopyIcon";
 import {ContextMenuElement} from "../../lo/ContextMenuElement";
-import {Switch} from "../../lo/Switch";
 import {Badge} from "../../lo/Badge";
+import {ProjectInfoV2Props} from "./ProjectInfoV2";
 
 export type ProjectInfoProps = {
     data: ProjectInfoData,
@@ -101,28 +99,32 @@ export class ProjectInfo extends BernieComponent<ProjectInfoProps, any, ProjectI
         })
     }
 
+    private toggleProjectPreviewDialog() {
+        App.app().callAction(Constants.openMainDialogWithParamsAction, {
+            dialog: Constants.projectPreviewDialog,
+            parameters: {
+                data: this.props.data,
+                ctx: {
+                    onSelect: data => {
+                        console.log("on select")
+                        if (this.props.onSelect !== undefined) {
+                            this.props.onSelect(data);
+                        } else {
+                            console.error("onSelect === undefined")
+                        }
+                    }
+                }
+            } as ProjectInfoV2Props
+        });
+    }
+
     private renderContextMenuContent(): JSX.Element {
         const theme = utilizeGlobalTheme();
 
         return (
             <FlexBox gap={px(1)}>
-                {/*<CopyIcon copyValueProducer={() => this.props.data.id}/>
-                <Separator orientation={Orientation.HORIZONTAL}/>*
-                <ContextMenuElement title={"Als gelesen markieren"}/>
+                <ContextMenuElement title={"Open preview"} titleAppendix={() => Badge.beta(theme)} onClick={() => this.toggleProjectPreviewDialog()}/>
                 <Separator orientation={Orientation.HORIZONTAL}/>
-                <ContextMenuElement title={"Leute einladen"}/>
-                <Separator orientation={Orientation.HORIZONTAL}/>
-                <ContextMenuElement title={"Server stummschalten"} icon={() => <Icon icon={<RightIcon/>} size={px(16)}/>}/>
-                <ContextMenuElement title={"Benachrichtigungseinstellungen"} icon={() => <Icon icon={<RightIcon/>} size={px(16)}/>}/>
-                <Separator orientation={Orientation.HORIZONTAL}/>
-                <ContextMenuElement title={"Servereinstellungen"} icon={() => <Icon icon={<RightIcon/>} size={px(16)}/>}/>
-                <ContextMenuElement title={"Privatsphäreeinstellungen"}/>
-                <ContextMenuElement title={"Serverprofil bearbeiten"}/>
-                <Separator orientation={Orientation.HORIZONTAL}/>
-                <ContextMenuElement title={"Kanal erstellen"}/>
-                <ContextMenuElement title={"Kategorie erstellen"}/>
-                <ContextMenuElement title={"Event erstellen"}/>
-                <Separator orientation={Orientation.HORIZONTAL}/>*/}
                 <ContextMenuElement title={"Edit project"} titleAppendix={() => Badge.beta(theme)} icon={() => <Icon icon={<EditIcon/>} size={px(16)}/>}/>
                 <ContextMenuElement title={"Delete project"} visualMeaning={ObjectVisualMeaning.ERROR} icon={() => <Icon icon={<DeleteIcon/>} size={px(16)}/>} onClick={() => this.toggleProjectDeleteDialog()}/>
                 <Separator orientation={Orientation.HORIZONTAL}/>
@@ -137,7 +139,7 @@ export class ProjectInfo extends BernieComponent<ProjectInfoProps, any, ProjectI
 
     private renderContextMenu(): JSX.Element {
         return (
-            <ContextCompound menu={this.renderContextMenuContent()}>
+            <ContextCompound  menu={this.renderContextMenuContent()}>
                 <Icon icon={<ContextIcon/>}/>
             </ContextCompound>
         );
@@ -292,12 +294,21 @@ export class ProjectInfo extends BernieComponent<ProjectInfoProps, any, ProjectI
                                 );
                             }, "file_size")}
                         </ChartGrid>
-                        <Button width={percent(100)} visualMeaning={ObjectVisualMeaning.INFO} opaque={true} shrinkOnClick={true} onClick={event => this.onSelect(event)}>
-                            <FlexBox flexDir={FlexDirection.ROW} gap={px(10)}>
-                                <Text text={"**Load**"}/>
-                                <Icon icon={<LoadIcon/>}/>
-                            </FlexBox>
-                        </Button>
+
+                        <FlexBox width={percent(100)} flexDir={FlexDirection.ROW}>
+                            <Button width={percent(50)} opaque={true} onClick={() => this.toggleProjectPreviewDialog()}>
+                                <FlexBox flexDir={FlexDirection.ROW} gap={px(10)}>
+                                    <Text text={"Details"} />
+                                </FlexBox>
+                            </Button>
+                            <Button width={percent(50)} visualMeaning={ObjectVisualMeaning.INFO} highlight opaque={true} shrinkOnClick={true} onClick={event => this.onSelect(event)}>
+                                <FlexBox flexDir={FlexDirection.ROW} gap={px(10)}>
+                                    <Icon icon={<LoadIcon/>} colored visualMeaning={ObjectVisualMeaning.INFO}/>
+                                </FlexBox>
+                            </Button>
+                        </FlexBox>
+
+
                     </FlexBox>
                 </FlexBox>
             </Box>

@@ -4,9 +4,10 @@ import './styles/index.scss';
 import './styles/fonts.scss'
 import reportWebVitals from './reportWebVitals';
 import {AppPage} from "./pages/app/AppPage";
+import {AppPageMode} from "./pages/app/AppPageMode";
 
 ReactDOM.render(
-    <AppPage/>,
+    <AppPage mode={AppPageMode.RELEASE}/>,
     document.getElementById('root')
 );
 

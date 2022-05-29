@@ -25,6 +25,7 @@ import {CDNRequestBranch} from "../data/cdn/CDNRequestBranch";
 import {ScreenManager} from "../screen/ScreenManager";
 import {AppShortcuts} from "./AppShortcuts";
 import {Cache} from "../cache/Cache";
+import {ModalDisplay} from "../modal/ModalDisplay";
 
 export function utilizeApp(): App {
     return App.app();
@@ -53,6 +54,9 @@ export function utilizeGlobalTheme(defTheme: Themeable.Theme = Themeable.default
 }
 
 export class App {
+    get modals(): Array<ModalDisplay> {
+        return this._modals;
+    }
 
     public static readonly enablePacketLogging: boolean = false;
 
@@ -118,6 +122,8 @@ export class App {
 
     private readonly actions: Map<String, Array<(parameters?: any) => void>> = new Map<String, Array<(parameters?: any) => void>>();
 
+    private readonly _modals: Array<ModalDisplay>;
+
     private readonly _screenManager: ScreenManager = new ScreenManager();
 
     private centralMemoryCache?: Cache;
@@ -143,6 +149,7 @@ export class App {
         this.globalTheme = config.defaultTheme;
         this.themes = config.themes;
         this._dialogAssembly = config.appAssembly;
+        this._modals = new Array<ModalDisplay>();
         this.init();
     }
 

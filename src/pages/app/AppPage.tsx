@@ -52,13 +52,12 @@ import {If} from "../../components/logic/If";
 import {Shard} from "../../logic/misc/Shard";
 import {QuickActionShard} from "../../shards/quickAction/QuickActionShard";
 import {LogPageDisplayVersion} from "../log/LogPageDisplayVersion";
-import {
-    SQLCommandBookmarksDialog,
-    SQLCommandBookmarksDialogProps
-} from "../sqlCommandBookmarks/SQLCommandBookmarksDialog";
-import {ServiceMonitorOverview} from "../../components/ho/serviceMonitorOverview/ServiceMonitorOverview";
+import {ProjectInfoV2, ProjectInfoV2Props} from "../../components/ho/projectInfo/ProjectInfoV2";
+import moment from "moment";
+import {AppPageMode} from "./AppPageMode";
 
 export type AppPageProps = {
+    mode: AppPageMode
 }
 
 export type AppPageState = {
@@ -79,7 +78,7 @@ let instance: AppPage | undefined = undefined;
 export class AppPage extends React.Component<AppPageProps, AppPageState> {
 
     private readonly DialogTransition = React.forwardRef((props: TransitionProps & {children?: React.ReactElement<any, any>}, ref: ForwardedRef<unknown>) => {
-        return <Slide direction="up" ref={ref} {...props} />;
+        return <Slide direction="up" mountOnEnter ref={ref} {...props} />;
     });
 
     private mounted: boolean = false;
@@ -91,7 +90,8 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
             <Screen children={
                 <Centered fullHeight children={
                     // <Text text={"Unit test screen"} bold uppercase visualMeaning={ObjectVisualMeaning.BETA} coloredText/>
-                    <ServiceMonitorOverview/>
+                    // <ServiceMonitorOverview/>
+                    <Text text={moment("2022-05-27T17:20:Z", "YYYY-MM-DD[T]HH:mm:ss").fromNow()}/>
                 }/>
             }/>
         )],
@@ -118,11 +118,50 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
         hook = () => this.setState({
             updateSlave: this.state.updateSlave + 1
         });
+
         this.mounted = true;
 
-        this.activateSpecialPage(DefaultSpecialPages.UNIT_TEST, () => undefined);
-        return;
+        switch (this.props.mode) {
+            case AppPageMode.UNIT_TEST:
+                this.activateSpecialPage(DefaultSpecialPages.UNIT_TEST, () => undefined);
+                return;
+            case AppPageMode.DEVELOPMENT:
+                this.openAppConfigSelector();
+                return;
+            case AppPageMode.RELEASE:
+                this.init({
+                    appTitle: "SQL Editor",
+                    debugMode: false,
+                    defaultAppRoute: "/boarding",
+                    defaultDebugAppRoute: "/boarding",
+                    rootRerenderHook: (callback) => this.rerender.bind(this)(),
+                    logInterceptors: [],
+                    logSaveSize: 1000,
+                    defaultTheme: "dark-green",
+                    appAssembly: this.assembly,
+                    shards: new Map<string, (app: App) => Shard>([
+                        ["db-session-cache", () => new DBSessionCacheShard()],
+                        ["quick-actions-shard", () => new QuickActionShard()]
+                    ]),
+                    themes: new Map<string, Themeable.Theme>([
+                        ["dark-green", Themeable.defaultTheme],
+                        ["light-green", Themeable.lightTheme]
+                    ]),
+                    connectorConfig: {
+                        protocol: "login",
+                        ssl: true,
+                        // address: "ws://192.168.2.100:80",
+                        address: "wss://server3.cwies.de:25574",
+                        id: "ton",
+                        maxConnectAttempts: 1,
+                        connectionRetryDelayFunc: () => 0,
+                        packetInterceptor: this.getLogPacketInterceptor()
+                    }
+                });
+        }
+    }
 
+    private openAppConfigSelector() {
         this.activateSpecialPage(DefaultSpecialPages.SELECT_APP_CONFIG, () => [
             {
                 title: "SQL Editor - Local debug",
@@ -250,7 +289,6 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
             //     }
             // }
         ] as AppConfigSelectionData[]);
-        // this.activateSpecialPage(DefaultSpecialPages.UNIT_TEST, () => undefined);
     }
 
     componentWillUnmount() {
@@ -302,12 +340,18 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
 
         return (
             // id={"main-dialog"}
-            <Dialog open={this.state.showDialog} onClose={() => this.setState({
+            <Dialog open={this.state.showDialog} keepMounted onClose={() => this.setState({
                 showDialog: false
-            })} TransitionComponent={this.DialogTransition} fullScreen={true} sx={{
+            })} TransitionComponent={this.DialogTransition} fullScreen={false} sx={{
                 '& .MuiDialog-paper': {
                     // todo make configurable
                     background: "transparent",
+
+                    maxHeight: "100vh !important",
+                    maxWidth: "100vw !important",
+                    margin: "0 !important",
+                    borderRadius: "0 !important"
+
                     // backgroundColor: theme.colors.backgroundColor.css()
                 }
             }} children={
@@ -385,10 +429,17 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
     render() {
         return (
             <div className={"app"}>
+                {this.renderModals()}
                 {this.renderDialog()}
                 <CommandPallet isOpen={this.state.showCommandPallet}/>
                 {this.state.currentSpecialPage !== undefined ? this.renderSpecialPage() : this.renderDefaultPage()}
             </div>
+        );
+    }
+
+    private renderModals(): JSX.Element {
+        return (
+            <></>
         );
     }
 
@@ -407,7 +458,9 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                     </MenuPage>
                 </BrowserRouter>
             );
-        } else return <>App not initiated</>;
+        } else return <>
+            App not initiated
+        </>;
     }
 
     private getRouts(): JSX.Element[] {
@@ -443,6 +496,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
         this.assembly.assembly(Constants.deleteProjectDialog, (theme, props) => <DeleteProjectDialog project={props}/>);
         this.assembly.assembly(Constants.serverConnectionDialog, (theme, props) => <ServerInfoDialog/>);
         this.assembly.assembly(Constants.roadmapDialog, (theme, props) => <RoadmapDialog/>);
+        this.assembly.assembly(Constants.projectPreviewDialog, (theme, props: ProjectInfoV2Props) => <Centered fullHeight children={<ProjectInfoV2 {...props}/>}/>);
     }
 
     private init(config?: AppConfig) {
@@ -561,6 +615,8 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                 }
             });
         });
+
+        this.rerender();
     }
 
     private getLogPacketInterceptor(): (packet: Environment.Packet, connector: Environment.Connector) => void {

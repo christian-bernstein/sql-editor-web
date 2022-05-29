@@ -172,7 +172,7 @@ export class QuickActionPanel extends BernieComponent<any, any, QuickActionPanel
                         );
                     }, "updating")
                 } appendix={
-                    <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} width={percent(100)}>
+                    <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER}>
                         <Mobile>
                             <Input fontWeight={"lighter"} minWidth={percent(100)} bgColor={t.colors.backgroundHighlightColor200} minHeightBoundary={false} height={percent(100)} placeholder={"Search action"} onChange={ev => {
                                 if (!this.local.state.updating) {

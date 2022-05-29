@@ -21,17 +21,21 @@ export class NavHeader extends BernieComponent<NavHeaderProps, any, any> {
     }
 
     componentRender(p: NavHeaderProps, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
+        const element = getOr(p.element, "default");
         return (
             <FlexBox flexDir={FlexDirection.ROW} gap={t.gaps.smallGab}>
                 {
                     Array.from(p.elements).map(([id, renderer]) => {
                         return (
                             <FlexBox flexDir={FlexDirection.COLUMN} gap={t.gaps.smallGab}>
-                                <Button border={false} bgColorOnDefault={false} opaque opaqueValue={.6} onClick={() => p.onChange(getOr(p.element, "default"), id)} children={
+                                <Button border={false} bgColorOnDefault={false} opaque opaqueValue={.6} onClick={() => {
+                                    if (element !== id) {
+                                        p.onChange(element, id);
+                                    }
+                                }} children={
                                     renderer(this)
                                 }/>
-
-                                <Separator visualMeaning={ObjectVisualMeaning.INFO}/>
+                                <Separator visualMeaning={ObjectVisualMeaning.INFO} visible={element === id}/>
                             </FlexBox>
                         );
                     })

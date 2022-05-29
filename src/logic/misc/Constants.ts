@@ -10,5 +10,7 @@ export class Constants {
 
     public static roadmapDialog: string = "roadmap-dialog";
 
+    public static projectPreviewDialog: string = "project-preview-dialog";
+
     public static openMainDialogWithParamsAction: string = "open-main-dialog-with-params";
 }
