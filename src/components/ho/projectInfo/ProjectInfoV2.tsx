@@ -286,7 +286,7 @@ export class ProjectInfoV2 extends BernieComponent<ProjectInfoV2Props, any, Proj
             return (
                 <>
                     <Default children={
-                        <TitledBox height={DimensionalMeasured.of(70, Dimension.vh)} width={DimensionalMeasured.of(50, Dimension.vw)} showFooter={true} showBody={true} titleRenderer={instance => this.a("header", instance)} body={local.state.body} bodyRenderers={new Map<string, (instance: TitledBox) => JSX.Element>([
+                        <TitledBox height={DimensionalMeasured.of(70, Dimension.vh)} width={DimensionalMeasured.of(50, Dimension.vw)} showFooter={true} showBody={true} titleRenderer={instance => this.a("header-desktop", instance)} body={local.state.body} bodyRenderers={new Map<string, (instance: TitledBox) => JSX.Element>([
                             ["default", instance => {
                                 return (
                                     <FlexBox width={percent(100)} overflowYBehaviour={OverflowBehaviour.SCROLL} gap={t.gaps.defaultGab}>
