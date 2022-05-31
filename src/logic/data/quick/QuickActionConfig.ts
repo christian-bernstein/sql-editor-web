@@ -8,6 +8,7 @@ export interface QuickActionConfig {
     description?: string,
     displayName: string,
     opaque?: boolean,
+    isAllowedAction?: () => boolean,
     visualMeaning?: ObjectVisualMeaning,
     onClick?: (event: React.MouseEvent<HTMLSpanElement, MouseEvent>, config: QuickActionConfig) => void,
     wrapperStyleOverwrite?: CSSProperties,

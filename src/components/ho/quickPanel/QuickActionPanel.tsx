@@ -32,7 +32,7 @@ import {Dimension} from "../../../logic/style/Dimension";
 import {QuickActionCategory} from "../../../logic/data/quick/QuickActionCategory";
 import {Centered} from "../../lo/PosInCenter";
 import {Default, Mobile} from "../../logic/Media";
-import {createMargin} from "../../../logic/style/Margin";
+import {Cursor} from "../../../logic/style/Cursor";
 
 export type QuickActionPanelLocalState = {
     updating: boolean,
@@ -82,10 +82,12 @@ export class QuickActionPanel extends BernieComponent<any, any, QuickActionPanel
                         const theme = utilizeGlobalTheme();
 
                         const renderBase = (config: QuickActionConfig) => {
+                            const allowedAction: boolean = config.isAllowedAction === undefined ? true : config.isAllowedAction();
+
                             return (
                                 <span onClick={event => QuickActionPanel.handleQAClick(event, config)} children={
                                     <If condition={getOr(config.wrapInDefaultButton, true)} ifTrue={
-                                        <Button padding={theme.paddings.defaultObjectPadding} shrinkOnClick opaque={getOr(config.opaque, config.beta)} visualMeaning={config.visualMeaning ? config.visualMeaning : (config.beta ? ObjectVisualMeaning.BETA : ObjectVisualMeaning.UI_NO_HIGHLIGHT)} children={
+                                        <Button cursor={allowedAction ? Cursor.pointer : Cursor.notAllowed} padding={theme.paddings.defaultObjectPadding} shrinkOnClick opaque={getOr(config.opaque, config.beta)} visualMeaning={config.visualMeaning ? config.visualMeaning : (config.beta ? ObjectVisualMeaning.BETA : ObjectVisualMeaning.UI_NO_HIGHLIGHT)} children={
                                             config.render(t, this, config)
                                         }/>
                                     } ifFalse={
@@ -108,11 +110,11 @@ export class QuickActionPanel extends BernieComponent<any, any, QuickActionPanel
                                     {actions.map(config => {
                                         if (config.renderHover !== undefined) {
                                             return (
-                                                <CustomTooltip wrapperStyle={config.wrapperStyleOverwrite} arrow title={config.renderHover(t, this)} children={renderBase(config)}/>
+                                                <CustomTooltip enterDelay={700} wrapperStyle={config.wrapperStyleOverwrite} arrow title={config.renderHover(t, this)} children={renderBase(config)}/>
                                             );
                                         } else {
                                             return (
-                                                <CustomTooltip wrapperStyle={config.wrapperStyleOverwrite} arrow noPadding noBorder title={
+                                                <CustomTooltip enterDelay={700} wrapperStyle={config.wrapperStyleOverwrite} arrow noPadding noBorder title={
                                                     <Box width={percent(100)} gapY={theme.gaps.defaultGab}>
                                                         <ElementHeader title={config.displayName} boldHeader icon={<
                                                             Icon icon={<RunIcon/>}/>
@@ -155,7 +157,7 @@ export class QuickActionPanel extends BernieComponent<any, any, QuickActionPanel
     componentRender(p: any, s: any, l: QuickActionPanelLocalState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
             <Box width={percent(100)} maxHeight={DimensionalMeasured.of(100, Dimension.vw)} borderless gapY={t.gaps.defaultGab}>
-                <ElementHeader title={"Quick actions"} icon={
+                <ElementHeader title={"Quick-actions"} icon={
                     this.component(local => {
                         return (
                             <If condition={local.state.updating} ifTrue={
@@ -172,7 +174,7 @@ export class QuickActionPanel extends BernieComponent<any, any, QuickActionPanel
                         );
                     }, "updating")
                 } appendix={
-                    <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER}>
+                    <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} width={percent(50)}>
                         <Mobile>
                             <Input fontWeight={"lighter"} minWidth={percent(100)} bgColor={t.colors.backgroundHighlightColor200} minHeightBoundary={false} height={percent(100)} placeholder={"Search action"} onChange={ev => {
                                 if (!this.local.state.updating) {

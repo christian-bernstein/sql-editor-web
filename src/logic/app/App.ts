@@ -54,6 +54,9 @@ export function utilizeGlobalTheme(defTheme: Themeable.Theme = Themeable.default
 }
 
 export class App {
+    get globalThemeName(): string {
+        return this._globalThemeName;
+    }
     get modals(): Array<ModalDisplay> {
         return this._modals;
     }
@@ -128,7 +131,7 @@ export class App {
 
     private centralMemoryCache?: Cache;
 
-    private globalTheme: string;
+    private _globalThemeName: string;
 
     private _config: AppConfig;
 
@@ -146,7 +149,7 @@ export class App {
 
     constructor(config: AppConfig) {
         this._config = config;
-        this.globalTheme = config.defaultTheme;
+        this._globalThemeName = config.defaultTheme;
         this.themes = config.themes;
         this._dialogAssembly = config.appAssembly;
         this._modals = new Array<ModalDisplay>();
@@ -381,12 +384,12 @@ export class App {
     }
 
     public getGlobalTheme(): Themeable.Theme {
-        return this.themes.get(this.globalTheme) as Themeable.Theme;
+        return this.themes.get(this._globalThemeName) as Themeable.Theme;
     }
 
     // todo add rerender feature
     public setGlobalTheme(theme: string, setDefaultBrowserTheme: boolean = true) {
-        this.globalTheme = theme;
+        this._globalThemeName = theme;
         if (setDefaultBrowserTheme) {
             this.setDefaultBrowserTheme(theme);
         }
@@ -446,7 +449,7 @@ export class App {
     private loadDefaultBrowserTheme() {
         const theme: string | null = window.localStorage.getItem("default-browser-theme");
         if (theme != null) {
-            this.globalTheme = theme;
+            this._globalThemeName = theme;
         }
     }
 

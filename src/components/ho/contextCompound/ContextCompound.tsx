@@ -12,7 +12,9 @@ export type ContextMenuProps = {
     clickType?: "single" | "double",
     wrapMenu?: boolean,
     wrapperStyle?: CSSProperties,
-    width?: DimensionalMeasured
+    width?: DimensionalMeasured,
+    onClose?: () => void,
+    open?: boolean
 }
 
 export type ContextMenuState = {
@@ -25,7 +27,7 @@ export class ContextCompound extends React.Component<ContextMenuProps, ContextMe
     constructor(props: ContextMenuProps) {
         super(props);
         this.state = {
-            open: false,
+            open: getOr(props.open, false),
             anchorEl: undefined
         };
     }
@@ -34,6 +36,8 @@ export class ContextCompound extends React.Component<ContextMenuProps, ContextMe
         this.setState({
             open: true,
             anchorEl: event.currentTarget
+        }, () => {
+            this.props.onClose?.();
         });
     }
 

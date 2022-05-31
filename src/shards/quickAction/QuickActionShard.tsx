@@ -14,11 +14,13 @@ export class QuickActionShard extends Shard {
 
         this.addCategory(new QuickActionCategory({
             id: "utilities",
-            displayName: "Utilities & debugging"
+            displayName: "Utilities"
         }), qac => {
             qac.registerQuickAction(
+                DefaultQuickActions.serverQuickViewQA,
                 DefaultQuickActions.fullscreenQA,
                 DefaultQuickActions.logQA,
+                DefaultQuickActions.clearLogQA,
                 DefaultQuickActions.rerenderQA,
                 DefaultQuickActions.reloadQA,
             );

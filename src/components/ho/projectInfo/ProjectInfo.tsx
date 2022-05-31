@@ -44,11 +44,11 @@ import {AreaChartComponent} from "../areaChart/AreaChartComponent";
 import {ClientDisplay} from "../clientDisplay/ClientDisplay";
 import {ContextMenuElement} from "../../lo/ContextMenuElement";
 import {Badge} from "../../lo/Badge";
-import {ProjectInfoV2Props} from "./ProjectInfoV2";
+import {ProjectPreviewProps} from "../projectPreview/ProjectPreview";
 
 export type ProjectInfoProps = {
     data: ProjectInfoData,
-    onSelect?: (data: ProjectInfoData) => void
+    onSelect: (data: ProjectInfoData) => void
 }
 
 export type ProjectInfoLocalState = {
@@ -87,9 +87,7 @@ export class ProjectInfo extends BernieComponent<ProjectInfoProps, any, ProjectI
     }
 
     private onSelect(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
-        if (this.props.onSelect !== undefined) {
-            this.props.onSelect(this.props.data);
-        }
+        this.props.onSelect(this.props.data)
     }
 
     private toggleProjectDeleteDialog() {
@@ -107,14 +105,10 @@ export class ProjectInfo extends BernieComponent<ProjectInfoProps, any, ProjectI
                 ctx: {
                     onSelect: data => {
                         console.log("on select")
-                        if (this.props.onSelect !== undefined) {
-                            this.props.onSelect(data);
-                        } else {
-                            console.error("onSelect === undefined")
-                        }
+                        this.props.onSelect(data);
                     }
                 }
-            } as ProjectInfoV2Props
+            } as ProjectPreviewProps
         });
     }
 
@@ -126,6 +120,7 @@ export class ProjectInfo extends BernieComponent<ProjectInfoProps, any, ProjectI
                 <ContextMenuElement title={"Open preview"} titleAppendix={() => Badge.beta(theme)} onClick={() => this.toggleProjectPreviewDialog()}/>
                 <Separator orientation={Orientation.HORIZONTAL}/>
                 <ContextMenuElement title={"Edit project"} titleAppendix={() => Badge.beta(theme)} icon={() => <Icon icon={<EditIcon/>} size={px(16)}/>}/>
+                <ContextMenuElement title={"Move project"} titleAppendix={() => Badge.beta(theme)} icon={() => <Icon icon={<EditIcon/>} size={px(16)}/>}/>
                 <ContextMenuElement title={"Delete project"} visualMeaning={ObjectVisualMeaning.ERROR} icon={() => <Icon icon={<DeleteIcon/>} size={px(16)}/>} onClick={() => this.toggleProjectDeleteDialog()}/>
                 <Separator orientation={Orientation.HORIZONTAL}/>
                 <ContextMenuElement title={"Copy project ID"} onClick={() => this.copyIDToClipboard()}/>

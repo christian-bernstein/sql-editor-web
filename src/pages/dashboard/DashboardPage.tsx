@@ -149,6 +149,9 @@ export default class DashboardPage extends BernieComponent<DashboardPageProps, D
     }
 
     private onProjectSelect(data: ProjectInfoData) {
+
+        console.log("dashboard: onProjectSelect")
+
         App.app().shard<DBSessionCacheShard>("db-session-cache").currentInfoData = data;
         this.setState({
             redirectToEditor: true
@@ -266,13 +269,17 @@ export default class DashboardPage extends BernieComponent<DashboardPageProps, D
                         </Centered>
                     }/>
                 } ifFalse={
-                    <LiteGrid columns={6} responsive minResponsiveWidth={px(300)} gap={em(1)}>{
-                        this.getFilteredProjects().map(project => <ProjectInfo
-                            key={project.id}
-                            onSelect={data => this.onProjectSelect(data)}
-                            data={project}
-                        />)
-                    }</LiteGrid>
+                    <LiteGrid columns={4} responsive minResponsiveWidth={px(350)} gap={em(1)} children={
+                        this.getFilteredProjects().map(project => {
+                            return (
+                                <ProjectInfo
+                                    key={project.id}
+                                    onSelect={data => this.onProjectSelect(data)}
+                                    data={project}
+                                />
+                            );
+                        })
+                    }/>
                 }/>
             );
         }, "project");

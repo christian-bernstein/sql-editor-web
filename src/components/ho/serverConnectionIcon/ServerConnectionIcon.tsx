@@ -23,7 +23,8 @@ import {LatencyDisplay} from "../../../tests/chart/LatencyDisplay";
 
 export type ServerConnectionIconProps = {
     openConnectionMetricsDialog?: boolean,
-    pulse?: boolean
+    pulse?: boolean,
+    renderTooltip?: boolean
 }
 
 export const ServerConnectionIcon: React.FC<ServerConnectionIconProps> = props => {
@@ -31,14 +32,13 @@ export const ServerConnectionIcon: React.FC<ServerConnectionIconProps> = props =
     const connector = App.app().getConnector();
     const conState = connector.socket?.readyState;
 
-    return (
-        <CustomTooltip noBorder arrow noPadding title={renderTooltip(props, theme, connector)}>
-            <span onClick={() => {
-                if (getOr(props.openConnectionMetricsDialog, false)) {
-                    App.app().callAction("open-main-dialog", Constants.serverConnectionDialog);
-                }
-            }}>
-            {(() => {
+    const icon = (
+        <span onClick={() => {
+            if (getOr(props.openConnectionMetricsDialog, false)) {
+                App.app().callAction("open-main-dialog", Constants.serverConnectionDialog);
+            }
+        }} children={
+            (() => {
                 switch (conState) {
                     case 0:
                         return renderConnecting(props, theme, connector);
@@ -51,10 +51,17 @@ export const ServerConnectionIcon: React.FC<ServerConnectionIconProps> = props =
                     default:
                         return <></>
                 }
-            })()}
-        </span>
-        </CustomTooltip>
+            })()
+        }/>
     );
+
+    if (getOr(props.renderTooltip, true)) {
+        return (
+            <CustomTooltip noBorder arrow noPadding title={renderTooltip(props, theme, connector)} children={icon}/>
+        );
+    } else {
+        return icon;
+    }
 }
 
 export const renderTooltip: (props: ServerConnectionIconProps, theme: Themeable.Theme, con: Environment.Connector) => JSX.Element = (props, theme, con) => {

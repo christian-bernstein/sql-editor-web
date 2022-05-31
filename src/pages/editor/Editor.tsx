@@ -73,6 +73,8 @@ import {CommandHistoryElement} from "../../components/ho/commandHistoryElement/C
 import {SavedCommandType} from "./SavedCommandType";
 import {Default, Mobile} from "../../components/logic/Media";
 import {SQLCommandBookmarksDialog} from "../sqlCommandBookmarks/SQLCommandBookmarksDialog";
+import {QuickActionPanel} from "../../components/ho/quickPanel/QuickActionPanel";
+import {ReactComponent as QuickPanelIcon} from "../../assets/icons/ic-20/ic20-view-boxes.svg";
 
 export type DebugEditorProps = {
 }
@@ -602,6 +604,14 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                             }
                         />,
                     ]}/>
+
+                    <ContextCompound wrapMenu={false} menu={<QuickActionPanel/>} children={
+                        <Button
+                            children={
+                                <Icon icon={<QuickPanelIcon/>}/>
+                            }
+                        />
+                    }/>
                 </FlexBox>
             );
         })

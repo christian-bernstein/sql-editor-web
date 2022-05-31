@@ -39,14 +39,16 @@ export type MenuPageV2Props = {
 }
 
 export type MenuPageV2LocalState = {
-    state: MenuState
+    state: MenuState,
+    qaPanelOpenState: boolean
 }
 
 export class MenuPageV2 extends BernieComponent<MenuPageV2Props, any, MenuPageV2LocalState> {
 
     constructor(props: MenuPageV2Props) {
         super(props, undefined, {
-            state: MenuState.SMALL
+            state: MenuState.SMALL,
+            qaPanelOpenState: false
         });
         this.headerAssembly();
         this.mainAssembly();
@@ -129,8 +131,16 @@ export class MenuPageV2 extends BernieComponent<MenuPageV2Props, any, MenuPageV2
                                     <ServerConnectionIcon openConnectionMetricsDialog pulse={false}/>
                                     <Separator orientation={Orientation.HORIZONTAL}/>
 
-                                    <ContextCompound wrapMenu={false} menu={<QuickActionPanel/>} children={
-                                        <Icon icon={<QuickPanelIcon/>}/>
+                                    <ContextCompound open={this.local.state.qaPanelOpenState} onClose={() => {
+                                        this.local.setState({
+                                            qaPanelOpenState: false
+                                        })
+                                    }} wrapMenu={false} menu={<QuickActionPanel/>} children={
+                                        <Icon icon={<QuickPanelIcon/>} onClick={() => {
+                                            this.local.setState({
+                                                qaPanelOpenState: true
+                                            })
+                                        }}/>
                                     }/>
                                 </FlexBox>
                             </Box>
