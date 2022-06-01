@@ -5,6 +5,7 @@
   "homepage": "/",
   "dependencies": {
     "@codemirror/lang-javascript": "^0.19.4",
+    "@codemirror/lang-json": "^0.20.0",
     "@codemirror/lang-sql": "^0.19.4",
     "@codemirror/language": "^0.19.7",
     "@dhaiwat10/react-link-preview": "^1.12.2",

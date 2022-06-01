@@ -7,7 +7,7 @@ import {AppPage} from "./pages/app/AppPage";
 import {AppPageMode} from "./pages/app/AppPageMode";
 
 ReactDOM.render(
-    <AppPage mode={AppPageMode.RELEASE}/>,
+    <AppPage mode={AppPageMode.UNIT_TEST}/>,
     document.getElementById('root')
 );
 

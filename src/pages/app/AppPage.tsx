@@ -55,6 +55,7 @@ import {LogPageDisplayVersion} from "../log/LogPageDisplayVersion";
 import {ProjectPreview, ProjectPreviewProps} from "../../components/ho/projectPreview/ProjectPreview";
 import moment from "moment";
 import {AppPageMode} from "./AppPageMode";
+import {ImportDatasetDialog} from "../importDatasets/ImportDatasetDialog";
 
 export type AppPageProps = {
     mode: AppPageMode
@@ -91,7 +92,12 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                 <Centered fullHeight children={
                     // <Text text={"Unit test screen"} bold uppercase visualMeaning={ObjectVisualMeaning.BETA} coloredText/>
                     // <ServiceMonitorOverview/>
-                    <Text text={moment("2022-05-27T17:20:Z", "YYYY-MM-DD[T]HH:mm:ss").fromNow()}/>
+                    // <Text text={moment("2022-05-27T17:20:Z", "YYYY-MM-DD[T]HH:mm:ss").fromNow()}/>
+                    <ImportDatasetDialog tableSupplier={() => [
+                        "test1", "ses internal", "lul"
+                    ]} sqlRelay={sql => {
+                        console.error(sql)
+                    }}/>
                 }/>
             }/>
         )],

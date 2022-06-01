@@ -485,46 +485,93 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                                 }/>
                             }/>
                         </span>,
-                        <ContextCompound width={percent(100)} menu={
-                            <FlexBox width={percent(100)} padding paddingY={theme.gaps.smallGab} paddingX={theme.gaps.smallGab}>
-                                <ElementHeader
-                                    title={"Input options"}
-                                    icon={<OptionsIcon/>}
-                                    wrapIcon
-                                    appendix={
-                                        <Button visualMeaning={ObjectVisualMeaning.BETA} shrinkOnClick opaque padding={px(4)}>
-                                            <Text text={"View roadmap"}/>
-                                        </Button>
-                                    }
-                                />
-                                <Separator/>
-                                <FlexBox gap={px(1)} width={percent(100)}>
-                                    <ContextMenuElement onClick={() => this.createCommandSnapshot(SavedCommandType.BOOKMARK)} title={"Save input"} icon={() => (
-                                        <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.defaultGab} align={Align.CENTER}>
-                                            {Badge.beta(theme)}
-                                            <Icon icon={<SaveIcon/>}/>
+
+                        <>
+                            <Mobile children={
+                                <ContextCompound width={percent(100)} menu={
+                                    <FlexBox width={percent(100)} padding paddingY={theme.gaps.smallGab} paddingX={theme.gaps.smallGab}>
+                                        <ElementHeader
+                                            title={"Input options"}
+                                            icon={<OptionsIcon/>}
+                                            wrapIcon
+                                            appendix={
+                                                <Button visualMeaning={ObjectVisualMeaning.BETA} shrinkOnClick opaque padding={px(4)}>
+                                                    <Text text={"View roadmap"}/>
+                                                </Button>
+                                            }
+                                        />
+                                        <Separator/>
+                                        <FlexBox gap={px(1)} width={percent(100)}>
+                                            <ContextMenuElement onClick={() => this.createCommandSnapshot(SavedCommandType.BOOKMARK)} title={"Save input"} icon={() => (
+                                                <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.defaultGab} align={Align.CENTER}>
+                                                    {Badge.beta(theme)}
+                                                    <Icon icon={<SaveIcon/>}/>
+                                                </FlexBox>
+                                            )}/>
+                                            <ContextMenuElement title={"Upload data"} icon={() => <Icon icon={<UploadIcon/>}/>}/>
+                                            <ContextMenuElement title={"Download data"} icon={() => (
+                                                <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.defaultGab} align={Align.CENTER}>
+                                                    <Icon icon={<DownloadIcon/>}/>
+                                                </FlexBox>
+                                            )}/>
                                         </FlexBox>
-                                    )}/>
-                                    <ContextMenuElement title={"Upload data"} icon={() => <Icon icon={<UploadIcon/>}/>}/>
-                                    <ContextMenuElement title={"Download data"} icon={() => (
-                                        <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.defaultGab} align={Align.CENTER}>
-                                            <Icon icon={<DownloadIcon/>}/>
-                                        </FlexBox>
-                                    )}/>
-                                </FlexBox>
-                                {/*<Text text={"Import data from your device. \nAllowed file formats: **.dat**, **.csv**, **.xls** *(Excel spreadsheet)*."}/>
+                                        {/*<Text text={"Import data from your device. \nAllowed file formats: **.dat**, **.csv**, **.xls** *(Excel spreadsheet)*."}/>
                                 <InformationBox visualMeaning={ObjectVisualMeaning.BETA}>
                                     <Text type={TextType.secondaryDescription} text={"As of subversion **v2.29-alpha.0** *(01. Mar 2022)*, the website is in it's development phase."}/>
                                 </InformationBox>*/}
-                            </FlexBox>
-                        } children={
-                            <Button
-                                shrinkOnClick
-                                border={false}
-                                visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
-                                children={<span children={<Icon icon={<ContextIcon/>}/>}/>}
-                            />
-                        }/>,
+                                    </FlexBox>
+                                } children={
+                                    <Button
+                                        shrinkOnClick
+                                        border={false}
+                                        visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
+                                        children={<span children={<Icon icon={<ContextIcon/>}/>}/>}
+                                    />
+                                }/>
+                            }/>
+                            <Default children={
+                                <ContextCompound menu={
+                                    <FlexBox width={percent(100)} padding paddingY={theme.gaps.smallGab} paddingX={theme.gaps.smallGab}>
+                                        <ElementHeader
+                                            title={"Input options"}
+                                            icon={<OptionsIcon/>}
+                                            wrapIcon
+                                            appendix={
+                                                <Button visualMeaning={ObjectVisualMeaning.BETA} shrinkOnClick opaque padding={px(4)}>
+                                                    <Text text={"View roadmap"}/>
+                                                </Button>
+                                            }
+                                        />
+                                        <Separator/>
+                                        <FlexBox gap={px(1)} width={percent(100)}>
+                                            <ContextMenuElement onClick={() => this.createCommandSnapshot(SavedCommandType.BOOKMARK)} title={"Save input"} icon={() => (
+                                                <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.defaultGab} align={Align.CENTER}>
+                                                    {Badge.beta(theme)}
+                                                    <Icon icon={<SaveIcon/>}/>
+                                                </FlexBox>
+                                            )}/>
+                                            <ContextMenuElement title={"Upload data"} icon={() => <Icon icon={<UploadIcon/>}/>}/>
+                                            <ContextMenuElement title={"Download data"} icon={() => (
+                                                <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.defaultGab} align={Align.CENTER}>
+                                                    <Icon icon={<DownloadIcon/>}/>
+                                                </FlexBox>
+                                            )}/>
+                                        </FlexBox>
+                                        {/*<Text text={"Import data from your device. \nAllowed file formats: **.dat**, **.csv**, **.xls** *(Excel spreadsheet)*."}/>
+                                <InformationBox visualMeaning={ObjectVisualMeaning.BETA}>
+                                    <Text type={TextType.secondaryDescription} text={"As of subversion **v2.29-alpha.0** *(01. Mar 2022)*, the website is in it's development phase."}/>
+                                </InformationBox>*/}
+                                    </FlexBox>
+                                } children={
+                                    <Button
+                                        shrinkOnClick
+                                        border={false}
+                                        visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
+                                        children={<span children={<Icon icon={<ContextIcon/>}/>}/>}
+                                    />
+                                }/>
+                            }/>
+                        </>,
                         // <Button
                         //     cursor={Cursor.notAllowed}
                         //     visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
@@ -605,13 +652,13 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                         />,
                     ]}/>
 
-                    <ContextCompound wrapMenu={false} menu={<QuickActionPanel/>} children={
+                    {/*<ContextCompound wrapMenu={false} menu={<QuickActionPanel/>} children={
                         <Button
                             children={
                                 <Icon icon={<QuickPanelIcon/>}/>
                             }
                         />
-                    }/>
+                    }/>*/}
                 </FlexBox>
             );
         })
@@ -731,7 +778,7 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
         this.goto("dashboard/");
     }
 
-    private async sendCommand(type: SessionCommandType) {
+    private async sendCommand(type: SessionCommandType, command?: string) {
         // todo set working state to true
 
         const apiRequest = async () => {
@@ -741,7 +788,7 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                 packetID: "SessionCommandPacketData",
                 data: {
                     type: type,
-                    raw: this.local.state.command,
+                    raw: command === undefined ? this.local.state.command : command,
                     attributes: new Map<string, string>(),
                     dbID: dbID
                 } as SessionCommand,
