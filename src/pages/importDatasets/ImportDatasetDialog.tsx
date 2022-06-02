@@ -28,8 +28,8 @@ export type ImportDatasetDialogProps = {
 
 export type ImportDatasetDialogLocalState = {
     tables: Array<string>,
-    selectedTable?: string,
     json: string,
+    selectedTable?: string,
     validJson?: boolean
 }
 
