@@ -16,7 +16,6 @@ import {ReactComponent as HistoryIcon} from "../../assets/icons/ic-20/ic20-book.
 import {ReactComponent as ContextIcon} from "../../assets/icons/ic-20/ic20-more-ver.svg";
 import {ReactComponent as TableIcon} from "../../assets/icons/ic-20/ic20-view-table.svg";
 import {ReactComponent as CreateIcon} from "../../assets/icons/ic-16/ic16-plus.svg";
-import {ReactComponent as SettingsIcon} from "../../assets/icons/ic-20/ic20-settings.svg";
 import {ReactComponent as OptionsIcon} from "../../assets/icons/ic-20/ic20-play.svg";
 import {ReactComponent as SaveIcon} from "../../assets/icons/ic-20/ic20-bookmark-add.svg";
 import {App, utilizeGlobalTheme} from "../../logic/app/App";
@@ -73,8 +72,8 @@ import {CommandHistoryElement} from "../../components/ho/commandHistoryElement/C
 import {SavedCommandType} from "./SavedCommandType";
 import {Default, Mobile} from "../../components/logic/Media";
 import {SQLCommandBookmarksDialog} from "../sqlCommandBookmarks/SQLCommandBookmarksDialog";
-import {QuickActionPanel} from "../../components/ho/quickPanel/QuickActionPanel";
-import {ReactComponent as QuickPanelIcon} from "../../assets/icons/ic-20/ic20-view-boxes.svg";
+import {Constants} from "../../logic/misc/Constants";
+import {ImportDatasetDialog, ImportDatasetDialogProps} from "../importDatasets/ImportDatasetDialog";
 
 export type DebugEditorProps = {
 }
@@ -486,7 +485,7 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                             }/>
                         </span>,
 
-                        <>
+                        <span>
                             <Mobile children={
                                 <ContextCompound width={percent(100)} menu={
                                     <FlexBox width={percent(100)} padding paddingY={theme.gaps.smallGab} paddingX={theme.gaps.smallGab}>
@@ -508,17 +507,31 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                                                     <Icon icon={<SaveIcon/>}/>
                                                 </FlexBox>
                                             )}/>
-                                            <ContextMenuElement title={"Upload data"} icon={() => <Icon icon={<UploadIcon/>}/>}/>
+
+
+                                            <ContextMenuElement title={"Insert datasets"} icon={() => <Icon icon={<UploadIcon/>}/>} onClick={() => {
+                                                App.app().callAction(Constants.openMainDialogWithParamsAction, {
+                                                    dialog: Constants.jsonDatasetInsertDialog,
+                                                    parameters: {
+                                                        sqlRelay: (sqlCommand: string, callback) => {
+                                                            // todo call the server from a new database-request system -> internal requests (no streaming)
+                                                            this.sendCommand(SessionCommandType.PUSH, sqlCommand).then(() => callback());
+                                                        },
+                                                        tableSupplier: (instance: ImportDatasetDialog) => {
+                                                            // todo call the server
+                                                            return [];
+                                                        }
+                                                    } as ImportDatasetDialogProps
+                                                });
+                                            }}/>
+
+
                                             <ContextMenuElement title={"Download data"} icon={() => (
                                                 <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.defaultGab} align={Align.CENTER}>
                                                     <Icon icon={<DownloadIcon/>}/>
                                                 </FlexBox>
                                             )}/>
                                         </FlexBox>
-                                        {/*<Text text={"Import data from your device. \nAllowed file formats: **.dat**, **.csv**, **.xls** *(Excel spreadsheet)*."}/>
-                                <InformationBox visualMeaning={ObjectVisualMeaning.BETA}>
-                                    <Text type={TextType.secondaryDescription} text={"As of subversion **v2.29-alpha.0** *(01. Mar 2022)*, the website is in it's development phase."}/>
-                                </InformationBox>*/}
                                     </FlexBox>
                                 } children={
                                     <Button
@@ -536,11 +549,6 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                                             title={"Input options"}
                                             icon={<OptionsIcon/>}
                                             wrapIcon
-                                            appendix={
-                                                <Button visualMeaning={ObjectVisualMeaning.BETA} shrinkOnClick opaque padding={px(4)}>
-                                                    <Text text={"View roadmap"}/>
-                                                </Button>
-                                            }
                                         />
                                         <Separator/>
                                         <FlexBox gap={px(1)} width={percent(100)}>
@@ -550,7 +558,29 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                                                     <Icon icon={<SaveIcon/>}/>
                                                 </FlexBox>
                                             )}/>
-                                            <ContextMenuElement title={"Upload data"} icon={() => <Icon icon={<UploadIcon/>}/>}/>
+
+
+
+
+                                            <ContextMenuElement title={"Insert datasets"} icon={() => <Icon icon={<UploadIcon/>}/>} onClick={() => {
+                                                App.app().callAction(Constants.openMainDialogWithParamsAction, {
+                                                    dialog: Constants.jsonDatasetInsertDialog,
+                                                    parameters: {
+                                                        sqlRelay: (sqlCommand: string, callback) => {
+                                                            // todo call the server from a new database-request system -> internal requests (no streaming)
+                                                            this.sendCommand(SessionCommandType.PUSH, sqlCommand).then(() => callback());
+                                                        },
+                                                        tableSupplier: (instance: ImportDatasetDialog) => {
+                                                            // todo call the server
+                                                            return [];
+                                                        }
+                                                    } as ImportDatasetDialogProps
+                                                });
+                                            }}/>
+
+
+
+
                                             <ContextMenuElement title={"Download data"} icon={() => (
                                                 <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.defaultGab} align={Align.CENTER}>
                                                     <Icon icon={<DownloadIcon/>}/>
@@ -571,7 +601,7 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                                     />
                                 }/>
                             }/>
-                        </>,
+                        </span>,
                         // <Button
                         //     cursor={Cursor.notAllowed}
                         //     visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}

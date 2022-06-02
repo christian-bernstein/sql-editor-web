@@ -12,5 +12,7 @@ export class Constants {
 
     public static projectPreviewDialog: string = "project-preview-dialog";
 
+    public static jsonDatasetInsertDialog: string = "json-dataset-insert-dialog";
+
     public static openMainDialogWithParamsAction: string = "open-main-dialog-with-params";
 }

@@ -20,10 +20,11 @@ import {javascript} from "@codemirror/lang-javascript";
 import {Button} from "../../components/lo/Button";
 import {Select} from "../../components/lo/Select";
 import {If} from "../../components/logic/If";
+import {App} from "../../logic/app/App";
 
 export type ImportDatasetDialogProps = {
     tableSupplier: (instance: ImportDatasetDialog) => Array<string>,
-    sqlRelay: (sql: string) => void
+    sqlRelay: (sql: string, callback: () => void) => void
 }
 
 export type ImportDatasetDialogLocalState = {
@@ -211,9 +212,9 @@ export class ImportDatasetDialog extends BernieComponent<ImportDatasetDialogProp
         return sql;
     }
 
-    private executeSQL() {
+    private executeSQL(callback: () => void) {
         try {
-            this.props.sqlRelay(this.generateSQL());
+            this.props.sqlRelay(this.generateSQL(), callback);
         } catch (e) {
             console.error(e);
         }
@@ -225,10 +226,15 @@ export class ImportDatasetDialog extends BernieComponent<ImportDatasetDialogProp
         }
         switch (mode) {
             case "close":
-                this.executeSQL();
+                this.executeSQL(() => {
+
+                });
+                App.app().callAction("close-main-dialog");
                 break;
             case "reset":
-                this.executeSQL();
+                this.executeSQL(() => {
+
+                });
                 this.local.setStateWithChannels({
                     json: ""
                 }, ["tables", "json"]);
