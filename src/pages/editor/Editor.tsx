@@ -510,19 +510,17 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
 
 
                                             <ContextMenuElement title={"Insert datasets"} icon={() => <Icon icon={<UploadIcon/>}/>} onClick={() => {
-                                                App.app().callAction(Constants.openMainDialogWithParamsAction, {
-                                                    dialog: Constants.jsonDatasetInsertDialog,
-                                                    parameters: {
-                                                        sqlRelay: (sqlCommand: string, callback) => {
-                                                            // todo call the server from a new database-request system -> internal requests (no streaming)
-                                                            this.sendCommand(SessionCommandType.PUSH, sqlCommand).then(() => callback());
-                                                        },
-                                                        tableSupplier: (instance: ImportDatasetDialog) => {
-                                                            // todo call the server
-                                                            return [];
-                                                        }
-                                                    } as ImportDatasetDialogProps
-                                                });
+                                                const dbID = App.app().dbSessionCacheShard().currentInfoData?.id;
+                                                if (dbID !== undefined) {
+                                                    App.app().callAction(Constants.openMainDialogWithParamsAction, {
+                                                        dialog: Constants.jsonDatasetInsertDialog,
+                                                        parameters: {
+                                                            dbID: dbID
+                                                        } as ImportDatasetDialogProps
+                                                    });
+                                                } else {
+                                                    console.error("currentInfoData in dbSessionCacheShard return undefined for key 'id', cannot execute intrinsic sql session command routine.");
+                                                }
                                             }}/>
 
 
@@ -563,17 +561,11 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
 
 
                                             <ContextMenuElement title={"Insert datasets"} icon={() => <Icon icon={<UploadIcon/>}/>} onClick={() => {
+                                                const dbID = App.app().dbSessionCacheShard().currentInfoData?.id;
                                                 App.app().callAction(Constants.openMainDialogWithParamsAction, {
                                                     dialog: Constants.jsonDatasetInsertDialog,
                                                     parameters: {
-                                                        sqlRelay: (sqlCommand: string, callback) => {
-                                                            // todo call the server from a new database-request system -> internal requests (no streaming)
-                                                            this.sendCommand(SessionCommandType.PUSH, sqlCommand).then(() => callback());
-                                                        },
-                                                        tableSupplier: (instance: ImportDatasetDialog) => {
-                                                            // todo call the server
-                                                            return [];
-                                                        }
+                                                        dbID: dbID
                                                     } as ImportDatasetDialogProps
                                                 });
                                             }}/>

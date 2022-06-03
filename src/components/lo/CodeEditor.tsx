@@ -19,8 +19,9 @@ export type CodeEditorProps = WithVisualMeaning & {
     debounce?: boolean,
     debounceMS?: number,
     width?: DimensionalMeasured,
+    height?: DimensionalMeasured,
     editable?: boolean,
-    hoverEffect?: boolean
+    hoverEffect?: boolean,
 }
 
 export class CodeEditor extends React.PureComponent<CodeEditorProps, any> {
@@ -54,6 +55,7 @@ export class CodeEditor extends React.PureComponent<CodeEditorProps, any> {
         const Editor = styled.div`
           max-width: 100%;
           width: ${getOr(this.props.width?.css(), "100%")};
+          height: ${getOr(this.props.height?.css(), "auto")};
           min-height: 37px;
           box-sizing: border-box;
           display: flex;

@@ -56,6 +56,7 @@ import {ProjectPreview, ProjectPreviewProps} from "../../components/ho/projectPr
 import moment from "moment";
 import {AppPageMode} from "./AppPageMode";
 import {ImportDatasetDialog, ImportDatasetDialogProps} from "../importDatasets/ImportDatasetDialog";
+import {NetworkShard} from "../../shards/network/NetworkShard";
 
 export type AppPageProps = {
     mode: AppPageMode
@@ -93,11 +94,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                     // <Text text={"Unit test screen"} bold uppercase visualMeaning={ObjectVisualMeaning.BETA} coloredText/>
                     // <ServiceMonitorOverview/>
                     // <Text text={moment("2022-05-27T17:20:Z", "YYYY-MM-DD[T]HH:mm:ss").fromNow()}/>
-                    <ImportDatasetDialog tableSupplier={() => [
-                        "test1", "ses internal", "lul"
-                    ]} sqlRelay={sql => {
-                        console.error(sql)
-                    }}/>
+                    <></>
                 }/>
             }/>
         )],
@@ -147,7 +144,8 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                     appAssembly: this.assembly,
                     shards: new Map<string, (app: App) => Shard>([
                         ["db-session-cache", () => new DBSessionCacheShard()],
-                        ["quick-actions-shard", () => new QuickActionShard()]
+                        ["quick-actions-shard", () => new QuickActionShard()],
+                        ["network-shard", () => new NetworkShard()]
                     ]),
                     themes: new Map<string, Themeable.Theme>([
                         ["dark-green", Themeable.defaultTheme],
@@ -184,7 +182,8 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                     appAssembly: this.assembly,
                     shards: new Map<string, (app: App) => Shard>([
                         ["db-session-cache", () => new DBSessionCacheShard()],
-                        ["quick-actions-shard", () => new QuickActionShard()]
+                        ["quick-actions-shard", () => new QuickActionShard()],
+                        ["network-shard", () => new NetworkShard()]
                     ]),
                     themes: new Map<string, Themeable.Theme>([
                         ["dark-green", Themeable.defaultTheme],
@@ -216,7 +215,8 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                     appAssembly: this.assembly,
                     shards: new Map<string, (app: App) => Shard>([
                         ["db-session-cache", () => new DBSessionCacheShard()],
-                        ["quick-actions-shard", () => new QuickActionShard()]
+                        ["quick-actions-shard", () => new QuickActionShard()],
+                        ["network-shard", () => new NetworkShard()]
                     ]),
                     themes: new Map<string, Themeable.Theme>([
                         ["dark-green", Themeable.defaultTheme],
@@ -249,7 +249,8 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                     appAssembly: this.assembly,
                     shards: new Map<string, (app: App) => Shard>([
                         ["db-session-cache", () => new DBSessionCacheShard()],
-                        ["quick-actions-shard", () => new QuickActionShard()]
+                        ["quick-actions-shard", () => new QuickActionShard()],
+                        ["network-shard", () => new NetworkShard()]
                     ]),
                     themes: new Map<string, Themeable.Theme>([
                         ["dark-green", Themeable.defaultTheme],

@@ -69,6 +69,7 @@
     "react-swipeable-views": "^0.14.0",
     "react-tiger-transition": "^4.1.2",
     "react-tooltip": "^4.2.21",
+    "sql-formatter": "^6.1.2",
     "styled-components": "^5.0.0",
     "typescript": "^4.2.4",
     "typescript-debounce-decorator": "^0.0.18",

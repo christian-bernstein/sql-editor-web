@@ -26,6 +26,8 @@ import {ScreenManager} from "../screen/ScreenManager";
 import {AppShortcuts} from "./AppShortcuts";
 import {Cache} from "../cache/Cache";
 import {ModalDisplay} from "../modal/ModalDisplay";
+import {NetworkShard} from "../../shards/network/NetworkShard";
+import {DBSessionCacheShard} from "../../shards/dbSessionCache/DBSessionCacheShard";
 
 export function utilizeApp(): App {
     return App.app();
@@ -177,6 +179,14 @@ export class App {
             this.shards.set(id, shard as T);
         }
         return this.shards.get(id) as T;
+    }
+
+    public dbSessionCacheShard(): DBSessionCacheShard {
+        return this.shard<DBSessionCacheShard>("db-session-cache");
+    }
+
+    public net(): NetworkShard {
+        return this.shard("network-shard");
     }
 
     public getLastSessionHistoryEntry(): SessionHistoryEntry | undefined {
