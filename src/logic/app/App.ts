@@ -28,6 +28,7 @@ import {Cache} from "../cache/Cache";
 import {ModalDisplay} from "../modal/ModalDisplay";
 import {NetworkShard} from "../../shards/network/NetworkShard";
 import {DBSessionCacheShard} from "../../shards/dbSessionCache/DBSessionCacheShard";
+import {LocalStorageShard} from "../../shards/localStorage/LocalStorageShard";
 
 export function utilizeApp(): App {
     return App.app();
@@ -183,6 +184,10 @@ export class App {
 
     public dbSessionCacheShard(): DBSessionCacheShard {
         return this.shard<DBSessionCacheShard>("db-session-cache");
+    }
+
+    public ls(): LocalStorageShard {
+        return this.shard("local-storage-shard");
     }
 
     public net(): NetworkShard {

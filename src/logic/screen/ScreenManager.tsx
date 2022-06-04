@@ -26,42 +26,55 @@ import {Text} from "../../components/lo/Text";
 import {If} from "../../components/logic/If";
 import {BadgedWrapper} from "../../components/lo/BadgedWrapper";
 import {Badge} from "../../components/lo/Badge";
+import DashboardPage from "../../pages/dashboard/DashboardPage";
 
 export class ScreenManager {
 
+    /**
+     * todo remove this dirty way of preventing the website to constantly fall back to the root page, whenever the website
+     *  is re-rendered globally
+     */
+    private static hasRenderedRedirectToDefaultPage: boolean = false;
+
     private readonly screens: Array<ScreenConfig> = new Array<ScreenConfig>({
-        defaultView: "def",
-        routeExact: true,
-        id: "/",
-        location: "/",
-        debug: false,
-        viewFactory: config => {
-            return [{
-                id: "def",
-                description: "The root distributor",
-                accessible: (config) => true,
-                displayName: "The root distributor",
-                tags: ["internal", "root", "distributor", "entrance"],
-                iconRenderer: {
-                    render(ctx: ViewRenderContext): JSX.Element {
-                        return (
-                            <Box borderless cursor={Cursor.pointer} noBGColor={!ctx.active}>
-                                <Icon icon={<TestIcon/>} visualMeaning={ObjectVisualMeaning.ERROR} colored/>
-                            </Box>
-                        );
+            defaultView: "def",
+            routeExact: true,
+            id: "/",
+            location: "/",
+            debug: false,
+            viewFactory: config => {
+                return [{
+                    id: "def",
+                    description: "The root distributor",
+                    accessible: (config) => true,
+                    displayName: "The root distributor",
+                    tags: ["internal", "root", "distributor", "entrance"],
+                    iconRenderer: {
+                        render(ctx: ViewRenderContext): JSX.Element {
+                            return (
+                                <Box borderless cursor={Cursor.pointer} noBGColor={!ctx.active}>
+                                    <Icon icon={<TestIcon/>} visualMeaning={ObjectVisualMeaning.ERROR} colored/>
+                                </Box>
+                            );
+                        }
+                    },
+                    renderer: {
+                         render(ctx: ViewRenderContext): JSX.Element {
+                             const appConfig = App.app().config;
+
+                             if (!ScreenManager.hasRenderedRedirectToDefaultPage) {
+                                 ScreenManager.hasRenderedRedirectToDefaultPage = true;
+                                 console.log("redirect to default page (from ScreenManager)");
+                                 return (
+                                     <Redirect push to={appConfig.debugMode ? appConfig.defaultDebugAppRoute : appConfig.defaultAppRoute}/>
+                                 );
+                             } else return <></>
+                         }
                     }
-                },
-                renderer: {
-                    render(ctx: ViewRenderContext): JSX.Element {
-                        const appConfig = App.app().config;
-                        return (
-                            <Redirect push to={appConfig.debugMode ? appConfig.defaultDebugAppRoute : appConfig.defaultAppRoute}/>
-                        );
-                    }
-                }
-            } as ViewConfig];
-        }
-    }, {
+                } as ViewConfig];
+            }
+         },
+        {
         defaultView: "def",
         id: "boarding",
         location: "/boarding",
@@ -109,6 +122,59 @@ export class ScreenManager {
                     render(ctx: ViewRenderContext): JSX.Element {
                         return (
                             <>Test page!!</>
+                        );
+                    }
+                }
+            } as ViewConfig];
+        }
+    }, {
+        defaultView: "def",
+        id: "dashboard",
+        location: "/dashboard",
+        debug: false,
+        viewFactory: config => {
+            return [{
+                id: "def",
+                description: "Sign up, log-in using shortcut-login *(Continue as)* or log-in using your credentials.",
+                accessible: (config) => true,
+                displayName: "Projects page",
+                tags: [],
+                iconRenderer: {
+                    render(ctx: ViewRenderContext): JSX.Element {
+                        return (
+                            <Box highlight cursor={Cursor.pointer} noBGColor={!ctx.active}>
+                                <Icon icon={<HubIcon/>}/>
+                            </Box>
+                        );
+                    }
+                },
+                renderer: {
+                    render(ctx: ViewRenderContext): JSX.Element {
+                        return (
+                            <DashboardPage/>
+                        );
+                    }
+                }
+            } as ViewConfig, {
+                id: "templates",
+                beta: true,
+                description: "Shows details about the project, like the author & contributors. [Project's GitHub repo](https://github.com/christian-bernstein/sql-editor-web)",
+                accessible: (config) => true,
+                displayName: "Templates page",
+                tags: [],
+                iconRenderer: {
+                    render(ctx: ViewRenderContext): JSX.Element {
+                        return (
+                            <Box highlight cursor={Cursor.pointer} width={percent(100)} noBGColor={!ctx.active}>
+                                <Icon icon={<InformationIcon/>}/>
+                            </Box>
+                        );
+                    }
+                },
+                renderer: {
+                    render(ctx: ViewRenderContext): JSX.Element {
+                        return (
+                            <>Templates page!!</>
                         );
                     }
                 }
@@ -166,7 +232,7 @@ export class ScreenManager {
                                     boxSizing: "content-box",
                                     width: percent(100).css()
                                 }} children={
-                                    <CustomTooltip placement={"right"} arrow noPadding noBorder title={
+                                    <CustomTooltip enterDelay={700} placement={"right"} arrow noPadding noBorder title={
                                         <Box gapY={theme.gaps.smallGab} maxWidth={px(500)}>
                                             <ElementHeader icon={<MapIcon/>} title={`${view.displayName} *(${screen.id} **@** ${view.id})*`} beta={getOr(view.beta, false)} appendix={
                                                 <If condition={active} ifTrue={

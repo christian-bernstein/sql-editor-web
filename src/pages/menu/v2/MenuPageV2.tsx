@@ -3,7 +3,7 @@ import {Assembly} from "../../../logic/assembly/Assembly";
 import {Themeable} from "../../../logic/style/Themeable";
 import {Screen} from "../../../components/lo/Page";
 import {LiteGrid} from "../../../components/lo/LiteGrid";
-import React from "react";
+import React, {ForwardedRef} from "react";
 import {FlexBox} from "../../../components/lo/FlexBox";
 import {FlexDirection} from "../../../logic/style/FlexDirection";
 import {Image} from "../../../components/lo/Image";
@@ -17,8 +17,6 @@ import {ObjectVisualMeaning} from "../../../logic/style/ObjectVisualMeaning";
 import {AppHeader} from "../../../components/lo/AppHeader";
 import {ReactComponent as CloseIcon} from "../../../assets/icons/ic-20/ic20-close.svg";
 import {ReactComponent as QuickPanelIcon} from "../../../assets/icons/ic-20/ic20-view-boxes.svg";
-import {ReactComponent as SettingsIcon} from "../../../assets/icons/ic-20/ic20-settings.svg";
-import {ReactComponent as ChatIcon} from "../../../assets/icons/ic-20/ic20-chat.svg";
 import {App} from "../../../logic/app/App";
 import {Icon} from "../../../components/lo/Icon";
 import {Box} from "../../../components/lo/Box";
@@ -32,7 +30,12 @@ import {Orientation} from "../../../logic/style/Orientation";
 import {If} from "../../../components/logic/If";
 import {ContextCompound} from "../../../components/ho/contextCompound/ContextCompound";
 import {QuickActionPanel} from "../../../components/ho/quickPanel/QuickActionPanel";
-import {Default, Desktop} from "../../../components/logic/Media";
+import {Default, Mobile} from "../../../components/logic/Media";
+import {Centered} from "../../../components/lo/PosInCenter";
+import {Slide, SwipeableDrawer} from "@mui/material";
+import {TransitionProps} from "@mui/material/transitions";
+import {InformationBox} from "../../../components/ho/informationBox/InformationBox";
+import {MobileMenuPage} from "../../mobileMenu/MobileMenuPage";
 
 export type MenuPageV2Props = {
     children: JSX.Element
@@ -47,13 +50,15 @@ export class MenuPageV2 extends BernieComponent<MenuPageV2Props, any, MenuPageV2
 
     constructor(props: MenuPageV2Props) {
         super(props, undefined, {
-            state: MenuState.SMALL,
+            // state: MenuState.SMALL,
+            state: MenuState.HIDDEN,
             qaPanelOpenState: false
         });
         this.headerAssembly();
         this.mainAssembly();
         this.menuSmallWrapperAssembly();
         this.menuSmallAssembly();
+        this.menuMobileWrapperAssembly();
     }
 
     private mainAssembly() {
@@ -192,9 +197,83 @@ export class MenuPageV2 extends BernieComponent<MenuPageV2Props, any, MenuPageV2
         })
     }
 
-    componentRender(p: any, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
-        return this.assembly.render({
-            component: "menu-small-wrapper"
+    private menuMobileWrapperAssembly() {
+        this.assembly.assembly("menu-mobile-wrapper", (theme, props) => {
+            return this.component(local => {
+
+                return (
+                    <div style={{
+                        position: "relative"
+                    }}>
+                        <div style={{
+                            position: "absolute"
+                        }} children={
+                            <SwipeableDrawer
+                                anchor={"left"}
+                                open={this.local.state.state !== MenuState.HIDDEN}
+                                onClose={() => {
+                                    this.local.setStateWithChannels({
+                                        state: MenuState.HIDDEN
+                                    }, ["menu-extender"]);
+                                }}
+                                onOpen={() => {
+                                    this.local.setStateWithChannels({
+                                        state: MenuState.EXTENDED
+                                    }, ["menu-extender"]);
+                                }}
+                                children={
+                                    <MobileMenuPage/>
+                                }
+                            />
+                        }/>
+                        <Screen deactivatePadding children={this.props.children} onDoubleClick={() => {
+                            this.local.setStateWithChannels({
+                                state: MenuState.EXTENDED
+                            }, ["menu-extender"]);
+                        }}/>
+                    </div>
+                );
+
+                //return (
+                //    <>
+                //        <Dialog open={this.local.state.state !== MenuState.HIDDEN} keepMounted onClose={() => this.local.setStateWithChannels({
+                //            state: MenuState.HIDDEN
+                //        }, ["menu-extender"])} TransitionComponent={this.DialogTransition} fullScreen={false} sx={{
+                //            '& .MuiDialog-paper': {
+                //                background: "transparent",
+                //                maxHeight: "100vh !important",
+                //                maxWidth: "100vw !important",
+                //                margin: "0 !important",
+                //                borderRadius: "0 !important"
+                //            }
+                //        }} children={
+                //            <Screen children={
+                //                <Centered fullHeight children={
+                //                    <Text text={"menu"}/>
+                //                }/>
+                //            }/>
+                //        }/>
+                //    </>
+                //);
+            }, "menu-extender");
         })
+    }
+
+    componentRender(p: any, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
+        return (
+            <>
+                <Default children={
+                    this.assembly.render({
+                        component: "menu-small-wrapper"
+                    })
+                }/>
+
+                <Mobile children={
+                    this.assembly.render({
+                        component: "menu-mobile-wrapper"
+                    })
+                }/>
+            </>
+        );
     }
 }

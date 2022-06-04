@@ -39,7 +39,7 @@ import {ReactComponent as ErrorIcon} from "../../assets/icons/ic-16/ic16-close.s
 import {ElementHeader} from "../../components/lo/ElementHeader";
 import {ContextCompound} from "../../components/ho/contextCompound/ContextCompound";
 import {Button} from "../../components/lo/Button";
-import {DBErrorDisplay} from "../../components/ho/dbErrorDisplay/DBErrorDisplay";
+import {SQLResultDisplay} from "../../components/ho/dbErrorDisplay/SQLResultDisplay";
 import {EditorCommandError} from "../editor/EditorCommandError";
 import {ContextMenuElement} from "../../components/lo/ContextMenuElement";
 import {ClientDisplay} from "../../components/ho/clientDisplay/ClientDisplay";
@@ -230,7 +230,7 @@ export class SQLQueryResultDialog extends BernieComponent<SQLQueryResultDialogPr
             const dataset = this.dataset();
             if (dataset.error !== null) {
                 return (
-                    <DBErrorDisplay height={percent(100)} error={dataset.error as EditorCommandError} deleteIcon={false}/>
+                    <SQLResultDisplay height={percent(100)} error={dataset.error as EditorCommandError} deleteIcon={false}/>
                 );
             } else {
                 return (

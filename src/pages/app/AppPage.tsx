@@ -57,6 +57,7 @@ import moment from "moment";
 import {AppPageMode} from "./AppPageMode";
 import {ImportDatasetDialog, ImportDatasetDialogProps} from "../importDatasets/ImportDatasetDialog";
 import {NetworkShard} from "../../shards/network/NetworkShard";
+import {LocalStorageShard} from "../../shards/localStorage/LocalStorageShard";
 
 export type AppPageProps = {
     mode: AppPageMode
@@ -145,7 +146,8 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                     shards: new Map<string, (app: App) => Shard>([
                         ["db-session-cache", () => new DBSessionCacheShard()],
                         ["quick-actions-shard", () => new QuickActionShard()],
-                        ["network-shard", () => new NetworkShard()]
+                        ["network-shard", () => new NetworkShard()],
+                        ["local-storage-shard", () => new LocalStorageShard()]
                     ]),
                     themes: new Map<string, Themeable.Theme>([
                         ["dark-green", Themeable.defaultTheme],
@@ -183,7 +185,8 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                     shards: new Map<string, (app: App) => Shard>([
                         ["db-session-cache", () => new DBSessionCacheShard()],
                         ["quick-actions-shard", () => new QuickActionShard()],
-                        ["network-shard", () => new NetworkShard()]
+                        ["network-shard", () => new NetworkShard()],
+                        ["local-storage-shard", () => new LocalStorageShard()]
                     ]),
                     themes: new Map<string, Themeable.Theme>([
                         ["dark-green", Themeable.defaultTheme],
@@ -216,7 +219,8 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                     shards: new Map<string, (app: App) => Shard>([
                         ["db-session-cache", () => new DBSessionCacheShard()],
                         ["quick-actions-shard", () => new QuickActionShard()],
-                        ["network-shard", () => new NetworkShard()]
+                        ["network-shard", () => new NetworkShard()],
+                        ["local-storage-shard", () => new LocalStorageShard()]
                     ]),
                     themes: new Map<string, Themeable.Theme>([
                         ["dark-green", Themeable.defaultTheme],
@@ -228,6 +232,8 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                         // address: "ws://192.168.2.100:80",
                         address: "wss://server3.cwies.de:25574",
                         id: "ton",
+                        // todo display in server telemetry page
+                        recordLatency: false,
                         maxConnectAttempts: 1,
                         connectionRetryDelayFunc: () => 0,
                         packetInterceptor: this.getLogPacketInterceptor()
@@ -250,7 +256,8 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                     shards: new Map<string, (app: App) => Shard>([
                         ["db-session-cache", () => new DBSessionCacheShard()],
                         ["quick-actions-shard", () => new QuickActionShard()],
-                        ["network-shard", () => new NetworkShard()]
+                        ["network-shard", () => new NetworkShard()],
+                        ["local-storage-shard", () => new LocalStorageShard()]
                     ]),
                     themes: new Map<string, Themeable.Theme>([
                         ["dark-green", Themeable.defaultTheme],
@@ -477,7 +484,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
             // <Route path={"/boarding"} render={() => <BoardingPage/>}/>,
             <Route path={"/register"} render={() => <SignupPage callingFrom={"/boarding"}/>}/>,
             <Route path={"/login"} render={() => <LoginPage/>}/>,
-            <Route path={"/dashboard"} render={() => <DashboardPage/>}/>,
+            // <Route path={"/dashboard"} render={() => <DashboardPage/>}/>,
             <Route path={"/editor"} component={() => <Editor/>}/>
         ];
         if (config.debugMode) {

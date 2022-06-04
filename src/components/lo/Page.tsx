@@ -15,6 +15,7 @@ export type PageProps = {
     style?: CSSProperties,
     classnames?: string[],
     deactivatePadding?: boolean
+    onDoubleClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
 }
 
 /**
@@ -60,7 +61,7 @@ export const Screen: React.FC<PageProps> = React.memo(props => {
     `;
 
     return (
-        <Wrapper style={getOr(props.style, {})} className={getOr(props.classnames?.join(" "), "")}>
+        <Wrapper onDoubleClick={event => getOr(props.onDoubleClick, () => {})(event)} style={getOr(props.style, {})} className={getOr(props.classnames?.join(" "), "")}>
             {/*<BG children={<Image pure src={Background}/>}/>*/}
             <Content children={props.children}/>
         </Wrapper>

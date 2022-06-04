@@ -12,6 +12,9 @@ import {FlexBox} from "../../components/lo/FlexBox";
 import {Badge} from "../../components/lo/Badge";
 import {ObjectVisualMeaning} from "../../logic/style/ObjectVisualMeaning";
 import {ReactComponent as CloseIcon} from "../../assets/icons/ic-20/ic20-close.svg";
+import {ReactComponent as MenuIcon} from "../../assets/icons/ic-20/ic20-more-ver.svg";
+import {ReactComponent as CheckIcon} from "../../assets/icons/ic-16/ic16-check.svg";
+import {ReactComponent as FalseIcon} from "../../assets/icons/ic-16/ic16-close.svg";
 import React from "react";
 import {Button} from "../../components/lo/Button";
 import {Select} from "../../components/lo/Select";
@@ -31,6 +34,11 @@ import {format} from "sql-formatter";
 import {AppHeader} from "../../components/lo/AppHeader";
 import {Icon} from "../../components/lo/Icon";
 import {Default, Mobile} from "../../components/logic/Media";
+import {SQLCommandUpdateResponsePacketData} from "../../packets/in/SQLCommandUpdateResponsePacketData";
+import _ from "lodash";
+import {SQLResultDisplay} from "../../components/ho/dbErrorDisplay/SQLResultDisplay";
+import {ContextCompound} from "../../components/ho/contextCompound/ContextCompound";
+import {ContextMenuElement} from "../../components/lo/ContextMenuElement";
 
 export type ImportDatasetDialogProps = {
     dbID: string
@@ -42,17 +50,29 @@ export type ImportDatasetDialogLocalState = {
     selectedTable?: string,
     validJson?: boolean,
     processingSQLInsert: boolean,
-    loadingTables: boolean
+    loadingTables: boolean,
+    currentUpdateResult?: SQLCommandUpdateResponsePacketData,
+    jsonPersist: (json: string) => void,
+    jsonPersistInSync: boolean
 }
 
 export class ImportDatasetDialog extends BernieComponent<ImportDatasetDialogProps, any, ImportDatasetDialogLocalState> {
 
     constructor(props: ImportDatasetDialogProps) {
+        const json = App.app().ls().get("insert-data", "json", "");
         super(props, undefined, {
             tables: [],
-            json: "",
+            json: json,
+            validJson: json.trim().length > 0 ? ImportDatasetDialog.checkJSONValidity(json) : undefined,
             processingSQLInsert: false,
-            loadingTables: false
+            loadingTables: false,
+            jsonPersist: _.debounce(json => {
+                App.app().ls().save("insert-data", "json", json.trim())
+                this.local.setStateWithChannels({
+                    jsonPersistInSync: true
+                }, ["json-persist"]);
+            }, 2000),
+            jsonPersistInSync: true
         });
     }
 
@@ -84,7 +104,7 @@ export class ImportDatasetDialog extends BernieComponent<ImportDatasetDialogProp
                     selectedTable: tables[0]
                 }, ["tables"]);
             },
-            simulateDelay: true,
+            simulateDelay: false,
             simulatedDelay: () => 5000,
             packet: {
                 attributes: new Map<string, string>(),
@@ -138,36 +158,37 @@ export class ImportDatasetDialog extends BernieComponent<ImportDatasetDialogProp
                 const renderer: () => JSX.Element = () => {
                     return (
                         <>
-                            <FlexBox width={percent(100)} height={percent(100)} overflowYBehaviour={OverflowBehaviour.SCROLL}>
+                            <FlexBox style={{borderRadius: theme.radii.defaultObjectRadius.css()}} width={percent(100)} height={percent(100)} overflowYBehaviour={OverflowBehaviour.SCROLL}>
                                 <FlexBox width={percent(100)} height={percent(100)}>
-                                    <CodeEditor
-                                        theme={oneDark}
-                                        classnames={["cm"]}
-                                        debounce={true}
-                                        debounceMS={300}
-                                        value={this.local.state.json}
-                                        placeholder={"[..]"}
-                                        extensions={[
-                                            javascript(),
-                                            HighlightStyle.define([
-                                                {tag: tags.keyword, class: "keyword"},
-                                                {tag: tags.local, class: "local"},
-                                                {tag: tags.color, class: "color"},
-                                                {tag: tags.comment, class: "comment"},
-                                                {tag: tags.function, class: "function"},
-                                                {tag: tags.string, class: "string"},
-                                                {tag: tags.content, class: "content"},
-                                                {tag: tags.arithmeticOperator, class: "arithmeticOperator"},
-                                            ])
-                                        ]}
-                                        upstreamHook={value => this.local.setStateWithChannels({
-                                            json: value.trim(),
-                                            validJson: value.trim().length > 0 ? ImportDatasetDialog.checkJSONValidity(value) : undefined
-                                        }, ["json-valid"])}
-                                    />
+
+                                    <FlexBox width={percent(100)}>
+                                        <CodeEditor
+                                            theme={oneDark}
+                                            classnames={["cm"]}
+                                            debounce={true}
+                                            debounceMS={300}
+                                            value={this.local.state.json}
+                                            placeholder={"[..]"}
+                                            extensions={[
+                                                javascript(),
+                                                HighlightStyle.define([
+                                                    {tag: tags.keyword, class: "keyword"},
+                                                    {tag: tags.local, class: "local"},
+                                                    {tag: tags.color, class: "color"},
+                                                    {tag: tags.comment, class: "comment"},
+                                                    {tag: tags.function, class: "function"},
+                                                    {tag: tags.string, class: "string"},
+                                                    {tag: tags.content, class: "content"},
+                                                    {tag: tags.arithmeticOperator, class: "arithmeticOperator"},
+                                                ])
+                                            ]}
+                                            upstreamHook={value => this.updateJSONInput(value, false)}
+                                        />
+                                    </FlexBox>
+
                                 </FlexBox>
                             </FlexBox>
-                            <FlexBox height={percent(100)} width={percent(100)} overflowYBehaviour={OverflowBehaviour.SCROLL}>
+                            <FlexBox style={{borderRadius: theme.radii.defaultObjectRadius.css()}} width={percent(100)} height={percent(100)} overflowYBehaviour={OverflowBehaviour.SCROLL}>
                                 <FlexBox width={percent(100)} height={percent(100)} minWidth={percent(100)}>
                                     {
                                         this.component(() => (
@@ -198,7 +219,7 @@ export class ImportDatasetDialog extends BernieComponent<ImportDatasetDialogProp
                                             } ifFalse={
                                                 <Box height={percent(100)} width={percent(100)}>
                                                     <Centered fullHeight>
-                                                        <Text text={"error"}/>
+                                                        <Text text={"invalid json"}/>
                                                     </Centered>
                                                 </Box>
                                             }/>
@@ -220,15 +241,51 @@ export class ImportDatasetDialog extends BernieComponent<ImportDatasetDialogProp
                             <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} gap={theme.gaps.smallGab}>
                                 {
                                     this.component(() => (
-                                        <If condition={local.state.validJson !== undefined && local.state.validJson} ifTrue={
+                                        <If condition={local.state.jsonPersistInSync} ifTrue={
                                             <Badge visualMeaning={ObjectVisualMeaning.SUCCESS} opaque>
                                                 <Text
-                                                    text={"valid"}
-                                                    bold
+                                                    text={"saved"}
                                                     uppercase
                                                     coloredText
                                                     type={TextType.secondaryDescription}
                                                     visualMeaning={ObjectVisualMeaning.SUCCESS}
+                                                    enableLeftAppendix
+                                                    leftAppendix={
+                                                        <Icon icon={<CheckIcon/>} visualMeaning={ObjectVisualMeaning.INFO} colored size={px(16)}/>
+                                                    }
+                                                />
+                                            </Badge>
+                                        } ifFalse={
+                                            <Badge visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} opaque>
+                                                <Text
+                                                    text={"saving"}
+                                                    uppercase
+                                                    coloredText
+                                                    type={TextType.secondaryDescription}
+                                                    visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
+                                                    enableLeftAppendix
+                                                    leftAppendix={
+                                                        <Icon icon={<FalseIcon/>} visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} colored size={px(16)}/>
+                                                    }
+                                                />
+                                            </Badge>
+                                        }/>
+                                    ), "json-persist")
+                                }
+                                {
+                                    this.component(() => (
+                                        <If condition={local.state.validJson !== undefined && local.state.validJson} ifTrue={
+                                            <Badge visualMeaning={ObjectVisualMeaning.SUCCESS} opaque>
+                                                <Text
+                                                    text={"valid"}
+                                                    uppercase
+                                                    coloredText
+                                                    type={TextType.secondaryDescription}
+                                                    visualMeaning={ObjectVisualMeaning.SUCCESS}
+                                                    enableLeftAppendix
+                                                    leftAppendix={
+                                                        <Icon icon={<CheckIcon/>} visualMeaning={ObjectVisualMeaning.INFO} colored size={px(16)}/>
+                                                    }
                                                 />
                                             </Badge>
                                         } ifFalse={
@@ -236,17 +293,30 @@ export class ImportDatasetDialog extends BernieComponent<ImportDatasetDialogProp
                                                 <Badge visualMeaning={ObjectVisualMeaning.ERROR} opaque>
                                                     <Text
                                                         text={"invalid"}
-                                                        bold
                                                         uppercase
                                                         coloredText
                                                         type={TextType.secondaryDescription}
                                                         visualMeaning={ObjectVisualMeaning.ERROR}
+                                                        enableLeftAppendix
+                                                        leftAppendix={
+                                                            <Icon icon={<FalseIcon/>} visualMeaning={ObjectVisualMeaning.ERROR} colored size={px(16)}/>
+                                                        }
                                                     />
                                                 </Badge>
                                             }/>
                                         }/>
                                     ), "json-valid")
                                 }
+
+                                <ContextCompound menu={
+                                    <FlexBox gap={px(1)}>
+                                        <ContextMenuElement title={"Format json *(human readable)*"} onClick={() => this.formatJSONInput()}/>
+                                        <ContextMenuElement title={"Format json *(space efficient)*"} onClick={() => this.formatJSONInput(false)}/>
+                                    </FlexBox>
+                                } children={
+                                    <Icon icon={<MenuIcon/>}/>
+                                }/>
+
                             </FlexBox>
                         </FlexBox>
                         <Default children={
@@ -257,8 +327,33 @@ export class ImportDatasetDialog extends BernieComponent<ImportDatasetDialogProp
                         }/>
                     </FlexBox>
                 );
-            }, "json");
+            }, "json", "tables");
         });
+    }
+
+    private updateJSONInput(newJSON: string, rerenderInputEditor: boolean = true) {
+        const channels = ["json-valid", "json-persist"];
+        if (rerenderInputEditor) {
+            channels.push("json");
+        }
+        this.local.setStateWithChannels({
+            json: newJSON.trim(),
+            validJson: newJSON.trim().length > 0 ? ImportDatasetDialog.checkJSONValidity(newJSON) : undefined,
+            jsonPersistInSync: false
+        }, channels, () => {
+            this.local.state.jsonPersist(newJSON);
+        });
+    }
+
+    private formatJSONInput(beautify: boolean = true) {
+        let json = this.local.state.json;
+        if (ImportDatasetDialog.checkJSONValidity(json)) {
+            if (beautify) {
+                this.updateJSONInput(JSON.stringify(JSON.parse(json), null, 2));
+            } else {
+                this.updateJSONInput(JSON.stringify(JSON.parse(json)));
+            }
+        }
     }
 
     private submitAssembly() {
@@ -266,16 +361,46 @@ export class ImportDatasetDialog extends BernieComponent<ImportDatasetDialogProp
             return this.component(local => {
                 return (
                     <If condition={local.state.processingSQLInsert} ifTrue={
-                        <></>
+                        <Box width={percent(100)} paddingY={px()} height={px(40)} visualMeaning={ObjectVisualMeaning.WARNING} opaque>
+                            <FlexBox width={percent(100)} height={percent(100)} flexDir={FlexDirection.ROW} align={Align.CENTER} justifyContent={Justify.SPACE_BETWEEN}>
+                                <Text text={"Inserting datasets.."}/>
+                                <BarLoader color={theme.colors.warnHighlightColor.css()}/>
+                            </FlexBox>
+                        </Box>
                     } ifFalse={
-                        <FlexBox width={percent(100)} flexDir={FlexDirection.ROW}>
-                            <Button width={percent(50)} onClick={() => this.submit("reset")} children={
-                                <Text text={"Insert & reset"}/>
-                            }/>
-                            <Button width={percent(50)} onClick={() => this.submit("close")} children={
-                                <Text text={"Insert & close"}/>
-                            }/>
+                        <FlexBox width={percent(100)}>
+                            {
+                                this.component(local1 => {
+                                    return (
+                                        local.state.currentUpdateResult !== undefined ? (
+                                            <SQLResultDisplay response={this.local.state.currentUpdateResult} type={SessionCommandType.PUSH} clearHook={() => {
+                                                this.local.setStateWithChannels({
+                                                    currentUpdateResult: undefined
+                                                }, ["insert-result"]);
+                                            }}/>
+                                        ) : <></>
+                                    );
+                                }, "insert-result")
+                            }
+                            {
+                                this.component(local1 => {
+                                    return (
+                                        <LiteGrid columns={3} gap={theme.gaps.smallGab}>
+                                            <Button visualMeaning={this.local.state.validJson ? ObjectVisualMeaning.INFO : ObjectVisualMeaning.UI_NO_HIGHLIGHT} opaque width={percent(100)} onClick={() => this.submit("reset")} children={
+                                                <Text text={"Insert & reset"} align={Align.CENTER}/>
+                                            }/>
+                                            <Button visualMeaning={this.local.state.validJson ? ObjectVisualMeaning.INFO : ObjectVisualMeaning.UI_NO_HIGHLIGHT} opaque width={percent(100)} onClick={() => this.submit("plain")} children={
+                                                <Text text={"Insert"}/>
+                                            }/>
+                                            <Button visualMeaning={this.local.state.validJson ? ObjectVisualMeaning.INFO : ObjectVisualMeaning.UI_NO_HIGHLIGHT} opaque width={percent(100)} onClick={() => this.submit("close")} children={
+                                                <Text text={"Insert & close"} align={Align.CENTER}/>
+                                            }/>
+                                        </LiteGrid>
+                                    );
+                                }, "json-valid")
+                            }
                         </FlexBox>
+
                     }/>
                 );
             }, "insert");
@@ -322,25 +447,37 @@ export class ImportDatasetDialog extends BernieComponent<ImportDatasetDialogProp
 
     private executeSQL() {
         App.app().net().intrinsicSQLUpdate({
+            onStart: () => {
+                this.local.setStateWithChannels({
+                    processingSQLInsert: true,
+                    currentUpdateResult: undefined
+                }, ["insert"]);
+            },
             packet: {
                 dbID: this.props.dbID,
                 raw: this.generateSQL(),
                 type: SessionCommandType.PUSH,
                 attributes: new Map<string, string>()
             },
+            simulateDelay: false,
+            simulatedDelay: () => 2000,
             onCallback: data => {
                 this.local.setStateWithChannels({
-                    processingSQLInsert: false
-                }, ["insert"])
+                    processingSQLInsert: false,
+                    currentUpdateResult: data
+                }, ["insert"]);
             }
         })
     }
 
-    private submit(mode: "close" | "reset") {
+    private submit(mode: "close" | "reset" | "plain") {
         if (!this.local.state.validJson) {
             return;
         }
         switch (mode) {
+            case "plain":
+                this.executeSQL();
+                break;
             case "close":
                 this.executeSQL();
                 App.app().callAction("close-main-dialog");

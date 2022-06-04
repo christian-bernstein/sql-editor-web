@@ -58,7 +58,7 @@ import {HistoryEntry} from "./HistoryEntry";
 import {EditorCommandError} from "./EditorCommandError";
 import {Group} from "../../components/lo/Group";
 import {BernieComponent} from "../../logic/BernieComponent";
-import {DBErrorDisplay} from "../../components/ho/dbErrorDisplay/DBErrorDisplay";
+import {SQLResultDisplay} from "../../components/ho/dbErrorDisplay/SQLResultDisplay";
 import {Assembly} from "../../logic/assembly/Assembly";
 import {Switch} from "../../components/lo/Switch";
 import {SQLCommandUpdateResponsePacketData} from "../../packets/in/SQLCommandUpdateResponsePacketData";
@@ -309,7 +309,7 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                                 <Icon icon={<MenuIcon/>} onClick={() => App.app().openMenu()}/>
                             </FlexBox>
                             <FlexBox align={Align.CENTER} justifyContent={Justify.CENTER}>
-                                <Text uppercase align={Align.CENTER} type={TextType.smallHeader} text={"DB Editor"} />
+                                <Text uppercase align={Align.CENTER} type={TextType.smallHeader} text={"SQL Editor"} />
                             </FlexBox>
                             <FlexBox align={Align.CENTER} justifyContent={Justify.FLEX_END} flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab}>
                                 <Icon icon={<CloseIcon/>} onClick={() => this.closeSession()}/>
@@ -335,7 +335,7 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
             const error: EditorCommandError | undefined = this.local.state.error;
             if (error !== undefined) {
                 return (
-                    <DBErrorDisplay error={error} deleteHook={() => {
+                    <SQLResultDisplay error={error} deleteErrorHook={() => {
                         this.local.setStateWithChannels({
                             error: undefined
                         }, ["error"])
