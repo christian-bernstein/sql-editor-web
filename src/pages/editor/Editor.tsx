@@ -73,7 +73,10 @@ import {SavedCommandType} from "./SavedCommandType";
 import {Default, Mobile} from "../../components/logic/Media";
 import {SQLCommandBookmarksDialog} from "../sqlCommandBookmarks/SQLCommandBookmarksDialog";
 import {Constants} from "../../logic/misc/Constants";
-import {ImportDatasetDialog, ImportDatasetDialogProps} from "../importDatasets/ImportDatasetDialog";
+import {ImportDatasetDialogProps} from "../importDatasets/ImportDatasetDialog";
+import {EditorLogicCompanion} from "../../logic/editor/EditorLogicCompanion";
+import _ from "lodash";
+import {format} from "sql-formatter";
 
 export type DebugEditorProps = {
 }
@@ -93,9 +96,16 @@ export type DebugEditorLocalState = {
     // todo SQLCommandQueryResponsePacketData | SQLCommandUpdateResponsePacketData
     sqlCommandResultCache: (SQLCommandQueryResponsePacketData)[],
     projectHistoryLocalCache: HistoryEntry[],
+
     error?: EditorCommandError,
+
+    lastSQLCommandResponse?: SQLCommandQueryResponsePacketData | SQLCommandUpdateResponsePacketData,
+    lastSQLCommandResponseType?: SessionCommandType,
+
     masterOpenDialogOnCommandResponse: boolean,
-    savedCommands: SavedCommand[]
+    savedCommands: SavedCommand[],
+    debouncedCommandStoreFunc: (command: string) => void,
+    companion: EditorLogicCompanion
 }
 
 /**
@@ -124,7 +134,11 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
             projectHistoryLocalCache: [],
             error: undefined,
             masterOpenDialogOnCommandResponse: true,
-            savedCommands: []
+            savedCommands: [],
+            debouncedCommandStoreFunc: _.debounce((command: string) => {
+                this.local.state.companion.setMainEditorContent(command);
+            }, 2500),
+            companion: new EditorLogicCompanion(App.app().dbSessionCacheShard().currentInfoData as ProjectInfoData)
         });
         this.initAssembly();
         this.initProtocolHandlers();
@@ -156,7 +170,7 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
         this.createPullPushAssembly();
         this.createSqlCommandResultAssembly();
         this.createSqlCommandResultAssemblyV2();
-        this.createErrorAssembly();
+        this.createResultAssembly();
         this.createInputControlsAssembly();
         this.createHeaderAssembly();
         this.createEditorMainAssembly();
@@ -253,12 +267,20 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                                     {tag: tags.string, class: "string"},
                                     {tag: tags.content, class: "content"},
                                     {tag: tags.arithmeticOperator, class: "arithmeticOperator"},
-
                                 ])
                             ]}
-                            upstreamHook={value => this.local.setState({
-                                command: value
-                            })}
+                            upstreamHook={newCommand => {
+                                const state = this.local.state;
+                                const deleteResult = Boolean(this.local.state.lastSQLCommandResponse?.success);
+
+                                this.local.setState({
+                                    command: newCommand,
+                                    lastSQLCommandResponseType: deleteResult ? undefined : state.lastSQLCommandResponseType,
+                                    lastSQLCommandResponse: deleteResult ? undefined : state.lastSQLCommandResponse
+                                }, undefined, () => {
+                                    state.debouncedCommandStoreFunc(newCommand);
+                                });
+                            }}
                         />
 
                         {/*this.component(local => {
@@ -330,15 +352,21 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
         });
     }
 
-    private createErrorAssembly() {
+    private createResultAssembly() {
+
+        // todo rename to result
         this.assembly.assembly("error", (theme, props) => {
-            const error: EditorCommandError | undefined = this.local.state.error;
-            if (error !== undefined) {
+
+            const result = this.local.state.lastSQLCommandResponse;
+            const type = this.local.state.lastSQLCommandResponseType;
+
+            if (result !== undefined && type !== undefined) {
                 return (
-                    <SQLResultDisplay error={error} deleteErrorHook={() => {
+                    <SQLResultDisplay type={type} response={result} clearHook={() => {
                         this.local.setStateWithChannels({
-                            error: undefined
-                        }, ["error"])
+                            lastSQLCommandResponse: undefined,
+                            lastSQLCommandResponseType: undefined
+                        }, ["error"]);
                     }}/>
                 );
             } else {
@@ -346,6 +374,22 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                     <></>
                 );
             }
+
+
+            // const error: EditorCommandError | undefined = this.local.state.error;
+            // if (error !== undefined) {
+            //     return (
+            //         <SQLResultDisplay error={error} deleteErrorHook={() => {
+            //             this.local.setStateWithChannels({
+            //                 error: undefined
+            //             }, ["error"])
+            //         }}/>
+            //     );
+            // } else {
+            //     return (
+            //         <></>
+            //     );
+            // }
         });
     }
 
@@ -410,10 +454,12 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
         });
     }
 
-    private setSQLInput(value: string): void {
+    private setSQLInput(sql: string): void {
         this.local.setStateWithChannels({
-            command: value
-        }, ["input"]);
+            command: sql
+        }, ["input"], () => {
+            this.local.state.debouncedCommandStoreFunc(sql);
+        });
     }
 
     private createInputControlsAssembly() {
@@ -524,11 +570,7 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                                             }}/>
 
 
-                                            <ContextMenuElement title={"Download data"} icon={() => (
-                                                <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.defaultGab} align={Align.CENTER}>
-                                                    <Icon icon={<DownloadIcon/>}/>
-                                                </FlexBox>
-                                            )}/>
+                                            <ContextMenuElement title={"Format sql"} onClick={() => this.formatSQL()}/>
                                         </FlexBox>
                                     </FlexBox>
                                 } children={
@@ -748,7 +790,9 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
 
                 this.local.setState({
                     processPullCommand: false,
-                    error: error
+                    error: error,
+                    lastSQLCommandResponse: data,
+                    lastSQLCommandResponseType: SessionCommandType.PULL
                 }, new Map([["channels", ["push-pull", "error"]]]));
             }
         });
@@ -762,7 +806,9 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                 }
                 this.local.setState({
                     processPushCommand: false,
-                    error: error
+                    error: error,
+                    lastSQLCommandResponse: data,
+                    lastSQLCommandResponseType: SessionCommandType.PUSH
                 }, new Map([["channels", ["push-pull", "error"]]]));
             }
         });
@@ -828,13 +874,17 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
             case SessionCommandType.PULL:
                 this.local.setState({
                     processPullCommand: true,
-                    error: undefined
+                    error: undefined,
+                    lastSQLCommandResponseType: undefined,
+                    lastSQLCommandResponse: undefined
                 }, new Map([["channels", ["*", "push-pull", "error"]]]), () => apiRequest());
                 break;
             case SessionCommandType.PUSH:
                 this.local.setState({
                     processPushCommand: true,
-                    error: undefined
+                    error: undefined,
+                    lastSQLCommandResponseType: undefined,
+                    lastSQLCommandResponse: undefined
                 }, new Map([["channels", ["*", "push-pull", "error"]]]), () => apiRequest());
                 break;
         }
@@ -1020,6 +1070,10 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
         );
     }
 
+    private formatSQL() {
+        this.setSQLInput(format(this.local.state.command))
+    }
+
     private createCommandSnapshot(type: SavedCommandType): void {
         const cmd = this.local.state.command;
         if (cmd.trim().length > 0) {
@@ -1031,7 +1085,10 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
     }
 
     componentDidMount() {
+        // todo is this code here correct? -> Editor login possible?
         App.app().triggerLoginIfNotLoggedIn({});
+
+        this.setSQLInput(this.local.state.companion.loadMainEditorContent(this.local.state.command));
     }
 
     componentRender(p: DebugEditorProps, s: DebugEditorState, l: DebugEditorLocalState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {

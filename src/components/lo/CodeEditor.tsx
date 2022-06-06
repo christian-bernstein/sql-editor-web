@@ -22,6 +22,7 @@ export type CodeEditorProps = WithVisualMeaning & {
     height?: DimensionalMeasured,
     editable?: boolean,
     hoverEffect?: boolean,
+    onKeyPress?: (event: React.KeyboardEvent<HTMLDivElement>) => void
 }
 
 export class CodeEditor extends React.PureComponent<CodeEditorProps, any> {
@@ -147,6 +148,7 @@ export class CodeEditor extends React.PureComponent<CodeEditorProps, any> {
         return (
             <Editor>
                 <ReactCodeMirror
+                    onKeyPress={this.props.onKeyPress}
                     value={getOr(this.props.value, "")}
                     editable={getOr(this.props.editable, true)}
                     indentWithTab={true}
