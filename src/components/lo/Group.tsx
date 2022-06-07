@@ -14,6 +14,8 @@ import {OverflowBehaviour} from "../../logic/style/OverflowBehaviour";
 import * as ReactIs from 'react-is';
 import {WithVisualMeaning} from "../../logic/style/WithVisualMeaning";
 import {ObjectVisualMeaning} from "../../logic/style/ObjectVisualMeaning";
+import {Align} from "../../logic/style/Align";
+import {Justify} from "../../logic/style/Justify";
 
 export type GroupProps = WithVisualMeaning & {
     elements: (JSX.Element | undefined)[],
@@ -48,7 +50,7 @@ export class Group extends BernieComponent<GroupProps, any, any> {
         return (
             <Wrapper>
                 <Box opaque={p.opaque} visualMeaning={vm} noPadding width={percent(100)} height={percent(100)} gapY={px(0)} gapX={px(0)} overflowXBehaviour={OverflowBehaviour.HIDDEN} overflowYBehaviour={OverflowBehaviour.HIDDEN}>
-                    <FlexBox type={type} height={percent(100)} flexDir={orientation === Orientation.HORIZONTAL ? FlexDirection.ROW : FlexDirection.COLUMN} width={percent(100)} gap={px(0)} children={
+                    <FlexBox align={Align.CENTER} justifyContent={Justify.CENTER} type={type} height={percent(100)} flexDir={orientation === Orientation.HORIZONTAL ? FlexDirection.ROW : FlexDirection.COLUMN} width={percent(100)} gap={px(0)} children={
                         this.props.elements.filter(e => e !== undefined).filter(e => !ReactIs.isFragment(e)).map((e, index, array) => {
                             if (index === array.length - 1) {
                                 return e;

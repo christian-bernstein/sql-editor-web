@@ -105,7 +105,7 @@ export type DebugEditorLocalState = {
     masterOpenDialogOnCommandResponse: boolean,
     savedCommands: SavedCommand[],
     debouncedCommandStoreFunc: (command: string) => void,
-    companion: EditorLogicCompanion
+    companion?: EditorLogicCompanion
 }
 
 /**
@@ -126,7 +126,7 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
             to: "/",
             openMainDialog: false
         }, {
-            command: "show tables from information_schema",
+            command: "show tables",
             processPullCommand: false,
             processPushCommand: false,
             processSQLResultOpening: false,
@@ -136,9 +136,9 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
             masterOpenDialogOnCommandResponse: true,
             savedCommands: [],
             debouncedCommandStoreFunc: _.debounce((command: string) => {
-                this.local.state.companion.setMainEditorContent(command);
+                this.companion().setMainEditorContent(command);
             }, 2500),
-            companion: new EditorLogicCompanion(App.app().dbSessionCacheShard().currentInfoData as ProjectInfoData)
+            companion: App.app().dbSessionCacheShard().currentInfoData === undefined ? undefined : new EditorLogicCompanion(App.app().dbSessionCacheShard().currentInfoData as ProjectInfoData)
         });
         this.initAssembly();
         this.initProtocolHandlers();
@@ -163,6 +163,10 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
             this.projectStaticData = data;
         }
         this.requestServerDBActionStream();
+    }
+
+    private companion(): EditorLogicCompanion {
+        return this.local.state.companion as EditorLogicCompanion;
     }
 
     private initAssembly() {
@@ -1088,7 +1092,7 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
         // todo is this code here correct? -> Editor login possible?
         App.app().triggerLoginIfNotLoggedIn({});
 
-        this.setSQLInput(this.local.state.companion.loadMainEditorContent(this.local.state.command));
+        this.setSQLInput(this.companion().loadMainEditorContent(this.local.state.command));
     }
 
     componentRender(p: DebugEditorProps, s: DebugEditorState, l: DebugEditorLocalState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {

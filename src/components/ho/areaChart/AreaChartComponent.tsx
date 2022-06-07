@@ -5,7 +5,7 @@ import ReactApexChart from "react-apexcharts";
 import {OverflowBehaviour} from "../../../logic/style/OverflowBehaviour";
 import {array, getOr} from "../../../logic/Utils";
 import {Dimension} from "../../../logic/style/Dimension";
-import {DimensionalMeasured, px} from "../../../logic/style/DimensionalMeasured";
+import {DimensionalMeasured, percent, px} from "../../../logic/style/DimensionalMeasured";
 import {Text, TextType} from "../../lo/Text";
 import styled from "styled-components";
 import {getMeaningfulColors, MeaningfulColors, Themeable} from "../../../logic/style/Themeable";
@@ -47,6 +47,9 @@ export class AreaChartComponent extends React.Component<AreaChartComponentProps,
 
         return (
             <Box overflowYBehaviour={OverflowBehaviour.HIDDEN}
+
+                 width={percent(100)}
+
                  paddingX={DimensionalMeasured.of(0, Dimension.em)}
                  paddingY={DimensionalMeasured.of(.25, Dimension.em)}
                  color={theme.colors.backgroundColor}>

@@ -81,13 +81,18 @@ export namespace Environment {
     }
 
     export type SocketEventHandler = {
-        handle: (ev: Event) => void,
+        handle: (ev?: Event) => void,
         stator: boolean,
         usagesLeft?: number
     }
 
     export enum SocketEventTypes {
-        ON_OPEN, ON_CLOSE, ON_INBOUND_MESSAGE, ON_OUTBOUND_MESSAGE
+        ON_OPEN, ON_CLOSE, ON_INBOUND_MESSAGE, ON_OUTBOUND_MESSAGE,
+
+
+        ON_IN_SINGLETON_MESSAGE, ON_IN_RESPONSE_MESSAGE, ON_IN_CALL_MESSAGE,
+
+        ON_OUT_SINGLETON_MESSAGE, ON_OUT_CALL_MESSAGE, ON_OUT_RESPONSE_MESSAGE
     }
 
     export class Connector {
@@ -158,6 +163,16 @@ export namespace Environment {
             [SocketEventTypes.ON_CLOSE, new Array<SocketEventHandler>()],
             [SocketEventTypes.ON_INBOUND_MESSAGE, new Array<SocketEventHandler>()],
             [SocketEventTypes.ON_OUTBOUND_MESSAGE, new Array<SocketEventHandler>()],
+
+
+            [SocketEventTypes.ON_OUT_SINGLETON_MESSAGE, new Array<SocketEventHandler>()],
+            [SocketEventTypes.ON_OUT_CALL_MESSAGE, new Array<SocketEventHandler>()],
+            [SocketEventTypes.ON_OUT_RESPONSE_MESSAGE, new Array<SocketEventHandler>()],
+
+            [SocketEventTypes.ON_IN_SINGLETON_MESSAGE, new Array<SocketEventHandler>()],
+            [SocketEventTypes.ON_OUT_CALL_MESSAGE, new Array<SocketEventHandler>()],
+            [SocketEventTypes.ON_IN_RESPONSE_MESSAGE, new Array<SocketEventHandler>()],
+
         ]);
 
         private readonly _config: ConnectorConfig;
@@ -271,13 +286,17 @@ export namespace Environment {
             if (this.socket?.readyState === WebSocket.OPEN) {
                 // Websocket is already connected and open for messages
                 this.socket?.send(payload);
+
+                this.fireSocketEvent(SocketEventTypes.ON_OUTBOUND_MESSAGE, undefined);
             } else {
                 // Websocket is still loading
                 try {
                     this.registerSocketEventHandler(SocketEventTypes.ON_OPEN, {
                         stator: false,
                         handle: ev => {
-                            (ev.target as WebSocket).send(payload);
+                            (ev?.target as WebSocket).send(payload);
+
+                            this.fireSocketEvent(SocketEventTypes.ON_OUTBOUND_MESSAGE, undefined);
                         }
                     });
                 } catch (err) {
@@ -301,6 +320,9 @@ export namespace Environment {
                 data: config.data
             });
             this.baseSend(packet);
+
+            this.fireSocketEvent(SocketEventTypes.ON_OUT_SINGLETON_MESSAGE, undefined);
+
             return this;
         }
 
@@ -316,6 +338,9 @@ export namespace Environment {
             });
             this.baseSend(packet);
             this._responseMap.set(uuid, config.callback);
+
+            this.fireSocketEvent(SocketEventTypes.ON_OUT_CALL_MESSAGE, undefined);
+
             return this;
         }
 
@@ -329,10 +354,13 @@ export namespace Environment {
                 data: config.data
             });
             this.baseSend(packet);
+
+            this.fireSocketEvent(SocketEventTypes.ON_OUT_RESPONSE_MESSAGE, undefined);
+
             return this;
         }
 
-        private fireSocketEvent(type: SocketEventTypes, ev: Event) {
+        private fireSocketEvent(type: SocketEventTypes, ev?: Event) {
             if (this.socketEventHandlers.has(type)) {
                 const handlers: Array<SocketEventHandler> = this.socketEventHandlers.get(type) as Array<SocketEventHandler>;
                 handlers.forEach((handler, index, array) => {
@@ -397,6 +425,9 @@ export namespace Environment {
                             // It's a return packet
                             const callback: Handler | undefined = this._responseMap.get(packet.id);
                             callback?.handle(this, packet);
+
+                            this.fireSocketEvent(SocketEventTypes.ON_IN_RESPONSE_MESSAGE, ev);
+
                         } else {
                             // It's a singleton or request packet
                             // Call base protocols
@@ -419,7 +450,15 @@ export namespace Environment {
                             } else {
                                 console.error(`No protocol instance available: '${this.currentProtocol}'`);
                             }
+
+                            if (packet.type === PacketType.REQUEST) {
+                                this.fireSocketEvent(SocketEventTypes.ON_IN_RESPONSE_MESSAGE, ev);
+                            } else {
+                                this.fireSocketEvent(SocketEventTypes.ON_IN_SINGLETON_MESSAGE, ev);
+                            }
                         }
+
+                        this.fireSocketEvent(SocketEventTypes.ON_INBOUND_MESSAGE, ev);
                     };
                     this._socket.onerror = ev => {
                         this._config.onError?.();
