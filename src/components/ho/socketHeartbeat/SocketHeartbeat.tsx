@@ -126,8 +126,8 @@ export class SocketHeartbeat extends BernieComponent<any, any, SocketHeartbeatLo
 
     componentRender(p: any, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
-            <Box borderless paddingY={percent(5)} children={
-                <FlexBox width={percent(100)} align={Align.CENTER} justifyContent={Justify.CENTER}>
+            <Box width={percent(100)} borderless paddingY={percent(5)} children={
+                <FlexBox width={percent(100)} align={Align.CENTER} justifyContent={Justify.SPACE_BETWEEN}>
                     <Text text={"**C**hannel-**s**plit-**c**ontroller"} uppercase/>
                     <LiteGrid gap={t.gaps.defaultGab} columns={2}>
 
@@ -204,7 +204,7 @@ export class SocketHeartbeat extends BernieComponent<any, any, SocketHeartbeatLo
 
 
 
-                            <Text text={"Latency"} uppercase bold/>
+                            <Text text={"Delay"} uppercase bold/>
                             <Group width={percent(100)} orientation={Orientation.HORIZONTAL} elements={[
                                 <Button>
                                     <Icon icon={
@@ -212,7 +212,7 @@ export class SocketHeartbeat extends BernieComponent<any, any, SocketHeartbeatLo
                                     }/>
                                 </Button>,
                                 <FlexBox width={percent(100)} justifyContent={Justify.CENTER} align={Align.CENTER}>
-                                    <Text text={"off"} visualMeaning={ObjectVisualMeaning.INFO} coloredText uppercase bold/>
+                                    <Text text={String(App.app().getConnector().inboundDelayMS)} visualMeaning={ObjectVisualMeaning.INFO} coloredText uppercase bold/>
                                 </FlexBox>,
                                 <Button>
                                     <Icon icon={
@@ -311,7 +311,7 @@ export class SocketHeartbeat extends BernieComponent<any, any, SocketHeartbeatLo
                                 </FlexBox>
                             </FlexBox>
 
-                            <Text text={"Latency"} uppercase bold/>
+                            <Text text={"Delay"} uppercase bold/>
                             <Group width={percent(100)} orientation={Orientation.HORIZONTAL} elements={[
                                 <Button highlight={false}>
                                     <Icon icon={

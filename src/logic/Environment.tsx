@@ -7,6 +7,7 @@ import {LatencySnapshot} from "./network/LatencySnapshot";
 import {PingPacketData} from "../packets/out/PingPacketData";
 import {PongPacketData} from "../packets/in/PongPacketData";
 import {getOr} from "./Utils";
+import {NetChannelConfig} from "./network/NetChannelConfig";
 
 export namespace Environment {
 
@@ -96,6 +97,20 @@ export namespace Environment {
     }
 
     export class Connector {
+        get outboundDelayMS(): number {
+            return this._outboundDelayMS;
+        }
+
+        set outboundDelayMS(value: number) {
+            this._outboundDelayMS = value;
+        }
+        get inboundDelayMS(): number {
+            return this._inboundDelayMS;
+        }
+
+        set inboundDelayMS(value: number) {
+            this._inboundDelayMS = value;
+        }
 
         get latencyCacheUpdateCallbacks(): Array<(con: Environment.Connector) => void> {
             return this._latencyCacheUpdateCallbacks;
@@ -163,23 +178,26 @@ export namespace Environment {
             [SocketEventTypes.ON_CLOSE, new Array<SocketEventHandler>()],
             [SocketEventTypes.ON_INBOUND_MESSAGE, new Array<SocketEventHandler>()],
             [SocketEventTypes.ON_OUTBOUND_MESSAGE, new Array<SocketEventHandler>()],
-
-
             [SocketEventTypes.ON_OUT_SINGLETON_MESSAGE, new Array<SocketEventHandler>()],
             [SocketEventTypes.ON_OUT_CALL_MESSAGE, new Array<SocketEventHandler>()],
             [SocketEventTypes.ON_OUT_RESPONSE_MESSAGE, new Array<SocketEventHandler>()],
-
             [SocketEventTypes.ON_IN_SINGLETON_MESSAGE, new Array<SocketEventHandler>()],
             [SocketEventTypes.ON_OUT_CALL_MESSAGE, new Array<SocketEventHandler>()],
             [SocketEventTypes.ON_IN_RESPONSE_MESSAGE, new Array<SocketEventHandler>()],
 
         ]);
 
+        private readonly netChannelConfigs: Map<string, NetChannelConfig> = new Map<string, NetChannelConfig>();
+
         private readonly _config: ConnectorConfig;
 
         private readonly _latencyRecords: Array<LatencySnapshot>;
 
         private readonly _latencyCacheUpdateCallbacks: Array<(con: Connector) => void>
+
+        private _inboundDelayMS: number;
+
+        private _outboundDelayMS: number;
 
         private _socket: WebSocket | undefined;
 
@@ -204,6 +222,8 @@ export namespace Environment {
             this._currentProtocol = config.protocol;
             this._latencyRecords = new Array<LatencySnapshot>();
             this._latencyCacheUpdateCallbacks = new Array<(con: Environment.Connector) => void>();
+            this._inboundDelayMS = 1;
+            this._outboundDelayMS = 1;
             Connector.connectors.push(this);
             this.init();
         }
@@ -417,48 +437,13 @@ export namespace Environment {
                         }
                     };
                     this._socket.onmessage = ev => {
-                        const packet: Packet = JSON.parse(ev.data) as Packet;
-                        this._config.packetInterceptor(packet, this);
-                        // console.log(packet)
-                        // this.fireSocketEvent(SocketEventTypes.ON_INBOUND_MESSAGE, ev);
-                        if (packet.type === PacketType.RESPONSE) {
-                            // It's a return packet
-                            const callback: Handler | undefined = this._responseMap.get(packet.id);
-                            callback?.handle(this, packet);
-
-                            this.fireSocketEvent(SocketEventTypes.ON_IN_RESPONSE_MESSAGE, ev);
-
+                        if (this._inboundDelayMS > 0) {
+                            setTimeout(() => {
+                                this.onMessage(ev);
+                            }, this._inboundDelayMS);
                         } else {
-                            // It's a singleton or request packet
-                            // Call base protocols
-                            this.baseProtocols.forEach((protocol: Protocol) => {
-                                this.handlePacketForProtocol({
-                                    packet: packet,
-                                    protocol: protocol,
-                                    errorHandler: console.error
-                                });
-                            })
-                            // Call current protocol
-                            // const protocol: Protocol | undefined = this._protocols.get(this._config.protocol);
-                            const protocol: Protocol | undefined = this._protocols.get(this.currentProtocol);
-                            if (protocol !== undefined) {
-                                this.handlePacketForProtocol({
-                                    packet: packet,
-                                    protocol: protocol,
-                                    errorHandler: console.error
-                                });
-                            } else {
-                                console.error(`No protocol instance available: '${this.currentProtocol}'`);
-                            }
-
-                            if (packet.type === PacketType.REQUEST) {
-                                this.fireSocketEvent(SocketEventTypes.ON_IN_RESPONSE_MESSAGE, ev);
-                            } else {
-                                this.fireSocketEvent(SocketEventTypes.ON_IN_SINGLETON_MESSAGE, ev);
-                            }
+                            this.onMessage(ev);
                         }
-
-                        this.fireSocketEvent(SocketEventTypes.ON_INBOUND_MESSAGE, ev);
                     };
                     this._socket.onerror = ev => {
                         this._config.onError?.();
@@ -471,6 +456,51 @@ export namespace Environment {
             }
             this._connectionAttempts++;
             return this;
+        }
+
+        private onMessage(ev: MessageEvent) {
+            const packet: Packet = JSON.parse(ev.data) as Packet;
+            this._config.packetInterceptor(packet, this);
+            // console.log(packet)
+            // this.fireSocketEvent(SocketEventTypes.ON_INBOUND_MESSAGE, ev);
+            if (packet.type === PacketType.RESPONSE) {
+                // It's a return packet
+                const callback: Handler | undefined = this._responseMap.get(packet.id);
+                callback?.handle(this, packet);
+
+                this.fireSocketEvent(SocketEventTypes.ON_IN_RESPONSE_MESSAGE, ev);
+
+            } else {
+                // It's a singleton or request packet
+                // Call base protocols
+                this.baseProtocols.forEach((protocol: Protocol) => {
+                    this.handlePacketForProtocol({
+                        packet: packet,
+                        protocol: protocol,
+                        errorHandler: console.error
+                    });
+                })
+                // Call current protocol
+                // const protocol: Protocol | undefined = this._protocols.get(this._config.protocol);
+                const protocol: Protocol | undefined = this._protocols.get(this.currentProtocol);
+                if (protocol !== undefined) {
+                    this.handlePacketForProtocol({
+                        packet: packet,
+                        protocol: protocol,
+                        errorHandler: console.error
+                    });
+                } else {
+                    console.error(`No protocol instance available: '${this.currentProtocol}'`);
+                }
+
+                if (packet.type === PacketType.REQUEST) {
+                    this.fireSocketEvent(SocketEventTypes.ON_IN_RESPONSE_MESSAGE, ev);
+                } else {
+                    this.fireSocketEvent(SocketEventTypes.ON_IN_SINGLETON_MESSAGE, ev);
+                }
+            }
+
+            this.fireSocketEvent(SocketEventTypes.ON_INBOUND_MESSAGE, ev);
         }
 
         private handlePacketForProtocol(config: {packet: Packet, protocol?: Protocol, errorHandler?: (message?: any, ...optionalParams: any[]) => void}): void {

@@ -47,9 +47,7 @@ export class AreaChartComponent extends React.Component<AreaChartComponentProps,
 
         return (
             <Box overflowYBehaviour={OverflowBehaviour.HIDDEN}
-
                  width={percent(100)}
-
                  paddingX={DimensionalMeasured.of(0, Dimension.em)}
                  paddingY={DimensionalMeasured.of(.25, Dimension.em)}
                  color={theme.colors.backgroundColor}>
