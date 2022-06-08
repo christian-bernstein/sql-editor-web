@@ -37,6 +37,10 @@ export class BernieComponent<RProps, RState, LState extends object> extends Reac
         this.init();
     }
 
+    public rerender(...channels: string[]) {
+        this.controller.rerender(...channels);
+    }
+
     get assembly(): Assembly {
         return this._assembly;
     }

@@ -22,6 +22,8 @@ import {Button} from "../../lo/Button";
 import {Togglable} from "../../logic/Togglable";
 import {Group} from "../../lo/Group";
 import {Orientation} from "../../../logic/style/Orientation";
+import {NumberSelector} from "../../lo/NumberSelector";
+import {getOr} from "../../../logic/Utils";
 
 export type SocketHeartbeatLocalState = {
     activeInbound: boolean,
@@ -205,21 +207,24 @@ export class SocketHeartbeat extends BernieComponent<any, any, SocketHeartbeatLo
 
 
                             <Text text={"Delay"} uppercase bold/>
-                            <Group width={percent(100)} orientation={Orientation.HORIZONTAL} elements={[
-                                <Button>
-                                    <Icon icon={
-                                        <LessIcon/>
-                                    }/>
-                                </Button>,
-                                <FlexBox width={percent(100)} justifyContent={Justify.CENTER} align={Align.CENTER}>
-                                    <Text text={String(App.app().getConnector().inboundDelayMS)} visualMeaning={ObjectVisualMeaning.INFO} coloredText uppercase bold/>
-                                </FlexBox>,
-                                <Button>
-                                    <Icon icon={
-                                        <MoreIcon/>
-                                    }/>
-                                </Button>,
-                            ]}/>
+                            {
+                                this.component(() => (
+                                    <NumberSelector
+                                        onChange={newValue => {
+                                            App.app().getConnector().inboundDelayMS = newValue;
+                                            this.rerender("inbound-delay");
+                                        }}
+                                        format={"{current}"}
+                                        initialValue={App.app().getConnector().inboundDelayMS}
+                                        deltaCalculator={() => 100}
+                                        minValue={0}
+                                        maxValue={2000}
+                                        specialNumberDisplayRenderers={new Map<{min: number; max: number}, (current: number) => JSX.Element>([
+                                            [{min: 0, max: 0}, () => <Text text={"off"} visualMeaning={ObjectVisualMeaning.INFO} coloredText uppercase bold/>]
+                                        ])}
+                                    />
+                                ), "inbound-delay")
+                            }
 
 
 
@@ -312,24 +317,25 @@ export class SocketHeartbeat extends BernieComponent<any, any, SocketHeartbeatLo
                             </FlexBox>
 
                             <Text text={"Delay"} uppercase bold/>
-                            <Group width={percent(100)} orientation={Orientation.HORIZONTAL} elements={[
-                                <Button highlight={false}>
-                                    <Icon icon={
-                                        <LessIcon/>
-                                    }/>
-                                </Button>,
-                                <FlexBox width={percent(100)} justifyContent={Justify.CENTER} align={Align.CENTER}>
-                                    <Text text={"off"} visualMeaning={ObjectVisualMeaning.INFO} coloredText uppercase bold/>
-                                </FlexBox>,
-                                <Button highlight={false}>
-                                    <Icon icon={
-                                        <MoreIcon/>
-                                    }/>
-                                </Button>,
-                            ]}/>
+                            {
+                                this.component(() => (
+                                    <NumberSelector
+                                        onChange={newValue => {
+                                            App.app().getConnector().outboundDelayMS = newValue;
+                                            this.rerender("outbound-delay");
+                                        }}
+                                        format={"{current}"}
+                                        initialValue={App.app().getConnector().outboundDelayMS}
+                                        deltaCalculator={() => 100}
+                                        minValue={0}
+                                        maxValue={2000}
+                                        specialNumberDisplayRenderers={new Map<{min: number; max: number}, (current: number) => JSX.Element>([
+                                            [{min: 0, max: 0}, () => <Text text={"off"} visualMeaning={ObjectVisualMeaning.INFO} coloredText uppercase bold/>]
+                                        ])}
+                                    />
+                                ), "outbound-delay")
+                            }
                         </FlexBox>
-
-
                     </LiteGrid>
                 </FlexBox>
             }/>

@@ -222,8 +222,8 @@ export namespace Environment {
             this._currentProtocol = config.protocol;
             this._latencyRecords = new Array<LatencySnapshot>();
             this._latencyCacheUpdateCallbacks = new Array<(con: Environment.Connector) => void>();
-            this._inboundDelayMS = 1;
-            this._outboundDelayMS = 1;
+            this._inboundDelayMS = 0;
+            this._outboundDelayMS = 0;
             Connector.connectors.push(this);
             this.init();
         }
@@ -246,7 +246,9 @@ export namespace Environment {
                         callback: {
                             handle: (connector1, packet) => {
                                 const pong: PongPacketData = packet.data as PongPacketData;
-                                const latency = Math.max(0, pong.inboundTimestamp - pong.outboundTimestamp);
+                                // todo fix... negative latency shouldn't be a thing c.c
+                                // const latency = Math.max(0, pong.inboundTimestamp - pong.outboundTimestamp);
+                                const latency = pong.outboundTimestamp - pong.inboundTimestamp;
                                 this.latencyRecords.push({
                                     latency: latency,
                                     timestamp: new Date()
@@ -356,10 +358,18 @@ export namespace Environment {
                 type: PacketType.REQUEST,
                 data: config.data
             });
-            this.baseSend(packet);
-            this._responseMap.set(uuid, config.callback);
 
-            this.fireSocketEvent(SocketEventTypes.ON_OUT_CALL_MESSAGE, undefined);
+            if (this.outboundDelayMS > 0) {
+                this.fireSocketEvent(SocketEventTypes.ON_OUT_CALL_MESSAGE, undefined);
+                setTimeout(() => {
+                    this.baseSend(packet);
+                    this._responseMap.set(uuid, config.callback);
+                }, this.outboundDelayMS);
+            } else {
+                this.baseSend(packet);
+                this._responseMap.set(uuid, config.callback);
+                this.fireSocketEvent(SocketEventTypes.ON_OUT_CALL_MESSAGE, undefined);
+            }
 
             return this;
         }
@@ -373,6 +383,8 @@ export namespace Environment {
                 type: PacketType.REQUEST,
                 data: config.data
             });
+
+
             this.baseSend(packet);
 
             this.fireSocketEvent(SocketEventTypes.ON_OUT_RESPONSE_MESSAGE, undefined);
@@ -437,10 +449,10 @@ export namespace Environment {
                         }
                     };
                     this._socket.onmessage = ev => {
-                        if (this._inboundDelayMS > 0) {
+                        if (this.inboundDelayMS > 0) {
                             setTimeout(() => {
                                 this.onMessage(ev);
-                            }, this._inboundDelayMS);
+                            }, this.inboundDelayMS);
                         } else {
                             this.onMessage(ev);
                         }
