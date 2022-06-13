@@ -383,7 +383,7 @@ export class BoardingPage extends BernieComponent<BoardingPageProps, BoardingPag
                                 // </ol>
                                 <>
                                     <Mobile children={
-                                        <LiteGrid gap={theme.gaps.defaultGab} style={{marginBottom: theme.gaps.smallGab.css()}} responsive minResponsiveWidth={px(200)} children={
+                                        <LiteGrid gap={theme.gaps.smallGab} style={{marginBottom: theme.gaps.defaultGab.css()}} responsive minResponsiveWidth={px(200)} children={
                                             App.app().getSessionHistoryEntries().map((entry: SessionHistoryEntry) => <ContinueAs
                                                 key={""} sessionHistoryEntry={{
                                                 sessionID: entry.sessionID,
