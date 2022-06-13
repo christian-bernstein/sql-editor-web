@@ -13,7 +13,7 @@ import {Icon} from "../../components/lo/Icon";
 import React from "react";
 import {Text, TextType} from "../../components/lo/Text";
 import {Screen} from "../../components/lo/Page";
-import {LinearProgress} from "@mui/material";
+import {LinearProgress, Pagination} from "@mui/material";
 import {percent, px} from "../../logic/style/DimensionalMeasured";
 import {ObjectVisualMeaning} from "../../logic/style/ObjectVisualMeaning";
 import {OverflowBehaviour} from "../../logic/style/OverflowBehaviour";
@@ -38,14 +38,10 @@ import {ReactComponent as SuccessIcon} from "../../assets/icons/ic-16/ic16-check
 import {ReactComponent as ErrorIcon} from "../../assets/icons/ic-16/ic16-close.svg";
 import {ElementHeader} from "../../components/lo/ElementHeader";
 import {ContextCompound} from "../../components/ho/contextCompound/ContextCompound";
-import {Button} from "../../components/lo/Button";
 import {SQLResultDisplay} from "../../components/ho/dbErrorDisplay/SQLResultDisplay";
 import {EditorCommandError} from "../editor/EditorCommandError";
 import {ContextMenuElement} from "../../components/lo/ContextMenuElement";
 import {ClientDisplay} from "../../components/ho/clientDisplay/ClientDisplay";
-import dateFormat from "dateformat";
-import {Collapsible} from "../../components/lo/Collapsible";
-import {ReactComponent as TagsIcon} from "../../assets/icons/ic-20/ic20-tag.svg";
 
 export enum DatasetSwitchMode {
     FIRST = "first",
@@ -75,6 +71,7 @@ export class SQLQueryResultDialog extends BernieComponent<SQLQueryResultDialogPr
         });
 
         this.registerResultSwitcher();
+        this.resultSwitcherV2Assembly();
         this.registerDatasetViewer();
         this.registerTelemetryViewer();
         this.registerHeader();
@@ -118,11 +115,15 @@ export class SQLQueryResultDialog extends BernieComponent<SQLQueryResultDialogPr
                     break;
             }
             if (nextIndex !== undefined) {
-                this.local.setStateWithChannels({
-                    current: nextIndex
-                }, ["data"]);
+                this.switchPage(nextIndex);
             }
         }
+    }
+
+    private switchPage(page: number) {
+        this.local.setStateWithChannels({
+            current: page
+        }, ["data"]);
     }
 
     private removeLocalResults(data: SQLCommandQueryResponsePacketData[]) {
@@ -330,6 +331,20 @@ export class SQLQueryResultDialog extends BernieComponent<SQLQueryResultDialogPr
         });
     }
 
+    private resultSwitcherV2Assembly() {
+        this.assembly.assembly("result-switcher-v2", (theme, props) => {
+            return (
+                <FlexBox width={percent(100)} align={Align.CENTER} justifyContent={Justify.CENTER} children={
+                    <Pagination count={this.local.state.localData.length} page={this.local.state.current + 1} variant="outlined" shape="rounded" style={{
+                        fontFamily: "OperatorMono"
+                    }} color={"primary"} onChange={(event, page) => {
+                        this.switchPage(page - 1);
+                    }}/>
+                }/>
+            );
+        })
+    }
+
     componentRender(p: SQLQueryResultDialogProps, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
             <Screen>
@@ -337,6 +352,7 @@ export class SQLQueryResultDialog extends BernieComponent<SQLQueryResultDialogPr
                 {this.component(() => this.assembly.render({component: "dataset-viewer"}), "data")}
                 {this.component(() => this.assembly.render({component: "telemetry"}), "data")}
                 {this.component(() => this.assembly.render({component: "result-switcher"}), "data")}
+                {this.component(() => this.assembly.render({component: "result-switcher-v2"}), "data")}
             </Screen>
         );
     }

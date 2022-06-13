@@ -6,6 +6,7 @@ import {ObjectVisualMeaning} from "./ObjectVisualMeaning";
 import {time, TimeMeasured} from "../misc/TimeMeasured";
 import {TimeUnit} from "../misc/TimeUnit";
 import {ThemeKeys, ThemeObject} from "react-json-view";
+import {createTheme, Theme as MUITheme} from "@mui/material";
 
 export function getMeaningfulColors(meaning: ObjectVisualMeaning, theme: Themeable.Theme): MeaningfulColors {
     switch (meaning) {
@@ -99,7 +100,6 @@ export namespace Themeable {
         borderColorSecondaryColor: Color,
         borderPrimaryShadowColor: Color,
         backdropColor: Color,
-
         betaColor: Color,
         betaHighlightColor: Color
     }
@@ -107,6 +107,7 @@ export namespace Themeable {
     export type Theme = {
         colors: ColorPallet,
         mode: "dark" | "light",
+        muiTheme: MUITheme,
         alpha: {
             opaqueUI: number
         },
@@ -210,6 +211,14 @@ export namespace Themeable {
     export const defaultTheme: Theme = {
         colors: defaultThemePallet,
         mode: "dark",
+        muiTheme: createTheme({
+            palette: {
+                mode: 'dark',
+            },
+            typography: {
+                fontFamily: "OperatorMono"
+            }
+        }),
         alpha: {
             opaqueUI: .1
         },
@@ -309,6 +318,14 @@ export namespace Themeable {
     export const lightTheme: Theme = {
         colors: lightThemePallet,
         mode: "light",
+        muiTheme: createTheme({
+            palette: {
+                mode: 'light',
+            },
+            typography: {
+                fontFamily: "OperatorMono"
+            }
+        }),
         alpha: {
             opaqueUI: .1
         },

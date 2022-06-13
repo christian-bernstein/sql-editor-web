@@ -21,7 +21,7 @@ import {DebugEditor} from "../editor/debug/DebugEditor";
 import {DBSessionCacheShard} from "../../shards/dbSessionCache/DBSessionCacheShard";
 import {RegexPage} from "../../tests/regex/RegexPage";
 import {Assembly} from "../../logic/assembly/Assembly";
-import {Dialog, Slide} from "@mui/material";
+import {Dialog, Slide, ThemeProvider} from "@mui/material";
 import {TransitionProps} from "@mui/material/transitions";
 import {Screen} from "../../components/lo/Page";
 import {FlexBox} from "../../components/lo/FlexBox";
@@ -274,34 +274,6 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                     }
                 }
             },
-            // {
-            //     title: "Epicure",
-            //     description: "Profile used for local debugging. (This profile can only be used, if the browser is running on the same device as the server is running.)",
-            //     config: {
-            //         appTitle: "Epicure",
-            //         debugMode: true,
-            //         defaultAppRoute: "/epicure",
-            //         defaultDebugAppRoute: "/epicure",
-            //         rootRerenderHook: (callback) => this.rerender.bind(this)(),
-            //         logInterceptors: [],
-            //         logSaveSize: 1000,
-            //         defaultTheme: "dark-green",
-            //         appAssembly: this.assembly,
-            //         themes: new Map<string, Themeable.Theme>([
-            //             ["dark-green", Themeable.defaultTheme],
-            //             ["light-green", Themeable.lightTheme]
-            //         ]),
-            //         connectorConfig: {
-            //             protocol: "login",
-            //             // address: "ws://192.168.2.100:80",
-            //             address: "ws://192.168.2.104:80",
-            //             id: "ton",
-            //             maxConnectAttempts: 1,
-            //             connectionRetryDelayFunc: () => 0,
-            //             packetInterceptor: this.getLogPacketInterceptor()
-            //         }
-            //     }
-            // }
         ] as AppConfigSelectionData[]);
     }
 
@@ -459,22 +431,26 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
 
     private renderDefaultPage(): JSX.Element {
         if (App.isInitiated()) {
-            return (
-                <BrowserRouter>
-                    <MenuPage showMenuInitially={false} doubleClickMenuOpen={false}>
-                        <MenuPageV2 children={
-                            <Switch>
-                                {this.getRouts()}
+            const theme = utilizeGlobalTheme();
 
-                                {App.app().screenManager.renderRoutes()}
-                            </Switch>
+            return (
+                <ThemeProvider theme={theme.muiTheme} children={
+                    <BrowserRouter children={
+                        <MenuPage showMenuInitially={false} doubleClickMenuOpen={false} children={
+                            <MenuPageV2 children={
+                                <Switch>
+                                    {this.getRouts()}
+
+                                    {App.app().screenManager.renderRoutes()}
+                                </Switch>
+                            }/>
                         }/>
-                    </MenuPage>
-                </BrowserRouter>
+                    }/>
+                }/>
             );
-        } else return <>
-            App not initiated
-        </>;
+        } else return (
+            <Text text={"App not initiated"}/>
+        );
     }
 
     private getRouts(): JSX.Element[] {

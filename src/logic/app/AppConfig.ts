@@ -16,5 +16,5 @@ export type AppConfig = {
     logInterceptors?: ((...data: any[]) => void)[]
     logSaveSize: number,
     appAssembly: Assembly,
-    shards?: Map<string, (app: App) => Shard>
+    shards?: Map<string, (app: App) => Shard>,
 }
