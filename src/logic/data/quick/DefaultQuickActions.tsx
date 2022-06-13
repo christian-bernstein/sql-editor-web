@@ -106,6 +106,22 @@ export namespace DefaultQuickActions {
         }
     }
 
+    export const gotoBoardingPageQA: QuickActionConfig = {
+        displayName: "Goto boarding page",
+        tags: ["Goto", "Boarding", "Page"],
+        render(theme: Themeable.Theme, panel: QuickActionPanel, config: QuickActionConfig): JSX.Element {
+            return (
+                <Icon icon={
+                    <Text text={"B"}/>
+                }/>
+            );
+        },
+        onClick: (event, config) => {
+            window.location.href = "/boarding"
+            App.app().rerenderGlobally();
+        }
+    }
+
     export const darkThemeQA: QuickActionConfig = {
         displayName: "Toggle Dark-Theme",
         tags: ["Dark-Theme", "Dark", "Theme"],

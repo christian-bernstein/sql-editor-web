@@ -15,6 +15,8 @@ import {CustomTooltip} from "./CustomTooltip";
 
 export type TextProps = {
     text: string,
+    texts?: string[],
+    delimiter?: string,
     type?: TextType,
     margin?: Margin,
     fontSize?: DimensionalMeasured,
@@ -33,7 +35,8 @@ export type TextProps = {
     cursor?: Cursor,
     whitespace?: "normal" | "pre-wrap" | "nowrap",
     renderMarkdown?: boolean,
-    bold?: boolean
+    bold?: boolean,
+    advancedLinkRendering?: boolean
 }
 
 export enum TextType {
@@ -65,7 +68,7 @@ export const Text: React.FC<TextProps> = props => {
             fontSize: props.fontSize.css()
         };
     }
-    const text = getOr(props.bold, false) ? `**${props.text}**` : props.text;
+    let text = getOr(props.bold, false) ? `**${props.text}**` : props.text;
     const meaningfulColors: MeaningfulColors = getMeaningfulColors(getOr(props.visualMeaning, ObjectVisualMeaning.UI_NO_HIGHLIGHT), theme);
     const Wrapper = styled.div`
       display: flex;
@@ -89,7 +92,8 @@ export const Text: React.FC<TextProps> = props => {
         fill: ${(props.coloredIcon ? meaningfulColors.iconColored : meaningfulColors.icon).css()};
       }
       
-      p, h1, h2, h3, h4, h5, h6 {
+      // h1, h2, h3,
+      p, h4, h5, h6, ul, li {
         margin-top: 0;
         margin-bottom: 0;
       }
@@ -105,6 +109,11 @@ export const Text: React.FC<TextProps> = props => {
       }
     `;
 
+    if (props.texts !== undefined) {
+        const delimiter = getOr(props.delimiter, "\n");
+        text = `${text}${delimiter}${props.texts.join(delimiter)}`
+    }
+
     return (
         <Wrapper style={style} onClick={event => getOr(props.onClick, () => {})(event)}>
             {props.enableLeftAppendix ? props.leftAppendix : <></>}
@@ -112,17 +121,25 @@ export const Text: React.FC<TextProps> = props => {
             {renderMD ? (
                 <ReactMarkdown className={"md"} children={text} components={{
                     a: (mdProps, context) => {
-                        return (
-                            <Link linkTooltip showLinkIcon={false} visualMeaning={props.visualMeaning} href={getOr<string>(mdProps.href, "")}>{mdProps.children}</Link>
+                        if (getOr(props.advancedLinkRendering, false)) {
+                            return (
+                                <Link linkTooltip showLinkIcon={false} visualMeaning={props.visualMeaning} href={getOr<string>(mdProps.href, "")} children={mdProps.children}/>
+                            );
+                        } else {
+                            const A = styled.a`
+                              color: ${theme.colors.primaryColor.css()};
+                              text-decoration: underline;
+                              transition: .14s;
+                              
+                              &:hover {
+                                color: ${theme.colors.primaryHighlightColor.css()};
+                              }
+                            `;
 
-                            // <CustomTooltip title={
-                            //     <LinkPreview url={getOr<string>(mdProps.href, "")}/>
-                            // } children={
-                            //     <Link showLinkIcon={false} visualMeaning={props.visualMeaning} href={getOr<string>(mdProps.href, "")}>{mdProps.children}</Link>
-                            // }/>
-
-                            // <LinkPreview url={getOr<string>(mdProps.href, "")}/>
-                        );
+                            return (
+                                <A href={getOr<string>(mdProps.href, "")} {...mdProps}/>
+                            );
+                        }
                     }
                 }}/>
             ) : (

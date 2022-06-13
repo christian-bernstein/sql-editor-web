@@ -3,6 +3,16 @@ import {App} from "../../logic/app/App";
 import {QuickActionCategory} from "../../logic/data/quick/QuickActionCategory";
 import React from "react";
 import {DefaultQuickActions} from "../../logic/data/quick/DefaultQuickActions";
+import {Themeable} from "../../logic/style/Themeable";
+import {QuickActionPanel} from "../../components/ho/quickPanel/QuickActionPanel";
+import {QuickActionConfig} from "../../logic/data/quick/QuickActionConfig";
+import {If} from "../../components/logic/If";
+import {BadgedWrapper} from "../../components/lo/BadgedWrapper";
+import {Icon} from "../../components/lo/Icon";
+import {ReactComponent as CheckIcon} from "../../assets/icons/ic-20/ic20-check.svg";
+import {px} from "../../logic/style/DimensionalMeasured";
+import {ObjectVisualMeaning} from "../../logic/style/ObjectVisualMeaning";
+import {ReactComponent as DarkThemeIcon} from "../../assets/icons/ic-20/ic20-brightness-low.svg";
 
 export class QuickActionShard extends Shard {
 
@@ -23,6 +33,7 @@ export class QuickActionShard extends Shard {
                 DefaultQuickActions.clearLogQA,
                 DefaultQuickActions.rerenderQA,
                 DefaultQuickActions.reloadQA,
+                DefaultQuickActions.gotoBoardingPageQA,
             );
         });
 
@@ -30,10 +41,34 @@ export class QuickActionShard extends Shard {
             id: "themes",
             displayName: "Themes"
         }), qac => {
-            qac.registerQuickAction(
-                DefaultQuickActions.lightThemeQA,
-                DefaultQuickActions.darkThemeQA
-            );
+            // qac.registerQuickAction(
+            //     DefaultQuickActions.lightThemeQA,
+            //     DefaultQuickActions.darkThemeQA
+            // );
+
+            App.app().config.themes.forEach((theme, name) => {
+                qac.registerQuickAction({
+                    displayName: `Toggle ${name}-theme`,
+                    tags: [name, String(theme.mode), "Theme"],
+                    render(theme: Themeable.Theme, panel: QuickActionPanel, config: QuickActionConfig): JSX.Element {
+                        return (
+                            <If condition={App.app().globalThemeName === name} ifTrue={
+                                <BadgedWrapper badge={
+                                    <Icon icon={<CheckIcon/>} size={px(12)} colored visualMeaning={ObjectVisualMeaning.INFO}/>
+                                } showBadgeInitially>
+                                    <Icon icon={<DarkThemeIcon/>}/>
+                                </BadgedWrapper>
+                            } ifFalse={
+                                <Icon icon={<DarkThemeIcon/>}/>
+                            }/>
+                        );
+                    },
+                    onClick: (event, config) => {
+                        App.app().setGlobalTheme(name);
+                        App.app().rerenderGlobally();
+                    }
+                })
+            })
         });
     }
 

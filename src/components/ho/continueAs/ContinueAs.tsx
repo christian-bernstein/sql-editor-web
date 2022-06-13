@@ -9,6 +9,8 @@ import {SimpleErrorBadge} from "../../deprecated/SimpleErrorBadge";
 import {Text} from "../../lo/Text";
 import {FlexBox} from "../../lo/FlexBox";
 import {FlexDirection} from "../../../logic/style/FlexDirection";
+import {Icon} from "../../lo/Icon";
+import {ObjectVisualMeaning} from "../../../logic/style/ObjectVisualMeaning";
 
 export type ContinueAsProps = {
     sessionHistoryEntry: SessionHistoryEntry,
@@ -75,7 +77,9 @@ export class ContinueAs extends React.Component<ContinueAsProps, ContinueAsState
         const theme = utilizeGlobalTheme();
 
         return (
-            <div className={"session-history-entry"} onClick={event => this.onContinueClicked(event)}>
+            <div className={"session-history-entry"} style={{
+                backgroundColor: theme.colors.backgroundHighlightColor.css()
+            }} onClick={event => this.onContinueClicked(event)}>
                 <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab}>
                     <Text text={"Continue as"}/>
                     {/*<ClientDisplay enableClientBadge={false} />*/}
@@ -86,7 +90,8 @@ export class ContinueAs extends React.Component<ContinueAsProps, ContinueAsState
                     {(() => {
                         if (this.state.loginInProcess) {
                             // Display loading animation
-                            return <BarLoader color={"#A9E5C3"} width={"50px"}/>;
+                            // return <BarLoader color={"#A9E5C3"} width={"50px"}/>;
+                            return <BarLoader color={theme.colors.primaryHighlightColor.css()} width={"50px"}/>;
                         } else {
                             if (this.state.error) {
                                 // Display error badge
@@ -95,7 +100,9 @@ export class ContinueAs extends React.Component<ContinueAsProps, ContinueAsState
                                 );
                             } else {
                                 // Display default states
-                                return <ArrowRight/>;
+                                return (
+                                    <Icon icon={<ArrowRight/>} colored visualMeaning={ObjectVisualMeaning.INFO}/>
+                                );
                             }
                         }
                     })()}

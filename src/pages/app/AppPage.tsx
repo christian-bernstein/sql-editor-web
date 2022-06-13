@@ -5,7 +5,6 @@ import "react-tiger-transition/styles/main.min.css";
 import {BrowserRouter, Route, Switch} from "react-router-dom";
 import {DefaultSpecialPages} from "../../logic/misc/DefaultSpecialPages";
 import {LoginPage} from "../login/LoginPage";
-import DashboardPage from "../dashboard/DashboardPage";
 import MenuPage from "../menu/MenuPage";
 import {App, utilizeGlobalTheme} from "../../logic/app/App";
 import {Environment} from "../../logic/Environment";
@@ -53,11 +52,12 @@ import {Shard} from "../../logic/misc/Shard";
 import {QuickActionShard} from "../../shards/quickAction/QuickActionShard";
 import {LogPageDisplayVersion} from "../log/LogPageDisplayVersion";
 import {ProjectPreview, ProjectPreviewProps} from "../../components/ho/projectPreview/ProjectPreview";
-import moment from "moment";
 import {AppPageMode} from "./AppPageMode";
 import {ImportDatasetDialog, ImportDatasetDialogProps} from "../importDatasets/ImportDatasetDialog";
 import {NetworkShard} from "../../shards/network/NetworkShard";
 import {LocalStorageShard} from "../../shards/localStorage/LocalStorageShard";
+import {UnitTestPage} from "../unit/UnitTestPage";
+import {MenuState} from "../menu/v2/MenuState";
 
 export type AppPageProps = {
     mode: AppPageMode
@@ -89,16 +89,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
     private readonly assembly: Assembly;
 
     private readonly specialPageRenderers: Map<string, (params: any) => JSX.Element> = new Map<string, (params: any) => JSX.Element>([
-        [DefaultSpecialPages.UNIT_TEST, () => (
-            <Screen children={
-                <Centered fullHeight children={
-                    // <Text text={"Unit test screen"} bold uppercase visualMeaning={ObjectVisualMeaning.BETA} coloredText/>
-                    // <ServiceMonitorOverview/>
-                    // <Text text={moment("2022-05-27T17:20:Z", "YYYY-MM-DD[T]HH:mm:ss").fromNow()}/>
-                    <></>
-                }/>
-            }/>
-        )],
+        [DefaultSpecialPages.UNIT_TEST, () => <UnitTestPage/>],
         [DefaultSpecialPages.BOARDING, () => <></>],
         [DefaultSpecialPages.SELECT_APP_CONFIG, (params) => <SelectAppConfigPageV2 onSelection={data => {
             this.init(data.config);
@@ -149,10 +140,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                         ["network-shard", () => new NetworkShard()],
                         ["local-storage-shard", () => new LocalStorageShard()]
                     ]),
-                    themes: new Map<string, Themeable.Theme>([
-                        ["dark-green", Themeable.defaultTheme],
-                        ["light-green", Themeable.lightTheme]
-                    ]),
+                    themes: Themeable.getAllThemes(),
                     connectorConfig: {
                         protocol: "login",
                         ssl: true,
@@ -188,10 +176,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                         ["network-shard", () => new NetworkShard()],
                         ["local-storage-shard", () => new LocalStorageShard()]
                     ]),
-                    themes: new Map<string, Themeable.Theme>([
-                        ["dark-green", Themeable.defaultTheme],
-                        ["light-green", Themeable.lightTheme]
-                    ]),
+                    themes: Themeable.getAllThemes(),
                     connectorConfig: {
                         protocol: "login",
                         // address: "ws://192.168.2.100:80",
@@ -222,10 +207,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                         ["network-shard", () => new NetworkShard()],
                         ["local-storage-shard", () => new LocalStorageShard()]
                     ]),
-                    themes: new Map<string, Themeable.Theme>([
-                        ["dark-green", Themeable.defaultTheme],
-                        ["light-green", Themeable.lightTheme]
-                    ]),
+                    themes: Themeable.getAllThemes(),
                     connectorConfig: {
                         protocol: "login",
                         ssl: true,
@@ -259,10 +241,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                         ["network-shard", () => new NetworkShard()],
                         ["local-storage-shard", () => new LocalStorageShard()]
                     ]),
-                    themes: new Map<string, Themeable.Theme>([
-                        ["dark-green", Themeable.defaultTheme],
-                        ["light-green", Themeable.lightTheme]
-                    ]),
+                    themes: Themeable.getAllThemes(),
                     connectorConfig: {
                         protocol: "login",
                         address: "wss://server3.cwies.de:25574",
@@ -587,6 +566,12 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                     if (ev.ctrlKey && ev.key === "m") {
                         ev.preventDefault();
                         app.callAction("toggle-menu");
+                    } else if (ev.altKey && ev.key === "m") {
+                        ev.preventDefault();
+                        const menu = MenuPageV2.instance;
+                        if (menu !== undefined) {
+                            MenuPageV2.setMenuState(menu.local.state.state === MenuState.HIDDEN ? MenuState.EXTENDED : MenuState.HIDDEN);
+                        }
                     }
                 }
             });

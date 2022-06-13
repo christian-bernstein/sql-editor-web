@@ -10,6 +10,7 @@ import {Icon} from "../../components/lo/Icon";
 import {ReactComponent as TestIcon} from "../../assets/icons/ic-20/ic20-alert.svg";
 import {ReactComponent as HubIcon} from "../../assets/icons/ic-20/ic20-home.svg";
 import {ReactComponent as InformationIcon} from "../../assets/icons/ic-20/ic20-info.svg";
+import {ReactComponent as DocsIcon} from "../../assets/icons/ic-20/ic20-book.svg";
 import {ReactComponent as MapIcon} from "../../assets/icons/ic-20/ic20-map.svg";
 import {Box} from "../../components/lo/Box";
 import {FlexDirection} from "../style/FlexDirection";
@@ -27,6 +28,7 @@ import {If} from "../../components/logic/If";
 import {BadgedWrapper} from "../../components/lo/BadgedWrapper";
 import {Badge} from "../../components/lo/Badge";
 import DashboardPage from "../../pages/dashboard/DashboardPage";
+import {UnitTestPage} from "../../pages/unit/UnitTestPage";
 
 export class ScreenManager {
 
@@ -122,6 +124,29 @@ export class ScreenManager {
                     render(ctx: ViewRenderContext): JSX.Element {
                         return (
                             <>Test page!!</>
+                        );
+                    }
+                }
+            } as ViewConfig, {
+                id: "docs",
+                beta: true,
+                description: "Documentation page with all the necessary information to use the SQL-Editor",
+                accessible: (config) => true,
+                displayName: "Documentation",
+                tags: [],
+                iconRenderer: {
+                    render(ctx: ViewRenderContext): JSX.Element {
+                        return (
+                            <Box highlight cursor={Cursor.pointer} width={percent(100)} noBGColor={!ctx.active}>
+                                <Icon icon={<DocsIcon/>}/>
+                            </Box>
+                        );
+                    }
+                },
+                renderer: {
+                    render(ctx: ViewRenderContext): JSX.Element {
+                        return (
+                            <UnitTestPage/>
                         );
                     }
                 }

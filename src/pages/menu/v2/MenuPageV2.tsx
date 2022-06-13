@@ -3,7 +3,7 @@ import {Assembly} from "../../../logic/assembly/Assembly";
 import {Themeable} from "../../../logic/style/Themeable";
 import {Screen} from "../../../components/lo/Page";
 import {LiteGrid} from "../../../components/lo/LiteGrid";
-import React, {ForwardedRef} from "react";
+import React from "react";
 import {FlexBox} from "../../../components/lo/FlexBox";
 import {FlexDirection} from "../../../logic/style/FlexDirection";
 import {Image} from "../../../components/lo/Image";
@@ -31,10 +31,7 @@ import {If} from "../../../components/logic/If";
 import {ContextCompound} from "../../../components/ho/contextCompound/ContextCompound";
 import {QuickActionPanel} from "../../../components/ho/quickPanel/QuickActionPanel";
 import {Default, Mobile} from "../../../components/logic/Media";
-import {Centered} from "../../../components/lo/PosInCenter";
-import {Slide, SwipeableDrawer} from "@mui/material";
-import {TransitionProps} from "@mui/material/transitions";
-import {InformationBox} from "../../../components/ho/informationBox/InformationBox";
+import {SwipeableDrawer} from "@mui/material";
 import {MobileMenuPage} from "../../mobileMenu/MobileMenuPage";
 
 export type MenuPageV2Props = {
@@ -48,6 +45,8 @@ export type MenuPageV2LocalState = {
 
 export class MenuPageV2 extends BernieComponent<MenuPageV2Props, any, MenuPageV2LocalState> {
 
+    public static instance?: MenuPageV2 = undefined;
+
     constructor(props: MenuPageV2Props) {
         super(props, undefined, {
             // state: MenuState.SMALL,
@@ -59,6 +58,24 @@ export class MenuPageV2 extends BernieComponent<MenuPageV2Props, any, MenuPageV2
         this.menuSmallWrapperAssembly();
         this.menuSmallAssembly();
         this.menuMobileWrapperAssembly();
+    }
+
+    componentDidMount() {
+        super.componentDidMount();
+        MenuPageV2.instance = this;
+    }
+
+    componentWillUnmount() {
+        super.componentWillUnmount();
+        MenuPageV2.instance = undefined;
+    }
+
+    public static setMenuState(state: MenuState) {
+        if (MenuPageV2.instance !== undefined) {
+            MenuPageV2.instance.local.setStateWithChannels({
+                state: state
+            }, ["main"]);
+        }
     }
 
     private mainAssembly() {
@@ -260,20 +277,26 @@ export class MenuPageV2 extends BernieComponent<MenuPageV2Props, any, MenuPageV2
     }
 
     componentRender(p: any, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
-        return (
-            <>
-                <Default children={
-                    this.assembly.render({
-                        component: "menu-small-wrapper"
-                    })
-                }/>
+        return this.component(local => {
+            if (local.state.state === MenuState.HIDDEN) {
+                return this.props.children;
+            } else {
+                return (
+                    <>
+                        <Default children={
+                            this.assembly.render({
+                                component: "menu-small-wrapper"
+                            })
+                        }/>
 
-                <Mobile children={
-                    this.assembly.render({
-                        component: "menu-mobile-wrapper"
-                    })
-                }/>
-            </>
-        );
+                        <Mobile children={
+                            this.assembly.render({
+                                component: "menu-mobile-wrapper"
+                            })
+                        }/>
+                    </>
+                );
+            }
+        }, "main")
     }
 }

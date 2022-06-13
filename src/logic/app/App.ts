@@ -91,6 +91,7 @@ export class App {
     public static appOrCreate: (config: AppConfig, onCreate?: (app: App) => void) => App = (config: AppConfig, onCreate: ((app: App) => void) | undefined) => {
         if (App.instance === undefined) {
             App.instance = new App(config);
+            App.instance.init();
             onCreate?.(App.instance);
         }
         return App.instance;
@@ -156,7 +157,7 @@ export class App {
         this.themes = config.themes;
         this._dialogAssembly = config.appAssembly;
         this._modals = new Array<ModalDisplay>();
-        this.init();
+        // this.init();
     }
 
     public cdn<T>(branches: CDNRequestBranch[], handler: (data: CDNResponsePacketData) => void): void {
@@ -421,7 +422,7 @@ export class App {
         return this.centralMemoryCache as Cache;
     }
 
-    private init() {
+    public init() {
         document.title = this.config.appTitle + (this.config.debugMode ? " (Debug mode)" : "");
         this._initiated = true;
 

@@ -43,15 +43,21 @@ export const CopyIcon: React.FC<ContextMenuCopyButtonProps> = props => {
             cursor: "pointer",
             backgroundColor: theme.colors.backgroundHighlightColor.css()
         }} children={
-            <CustomTooltip arrow noBorder title={
-                copied ? (
-                    <Text text={"Copied"} bold coloredText visualMeaning={ObjectVisualMeaning.SUCCESS}/>
-                ) : (
-                    <If condition={getOr(props.displayValueAsHover, true)} ifTrue={
+
+            <If condition={getOr(props.displayValueAsHover, true)} ifTrue={
+                <CustomTooltip arrow noBorder title={
+                    copied ? (
+                        <Text text={"Copied"} bold coloredText visualMeaning={ObjectVisualMeaning.SUCCESS}/>
+                    ) : (
                         <Text text={props.copyValueProducer()}/>
-                    }/>
-                )
-            } children={
+                    )
+                } children={
+                    <div style={{position: "relative", height: 16, width: 16}}>
+                        <Clippy style={{color: theme.colors.iconColor.css(), position: "absolute", top: 0, left: 0, strokeDasharray: 50, strokeDashoffset: copied ? -50 : 0, transition: "all 300ms ease-in-out"}}/>
+                        <Check isVisible={copied} style={{color: theme.colors.primaryHighlightColor.css(), position: "absolute", top: 0, left: 0, strokeDasharray: 50, strokeDashoffset: copied ? 0 : -50, transition: "all 300ms ease-in-out"}}/>
+                    </div>
+                }/>
+            } ifFalse={
                 <div style={{position: "relative", height: 16, width: 16}}>
                     <Clippy style={{color: theme.colors.iconColor.css(), position: "absolute", top: 0, left: 0, strokeDasharray: 50, strokeDashoffset: copied ? -50 : 0, transition: "all 300ms ease-in-out"}}/>
                     <Check isVisible={copied} style={{color: theme.colors.primaryHighlightColor.css(), position: "absolute", top: 0, left: 0, strokeDasharray: 50, strokeDashoffset: copied ? 0 : -50, transition: "all 300ms ease-in-out"}}/>

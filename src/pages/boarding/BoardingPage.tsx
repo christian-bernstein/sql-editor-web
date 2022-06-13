@@ -7,10 +7,10 @@ import {ReactComponent as FullscreenExitIcon} from "../../assets/icons/ic-20/ic2
 import {ReactComponent as LogIcon} from "../../assets/icons/ic-20/ic20-bolt.svg";
 import {ReactComponent as DiscordBlackIcon} from "../../assets/discord/Discord-Logo-Black.svg";
 import {ReactComponent as DiscordWhiteIcon} from "../../assets/discord/Discord-Logo-White.svg";
+import {ReactComponent as LoginIcon} from "../../assets/icons/ic-20/ic20-user.svg";
 
 // todo remove completely
 // import "../../styles/pages/BoardingPage.scss";
-
 import {_Button} from "../../components/deprecated/_Button";
 import {ComponentStyle} from "../../logic/style/ComponentStyle";
 import {ContinueAs} from "../../components/ho/continueAs/ContinueAs";
@@ -43,14 +43,13 @@ import {BernieComponent} from "../../logic/BernieComponent";
 import {Assembly} from "../../logic/assembly/Assembly";
 import {If} from "../../components/logic/If";
 import {LiteGrid} from "../../components/lo/LiteGrid";
-import {ReactComponent as OpenDialogIcon} from "../../assets/icons/ic-20/ic20-open-in-browser.svg";
 import {ReactComponent as LogoutIcon} from "../../assets/icons/ic-16/ic16-turn-off.svg";
 import {ReactComponent as DashboardIcon} from "../../assets/icons/ic-16/ic16-open-in-browser.svg";
 import {Debug} from "../../components/logic/Debug";
-import {LatencyDisplay} from "../../tests/chart/LatencyDisplay";
 import {QuickActionPanel} from "../../components/ho/quickPanel/QuickActionPanel";
 import {ReactComponent as QuickPanelIcon} from "../../assets/icons/ic-20/ic20-view-boxes.svg";
 import {ContextCompound} from "../../components/ho/contextCompound/ContextCompound";
+import {Default, Desktop, Mobile} from "../../components/logic/Media";
 
 export type BoardingPageProps = {}
 
@@ -97,7 +96,6 @@ export class BoardingPage extends BernieComponent<BoardingPageProps, BoardingPag
 
         const Wrapper = styled.div`
           background-color: ${theme.colors.backgroundColor.css()};
-
           width: 100%;
           height: 100%;
           color: ${theme.colors.fontPrimaryColor.css()};
@@ -128,7 +126,7 @@ export class BoardingPage extends BernieComponent<BoardingPageProps, BoardingPag
 
                 .logo-space {
                   width: 100%;
-
+                  
                   &:first-child {
                     height: 24px;
                     fill: ${theme.colors.iconColor.css()};
@@ -346,7 +344,7 @@ export class BoardingPage extends BernieComponent<BoardingPageProps, BoardingPag
                         </div>
                     </div>
                     <FlexBox flexDir={FlexDirection.COLUMN} align={Align.CENTER}>
-                        <AppLogo/>
+                        <Icon icon={<AppLogo/>} colored size={px(78)} visualMeaning={ObjectVisualMeaning.INFO}/>
                         <Text text={"SQL-Editor"} type={TextType.largeHeader}/>
                         <Text text={"Learn SQL in our interactive\neditor and create your projects"} type={TextType.secondaryDescription} align={Align.CENTER}/>
                     </FlexBox>
@@ -374,15 +372,35 @@ export class BoardingPage extends BernieComponent<BoardingPageProps, BoardingPag
                             </FlexBox>*/}
 
                             {App.app().getSessionHistoryEntries().length > 0 ? (
-                                <ol className={"continue-as-list"}>
-                                    {
-                                        App.app().getSessionHistoryEntries().map((entry: SessionHistoryEntry) => <ContinueAs
-                                            key={""} sessionHistoryEntry={{
-                                            sessionID: entry.sessionID,
-                                            profileData: entry.profileData
-                                        }}/>)
-                                    }
-                                </ol>
+                                // <ol className={"continue-as-list"}>
+                                //     {
+                                //         App.app().getSessionHistoryEntries().map((entry: SessionHistoryEntry) => <ContinueAs
+                                //             key={""} sessionHistoryEntry={{
+                                //             sessionID: entry.sessionID,
+                                //             profileData: entry.profileData
+                                //         }}/>)
+                                //     }
+                                // </ol>
+                                <>
+                                    <Mobile children={
+                                        <LiteGrid gap={theme.gaps.defaultGab} style={{marginBottom: theme.gaps.smallGab.css()}} responsive minResponsiveWidth={px(200)} children={
+                                            App.app().getSessionHistoryEntries().map((entry: SessionHistoryEntry) => <ContinueAs
+                                                key={""} sessionHistoryEntry={{
+                                                sessionID: entry.sessionID,
+                                                profileData: entry.profileData
+                                            }}/>)
+                                        }/>
+                                    }/>
+                                    <Default children={
+                                        <LiteGrid gap={theme.gaps.defaultGab} style={{marginBottom: theme.gaps.defaultGab.css()}} responsive minResponsiveWidth={px(200)} children={
+                                            App.app().getSessionHistoryEntries().map((entry: SessionHistoryEntry) => <ContinueAs
+                                                key={""} sessionHistoryEntry={{
+                                                sessionID: entry.sessionID,
+                                                profileData: entry.profileData
+                                            }}/>)
+                                        }/>
+                                    }/>
+                                </>
                             ) : (
                                 <></>
                             )}
@@ -402,10 +420,15 @@ export class BoardingPage extends BernieComponent<BoardingPageProps, BoardingPag
                                 </LiteGrid>
                             } ifFalse={
                                 <div className={"boarding-type"}>
-                                    <Link to={"/login"}>
-                                        <_Button onClick={() => {}} internalStyling={true} theme={ComponentStyle.DEFAULT}>
+                                    <Link to={"/login"} style={{textDecoration: "none"}}>
+                                        <Button height={px(54)} children={
+                                            <Centered fullHeight>
+                                                <Text cursor={Cursor.pointer} text={"Log in"} type={TextType.smallHeader}/>
+                                            </Centered>
+                                        }/>
+                                        {/*<_Button onClick={() => {}} internalStyling={true} theme={ComponentStyle.DEFAULT}>
                                             Log in
-                                        </_Button>
+                                        </_Button>*/}
                                     </Link>
                                     <span className={"separator"}>/</span>
                                     <Link to={"/register"} style={{width: "100%", height: "100%", textDecoration: "none"}}>

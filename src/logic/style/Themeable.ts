@@ -72,8 +72,20 @@ export type MeaningfulColors = {
 
 export namespace Themeable {
 
+    export function getAllThemes(): Map<string, Theme> {
+        return new Map<string, Themeable.Theme>([
+            ["dark-green", Themeable.defaultTheme],
+            ["light-green", Themeable.lightTheme],
+            ["dark-tritanopia", Themeable.darkTritanopiaTheme],
+        ])
+    }
+
     export function createColorPallet(partial: Partial<ColorPallet> ): ColorPallet {
         return {...defaultThemePallet, ...partial};
+    }
+
+    export function theme(partial: Partial<Theme> ): Theme {
+        return {...defaultTheme, ...partial};
     }
 
     export type ColorPallet = {
@@ -159,8 +171,7 @@ export namespace Themeable {
         backgroundHighlightColor200: Color.ofHex("#282c34"),
         backgroundHighlightInputColor: Color.ofHex("#282c34"),
         backgroundDeactivatedColor: Color.ofHex("#434750"),
-        // tooltipBackgroundColor: Color.ofHex("#171717"),
-        tooltipBackgroundColor: Color.ofHex("#2b2c2e"),
+        tooltipBackgroundColor: Color.ofHex("#171717"),
         tooltipPrimaryFontColor: Color.ofHex("#DEDFE0"),
         iconColor: Color.ofHex("#FFFFFF"),
         fontPrimaryColor: Color.ofHex("#FFFFFF"),
@@ -177,14 +188,42 @@ export namespace Themeable {
         borderColorSecondaryColor: Color.ofHex("#FBBE63"),
         borderPrimaryShadowColor: Color.ofHex("#71D99E", .13),
         backdropColor: Color.ofHex("#171717", .8),
+        betaColor: Color.ofHex("#8957e5"),
+        betaHighlightColor: Color.ofHex("#a371f7")
+    }
 
+    export const darkTritanopiaThemePallet: ColorPallet = {
+        backgroundColor: Color.ofHex("#0d1117"),
+        backgroundColorOuter: Color.ofHex("#161b22"),
+        backgroundHighlightColor: Color.ofHex("#161b22"),
+        backgroundHighlightColor200: Color.ofHex("#282c34"),
+        backgroundHighlightInputColor: Color.ofHex("#282c34"),
+        backgroundDeactivatedColor: Color.ofHex("#434750"),
+        tooltipBackgroundColor: Color.ofHex("#2b2c2e"),
+        tooltipPrimaryFontColor: Color.ofHex("#DEDFE0"),
+        iconColor: Color.ofHex("#FFFFFF"),
+        fontPrimaryColor: Color.ofHex("#FFFFFF"),
+        fontPrimaryInvertedColor: Color.ofHex("#000000"),
+        fontSecondaryColor: Color.ofHex("#C6C6C6"),
+        fontDeactivatedColor: Color.ofHex("#4F4F4F"),
+        primaryColor: Color.ofHex("#58a6ff"),
+        primaryHighlightColor: Color.ofHex("#58a6ff"),
+        errorColor: Color.ofHex("#D93240"),
+        errorHighlightColor: Color.ofHex("#e55561"),
+        warnColor: Color.ofHex("#FBBE63"),
+        warnHighlightColor: Color.ofHex("#ffd387"),
+        borderPrimaryColor: Color.ofHex("#30363D"),
+        borderColorSecondaryColor: Color.ofHex("#FBBE63"),
+        borderPrimaryShadowColor: Color.ofHex("#388bfd", .13),
+        backdropColor: Color.ofHex("#171717", .8),
         betaColor: Color.ofHex("#8957e5"),
         betaHighlightColor: Color.ofHex("#a371f7")
     }
 
     export const lightThemePallet: ColorPallet = createColorPallet({
         backgroundColor: Color.ofHex("#ffffff"),
-        backgroundHighlightColor: Color.ofHex("#eaeaea"),
+        backgroundColorOuter: Color.ofHex("#EDF2F8"),
+        backgroundHighlightColor: Color.ofHex("#EDF2F8"),
         backgroundHighlightColor200: Color.ofHex("#e1e1e1"),
         backgroundHighlightInputColor: Color.ofHex("#ffffff"),
         backgroundDeactivatedColor: Color.ofHex("#e8e8e8"),
@@ -194,19 +233,129 @@ export namespace Themeable {
         iconColor: Color.ofHex("#000000"),
         fontPrimaryColor: Color.ofHex("#000000"),
         fontPrimaryInvertedColor: Color.ofHex("#ffffff"),
-        fontSecondaryColor: Color.ofHex("#C6C6C6"),
+        fontSecondaryColor: Color.ofHex("#484848"),
         fontDeactivatedColor: Color.ofHex("#4F4F4F"),
-        primaryColor: Color.ofHex("#71D99E"),
-        primaryHighlightColor: Color.ofHex("#A9E5C3"),
+        // primaryColor: Color.ofHex("#71D99E"),
+        primaryColor: Color.ofHex("#58a6ff"),
+        // primaryHighlightColor: Color.ofHex("#A9E5C3"),
+        primaryHighlightColor: Color.ofHex("#58a6ff"),
         errorColor: Color.ofHex("#D93240"),
         errorHighlightColor: Color.ofHex("#e55561"),
         warnColor: Color.ofHex("#FBBE63"),
         warnHighlightColor: Color.ofHex("#ffd387"),
         borderPrimaryColor: Color.ofHex("#c4c4c4"),
         borderColorSecondaryColor: Color.ofHex("#FBBE63"),
-        borderPrimaryShadowColor: Color.ofHex("#71D99E", .13),
+        // borderPrimaryShadowColor: Color.ofHex("#71D99E", .13),
+        borderPrimaryShadowColor: Color.ofHex("#388bfd", .13),
         backdropColor: Color.ofHex("#171717", .8)
     })
+
+    export const darkTritanopiaTheme: Theme = {
+        colors: darkTritanopiaThemePallet,
+        mode: "dark",
+        muiTheme: createTheme({
+            palette: {
+                mode: 'dark',
+            },
+            typography: {
+                fontFamily: "OperatorMono"
+            }
+        }),
+        alpha: {
+            opaqueUI: .1
+        },
+        radii: {
+            defaultObjectRadius: px(6)
+        },
+        margins: {
+            smallTextVerticalMargin: px(3)
+        },
+        paddings: {
+            defaultBadgePadding: px(2),
+            defaultObjectPadding: px(16),
+            defaultButtonPadding: px(8),
+            defaultTextIconPadding: px(4)
+        },
+        gaps: {
+            defaultGab: px(16),
+            smallGab: px(8)
+        },
+        hovers: {
+            hoverLightFilter: DimensionalMeasured.of(120, Dimension.percentage),
+            clickLightFilter: DimensionalMeasured.of(130, Dimension.percentage),
+        },
+        transitions: {
+            mainTime: time(100, TimeUnit.ms),
+            fastTime: time(50, TimeUnit.ms)
+        },
+        texts: {
+            // todo implement global font family
+            fontFamily: "Operator Mono",
+            complete: {
+                boldLargeHeader: {
+                    fontFamily: "OperatorMono",
+                    fontStyle: "normal",
+                    fontWeight: "bold",
+                    fontSize: px(40).css(),
+                    lineHeight: px(50).css(),
+                    display: "flex"
+                },
+                boldSmallHeader: {
+                    margin: 0,
+                    fontFamily: "OperatorMono",
+                    fontStyle: "normal",
+                    fontWeight: "bold",
+                    fontSize: "16px",
+                    lineHeight: "19px",
+                    display: "flex",
+                    alignItems: "center",
+                    // letterSpacing: "0.03em",
+                    color: `${defaultThemePallet.fontPrimaryColor.css()}`
+                },
+                defaultText: {
+                    margin: 0,
+                    fontFamily: "OperatorMono",
+                    fontStyle: "normal",
+                    fontWeight: 350,
+                    fontSize: "14px",
+                    lineHeight: "19px",
+                    display: "flex",
+                    alignItems: "center",
+                    // letterSpacing: "0.03em",
+                    color: `${defaultThemePallet.fontPrimaryColor.css()}`
+                },
+                boldSmallHeaderDeactivated: {
+                    margin: 0,
+                    fontFamily: "OperatorMono",
+                    fontStyle: "normal",
+                    fontWeight: "bold",
+                    fontSize: "16px",
+                    lineHeight: "19px",
+                    display: "flex",
+                    alignItems: "center",
+                    // letterSpacing: "0.03em",
+                    color: `${defaultThemePallet.fontDeactivatedColor.css()}`
+                },
+                secondaryDescription: {
+                    margin: 0,
+                    fontFamily: "OperatorMono",
+                    fontStyle: "normal",
+                    fontWeight: 350,
+                    fontSize: "14px",
+                    lineHeight: "17px",
+                    display: "flex",
+                    alignItems: "center",
+                    //letterSpacing: "0.03em",
+                    color: `${defaultThemePallet.fontSecondaryColor.css()}`
+                }
+            }
+        },
+        libraries: {
+            reactJson: {
+                theme: "grayscale"
+            }
+        }
+    }
 
     export const defaultTheme: Theme = {
         colors: defaultThemePallet,
@@ -267,7 +416,7 @@ export namespace Themeable {
                     lineHeight: "19px",
                     display: "flex",
                     alignItems: "center",
-                    letterSpacing: "0.03em",
+                    // letterSpacing: "0.03em",
                     color: `${defaultThemePallet.fontPrimaryColor.css()}`
                 },
                 defaultText: {
@@ -279,7 +428,7 @@ export namespace Themeable {
                     lineHeight: "19px",
                     display: "flex",
                     alignItems: "center",
-                    letterSpacing: "0.03em",
+                    // letterSpacing: "0.03em",
                     color: `${defaultThemePallet.fontPrimaryColor.css()}`
                 },
                 boldSmallHeaderDeactivated: {
@@ -291,7 +440,7 @@ export namespace Themeable {
                     lineHeight: "19px",
                     display: "flex",
                     alignItems: "center",
-                    letterSpacing: "0.03em",
+                    // letterSpacing: "0.03em",
                     color: `${defaultThemePallet.fontDeactivatedColor.css()}`
                 },
                 secondaryDescription: {
@@ -303,7 +452,7 @@ export namespace Themeable {
                     lineHeight: "17px",
                     display: "flex",
                     alignItems: "center",
-                    letterSpacing: "0.03em",
+                    //letterSpacing: "0.03em",
                     color: `${defaultThemePallet.fontSecondaryColor.css()}`
                 }
             }
@@ -327,7 +476,7 @@ export namespace Themeable {
             }
         }),
         alpha: {
-            opaqueUI: .1
+            opaqueUI: .3
         },
         radii: {
             defaultObjectRadius: px(6)

@@ -47,7 +47,7 @@ export class Box extends React.Component<BoxProps, any> {
         const theme: Themeable.Theme = utilizeGlobalTheme();
         const meaningfulColors: MeaningfulColors = getMeaningfulColors(getOr(this.props.visualMeaning, ObjectVisualMeaning.UI_NO_HIGHLIGHT), theme);
         const col: Color = this.props.color ? this.props.color : meaningfulColors.main;
-        const bgColor: Color = getOr(this.props.bgColor, this.props.opaque ? col.withAlpha(getOr(this.props.opaqueValue, .1)) : col);
+        const bgColor: Color = getOr(this.props.bgColor, this.props.opaque ? col.withAlpha(getOr(this.props.opaqueValue, theme.alpha.opaqueUI)) : col);
 
         const Box = styled.div`
           cursor: ${getOr(this.props.cursor, Cursor.default)};
