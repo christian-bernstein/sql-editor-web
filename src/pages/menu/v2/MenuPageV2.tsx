@@ -50,7 +50,7 @@ export class MenuPageV2 extends BernieComponent<MenuPageV2Props, any, MenuPageV2
     constructor(props: MenuPageV2Props) {
         super(props, undefined, {
             // state: MenuState.SMALL,
-            state: MenuState.HIDDEN,
+            state: MenuState.EXTENDED,
             qaPanelOpenState: false
         });
         this.headerAssembly();
