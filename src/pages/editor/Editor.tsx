@@ -38,7 +38,7 @@ import {SessionCommand} from "../../logic/data/SessionCommand";
 import {arrayFactory} from "../../logic/Utils";
 import {Button} from "../../components/lo/Button";
 import {LoadState} from "../../logic/misc/LoadState";
-import {CircularProgress, Dialog, Slide, Zoom} from "@mui/material";
+import {CircularProgress, Dialog, Slide, SwipeableDrawer, Zoom} from "@mui/material";
 import {SessionCommandType} from "../../logic/data/SessionCommandType";
 import {CustomTooltip} from "../../components/lo/CustomTooltip";
 import {TransitionProps} from '@mui/material/transitions';
@@ -943,18 +943,49 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
         const theme: Themeable.Theme = utilizeGlobalTheme();
 
         if (this.state.openMainDialog) {
+            // return (
+            //     <SwipeableDrawer
+            //         open={this.state.openMainDialog}
+            //         onClose={() => this.setState({
+            //             openMainDialog: false
+            //         })}
+            //         onOpen={() => this.setState({
+            //             openMainDialog: true
+            //         })}
+            //         keepMounted
+            //         anchor={"bottom"}
+            //         sx={{
+            //             '& .MuiDialog-paper': {
+            //                 backgroundColor: theme.colors.backgroundColor.css()
+            //             }
+            //         }}
+            //         children={
+            //             this.assembly.render({
+            //                 component: this.state.dialogComponent as string,
+            //             })
+            //         }
+            //     />
+            // );
+
             return (
-                <Dialog open={this.state.openMainDialog} onClose={() => this.setState({
-                    openMainDialog: false
-                })} TransitionComponent={this.DialogTransition} fullScreen sx={{
-                    '& .MuiDialog-paper': {
-                        backgroundColor: theme.colors.backgroundColor.css()
+                <Dialog
+                    open={this.state.openMainDialog}
+                    onClose={() => this.setState({
+                        openMainDialog: false
+                    })}
+                    TransitionComponent={this.DialogTransition}
+                    fullScreen
+                    sx={{
+                        '& .MuiDialog-paper': {
+                            backgroundColor: theme.colors.backgroundColor.css()
+                        }
+                    }}
+                    children={
+                        this.assembly.render({
+                            component: this.state.dialogComponent as string,
+                        })
                     }
-                }}>{
-                    this.assembly.render({
-                        component: this.state.dialogComponent as string,
-                    }
-                )}</Dialog>
+                />
             );
         } else return <></>
     }

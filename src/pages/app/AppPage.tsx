@@ -20,7 +20,7 @@ import {DebugEditor} from "../editor/debug/DebugEditor";
 import {DBSessionCacheShard} from "../../shards/dbSessionCache/DBSessionCacheShard";
 import {RegexPage} from "../../tests/regex/RegexPage";
 import {Assembly} from "../../logic/assembly/Assembly";
-import {Dialog, Slide, ThemeProvider} from "@mui/material";
+import {Dialog, Slide, SwipeableDrawer, ThemeProvider} from "@mui/material";
 import {TransitionProps} from "@mui/material/transitions";
 import {Screen} from "../../components/lo/Page";
 import {FlexBox} from "../../components/lo/FlexBox";
@@ -304,25 +304,21 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
         const theme: Themeable.Theme = utilizeGlobalTheme();
 
         return (
-            // id={"main-dialog"}
-            <Dialog open={this.state.showDialog} keepMounted onClose={() => this.setState({
+            <SwipeableDrawer anchor={"bottom"} open={this.state.showDialog} keepMounted onOpen={() => this.setState({
+                showDialog: true
+            })} onClose={() => this.setState({
                 showDialog: false
-            })} TransitionComponent={this.DialogTransition} fullScreen={false} sx={{
+            })} sx={{
                 '& .MuiDialog-paper': {
-                    // todo make configurable
                     background: "transparent",
-
                     maxHeight: "100vh !important",
                     maxWidth: "100vw !important",
                     margin: "0 !important",
                     borderRadius: "0 !important"
-
-                    // backgroundColor: theme.colors.backgroundColor.css()
                 }
             }} children={
                 <If condition={this.state.showDialog && this.state.dialogAssembly !== undefined} ifTrue={
                     this.assembly.render({
-                        // todo create fallback
                         component: this.state.dialogAssembly as string,
                         param: this.state.dialogProps,
                         errorComponent: e => {
@@ -345,42 +341,43 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
             }/>
         );
 
-        // if (this.state.showDialog && this.state.dialogAssembly !== undefined) {
-        //     return (
-        //         <Dialog keepMounted={true} id={"main-dialog"} open={this.state.showDialog} onClose={() => this.setState({
-        //             showDialog: false
-        //         })} TransitionComponent={this.DialogTransition} fullScreen={true} sx={{
-        //             '& .MuiDialog-paper': {
-        //                 // todo make configurable
-        //                 background: "transparent"
-        //                 // backgroundColor: theme.colors.backgroundColor.css()
-        //             }
-        //         }} children={
-        //             <If condition={this.state.showDialog && this.state.dialogAssembly !== undefined} ifTrue={
-        //                 this.assembly.render({
-        //                     // todo create fallback
-        //                     component: this.state.dialogAssembly as string,
-        //                     param: this.state.dialogProps,
-        //                     errorComponent: e => {
-        //                         return (
-        //                             <PageV2>
-        //                                 <FlexBox flexDir={FlexDirection.COLUMN} align={Align.CENTER} justifyContent={Justify.FLEX_END} height={percent(100)}>
-        //                                     <PosInCenter fullHeight>
-        //                                         <InformationBox visualMeaning={ObjectVisualMeaning.ERROR}>
-        //                                             <Text text={`**[DEBUG]** No assembly found\n'${e}'`}/>
-        //                                         </InformationBox>
-        //                                     </PosInCenter>
-        //                                     <Icon icon={<CloseIcon/>} visualMeaning={ObjectVisualMeaning.ERROR} colored onClick={() => App.app().callAction("close-main-dialog")}/>
-        //                                 </FlexBox>
-        //                             </PageV2>
-        //                         );
-        //                     }
-        //                 })
-        //             } ifFalse={<></>}
-        //             />
-        //         }/>
-        //     );
-        // } else return <></>
+        // return (
+        //     // id={"main-dialog"}
+        //     <Dialog open={this.state.showDialog} keepMounted onClose={() => this.setState({
+        //         showDialog: false
+        //     })} TransitionComponent={this.DialogTransition} fullScreen={false} sx={{
+        //         '& .MuiDialog-paper': {
+        //             background: "transparent",
+        //             maxHeight: "100vh !important",
+        //             maxWidth: "100vw !important",
+        //             margin: "0 !important",
+        //             borderRadius: "0 !important"
+        //         }
+        //     }} children={
+        //         <If condition={this.state.showDialog && this.state.dialogAssembly !== undefined} ifTrue={
+        //             this.assembly.render({
+        //                 // todo create fallback
+        //                 component: this.state.dialogAssembly as string,
+        //                 param: this.state.dialogProps,
+        //                 errorComponent: e => {
+        //                     return (
+        //                         <Screen>
+        //                             <FlexBox flexDir={FlexDirection.COLUMN} align={Align.CENTER} justifyContent={Justify.FLEX_END} height={percent(100)}>
+        //                                 <Centered fullHeight>
+        //                                     <InformationBox visualMeaning={ObjectVisualMeaning.ERROR}>
+        //                                         <Text text={`**[DEBUG]** No assembly found\n'${e}'`}/>
+        //                                     </InformationBox>
+        //                                 </Centered>
+        //                                 <Icon icon={<CloseIcon/>} visualMeaning={ObjectVisualMeaning.ERROR} colored onClick={() => App.app().callAction("close-main-dialog")}/>
+        //                             </FlexBox>
+        //                         </Screen>
+        //                     );
+        //                 }
+        //             })
+        //         } ifFalse={<></>}
+        //         />
+        //     }/>
+        // );
     }
 
     public rerender() {

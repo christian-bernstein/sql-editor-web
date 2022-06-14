@@ -3,10 +3,11 @@ import {ReactComponent as ContextIcon} from "../../../assets/icons/ic-20/ic20-mo
 import {ReactComponent as DeleteIcon} from "../../../assets/icons/ic-20/ic20-delete.svg";
 import {ReactComponent as CalenderIcon} from "../../../assets/icons/ic-20/ic20-calendar-edit.svg";
 import {ReactComponent as FileIcon} from "../../../assets/icons/ic-20/ic20-file-add.svg";
-import {ReactComponent as LoadIcon} from "../../../assets/icons/ic-20/ic20-play.svg";
+import {ReactComponent as LoadIcon} from "../../../assets/icons/ic-16/ic16-play.svg";
 import {ReactComponent as TagsIcon} from "../../../assets/icons/ic-20/ic20-tag.svg";
 import {ReactComponent as UserIcon} from "../../../assets/icons/ic-20/ic20-user.svg";
 import {ReactComponent as EditIcon} from "../../../assets/icons/ic-20/ic20-edit.svg";
+import {ReactComponent as InfoIcon} from "../../../assets/icons/ic-20/ic20-info.svg";
 import {ProjectInfoData} from "../../../logic/data/ProjectInfoData";
 import {Text, TextType} from "../../lo/Text";
 import {percent, px} from "../../../logic/style/DimensionalMeasured";
@@ -45,6 +46,7 @@ import {ClientDisplay} from "../clientDisplay/ClientDisplay";
 import {ContextMenuElement} from "../../lo/ContextMenuElement";
 import {Badge} from "../../lo/Badge";
 import {ProjectPreviewProps} from "../projectPreview/ProjectPreview";
+import {SingleLinearProgress} from "../../lo/SingleLinearProgress";
 
 export type ProjectInfoProps = {
     data: ProjectInfoData,
@@ -290,15 +292,50 @@ export class ProjectInfo extends BernieComponent<ProjectInfoProps, any, ProjectI
                             }, "file_size")}
                         </ChartGrid>
 
+                        {this.component(local => {
+                            const maxFileSize = 1e+6;
+                            const fileSize = local.state.projectFileSize !== undefined ? local.state.projectFileSize : 0;
+                            const [size, unit] = Utils.humanFileSize(fileSize).split(' ');
+                            const [maxSize, maxUnit] = Utils.humanFileSize(maxFileSize).split(' ');
+                            return (
+                                <Box width={percent(100)}>
+                                    <FlexBox width={percent(100)}>
+                                        <FlexBox align={Align.CENTER} width={percent(100)} justifyContent={Justify.SPACE_BETWEEN} flexDir={FlexDirection.ROW}>
+                                            <Text whitespace={"nowrap"} text={`${size} ${unit}`}/>
+                                            <Separator orientation={Orientation.HORIZONTAL}/>
+                                            <Text whitespace={"nowrap"} bold text={`${Number((fileSize / maxFileSize) * 100).toFixed(2)}%`}/>
+                                            <Separator orientation={Orientation.HORIZONTAL}/>
+                                            <Text whitespace={"nowrap"} text={Utils.humanFileSize(maxFileSize)}/>
+                                        </FlexBox>
+                                        <SingleLinearProgress
+                                            value={fileSize}
+                                            visualMeaning={ObjectVisualMeaning.INFO}
+                                            max={maxFileSize}
+                                            valueVMMap={new Map<{min: number; max: number}, ObjectVisualMeaning>([
+                                                [{min: 70, max: 90}, ObjectVisualMeaning.WARNING],
+                                                [{min: 90, max: 100}, ObjectVisualMeaning.ERROR]
+                                            ])}
+                                        />
+                                    </FlexBox>
+                                </Box>
+                            );
+                        }, "file_size")}
+
+
                         <FlexBox width={percent(100)} flexDir={FlexDirection.ROW}>
-                            <Button width={percent(50)} opaque={true} onClick={() => this.toggleProjectPreviewDialog()}>
+                            <Button onClick={() => this.toggleProjectPreviewDialog()}>
                                 <FlexBox flexDir={FlexDirection.ROW} gap={px(10)}>
-                                    <Text text={"Details"} />
+                                    <Icon icon={<InfoIcon/>}/>
                                 </FlexBox>
                             </Button>
-                            <Button width={percent(50)} visualMeaning={ObjectVisualMeaning.INFO} highlight opaque={true} shrinkOnClick={true} onClick={event => this.onSelect(event)}>
+                            <Button width={percent(100)} visualMeaning={ObjectVisualMeaning.INFO} highlight opaque={true} shrinkOnClick={true} onClick={event => this.onSelect(event)}>
                                 <FlexBox flexDir={FlexDirection.ROW} gap={px(10)}>
                                     <Icon icon={<LoadIcon/>} colored visualMeaning={ObjectVisualMeaning.INFO}/>
+                                </FlexBox>
+                            </Button>
+                            <Button>
+                                <FlexBox flexDir={FlexDirection.ROW} gap={px(10)}>
+                                    <Icon icon={<EditIcon/>}/>
                                 </FlexBox>
                             </Button>
                         </FlexBox>
