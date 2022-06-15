@@ -41,7 +41,10 @@ export type InputProps = {
     styledBorder?: boolean,
     paddingLeft?: boolean,
     fontSize?: DimensionalMeasured,
-    minWidth?: DimensionalMeasured
+    minWidth?: DimensionalMeasured,
+    pattern?: string,
+    inputMode?: 'none' | 'text' | 'tel' | 'url' | 'email' | 'numeric' | 'decimal' | 'search',
+    onBlur?: () => void
 }
 
 export type InputState = {
@@ -160,9 +163,13 @@ export class Input extends React.Component<InputProps, InputState> {
                        autoFocus={getOr(this.props.autoFocus, false)}
                        spellCheck={false}
                        ref={() => this.ref}
+                       pattern={getOr(this.props.pattern, "*")}
+                       inputMode={this.props.inputMode}
                        onChange={event => this.onInputChange(event)}
                        placeholder={getOr(this.props.placeholder, " ")}
                        value={this.props.value}
+                       defaultValue={this.props.defaultValue}
+                       onBlur={this.props.onBlur}
                 />
                 <If condition={getOr(this.props.hideLabel, false)} ifTrue={
                     <></>

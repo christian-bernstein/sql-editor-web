@@ -24,6 +24,8 @@ export class EpicureSearchPage extends BernieComponent<any, any, EpicureSearchPa
         super(undefined, undefined, {
             recipes: arrayFactory(i => {
                 return {
+                    id: "asd",
+                    steps: [],
                     title: "Gebratene Nudeln auf tailändische Art",
                     cookingTimeInMin: 60,
                     categories: ["asiatisch"],

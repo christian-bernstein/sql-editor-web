@@ -22,13 +22,19 @@ export class Switch extends BernieComponent<SwitchProps, any, any> {
         const vm = getOr(p.visualMeaning, ObjectVisualMeaning.UI_NO_HIGHLIGHT);
         const mc = getMeaningfulColors(vm, t);
         const checked = getOr(p.checked, false);
-        const Wrapper = styled.span`          
+        // todo check if 3 width-settings affect the 'auto-result-open'-button in the editor
+        const Wrapper = styled.span`       
+          width: 100%;
+          
           .MuiFormControlLabel-root {
             margin-right: 0;
+            margin-left: 0;
+            width: 100%;
           }
           
           .MuiTypography-root {
-             margin-left: ${t.gaps.smallGab.css()};
+            margin-left: ${t.gaps.smallGab.css()};
+            width: 100%;
           }
         `;
         return (
@@ -43,7 +49,7 @@ export class Switch extends BernieComponent<SwitchProps, any, any> {
                         color: getOr(p.basicIconColor, false) ? t.colors.iconColor.css() : mc.lighter.css(),
                     },
                 }}/>} label={
-                    <If condition={p.text === undefined} ifTrue={<></>} ifFalse={
+                    <If condition={p.text === undefined} ifTrue={<>{this.props.children}</>} ifFalse={
                         <>{p.text}</>
                     }/>
                 } onChange={p.onChange}/>

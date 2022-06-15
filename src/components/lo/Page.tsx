@@ -7,6 +7,7 @@ import {getOr} from "../../logic/Utils";
 
 import Background from "../../assets/images/img-2.png";
 import {Image} from "./Image";
+import {Centered} from "./PosInCenter";
 
 export type PageProps = {
     gapX?: DimensionalMeasured,
@@ -18,9 +19,14 @@ export type PageProps = {
     onDoubleClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
 }
 
-/**
- * todo rename to screen
- */
+export function screenedAndCentered(child: JSX.Element): JSX.Element {
+    return (
+        <Screen children={
+            <Centered fullHeight children={child}/>
+        }/>
+    );
+}
+
 export const Screen: React.FC<PageProps> = React.memo(props => {
     const theme: Themeable.Theme = utilizeGlobalTheme();
     const Wrapper = styled.div`

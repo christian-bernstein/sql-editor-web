@@ -7,6 +7,7 @@ import styled from "styled-components";
 import {getMeaningfulColors, MeaningfulColors, Themeable} from "../../logic/style/Themeable";
 import {utilizeGlobalTheme} from "../../logic/app/App";
 import {FontWeight} from "../../logic/style/FontWeight";
+import {DimensionalMeasured} from "../../logic/style/DimensionalMeasured";
 
 export type TextAreaProps = {
     id?: string,
@@ -20,7 +21,8 @@ export type TextAreaProps = {
     autoFocus?: boolean,
     placeholder?: string,
     rows?: number,
-    fontWeight?: FontWeight
+    fontWeight?: FontWeight,
+    height?: DimensionalMeasured
 }
 
 export type TextAreaState = {
@@ -59,6 +61,9 @@ export class TextArea extends React.Component<TextAreaProps, TextAreaState> {
           min-height: 3.5rem;
           font-weight: ${getOr(this.props.fontWeight, "normal")};
           resize: vertical;  
+          font-size: 12px;
+          
+          height: ${getOr(this.props.height?.css(), "auto")};;
           
           &:hover {
             filter: brightness(${theme.hovers.hoverLightFilter.css()});
@@ -75,6 +80,7 @@ export class TextArea extends React.Component<TextAreaProps, TextAreaState> {
                 rows={getOr(this.props.rows, 8)}
                 autoFocus={getOr(this.props.autoFocus, false)}
                 spellCheck={false}
+                defaultValue={this.props.defaultValue}
                 onChange={event => this.onInputChange(event)}
                 placeholder={getOr(this.props.placeholder, " ")}
                 value={this.props.value}

@@ -12,6 +12,7 @@ import {ReactComponent as HubIcon} from "../../assets/icons/ic-20/ic20-home.svg"
 import {ReactComponent as InformationIcon} from "../../assets/icons/ic-20/ic20-info.svg";
 import {ReactComponent as DocsIcon} from "../../assets/icons/ic-20/ic20-book.svg";
 import {ReactComponent as MapIcon} from "../../assets/icons/ic-20/ic20-map.svg";
+import {ReactComponent as EpicureIcon} from "../../assets/icons/ic-20/ic20-explore.svg";
 import {Box} from "../../components/lo/Box";
 import {FlexDirection} from "../style/FlexDirection";
 import {percent, px} from "../style/DimensionalMeasured";
@@ -29,6 +30,7 @@ import {BadgedWrapper} from "../../components/lo/BadgedWrapper";
 import {Badge} from "../../components/lo/Badge";
 import DashboardPage from "../../pages/dashboard/DashboardPage";
 import {UnitTestPage} from "../../pages/unit/UnitTestPage";
+import {EpicureHubPage} from "../../tests/epicure/pages/hub/EpicureHubPage";
 
 export class ScreenManager {
 
@@ -147,6 +149,28 @@ export class ScreenManager {
                     render(ctx: ViewRenderContext): JSX.Element {
                         return (
                             <UnitTestPage/>
+                        );
+                    }
+                }
+            } as ViewConfig, {
+                id: "epi",
+                description: "Epicure page",
+                accessible: (config) => true,
+                displayName: "Epicure page",
+                tags: [],
+                iconRenderer: {
+                    render(ctx: ViewRenderContext): JSX.Element {
+                        return (
+                            <Box highlight cursor={Cursor.pointer} noBGColor={!ctx.active}>
+                                <Icon icon={<EpicureIcon/>}/>
+                            </Box>
+                        );
+                    }
+                },
+                renderer: {
+                    render(ctx: ViewRenderContext): JSX.Element {
+                        return (
+                            <EpicureHubPage/>
                         );
                     }
                 }

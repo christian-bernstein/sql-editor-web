@@ -12,6 +12,7 @@ import {Align} from "../../logic/style/Align";
 import {Cursor} from "../../logic/style/Cursor";
 import {LinkPreview} from "@dhaiwat10/react-link-preview";
 import {CustomTooltip} from "./CustomTooltip";
+import {Image} from "./Image";
 
 export type TextProps = {
     text: string,
@@ -140,6 +141,11 @@ export const Text: React.FC<TextProps> = props => {
                                 <A href={getOr<string>(mdProps.href, "")} {...mdProps}/>
                             );
                         }
+                    },
+                    img: (props1, context) => {
+                        return (
+                            <Image src={getOr(props1.src, "")}/>
+                        );
                     }
                 }}/>
             ) : (

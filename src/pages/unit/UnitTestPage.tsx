@@ -15,12 +15,14 @@ import {Image} from "../../components/lo/Image";
 import {Group} from "../../components/lo/Group";
 import {LiteGrid} from "../../components/lo/LiteGrid";
 import {DocumentationPage} from "../documentation/DocumentationPage";
+import {EpicureHubPage} from "../../tests/epicure/pages/hub/EpicureHubPage";
 
 export class UnitTestPage extends BernieComponent<any, any, any> {
 
     componentRender(p: any, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
-            <DocumentationPage/>
+            // <DocumentationPage/>
+            <EpicureHubPage/>
         );
     }
 }

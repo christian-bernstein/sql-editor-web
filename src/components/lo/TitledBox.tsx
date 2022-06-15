@@ -5,10 +5,12 @@ import {getOr} from "../../logic/Utils";
 import {Group} from "./Group";
 import {Box} from "./Box";
 import {Orientation} from "../../logic/style/Orientation";
-import {DimensionalMeasured, percent} from "../../logic/style/DimensionalMeasured";
+import {DimensionalMeasured, percent, px} from "../../logic/style/DimensionalMeasured";
 import {InformationBox} from "../ho/informationBox/InformationBox";
 import {ObjectVisualMeaning} from "../../logic/style/ObjectVisualMeaning";
 import {Text} from "./Text";
+import {CSSProp} from "styled-components";
+import {CSSProperties} from "react";
 
 export type TitledBoxProps = {
     showBody?: boolean,
@@ -19,6 +21,7 @@ export type TitledBoxProps = {
     height?: DimensionalMeasured,
     showFooter?: boolean,
     footer?: (instance: TitledBox) => JSX.Element;
+    headerBoxStyle?: CSSProperties
 }
 
 export type TitledBoxLocalState = {
@@ -72,6 +75,7 @@ export class TitledBox extends BernieComponent<TitledBoxProps, any, TitledBoxLoc
                 <Box color={t.colors.backgroundColor}
                      width={percent(100)}
                      children={p.titleRenderer(this)}
+                     style={p.headerBoxStyle}
                 />,
                 local.state.showBody ? <Box
                     width={percent(100)}

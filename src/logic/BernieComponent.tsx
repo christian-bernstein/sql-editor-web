@@ -8,8 +8,22 @@ import {App, utilizeGlobalTheme} from "./app/App";
 import {Redirect} from "react-router-dom";
 import {getOr} from "./Utils";
 import {Assembly} from "./assembly/Assembly";
+import {SwipeableDrawer} from "@mui/material";
+import {If} from "../components/logic/If";
+import {Screen} from "../components/lo/Page";
+import {Centered} from "../components/lo/PosInCenter";
+import {ObjectVisualMeaning} from "./style/ObjectVisualMeaning";
+import {Text} from "../components/lo/Text";
+
+export type BernieComponentConfig = {
+    enableLocalDialog: boolean
+}
 
 export class BernieComponent<RProps, RState, LState extends object> extends React.Component<RProps, RState> {
+
+    private static readonly defaultConfig: BernieComponentConfig = {
+        enableLocalDialog: false
+    };
 
     private readonly _local: State<LState>;
 
@@ -17,20 +31,28 @@ export class BernieComponent<RProps, RState, LState extends object> extends Reac
 
     private readonly _assembly: Assembly = new Assembly();
 
+    private readonly config: BernieComponentConfig;
+
     private redirectTo: string | undefined;
 
     private redirect: boolean;
 
     private componentActive: boolean;
 
-    constructor(props: RProps, state: RState, local: LState) {
+    private renderLocalForegroundDialog: boolean;
+
+    private renderLocalForegroundDialogGenerator?: (component: BernieComponent<RProps, RState, LState>) => JSX.Element;
+
+    constructor(props: RProps, state: RState, local: LState, config?: BernieComponentConfig) {
         super(props);
+        this.config = getOr(config, BernieComponent.defaultConfig);
         this.state = state;
         this._local = cs(local);
         this._controller = new RenderController();
         this.redirectTo = undefined;
         this.redirect = false;
         this.componentActive = false;
+        this.renderLocalForegroundDialog = false;
         this.local.on((state, value) => {
             this.controller.rerender(...getOr(value.get("channels"), ["*"]));
         });
@@ -95,17 +117,26 @@ export class BernieComponent<RProps, RState, LState extends object> extends Reac
         return (
             <Redirect to={this.redirectTo as string} push/>
         );
-
-        // if (this.redirect && this.redirectTo !== undefined) {
-        //     return (
-        //         <Redirect to={this.redirectTo} push/>
-        //     );
-        // } else {
-        //     return <>cannot render redirect</>
-        // }
     }
 
     public init() {
+    }
+
+    public _openLocalDialog(component: JSX.Element) {
+        this.openLocalDialog(() => component);
+    }
+
+    public closeLocalDialog() {
+        this.renderLocalForegroundDialog = false;
+        this.rerender("foreground-dialog");
+    }
+
+    public openLocalDialog(generator: (component: BernieComponent<RProps, RState, LState>) => JSX.Element) {
+        if (this.config.enableLocalDialog) {
+            this.renderLocalForegroundDialog = true;
+            this.renderLocalForegroundDialogGenerator = generator;
+            this.rerender("foreground-dialog");
+        } else throw new Error("Cannot call / open a local dialog if 'enableLocalDialog' is disabled in the (Bernie)-Components config");
     }
 
     public componentRender(p: RProps, s: RState, l: LState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
@@ -125,6 +156,44 @@ export class BernieComponent<RProps, RState, LState extends object> extends Reac
         });
     }
 
+    private renderForegroundDialog(): JSX.Element {
+        return (
+            <SwipeableDrawer
+                id={"bernie-component-local-foreground-dialog"}
+                key={"bernie-component-local-foreground-dialog"}
+                anchor={"bottom"}
+                open={this.renderLocalForegroundDialog}
+                keepMounted
+                onOpen={() => {
+                    this.renderLocalForegroundDialog = true;
+                    this.rerender("foreground-dialog");
+                }}
+                onClose={() => {
+                    this.renderLocalForegroundDialog = false;
+                    this.rerender("foreground-dialog");
+                }} sx={{
+                    '& .MuiDialog-paper': {
+                        background: "transparent",
+                        maxHeight: "100vh !important",
+                        maxWidth: "100vw !important",
+                        margin: "0 !important",
+                        borderRadius: "0 !important"
+                    }
+                }} children={
+                    this.renderLocalForegroundDialogGenerator === undefined ? (
+                        <Screen children={
+                            <Centered fullHeight children={
+                                <Text coloredText visualMeaning={ObjectVisualMeaning.ERROR} text={"Cannot render component-local foreground dialog"}/>
+                            }/>
+                        }/>
+                    ) : (
+                        this.renderLocalForegroundDialogGenerator(this)
+                    )
+                }
+            />
+        );
+    }
+
     componentDidMount() {
         this.componentActive = true;
     }
@@ -137,12 +206,23 @@ export class BernieComponent<RProps, RState, LState extends object> extends Reac
         if (this.redirect) {
             return this.renderRedirect();
         } else {
-            return this.componentRender(
-                this.props,
-                this.state,
-                this.local.state,
-                utilizeGlobalTheme(),
-                this.assembly
+            return (
+                <>
+                    {
+                        this.config.enableLocalDialog ? (
+                            this.component((local) => this.renderForegroundDialog(), "foreground-dialog")
+                        ) : undefined
+                    }
+                    {
+                        this.componentRender(
+                            this.props,
+                            this.state,
+                            this.local.state,
+                            utilizeGlobalTheme(),
+                            this.assembly
+                        )
+                    }
+                </>
             );
         }
     }
