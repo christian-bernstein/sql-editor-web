@@ -13,6 +13,7 @@ import {ReactComponent as InformationIcon} from "../../assets/icons/ic-20/ic20-i
 import {ReactComponent as DocsIcon} from "../../assets/icons/ic-20/ic20-book.svg";
 import {ReactComponent as MapIcon} from "../../assets/icons/ic-20/ic20-map.svg";
 import {ReactComponent as EpicureIcon} from "../../assets/icons/ic-20/ic20-explore.svg";
+import {ReactComponent as DebugIcon} from "../../assets/icons/ic-20/ic20-bug.svg";
 import {Box} from "../../components/lo/Box";
 import {FlexDirection} from "../style/FlexDirection";
 import {percent, px} from "../style/DimensionalMeasured";
@@ -31,6 +32,7 @@ import {Badge} from "../../components/lo/Badge";
 import DashboardPage from "../../pages/dashboard/DashboardPage";
 import {UnitTestPage} from "../../pages/unit/UnitTestPage";
 import {EpicureHubPage} from "../../tests/epicure/pages/hub/EpicureHubPage";
+import {DocumentationPage} from "../../pages/documentation/DocumentationPage";
 
 export class ScreenManager {
 
@@ -141,6 +143,29 @@ export class ScreenManager {
                         return (
                             <Box highlight cursor={Cursor.pointer} width={percent(100)} noBGColor={!ctx.active}>
                                 <Icon icon={<DocsIcon/>}/>
+                            </Box>
+                        );
+                    }
+                },
+                renderer: {
+                    render(ctx: ViewRenderContext): JSX.Element {
+                        return (
+                            <DocumentationPage/>
+                        );
+                    }
+                }
+            } as ViewConfig, {
+                id: "unit",
+                beta: true,
+                description: "Unit-test page",
+                accessible: (config) => true,
+                displayName: "Unit-test page",
+                tags: [],
+                iconRenderer: {
+                    render(ctx: ViewRenderContext): JSX.Element {
+                        return (
+                            <Box highlight cursor={Cursor.pointer} width={percent(100)} noBGColor={!ctx.active}>
+                                <Icon icon={<DebugIcon/>}/>
                             </Box>
                         );
                     }
