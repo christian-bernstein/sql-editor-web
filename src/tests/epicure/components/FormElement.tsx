@@ -17,7 +17,8 @@ export type FormElementProps = {
     onRawChange?: (value: any) => void,
     onDebouncedChange?: (value: any) => void,
     debounceValue?: number,
-    value?: string
+    value?: string,
+    initialValue?: any,
     validate?: (value: any) => {
         valid: boolean,
         message?: string
@@ -41,6 +42,13 @@ export class FormElement extends BernieComponent<FormElementProps, any, FormElem
             }, getOr(props.debounceValue, 300)),
             edited: false
         });
+    }
+
+    init() {
+        super.init();
+        if (this.value() === undefined && this.props.initialValue !== undefined) {
+            this.props.fdh.set(this.props.id, this.props.initialValue);
+        }
     }
 
     private validate(): { valid: boolean, message?: string } {

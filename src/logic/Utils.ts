@@ -35,6 +35,12 @@ export namespace Utils {
         return enumValues[randomIndex];
     }
 
+    export function zeroPad(num: string, size: number) {
+        console.log(num)
+        while (num.length < size) num = "0" + num;
+        return num;
+    }
+
     export function randomBool(): boolean {
         return Math.random() > .5;
     }

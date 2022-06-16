@@ -1,5 +1,6 @@
 import {Ingredient} from "./Ingredient";
 import {Step} from "./Step";
+import Source from "./Source";
 
 export type Recipe = {
     id: string,
@@ -10,5 +11,6 @@ export type Recipe = {
     comment: string,
     kcal: number,
     categories: string[],
-    steps: Step[]
+    steps: Step[],
+    source?: Source
 }

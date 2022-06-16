@@ -16,13 +16,14 @@ import {ObjectVisualMeaning} from "./style/ObjectVisualMeaning";
 import {Text} from "../components/lo/Text";
 
 export type BernieComponentConfig = {
-    enableLocalDialog: boolean
+    enableLocalDialog: boolean,
+    componentID?: string
 }
 
 export class BernieComponent<RProps, RState, LState extends object> extends React.Component<RProps, RState> {
 
     private static readonly defaultConfig: BernieComponentConfig = {
-        enableLocalDialog: false
+        enableLocalDialog: false,
     };
 
     private readonly _local: State<LState>;
@@ -57,6 +58,26 @@ export class BernieComponent<RProps, RState, LState extends object> extends Reac
             this.controller.rerender(...getOr(value.get("channels"), ["*"]));
         });
         this.init();
+    }
+
+    /**
+     * pd = persist data
+     */
+    public pd<T>(key: string, value: T): T {
+        window.localStorage.setItem(`cp-${getOr(this.config.componentID, "generic")}-${key}`, JSON.stringify(value));
+        return value;
+    }
+
+    /**
+     * rd = read data
+     */
+    public rd<T>(key: string, def: T): T {
+        let item = window.localStorage.getItem(`cp-${getOr(this.config.componentID, "generic")}-${key}`);
+        if (item === null) {
+            return def;
+        } else {
+            return JSON.parse(item);
+        }
     }
 
     public rerender(...channels: string[]) {

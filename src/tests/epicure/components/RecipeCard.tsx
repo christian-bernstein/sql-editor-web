@@ -21,6 +21,8 @@ import {ContextCompound} from "../../../components/ho/contextCompound/ContextCom
 import {ContextMenuElement} from "../../../components/lo/ContextMenuElement";
 import {EpicureAPI} from "../EpicureAPI";
 import {Badge} from "../../../components/lo/Badge";
+import {ObjectJSONDisplay} from "../../../components/ho/objectJSONDisplay/ObjectJSONDisplay";
+import Source, {MagazineSourceData} from "../Source";
 
 export type RecipeCardCtx = {
     onOpen: RecipeCtxAction<undefined>,
@@ -79,6 +81,23 @@ export class RecipeCard extends BernieComponent<RecipeCardProps, any, any> {
                             </FlexBox>
                         }/>
                     </LiteGrid>
+
+                    {
+                        p.recipe.source === undefined ? <></> : (
+                            () => {
+                                const source = p.recipe.source as Source;
+                                const data = source.data as MagazineSourceData;
+                                return (
+                                    <Box width={percent(100)} bgColor={t.colors.backgroundHighlightColor200} children={
+                                        <FlexBox width={percent(100)} gap={t.gaps.smallGab}>
+                                            <Text text={`**Publisher:** ${data.title}`}/>
+                                            <Text text={`**Magazine:** ${data.month} ${data.year}`}/>
+                                        </FlexBox>
+                                    }/>
+                                );
+                            }
+                        )()
+                    }
 
                     <FlexBox flexDir={FlexDirection.ROW} width={percent(100)} overflowXBehaviour={OverflowBehaviour.SCROLL}>
                         <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} children={

@@ -4,16 +4,19 @@ import {Themeable} from "../../logic/style/Themeable";
 import {FormControl, MenuItem, Select as MUISelect} from "@mui/material";
 import React from "react";
 import {Text} from "./Text";
+import {Color} from "../../logic/style/Color";
+import {getOr} from "../../logic/Utils";
 
 export type SelectElement = {
     value: any,
-    renderer?: (value: any, selected: boolean) => JSX.Element
+    renderer?: (value: any, selected: boolean) => JSX.Element,
 }
 
 export type SelectProps = {
     elements: () => Array<SelectElement>,
     onChange: (value: any) => void,
-    initialValue: any
+    initialValue: any,
+    bgColor?: Color
 }
 
 export class Select extends BernieComponent<SelectProps, any, any> {
@@ -21,9 +24,10 @@ export class Select extends BernieComponent<SelectProps, any, any> {
     // <MenuItem value={30}>Thirty</MenuItem>
     componentRender(p: SelectProps, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
-            <FormControl sx={{width: "100%"}} size="small">
-                <MUISelect value={p.initialValue} sx={{
-                    backgroundColor: t.colors.backgroundHighlightColor200.css(),
+            <FormControl sx={{width: "100%", height: "100%"}} size="medium">
+                {/* value={p.initialValue} */}
+                <MUISelect defaultValue={p.initialValue} sx={{
+                    backgroundColor: getOr(p.bgColor, t.colors.backgroundHighlightColor200).css(),
                     color: t.colors.fontPrimaryColor.css(),
                     '& .MuiSvgIcon-root': {
                         fill: `${t.colors.iconColor.css()} !important`

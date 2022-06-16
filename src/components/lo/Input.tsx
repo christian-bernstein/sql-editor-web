@@ -44,7 +44,11 @@ export type InputProps = {
     minWidth?: DimensionalMeasured,
     pattern?: string,
     inputMode?: 'none' | 'text' | 'tel' | 'url' | 'email' | 'numeric' | 'decimal' | 'search',
-    onBlur?: () => void
+    onBlur?: () => void,
+
+    min?: string,
+    max?: string,
+    step?: string
 }
 
 export type InputState = {
@@ -170,6 +174,9 @@ export class Input extends React.Component<InputProps, InputState> {
                        value={this.props.value}
                        defaultValue={this.props.defaultValue}
                        onBlur={this.props.onBlur}
+                       min={this.props.min}
+                       max={this.props.max}
+                       step={this.props.step}
                 />
                 <If condition={getOr(this.props.hideLabel, false)} ifTrue={
                     <></>
