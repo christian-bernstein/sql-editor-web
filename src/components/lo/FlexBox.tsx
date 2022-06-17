@@ -42,7 +42,8 @@ export class FlexBox extends React.Component<FlexBoxProps, any> {
           align-items: ${this.props.align || Align.START};
           justify-content: ${getOr(this.props.justifyContent, Justify.FLEX_START)};
           width: ${getOr(this.props.width?.css(), "auto")};
-          min-width: ${getOr(this.props.minWidth, px()).css()};
+          // todo does the removal of min-w break any 
+          // min-width: ${getOr(this.props.minWidth, px()).css()};
           height: ${getOr(this.props.height?.css(), "auto")};
           overflow-x: ${getOr<OverflowBehaviour>(this.props.overflowXBehaviour, OverflowBehaviour.VISIBLE)};
           overflow-y: ${getOr<OverflowBehaviour>(this.props.overflowYBehaviour, OverflowBehaviour.VISIBLE)};

@@ -8,7 +8,7 @@ import {RecipeCard} from "../../components/RecipeCard";
 import {OverflowBehaviour} from "../../../../logic/style/OverflowBehaviour";
 import {percent, px} from "../../../../logic/style/DimensionalMeasured";
 import {EpicureRecipePage} from "../recipe/EpicureRecipePage";
-import {EpicureAPI, filter} from "../../EpicureAPI";
+import {EpicureAPI} from "../../EpicureAPI";
 import {utilizeGlobalTheme} from "../../../../logic/app/App";
 import {ObjectVisualMeaning} from "../../../../logic/style/ObjectVisualMeaning";
 import {Backdrop, SpeedDial, SpeedDialAction, SpeedDialIcon} from "@mui/material";
@@ -28,6 +28,8 @@ import {ReactComponent as FilterIcon} from "../../../../assets/icons/ic-20/ic20-
 import {BadgedWrapper} from "../../../../components/lo/BadgedWrapper";
 import {If} from "../../../../components/logic/If";
 import {EpicureFilterPage} from "../filter/EpicureFilterPage";
+import {Separator} from "../../../../components/lo/Separator";
+import {Orientation} from "../../../../logic/style/Orientation";
 
 export type EpicureHubPageLocalState = {
     speedDialOpen: boolean
@@ -45,27 +47,7 @@ export class EpicureHubPage extends BernieComponent<any, any, EpicureHubPageLoca
 
     init() {
         super.init();
-        EpicureAPI.api(() => new EpicureAPI()).addFilter(filter<string | undefined>({
-            id: "title",
-            type: "title",
-            data: "Curry",
-            filterPreviewRenderer: () => <Text text={""}/>,
-            filter: (recipe, filter, api) => {
-                if (filter.data === undefined) {
-                    return true;
-                } else {
-                    return recipe.title.toLowerCase().includes(`${filter.data.toLowerCase()}`);
-                }
-            }
-        })).addFilter(filter<number>({
-            id: "min-kcal",
-            type: "min-kcal",
-            data: 500,
-            filterPreviewRenderer: () => <Text text={""}/>,
-            filter: (recipe, filter, api) => {
-                return recipe.kcal >= filter.data;
-            }
-        }));
+        EpicureAPI.api(() => new EpicureAPI());
     }
 
     private toggleSpeedDial(open: boolean) {
@@ -151,10 +133,10 @@ export class EpicureHubPage extends BernieComponent<any, any, EpicureHubPageLoca
                                 <BadgedWrapper badge={
                                     <Text text={`${len}`} visualMeaning={ObjectVisualMeaning.INFO} coloredText fontSize={px(10)}/>
                                 } showBadgeInitially={showBadge} children={
-                                    <Icon icon={<FilterIcon/>} onClick={() => this.openLocalDialog(() => <EpicureFilterPage/>)}/>
+                                    <Icon icon={<FilterIcon/>} onClick={() => this.openLocalDialog(() => <EpicureFilterPage onFiltersUpdate={() => this.rerender("filters", "recipes")}/>)}/>
                                 }/>
                             } ifFalse={
-                                <Icon icon={<FilterIcon/>} onClick={() => this.openLocalDialog(() => <EpicureFilterPage/>)}/>
+                                <Icon icon={<FilterIcon/>} onClick={() => this.openLocalDialog(() => <EpicureFilterPage onFiltersUpdate={() => this.rerender("filters", "recipes")}/>)}/>
                             }/>
                         );
                     }, "filters")

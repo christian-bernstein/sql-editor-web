@@ -6,7 +6,7 @@ import {getOr} from "../../logic/Utils";
 
 export type MapProps<T> = {
     data: T[],
-    renderer: (item: T, component: Map<T>) => JSX.Element,
+    renderer: (item: T, data: T[], component: Map<T>) => JSX.Element,
     wrapper?: (props: PropsWithChildren<any>) => JSX.Element,
     renderWrapperOnEmpty?: boolean
 }
@@ -26,14 +26,14 @@ export class Map<T> extends BernieComponent<MapProps<T>, any, any> {
             return p.wrapper({
                 children: (
                     <Fragment children={
-                        p.data.map(item => p.renderer(item, this))
+                        p.data.map(item => p.renderer(item, p.data, this))
                     }/>
                 )
             });
         }
         return (
             <Fragment children={
-                p.data.map(item => p.renderer(item, this))
+                p.data.map(item => p.renderer(item, p.data, this))
             }/>
         );
     }

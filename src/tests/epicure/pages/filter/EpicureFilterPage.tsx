@@ -17,23 +17,103 @@ import {percent, px} from "../../../../logic/style/DimensionalMeasured";
 import {FlexDirection} from "../../../../logic/style/FlexDirection";
 import {Align} from "../../../../logic/style/Align";
 import {Button} from "../../../../components/lo/Button";
+import {EpicureAPI} from "../../EpicureAPI";
+import {Map} from "../../../../components/logic/Map";
+import {Filter} from "../Filter";
+import {SideScroller} from "../../../../components/layout/SideScroller";
+import {Box} from "../../../../components/lo/Box";
+import {Icon} from "../../../../components/lo/Icon";
+import {ReactComponent as CloseIcon} from "../../../../assets/icons/ic-20/ic20-close.svg";
+import React from "react";
+import {Centered} from "../../../../components/lo/PosInCenter";
+import {If} from "../../../../components/logic/If";
+
+export type EpicureFilterPageProps = {
+    onFiltersUpdate: () => void
+}
 
 export type EpicureFilterPageLocalState = {
     fdh: FormDataHub
 }
 
-export class EpicureFilterPage extends BernieComponent<any, any, EpicureFilterPageLocalState> {
+export class EpicureFilterPage extends BernieComponent<EpicureFilterPageProps, any, EpicureFilterPageLocalState> {
 
-    constructor() {
-        super(undefined, undefined, {
+    constructor(props: EpicureFilterPageProps) {
+        super(props, undefined, {
             fdh: new FormDataHub("EpicureFilterPage").loadFromLocalStore()
         });
     }
 
     init() {
         super.init();
+        this.filterPreviewAssembly();
         this.filterTypeSelectorAssembly();
         this.filterAssembly();
+    }
+
+    private filterPreviewAssembly() {
+        this.assembly.assembly("filter-preview", theme => {
+            return this.component(() => {
+                const filterName = this.local.state.fdh.get("filter-type");
+
+                return (
+                    <FlexBox height={percent(100)} width={percent(100)}>
+                        <Centered children={
+                            <Text text={"Current filters"}/>
+                        }/>
+
+                        {
+                            (() => {
+                                const activeFilters = EpicureAPI.api().filters.filter(filter => filter.type === filterName);
+                                const inactiveFilters = EpicureAPI.api().filters.filter(filter => filter.type !== filterName);
+
+                                return (
+                                    <SideScroller useMouseDragging>
+                                        <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER}>
+                                            <Map<Filter<any>> data={activeFilters} renderWrapperOnEmpty={false} wrapper={props => <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} {...props}/>} renderer={(item) => (
+                                                <Box opaque visualMeaning={ObjectVisualMeaning.INFO} children={
+                                                    <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER}>
+                                                        <Text text={item.type} bold whitespace={"nowrap"}/>
+                                                        <Text text={`${item.data}`} whitespace={"nowrap"} type={TextType.secondaryDescription} fontSize={px(12)}/>
+                                                        <Icon icon={<CloseIcon/>} onClick={() => {
+                                                            EpicureAPI.api().removeFilter(item.id);
+                                                            this.rerender("filters", "recipes");
+                                                            this.props.onFiltersUpdate();
+                                                        }}/>
+                                                    </FlexBox>
+                                                }/>
+                                            )}/>
+
+                                            {
+                                                activeFilters.length > 0 && inactiveFilters.length > 0 ? (
+                                                    <Separator orientation={Orientation.VERTICAL} width={px(1)} style={{height: "30px"}}/>
+                                                ) : undefined
+                                            }
+
+                                            <Map<Filter<any>> data={inactiveFilters} renderWrapperOnEmpty={false} wrapper={props => <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} {...props}/>} renderer={(item) => (
+                                                <Box children={
+                                                    <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER}>
+                                                        <Text text={item.type} bold whitespace={"nowrap"}/>
+                                                        <Text text={`${item.data}`} whitespace={"nowrap"} type={TextType.secondaryDescription} fontSize={px(12)}/>
+                                                        <Icon icon={<CloseIcon/>} onClick={() => {
+                                                            EpicureAPI.api().removeFilter(item.id);
+                                                            this.rerender("filters", "recipes");
+                                                            this.props.onFiltersUpdate();
+                                                        }}/>
+                                                    </FlexBox>
+                                                }/>
+                                            )}/>
+
+
+                                        </FlexBox>
+                                    </SideScroller>
+                                );
+                            })()
+                        }
+                    </FlexBox>
+                );
+            }, "filters", "filter");
+        })
     }
 
     private filterTypeSelectorAssembly() {
@@ -57,8 +137,8 @@ export class EpicureFilterPage extends BernieComponent<any, any, EpicureFilterPa
 
     private filterAssembly() {
         this.assembly.assembly("filter", theme => {
-            const filterName = this.local.state.fdh.get("filter-type", "title");
-            const elem = Filters.filterSetupRenderers.get(filterName)?.(this);
+            const filterName = this.local.state.fdh.get("filter-type", "Recipe title");
+            const elem = Filters.filterSetupRenderers.get(filterName)?.setupRenderer(this);
             if (elem === undefined) {
                 return (
                     <InformationBox visualMeaning={ObjectVisualMeaning.ERROR} children={
@@ -71,12 +151,29 @@ export class EpicureFilterPage extends BernieComponent<any, any, EpicureFilterPa
 
     public addFilter() {
         const filterName = this.local.state.fdh.get("filter-type");
+        const setting = Filters.filterSetupRenderers.get(filterName);
+        if (setting !== undefined) {
+            const filter = setting.filterConvertor(this, this.local.state.fdh);
+            EpicureAPI.api().addFilter(filter);
+            this.rerender("filters");
+            this.props.onFiltersUpdate();
+        }
     }
 
-    componentRender(p: any, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
+    componentRender(p: EpicureFilterPageProps, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
             <Screen>
                 <AppHeader title={"Filter page"}/>
+
+                {this.a("filter-preview")}
+
+
+                <FlexBox width={percent(100)} flexDir={FlexDirection.ROW} align={Align.CENTER} padding paddingX={px()} paddingY={t.gaps.defaultGab}>
+                    <Separator orientation={Orientation.HORIZONTAL}/>
+                    <Text text={"Filter type"} whitespace={"nowrap"} type={TextType.secondaryDescription} fontSize={px(12)}/>
+                    <Separator orientation={Orientation.HORIZONTAL}/>
+                </FlexBox>
+
                 {this.a("filter-type-selector")}
 
                 <FlexBox width={percent(100)} flexDir={FlexDirection.ROW} align={Align.CENTER} padding paddingX={px()} paddingY={t.gaps.defaultGab}>

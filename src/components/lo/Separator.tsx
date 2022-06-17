@@ -1,4 +1,4 @@
-import React from "react";
+import React, {CSSProperties} from "react";
 import {WithVisualMeaning} from "../../logic/style/WithVisualMeaning";
 import styled from "styled-components";
 import {DimensionalMeasured, px} from "../../logic/style/DimensionalMeasured";
@@ -12,7 +12,8 @@ export type SeparatorProps = {
     width?: DimensionalMeasured,
     orientation?: Orientation,
     borderRadius?: DimensionalMeasured,
-    visible?: boolean
+    visible?: boolean,
+    style?: CSSProperties
     // height?: DimensionalMeasured
 } & WithVisualMeaning
 
@@ -27,6 +28,6 @@ export const Separator: React.FC<SeparatorProps> = React.memo(props => {
       visibility: ${getOr(props.visible, true) ? "visible" : "hidden"};
     `;
     return (
-        <Span />
+        <Span style={getOr(props.style, {})}/>
     );
 })

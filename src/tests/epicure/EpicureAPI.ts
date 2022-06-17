@@ -64,7 +64,7 @@ export class EpicureAPI {
     }
 
     public updateFilter<T>(id: string, operator: (filter: Filter<T>) => Filter<T>) {
-        operator(this.getFilter(id))
+        operator(this.getFilter(id));
     }
 
     public loadFilteredRecipes(): Array<Recipe> {
