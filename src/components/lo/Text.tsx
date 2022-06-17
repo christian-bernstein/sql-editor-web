@@ -112,7 +112,7 @@ export const Text: React.FC<TextProps> = props => {
 
     if (props.texts !== undefined) {
         const delimiter = getOr(props.delimiter, "\n");
-        text = `${text}${delimiter}${props.texts.join(delimiter)}`
+        text = `${text.length === 0 ? "" : `${text}${delimiter}`}${props.texts.join(delimiter)}`
     }
 
     return (

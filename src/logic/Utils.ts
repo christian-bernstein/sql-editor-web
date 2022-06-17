@@ -22,6 +22,11 @@ export function arrayFactory<T>(objSuppl: (i: number) => T, n: number = 1): T[] 
     return arr;
 }
 
+export function logAndReturn<T>(obj: T, prefix: string = ""): T {
+    console.log(`${prefix} ${obj}`);
+    return obj;
+}
+
 export namespace Utils {
 
     /**

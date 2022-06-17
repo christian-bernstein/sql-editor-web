@@ -8,21 +8,22 @@ import {Recipe} from "../Recipe";
 import {ElementHeader} from "../../../components/lo/ElementHeader";
 import {ReactComponent as ContextIcon} from "../../../assets/icons/ic-20/ic20-more-ver.svg";
 import {ReactComponent as DeleteIcon} from "../../../assets/icons/ic-20/ic20-delete.svg";
+import {ReactComponent as SourceIcon} from "../../../assets/icons/ic-20/ic20-link.svg";
 import {Icon} from "../../../components/lo/Icon";
 import {FlexBox} from "../../../components/lo/FlexBox";
 import {LiteGrid} from "../../../components/lo/LiteGrid";
 import {ObjectVisualMeaning} from "../../../logic/style/ObjectVisualMeaning";
 import {Align} from "../../../logic/style/Align";
 import {FlexDirection} from "../../../logic/style/FlexDirection";
-import {OverflowBehaviour} from "../../../logic/style/OverflowBehaviour";
 import {Button} from "../../../components/lo/Button";
 import {RecipeCtxAction} from "../RecipeCtxAction";
 import {ContextCompound} from "../../../components/ho/contextCompound/ContextCompound";
 import {ContextMenuElement} from "../../../components/lo/ContextMenuElement";
 import {EpicureAPI} from "../EpicureAPI";
 import {Badge} from "../../../components/lo/Badge";
-import {ObjectJSONDisplay} from "../../../components/ho/objectJSONDisplay/ObjectJSONDisplay";
 import Source, {MagazineSourceData} from "../Source";
+import {Map} from "../../../components/logic/Map";
+import {SideScroller} from "../../../components/layout/SideScroller";
 
 export type RecipeCardCtx = {
     onOpen: RecipeCtxAction<undefined>,
@@ -88,10 +89,14 @@ export class RecipeCard extends BernieComponent<RecipeCardProps, any, any> {
                                 const source = p.recipe.source as Source;
                                 const data = source.data as MagazineSourceData;
                                 return (
-                                    <Box width={percent(100)} bgColor={t.colors.backgroundHighlightColor200} children={
-                                        <FlexBox width={percent(100)} gap={t.gaps.smallGab}>
-                                            <Text text={`**Publisher:** ${data.title}`}/>
-                                            <Text text={`**Magazine:** ${data.month} ${data.year}`}/>
+                                    <Box opaque visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} width={percent(100)} children={
+                                        <FlexBox width={percent(100)} gap={t.gaps.smallGab} align={Align.CENTER} flexDir={FlexDirection.ROW}>
+                                            <Icon icon={<SourceIcon/>}/>
+                                            <Text text={""} delimiter={", "} texts={[
+                                                `**Publisher:** ${data.title}`,
+                                                `**Magazine:** ${data.month} ${data.year}`,
+                                                `**Page:** ${data.page}`,
+                                            ]}/>
                                         </FlexBox>
                                     }/>
                                 );
@@ -99,13 +104,11 @@ export class RecipeCard extends BernieComponent<RecipeCardProps, any, any> {
                         )()
                     }
 
-                    <FlexBox flexDir={FlexDirection.ROW} width={percent(100)} overflowXBehaviour={OverflowBehaviour.SCROLL}>
-                        <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} children={
-                            p.recipe.categories.map(cat => <Button highlight={false} children={
-                                <Text text={cat}/>
-                            }/>)
+                    <Map<string> data={p.recipe.categories} wrapper={props => <SideScroller useMouseDragging {...props}/>} renderer={(item) => (
+                        <Button highlight={false} children={
+                            <Text text={item}/>
                         }/>
-                    </FlexBox>
+                    )}/>
 
                     <Button visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} opaque width={percent(100)} onClick={() => p.ctx.onOpen.on(p.recipe)} children={
                         <Text text={"Show recipe"}/>

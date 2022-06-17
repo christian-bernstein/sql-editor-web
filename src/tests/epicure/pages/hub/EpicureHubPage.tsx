@@ -6,17 +6,28 @@ import {AppHeader} from "../../../../components/lo/AppHeader";
 import {FlexBox} from "../../../../components/lo/FlexBox";
 import {RecipeCard} from "../../components/RecipeCard";
 import {OverflowBehaviour} from "../../../../logic/style/OverflowBehaviour";
-import {percent} from "../../../../logic/style/DimensionalMeasured";
-import {UnitOfMeasure} from "../../UnitOfMeasure";
-import {Recipe} from "../../Recipe";
+import {percent, px} from "../../../../logic/style/DimensionalMeasured";
 import {EpicureRecipePage} from "../recipe/EpicureRecipePage";
-import {EpicureAPI} from "../../EpicureAPI";
+import {EpicureAPI, filter} from "../../EpicureAPI";
 import {utilizeGlobalTheme} from "../../../../logic/app/App";
 import {ObjectVisualMeaning} from "../../../../logic/style/ObjectVisualMeaning";
 import {Backdrop, SpeedDial, SpeedDialAction, SpeedDialIcon} from "@mui/material";
 import {ReactComponent as CreateIcon} from "../../../../assets/icons/ic-20/ic20-plus.svg";
 import React from "react";
 import {EpicureAddPage} from "../add/EpicureAddPage";
+import {Text, TextType} from "../../../../components/lo/Text";
+import {Map} from "../../../../components/logic/Map";
+import {Filter} from "../Filter";
+import {Box} from "../../../../components/lo/Box";
+import {Icon} from "../../../../components/lo/Icon";
+import {FlexDirection} from "../../../../logic/style/FlexDirection";
+import {Align} from "../../../../logic/style/Align";
+import {SideScroller} from "../../../../components/layout/SideScroller";
+import {ReactComponent as CloseIcon} from "../../../../assets/icons/ic-20/ic20-close.svg";
+import {ReactComponent as FilterIcon} from "../../../../assets/icons/ic-20/ic20-filter.svg";
+import {BadgedWrapper} from "../../../../components/lo/BadgedWrapper";
+import {If} from "../../../../components/logic/If";
+import {EpicureFilterPage} from "../filter/EpicureFilterPage";
 
 export type EpicureHubPageLocalState = {
     speedDialOpen: boolean
@@ -34,7 +45,27 @@ export class EpicureHubPage extends BernieComponent<any, any, EpicureHubPageLoca
 
     init() {
         super.init();
-        EpicureAPI.api(() => new EpicureAPI());
+        EpicureAPI.api(() => new EpicureAPI()).addFilter(filter<string | undefined>({
+            id: "title",
+            type: "title",
+            data: "Curry",
+            filterPreviewRenderer: () => <Text text={""}/>,
+            filter: (recipe, filter, api) => {
+                if (filter.data === undefined) {
+                    return true;
+                } else {
+                    return recipe.title.toLowerCase().includes(`${filter.data.toLowerCase()}`);
+                }
+            }
+        })).addFilter(filter<number>({
+            id: "min-kcal",
+            type: "min-kcal",
+            data: 500,
+            filterPreviewRenderer: () => <Text text={""}/>,
+            filter: (recipe, filter, api) => {
+                return recipe.kcal >= filter.data;
+            }
+        }));
     }
 
     private toggleSpeedDial(open: boolean) {
@@ -110,13 +141,46 @@ export class EpicureHubPage extends BernieComponent<any, any, EpicureHubPageLoca
         return (
             <Screen>
                 {this.renderSpeedDial()}
-                <AppHeader title={"Epicure Hub"}/>
+                <AppHeader title={"Epicure Hub"} right={
+                    this.component(() => {
+                        const len = EpicureAPI.api().filters.length;
+                        const showBadge = len != 0;
+
+                        return (
+                            <If condition={showBadge} ifTrue={
+                                <BadgedWrapper badge={
+                                    <Text text={`${len}`} visualMeaning={ObjectVisualMeaning.INFO} coloredText fontSize={px(10)}/>
+                                } showBadgeInitially={showBadge} children={
+                                    <Icon icon={<FilterIcon/>} onClick={() => this.openLocalDialog(() => <EpicureFilterPage/>)}/>
+                                }/>
+                            } ifFalse={
+                                <Icon icon={<FilterIcon/>} onClick={() => this.openLocalDialog(() => <EpicureFilterPage/>)}/>
+                            }/>
+                        );
+                    }, "filters")
+                }
+                 footer={
+                    this.component(() => (
+                        <Map<Filter<any>> data={EpicureAPI.api().filters} wrapper={props => <SideScroller useMouseDragging {...props}/>} renderer={item => (
+                            <Box>
+                                <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER}>
+                                    <Text text={item.type} bold whitespace={"nowrap"}/>
+                                    <Text text={`${item.data}`} whitespace={"nowrap"} type={TextType.secondaryDescription} fontSize={px(12)}/>
+                                    <Icon icon={<CloseIcon/>} onClick={() => {
+                                        EpicureAPI.api().removeFilter(item.id);
+                                        this.rerender("filters", "recipes");
+                                    }}/>
+                                </FlexBox>
+                            </Box>
+                        )}/>
+                    ), "filters")
+                }/>
                 <FlexBox width={percent(100)} overflowYBehaviour={OverflowBehaviour.SCROLL} children={
                     <FlexBox width={percent(100)} children={
                         this.component(() => (
                             <>
                                 {
-                                    EpicureAPI.api().loadAllRecipes().map(recipe => (
+                                    EpicureAPI.api().loadFilteredRecipes().map(recipe => (
                                         <RecipeCard recipe={recipe} ctx={{
                                             onOpen: {
                                                 on: (recipe, param) => {

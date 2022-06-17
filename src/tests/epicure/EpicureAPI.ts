@@ -1,13 +1,22 @@
 import {RecipeSession} from "./RecipeSession";
-import {Utils} from "../../logic/Utils";
-import {Environment} from "../../logic/Environment";
 import {Recipe} from "./Recipe";
 import {UnitOfMeasure} from "./UnitOfMeasure";
 import {Unit} from "./Unit";
+import {Filter} from "./pages/Filter";
+
+export const filter: <T>(filter: Filter<T>) => Filter<T> = (filter) => {
+    return filter;
+}
 
 export class EpicureAPI {
 
+    get filters(): Array<Filter<any>> {
+        return this._filters;
+    }
+
     private static instance?: EpicureAPI = undefined;
+
+    private _filters: Array<Filter<any>> = new Array<Filter<any>>();
 
     public static api(supplier?: () => EpicureAPI): EpicureAPI {
         if (EpicureAPI.instance === undefined) {
@@ -26,6 +35,48 @@ export class EpicureAPI {
 
     public toSessionKey(id: string): string {
         return `epicure-session-${id}`;
+    }
+
+    public addFilter(filter: Filter<any>): EpicureAPI {
+        const filtered = this._filters.filter(f => f.id === filter.id);
+        if (filtered.length > 0) {
+            this._filters.splice(this._filters.indexOf(filtered[0], 1));
+        }
+        this._filters.push(filter);
+        return this;
+    }
+
+    public removeFilter(id: string): EpicureAPI {
+        const filtered = this._filters.filter(f => f.id === id);
+        if (filtered.length > 0) {
+            this._filters.splice(this._filters.indexOf(filtered[0], 1));
+        }
+        return this;
+    }
+
+    public getFilter<T>(id: string): Filter<T> {
+        const filtered = this._filters.filter(f => f.id === id);
+        let filter = undefined
+        if (filtered.length > 0) {
+            filter = filtered[0];
+        }
+        return filter as Filter<T>;
+    }
+
+    public updateFilter<T>(id: string, operator: (filter: Filter<T>) => Filter<T>) {
+        operator(this.getFilter(id))
+    }
+
+    public loadFilteredRecipes(): Array<Recipe> {
+        return this.loadAllRecipes().filter(recipe => {
+            let show = true;
+            this._filters.forEach(filter => {
+                if (!filter.filter(recipe, filter, this)) {
+                    show = false;
+                }
+            });
+            return show;
+        });
     }
 
     public loadRecipeSession(id: string): RecipeSession {
