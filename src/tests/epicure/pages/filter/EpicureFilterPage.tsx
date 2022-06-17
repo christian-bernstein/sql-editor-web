@@ -74,7 +74,7 @@ export class EpicureFilterPage extends BernieComponent<EpicureFilterPageProps, a
                                                 <Box opaque visualMeaning={ObjectVisualMeaning.INFO} children={
                                                     <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER}>
                                                         <Text text={item.type} bold whitespace={"nowrap"}/>
-                                                        <Text text={`${item.data}`} whitespace={"nowrap"} type={TextType.secondaryDescription} fontSize={px(12)}/>
+                                                        <Text text={item.dataStringRenderer ? item.dataStringRenderer(item.data) : `${item.data}`} whitespace={"nowrap"} type={TextType.secondaryDescription} fontSize={px(12)}/>
                                                         <Icon icon={<CloseIcon/>} onClick={() => {
                                                             EpicureAPI.api().removeFilter(item.id);
                                                             this.rerender("filters", "recipes");
@@ -94,7 +94,7 @@ export class EpicureFilterPage extends BernieComponent<EpicureFilterPageProps, a
                                                 <Box children={
                                                     <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER}>
                                                         <Text text={item.type} bold whitespace={"nowrap"}/>
-                                                        <Text text={`${item.data}`} whitespace={"nowrap"} type={TextType.secondaryDescription} fontSize={px(12)}/>
+                                                        <Text text={item.dataStringRenderer ? item.dataStringRenderer(item.data) : `${item.data}`} whitespace={"nowrap"} type={TextType.secondaryDescription} fontSize={px(12)}/>
                                                         <Icon icon={<CloseIcon/>} onClick={() => {
                                                             EpicureAPI.api().removeFilter(item.id);
                                                             this.rerender("filters", "recipes");

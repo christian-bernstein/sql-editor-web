@@ -6,5 +6,6 @@ export type Filter<T> = {
     type: string,
     data: T,
     filter: (recipe: Recipe, filter: Filter<T>, api: EpicureAPI) => boolean,
-    filterPreviewRenderer: (data: T) => JSX.Element
+    filterPreviewRenderer: (data: T) => JSX.Element,
+    dataStringRenderer?: (data: T) => string
 }

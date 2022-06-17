@@ -5,6 +5,7 @@ import {filter} from "../../EpicureAPI";
 import {FlexBox} from "../../../../components/lo/FlexBox";
 import {percent} from "../../../../logic/style/DimensionalMeasured";
 import {NumberRange} from "../../../../logic/data/NumberRange";
+import {Text} from "../../../../components/lo/Text";
 
 export namespace Filters {
 
@@ -114,6 +115,7 @@ export namespace Filters {
                 data: {min: hub.get("minimum-calories"), max: hub.get("maximum-calories")},
                 type: "Calories",
                 filterPreviewRenderer: data => <></>,
+                dataStringRenderer: data => `**min:** ${data.min}, **max:** ${data.max}`,
                 filter: (recipe, filter, api) => {
                     return recipe.kcal >= filter.data.min && recipe.kcal <= filter.data.max;
                 }

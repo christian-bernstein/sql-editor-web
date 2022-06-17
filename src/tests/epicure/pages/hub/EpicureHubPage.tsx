@@ -147,7 +147,7 @@ export class EpicureHubPage extends BernieComponent<any, any, EpicureHubPageLoca
                             <Box>
                                 <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER}>
                                     <Text text={item.type} bold whitespace={"nowrap"}/>
-                                    <Text text={`${item.data}`} whitespace={"nowrap"} type={TextType.secondaryDescription} fontSize={px(12)}/>
+                                    <Text text={item.dataStringRenderer ? item.dataStringRenderer(item.data) : `${item.data}`} whitespace={"nowrap"} type={TextType.secondaryDescription} fontSize={px(12)}/>
                                     <Icon icon={<CloseIcon/>} onClick={() => {
                                         EpicureAPI.api().removeFilter(item.id);
                                         this.rerender("filters", "recipes");
