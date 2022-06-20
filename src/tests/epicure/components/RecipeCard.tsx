@@ -62,6 +62,7 @@ export class RecipeCard extends BernieComponent<RecipeCardProps, any, any> {
                                 <FlexBox gap={px(1)}>
                                     <ContextMenuElement title={"Clear session data"} titleAppendix={() => Badge.beta()} onClick={() => {
                                         api.removeRecipeSession(p.recipe.id);
+                                        this.forceUpdate();
                                     }} icon={() => <Icon icon={<DeleteIcon/>}/>}/>
                                     <ContextMenuElement visualMeaning={ObjectVisualMeaning.ERROR} title={"Delete recipe"} onClick={() => {
                                         api.deleteRecipe(p.recipe.id);
