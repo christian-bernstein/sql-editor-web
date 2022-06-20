@@ -24,6 +24,8 @@ import {Badge} from "../../../components/lo/Badge";
 import Source, {MagazineSourceData} from "../Source";
 import {Map} from "../../../components/logic/Map";
 import {SideScroller} from "../../../components/layout/SideScroller";
+import {Rating} from "@mui/material";
+import {OverflowBehaviour} from "../../../logic/style/OverflowBehaviour";
 
 export type RecipeCardCtx = {
     onOpen: RecipeCtxAction<undefined>,
@@ -37,29 +39,45 @@ export type RecipeCardProps = {
 
 export class RecipeCard extends BernieComponent<RecipeCardProps, any, any> {
 
-    /**
-     * #014034
-     * #02735E
-     * #038C73
-     */
     componentRender(p: RecipeCardProps, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
+        const api = EpicureAPI.api();
+        const session = api.loadRecipeSession(p.recipe.id);
+
         return (
             <Box width={percent(100)} children={
                 <FlexBox width={percent(100)}>
                     <ElementHeader boldHeader title={p.recipe.title} appendix={
-                        <ContextCompound menu={
-                            <FlexBox gap={px(1)}>
-                                <ContextMenuElement title={"Clear session data"} titleAppendix={() => Badge.beta()} onClick={() => {
-                                    EpicureAPI.api().removeRecipeSession(p.recipe.id);
-                                }} icon={() => <Icon icon={<DeleteIcon/>}/>}/>
-                                <ContextMenuElement visualMeaning={ObjectVisualMeaning.ERROR} title={"Delete recipe"} onClick={() => {
-                                    EpicureAPI.api().deleteRecipe(p.recipe.id);
-                                    p.ctx.onDelete.on(p.recipe);
-                                }} icon={() => <Icon icon={<DeleteIcon/>}/>}/>
-                            </FlexBox>
-                        } children={
-                            <Icon icon={<ContextIcon/>}/>
-                        }/>
+
+                        <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} overflowXBehaviour={OverflowBehaviour.SCROLL}>
+                            <Rating
+                                defaultValue={session.rating}
+                                onChange={(event, value) => {
+                                    const ls = api.loadRecipeSession(p.recipe.id);
+                                    ls.rating = value === null ? undefined : value;
+                                    api.saveRecipeSession(p.recipe.id, ls);
+                                }}
+                            />
+
+                            <ContextCompound menu={
+                                <FlexBox gap={px(1)}>
+                                    <ContextMenuElement title={"Clear session data"} titleAppendix={() => Badge.beta()} onClick={() => {
+                                        api.removeRecipeSession(p.recipe.id);
+                                    }} icon={() => <Icon icon={<DeleteIcon/>}/>}/>
+                                    <ContextMenuElement visualMeaning={ObjectVisualMeaning.ERROR} title={"Delete recipe"} onClick={() => {
+                                        api.deleteRecipe(p.recipe.id);
+                                        p.ctx.onDelete.on(p.recipe);
+                                    }} icon={() => <Icon icon={<DeleteIcon/>}/>}/>
+                                </FlexBox>
+                            } children={
+                                <Icon icon={<ContextIcon/>}/>
+                            }/>
+                        </FlexBox>
+
+
+
+
+
+
                     }/>
                     <Text text={p.recipe.description}/>
                     <LiteGrid columns={3} gap={t.gaps.defaultGab}>

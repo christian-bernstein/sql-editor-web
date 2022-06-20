@@ -11,7 +11,7 @@ import {EpicureRecipePage} from "../recipe/EpicureRecipePage";
 import {EpicureAPI} from "../../EpicureAPI";
 import {utilizeGlobalTheme} from "../../../../logic/app/App";
 import {ObjectVisualMeaning} from "../../../../logic/style/ObjectVisualMeaning";
-import {Backdrop, SpeedDial, SpeedDialAction, SpeedDialIcon} from "@mui/material";
+import {Backdrop, SpeedDial, SpeedDialAction, SpeedDialIcon, ThemeProvider} from "@mui/material";
 import {ReactComponent as CreateIcon} from "../../../../assets/icons/ic-20/ic20-plus.svg";
 import React from "react";
 import {EpicureAddPage} from "../add/EpicureAddPage";
@@ -121,67 +121,69 @@ export class EpicureHubPage extends BernieComponent<any, any, EpicureHubPageLoca
 
     componentRender(p: any, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
-            <Screen>
-                {this.renderSpeedDial()}
-                <AppHeader title={"Epicure Hub"} right={
-                    this.component(() => {
-                        const len = EpicureAPI.api().filters.length;
-                        const showBadge = len != 0;
+            <ThemeProvider theme={t.muiTheme} children={
+                <Screen>
+                    {this.renderSpeedDial()}
+                    <AppHeader title={"Epicure Hub"} right={
+                        this.component(() => {
+                            const len = EpicureAPI.api().filters.length;
+                            const showBadge = len != 0;
 
-                        return (
-                            <If condition={showBadge} ifTrue={
-                                <BadgedWrapper badge={
-                                    <Text text={`${len}`} visualMeaning={ObjectVisualMeaning.INFO} coloredText fontSize={px(10)}/>
-                                } showBadgeInitially={showBadge} children={
+                            return (
+                                <If condition={showBadge} ifTrue={
+                                    <BadgedWrapper badge={
+                                        <Text text={`${len}`} visualMeaning={ObjectVisualMeaning.INFO} coloredText fontSize={px(10)}/>
+                                    } showBadgeInitially={showBadge} children={
+                                        <Icon icon={<FilterIcon/>} onClick={() => this.openLocalDialog(() => <EpicureFilterPage onFiltersUpdate={() => this.rerender("filters", "recipes")}/>)}/>
+                                    }/>
+                                } ifFalse={
                                     <Icon icon={<FilterIcon/>} onClick={() => this.openLocalDialog(() => <EpicureFilterPage onFiltersUpdate={() => this.rerender("filters", "recipes")}/>)}/>
                                 }/>
-                            } ifFalse={
-                                <Icon icon={<FilterIcon/>} onClick={() => this.openLocalDialog(() => <EpicureFilterPage onFiltersUpdate={() => this.rerender("filters", "recipes")}/>)}/>
-                            }/>
-                        );
-                    }, "filters")
-                }
-                 footer={
-                    this.component(() => (
-                        <Map<Filter<any>> data={EpicureAPI.api().filters} wrapper={props => <SideScroller useMouseDragging {...props}/>} renderer={item => (
-                            <Box>
-                                <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER}>
-                                    <Text text={item.type} bold whitespace={"nowrap"}/>
-                                    <Text text={item.dataStringRenderer ? item.dataStringRenderer(item.data) : `${item.data}`} whitespace={"nowrap"} type={TextType.secondaryDescription} fontSize={px(12)}/>
-                                    <Icon icon={<CloseIcon/>} onClick={() => {
-                                        EpicureAPI.api().removeFilter(item.id);
-                                        this.rerender("filters", "recipes");
-                                    }}/>
-                                </FlexBox>
-                            </Box>
-                        )}/>
-                    ), "filters")
-                }/>
-                <FlexBox width={percent(100)} overflowYBehaviour={OverflowBehaviour.SCROLL} children={
-                    <FlexBox width={percent(100)} children={
-                        this.component(() => (
-                            <>
-                                {
-                                    EpicureAPI.api().loadFilteredRecipes().map(recipe => (
-                                        <RecipeCard recipe={recipe} ctx={{
-                                            onOpen: {
-                                                on: (recipe, param) => {
-                                                    this._openLocalDialog(screenedAndCentered(<EpicureRecipePage recipe={recipe}/>));
+                            );
+                        }, "filters")
+                    }
+                               footer={
+                                   this.component(() => (
+                                       <Map<Filter<any>> data={EpicureAPI.api().filters} wrapper={props => <SideScroller useMouseDragging {...props}/>} renderer={item => (
+                                           <Box>
+                                               <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER}>
+                                                   <Text text={item.type} bold whitespace={"nowrap"}/>
+                                                   <Text text={item.dataStringRenderer ? item.dataStringRenderer(item.data) : `${item.data}`} whitespace={"nowrap"} type={TextType.secondaryDescription} fontSize={px(12)}/>
+                                                   <Icon icon={<CloseIcon/>} onClick={() => {
+                                                       EpicureAPI.api().removeFilter(item.id);
+                                                       this.rerender("filters", "recipes");
+                                                   }}/>
+                                               </FlexBox>
+                                           </Box>
+                                       )}/>
+                                   ), "filters")
+                               }/>
+                    <FlexBox width={percent(100)} overflowYBehaviour={OverflowBehaviour.SCROLL} children={
+                        <FlexBox width={percent(100)} children={
+                            this.component(() => (
+                                <>
+                                    {
+                                        EpicureAPI.api().loadFilteredRecipes().map(recipe => (
+                                            <RecipeCard recipe={recipe} ctx={{
+                                                onOpen: {
+                                                    on: (recipe, param) => {
+                                                        this._openLocalDialog(screenedAndCentered(<EpicureRecipePage recipe={recipe}/>));
+                                                    }
+                                                },
+                                                onDelete: {
+                                                    on: recipe => {
+                                                        this.rerender("recipes");
+                                                    }
                                                 }
-                                            },
-                                            onDelete: {
-                                                on: recipe => {
-                                                    this.rerender("recipes");
-                                                }
-                                            }
-                                        }}/>
-                                    ))
-                                }
-                            </>
-                        ), "recipes")}
-                    />
-                }/>
-            </Screen>
+                                            }}/>
+                                        ))
+                                    }
+                                </>
+                            ), "recipes")}
+                        />
+                    }/>
+                </Screen>
+            }/>
         );
     }
 }
