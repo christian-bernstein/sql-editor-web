@@ -47,7 +47,6 @@ export class RecipeCard extends BernieComponent<RecipeCardProps, any, any> {
             <Box width={percent(100)} children={
                 <FlexBox width={percent(100)}>
                     <ElementHeader boldHeader title={p.recipe.title} appendix={
-
                         <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} overflowXBehaviour={OverflowBehaviour.SCROLL}>
                             <Rating
                                 defaultValue={session.rating}
@@ -73,12 +72,6 @@ export class RecipeCard extends BernieComponent<RecipeCardProps, any, any> {
                                 <Icon icon={<ContextIcon/>}/>
                             }/>
                         </FlexBox>
-
-
-
-
-
-
                     }/>
                     <Text text={p.recipe.description}/>
                     <LiteGrid columns={3} gap={t.gaps.defaultGab}>

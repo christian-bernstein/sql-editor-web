@@ -21,7 +21,8 @@ export type ImageProps = {
     borderRadius?: DimensionalMeasured
     onClick?: () => void,
     pure?: boolean,
-    src: string | string[]
+    src: string | string[],
+    noBGColor?: boolean
 }
 
 export class Image extends BernieComponent<ImageProps, any, any> {
@@ -36,12 +37,8 @@ export class Image extends BernieComponent<ImageProps, any, any> {
             minWidth: getOr(p.width, percent(100)).css(),
             height: getOr(p.height, percent(100)).css(),
             minHeight: getOr(p.height, percent(100)).css(),
-
-
             borderRadius: pure ? 0 : getOr(p.borderRadius, t.radii.defaultObjectRadius).css(),
             border: pure ? "none" : `1px solid ${t.colors.borderPrimaryColor.css()}`,
-
-
             overflow: "hidden",
             objectFit: "cover",
             objectPosition: op,
@@ -67,7 +64,7 @@ export class Image extends BernieComponent<ImageProps, any, any> {
         }
 
         return (
-            <Box noPadding style={boxStyle} borderless>
+            <Box noPadding noBGColor={getOr(p.noBGColor, false)} style={boxStyle} borderless>
                 <Img onClick={p.onClick} className={"react-image-component"} style={style} src={p.src} loading={"lazy"} loader={(
                     <div style={loader}>
                         <PuffLoader color={t.colors.backgroundHighlightColor200.css()} size={"16px"}/>

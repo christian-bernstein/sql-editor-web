@@ -2,7 +2,7 @@ import {BernieComponent} from "../../logic/BernieComponent";
 import {Assembly} from "../../logic/assembly/Assembly";
 import {Themeable} from "../../logic/style/Themeable";
 import {Box} from "./Box";
-import ReactCodeMirror from "@uiw/react-codemirror";
+import ReactCodeMirror, {Extension} from "@uiw/react-codemirror";
 import React from "react";
 import {percent, px} from "../../logic/style/DimensionalMeasured";
 import {OverflowBehaviour} from "../../logic/style/OverflowBehaviour";
@@ -13,9 +13,11 @@ import {Button} from "./Button";
 import {CopyIcon} from "../ho/copyIcon/CopyIcon";
 import {javascript, tsxLanguage} from "@codemirror/lang-javascript";
 import {jsx} from "@emotion/react";
+import {getOr} from "../../logic/Utils";
 
 export type CodeDisplayProps = {
-    code: string[]
+    code: string[],
+    extensions?: Extension[]
 }
 
 export class CodeDisplay extends BernieComponent<CodeDisplayProps, any, any> {
@@ -121,7 +123,7 @@ export class CodeDisplay extends BernieComponent<CodeDisplayProps, any, any> {
                         }}
                         editable={false}
                         value={p.code.join("\n")}
-                        extensions={[javascript()]}
+                        extensions={getOr(p.extensions, [javascript()])}
                     />
                 </Wrapper>
             </Box>

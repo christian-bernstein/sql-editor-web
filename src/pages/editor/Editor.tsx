@@ -38,7 +38,7 @@ import {SessionCommand} from "../../logic/data/SessionCommand";
 import {arrayFactory} from "../../logic/Utils";
 import {Button} from "../../components/lo/Button";
 import {LoadState} from "../../logic/misc/LoadState";
-import {CircularProgress, Dialog, Slide, SwipeableDrawer, Zoom} from "@mui/material";
+import {CircularProgress, Dialog, Slide, Zoom} from "@mui/material";
 import {SessionCommandType} from "../../logic/data/SessionCommandType";
 import {CustomTooltip} from "../../components/lo/CustomTooltip";
 import {TransitionProps} from '@mui/material/transitions';
@@ -77,6 +77,10 @@ import {ImportDatasetDialogProps} from "../importDatasets/ImportDatasetDialog";
 import {EditorLogicCompanion} from "../../logic/editor/EditorLogicCompanion";
 import _ from "lodash";
 import {format} from "sql-formatter";
+import {ReactComponent as ProfileIcon} from "../../assets/icons/ic-20/ic20-user.svg";
+import {CodeDisplay} from "../../components/lo/CodeDisplay";
+import {createMargin} from "../../logic/style/Margin";
+import styled from "styled-components";
 
 export type DebugEditorProps = {
 }
@@ -301,8 +305,23 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
 
     private createEditorMainAssembly() {
         this.assembly.assembly("main", (theme, props) => {
+            const Line = styled.span`
+              position: absolute;
+              height: 100%;
+              width: fit-content;
+              
+              &::before {
+                content: ' ';
+                width: 2px;
+                height: 100%;
+                position: absolute;
+                left: 0;
+                background-color: ${theme.colors.backgroundHighlightColor200.css()};
+              }
+            `;
+
             return (
-                <FlexBox height={percent(100)} width={percent(100)} gap={theme.gaps.smallGab} flexDir={FlexDirection.COLUMN}>
+                <FlexBox height={percent(100)} width={percent(100)} gap={theme.gaps.smallGab}  flexDir={FlexDirection.COLUMN}>
                     <Text text={"Database output"} bold uppercase type={TextType.secondaryDescription}/>
                     <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab} width={percent(100)} justifyContent={Justify.SPACE_BETWEEN} align={Align.CENTER}>
                         {this.renderHistoryButton()}
@@ -314,10 +333,84 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                         }}/>
                     </FlexBox>
 
-                    <If condition={App.app().config.debugMode} ifTrue={this.renderDBHistory()} ifFalse={
-                        <FlexBox height={percent(100)}>
+                    <FlexBox width={percent(100)} height={percent(100)} align={Align.END} justifyContent={Justify.FLEX_END} gap={px()}>
+                        <FlexBox flexDir={FlexDirection.ROW} width={percent(100)}>
+                            <Box visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} noPadding width={px(38)} height={px(38)} children={
+                                <FlexBox width={percent(100)} height={percent(100)} justifyContent={Justify.CENTER} align={Align.CENTER} children={
+                                    <Icon icon={<ProfileIcon/>}/>
+                                }/>
+                            }/>
+                            <FlexBox gap={px(0)} width={percent(100)}>
+                                <Box width={percent(100)} opaque visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} arrow={{
+                                    enable: true,
+                                    bgColor: theme.colors.backgroundColor
+                                }} noBGColor children={
+                                    <FlexBox width={percent(100)}>
+                                        <Text text={"SQL basic update"} type={TextType.smallHeader}/>
+                                        <CodeDisplay extensions={[sql()]} code={["show tables from information-scheme"]}/>
+                                    </FlexBox>
+                                }/>
+
+                                <FlexBox overflowXBehaviour={OverflowBehaviour.SCROLL} width={percent(100)}>
+                                    <FlexBox flexDir={FlexDirection.ROW} height={percent(100)} padding paddingY={theme.gaps.defaultGab} style={{position: "relative"}} align={Align.CENTER} margin={createMargin(0, 0, 0, theme.gaps.smallGab.measurand)}>
+                                        <Line/>
+
+                                        <Icon icon={<ProfileIcon/>} style={{
+                                            marginLeft: "-9px",
+                                            borderRadius: "9999px",
+                                            boxShadow: `0 0 0 ${theme.paddings.defaultTextIconPadding.withPlus(1).css()} ${theme.colors.backgroundColor.css()}`,
+                                            backgroundColor: theme.colors.backgroundColor.css()
+                                        }} size={px(20)}/>
+
+                                        <FlexBox gap={px(1)}>
+                                            <Text text={"Processing sql instruction on node **bvss-1**  [Open a ticket]()"} type={TextType.secondaryDescription}/>
+                                            <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab}>
+                                                <Text text={"EPD:"} type={TextType.secondaryDescription} fontSize={px(14)}/>
+                                                <Text text={"7ms"} coloredText visualMeaning={ObjectVisualMeaning.INFO} type={TextType.secondaryDescription} fontSize={px(14)}/>
+                                            </FlexBox>
+                                        </FlexBox>
+
+
+                                    </FlexBox>
+                                </FlexBox>
+
+                            </FlexBox>
                         </FlexBox>
-                    }/>
+
+                        <FlexBox flexDir={FlexDirection.ROW} width={percent(100)} >
+                            <Box visualMeaning={ObjectVisualMeaning.ERROR} noPadding width={px(38)} height={px(38)} children={
+                                <FlexBox width={percent(100)} height={percent(100)} justifyContent={Justify.CENTER} align={Align.CENTER} children={
+                                    <Icon icon={<ErrorIcon/>}/>
+                                }/>
+                            }/>
+                            <FlexBox gap={px(0)} width={percent(100)}>
+                                <Box width={percent(100)} opaque visualMeaning={ObjectVisualMeaning.ERROR} arrow={{
+                                    enable: true,
+                                    bgColor: theme.colors.backgroundColor
+                                }} noBGColor children={
+                                    <FlexBox width={percent(100)} overflowXBehaviour={OverflowBehaviour.SCROLL} gap={theme.gaps.smallGab}>
+                                        <Text text={"Unable to execute SQL instruction"} type={TextType.smallHeader}/>
+                                        <Text text={"Please check the instruction for errors"} fontSize={px(12)} type={TextType.secondaryDescription}/>
+
+                                        <Separator style={{marginBottom: theme.gaps.defaultGab.css()}}/>
+
+                                        <FlexBox gap={px(1)}>
+                                            <Text text={"Error type"} uppercase bold fontSize={px(12)}/>
+                                            <Text text={"org.h2.jdbc.JdbcSQLNonTransientException"} />
+                                        </FlexBox>
+
+                                        <FlexBox gap={px(1)}>
+                                            <Text text={"Message"} uppercase bold fontSize={px(12)}/>
+                                            <Text text={"Method is not allowed for a query. Use execute or executeQuery instead of executeUpdate; SQL statement: show tables [90001-200]"} />
+                                        </FlexBox>
+
+                                    </FlexBox>
+                                }/>
+                            </FlexBox>
+                        </FlexBox>
+                    </FlexBox>
+
+                    <If condition={App.app().config.debugMode} ifTrue={this.renderDBHistory()}/>
                 </FlexBox>
             );
         })
@@ -1123,17 +1216,19 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
         // todo is this code here correct? -> Editor login possible?
         App.app().triggerLoginIfNotLoggedIn({});
 
-        this.setSQLInput(this.companion().loadMainEditorContent(this.local.state.command));
+        if (this.companion() !== undefined) {
+            this.setSQLInput(this.companion().loadMainEditorContent(this.local.state.command));
+        }
     }
 
     componentRender(p: DebugEditorProps, s: DebugEditorState, l: DebugEditorLocalState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         const session: ProjectInfoData | undefined = App.app().shard<DBSessionCacheShard>("db-session-cache").currentInfoData;
         return (
-            <RedirectController redirect={this.state.redirect} data={{
-                to: this.state.to
-            }}>
-                {session === undefined ? this.renderSessionUndefinedErrorPage() : this.renderEditor(session)}
-            </RedirectController>
+            <RedirectController
+                redirect={this.state.redirect}
+                data={{to: this.state.to}}
+                children={session === undefined ? this.renderSessionUndefinedErrorPage() : this.renderEditor(session)}
+            />
         );
     }
 }
