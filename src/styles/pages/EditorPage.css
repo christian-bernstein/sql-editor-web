@@ -1,0 +1,8 @@
+.react-swipeable-view-container {
+  height: 100%;
+}
+.react-swipeable-view-container > *, .react-swipeable-view-container > * > * {
+  height: 100%;
+}
+
+/*# sourceMappingURL=EditorPage.css.map */

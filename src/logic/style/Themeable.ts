@@ -256,6 +256,10 @@ export namespace Themeable {
         muiTheme: createTheme({
             palette: {
                 mode: 'dark',
+                primary: {
+                    main: darkTritanopiaThemePallet.primaryColor.css(),
+                    light: darkTritanopiaThemePallet.primaryHighlightColor.css(),
+                }
             },
             typography: {
                 fontFamily: "OperatorMono"
@@ -363,6 +367,10 @@ export namespace Themeable {
         muiTheme: createTheme({
             palette: {
                 mode: 'dark',
+                primary: {
+                    main: defaultThemePallet.primaryColor.css(),
+                    light: defaultThemePallet.primaryHighlightColor.css(),
+                }
             },
             typography: {
                 fontFamily: "OperatorMono"
@@ -470,6 +478,10 @@ export namespace Themeable {
         muiTheme: createTheme({
             palette: {
                 mode: 'light',
+                primary: {
+                    main: lightThemePallet.primaryColor.css(),
+                    light: lightThemePallet.primaryHighlightColor.css(),
+                }
             },
             typography: {
                 fontFamily: "OperatorMono"
@@ -531,7 +543,8 @@ export namespace Themeable {
                     fontFamily: "OperatorMono",
                     fontStyle: "normal",
                     fontWeight: 350,
-                    fontSize: "14px",
+                    // fontSize: "14px",
+                    fontSize: "12px",
                     lineHeight: "19px",
                     display: "flex",
                     alignItems: "center",

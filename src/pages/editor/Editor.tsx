@@ -1,3 +1,4 @@
+import "../../styles/pages/EditorPage.scss";
 import React, {ForwardedRef} from "react";
 import {Screen} from "../../components/lo/Page";
 import {LiteGrid} from "../../components/lo/LiteGrid";
@@ -7,7 +8,6 @@ import {Justify} from "../../logic/style/Justify";
 import {Icon} from "../../components/lo/Icon";
 import {ReactComponent as MenuIcon} from "../../assets/icons/ic-20/ic20-menu.svg";
 import {ReactComponent as ErrorIcon} from "../../assets/icons/ic-20/ic20-alert.svg";
-import {ReactComponent as RedirectIcon} from "../../assets/icons/ic-20/ic20-arrow-right.svg";
 import {ReactComponent as PushIcon, ReactComponent as UploadIcon} from "../../assets/icons/ic-16/ic16-upload.svg";
 import {ReactComponent as PullIcon, ReactComponent as DownloadIcon} from "../../assets/icons/ic-16/ic16-download.svg";
 import {ReactComponent as CloseIcon} from "../../assets/icons/ic-20/ic20-close.svg";
@@ -35,10 +35,9 @@ import {sql} from "@codemirror/lang-sql";
 import {OverflowBehaviour} from "../../logic/style/OverflowBehaviour";
 import {Themeable} from "../../logic/style/Themeable";
 import {SessionCommand} from "../../logic/data/SessionCommand";
-import {arrayFactory} from "../../logic/Utils";
 import {Button} from "../../components/lo/Button";
 import {LoadState} from "../../logic/misc/LoadState";
-import {CircularProgress, Dialog, Slide, Zoom} from "@mui/material";
+import {CircularProgress, Dialog, Slide, Tab, Tabs, Zoom} from "@mui/material";
 import {SessionCommandType} from "../../logic/data/SessionCommandType";
 import {CustomTooltip} from "../../components/lo/CustomTooltip";
 import {TransitionProps} from '@mui/material/transitions';
@@ -52,7 +51,6 @@ import {HighlightStyle, tags} from "@codemirror/highlight"
 import {ElementHeader} from "../../components/lo/ElementHeader";
 import {InformationBox} from "../../components/ho/informationBox/InformationBox";
 import {SQLQueryResultDialog} from "../sqlQueryResult/SQLQueryResultDialog";
-import {RoadmapEntry} from "../../components/ho/roadmapEntry/RoadmapEntry";
 import {If} from "../../components/logic/If";
 import {HistoryEntry} from "./HistoryEntry";
 import {EditorCommandError} from "./EditorCommandError";
@@ -62,7 +60,6 @@ import {SQLResultDisplay} from "../../components/ho/dbErrorDisplay/SQLResultDisp
 import {Assembly} from "../../logic/assembly/Assembly";
 import {Switch} from "../../components/lo/Switch";
 import {SQLCommandUpdateResponsePacketData} from "../../packets/in/SQLCommandUpdateResponsePacketData";
-import {DBTaskCard} from "../../components/indev/DBTaskCard";
 import {CopyIcon} from "../../components/ho/copyIcon/CopyIcon";
 import {ContextCompound} from "../../components/ho/contextCompound/ContextCompound";
 import {ContextMenuElement} from "../../components/lo/ContextMenuElement";
@@ -81,6 +78,11 @@ import {ReactComponent as ProfileIcon} from "../../assets/icons/ic-20/ic20-user.
 import {CodeDisplay} from "../../components/lo/CodeDisplay";
 import {createMargin} from "../../logic/style/Margin";
 import styled from "styled-components";
+import {TabPanel} from "../../logic/misc/TabPanel";
+import SwipeableViews from "react-swipeable-views";
+import {FormDataHub} from "../../tests/epicure/components/FormDataHub";
+import {arrayFactory} from "../../logic/Utils";
+import {StructureTab} from "./tabs/structure/StructureTab";
 
 export type DebugEditorProps = {
 }
@@ -100,16 +102,14 @@ export type DebugEditorLocalState = {
     // todo SQLCommandQueryResponsePacketData | SQLCommandUpdateResponsePacketData
     sqlCommandResultCache: (SQLCommandQueryResponsePacketData)[],
     projectHistoryLocalCache: HistoryEntry[],
-
     error?: EditorCommandError,
-
     lastSQLCommandResponse?: SQLCommandQueryResponsePacketData | SQLCommandUpdateResponsePacketData,
     lastSQLCommandResponseType?: SessionCommandType,
-
     masterOpenDialogOnCommandResponse: boolean,
     savedCommands: SavedCommand[],
     debouncedCommandStoreFunc: (command: string) => void,
-    companion?: EditorLogicCompanion
+    companion?: EditorLogicCompanion,
+    fdh: FormDataHub
 }
 
 /**
@@ -142,7 +142,8 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
             debouncedCommandStoreFunc: _.debounce((command: string) => {
                 this.companion().setMainEditorContent(command);
             }, 2500),
-            companion: App.app().dbSessionCacheShard().currentInfoData === undefined ? undefined : new EditorLogicCompanion(App.app().dbSessionCacheShard().currentInfoData as ProjectInfoData)
+            companion: App.app().dbSessionCacheShard().currentInfoData === undefined ? undefined : new EditorLogicCompanion(App.app().dbSessionCacheShard().currentInfoData as ProjectInfoData),
+            fdh: new FormDataHub("SQLEditorPage").loadFromLocalStore()
         });
         this.initAssembly();
         this.initProtocolHandlers();
@@ -169,9 +170,9 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
         this.requestServerDBActionStream();
     }
 
-    private companion(): EditorLogicCompanion {
-        return this.local.state.companion as EditorLogicCompanion;
-    }
+    /**
+     * ASSEMBLY COMPONENT
+     */
 
     private initAssembly() {
         this.createBookmarksAssembly();
@@ -202,38 +203,10 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
         });
     }
 
-    private deleteSavedCommand(command: SavedCommand): void {
-        const commands = this.local.state.savedCommands;
-        const index = commands.indexOf(command);
-        if (index > -1) {
-            commands.splice(index, 1);
-            this.local.setStateWithChannels({
-                savedCommands: commands
-            }, ["bookmarks"]);
-
-            // todo remove this
-            this.setState({
-                openMainDialog: false
-            });
-        }
-    }
-
     private createInputAssembly() {
         this.assembly.assembly("input", (theme, props) => {
             return (
                 <FlexBox width={percent(100)} overflowYBehaviour={OverflowBehaviour.VISIBLE} gap={theme.gaps.smallGab} justifyContent={Justify.FLEX_END}>
-                    {/*<Box width={percent(100)} gapY={theme.gaps.defaultGab}>
-                            <Text text={"Edits"}/>
-                            <Task task={{}}/>
-                        </Box>*/}
-                    {/*<RenderExecutor
-                            id={v4()}
-                            channels={["*", "command"]}
-                            componentDidMountRelay={bridge => this.controller.register(bridge)}
-                            componentFactory={() => (
-                                <Text text={this.local.state.command}/>
-                            )}
-                        />*/}
                     <Text text={"SQL input"} bold uppercase type={TextType.secondaryDescription}/>
                     {this.component(local => {
                         return this.assembly.render({
@@ -241,19 +214,34 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                         })
                     }, "*", "error")}
 
-                    <FlexBox align={Align.CENTER} justifyContent={Justify.SPACE_BETWEEN} gap={theme.gaps.smallGab} flexDir={FlexDirection.ROW} width={percent(100)} height={percent(100)}>
-                        {this.component(local => {
-                            return this.assembly.render({
-                                component: "input-controls"
-                            })
-                        }, "*", "input-controls")}
-                        {this.component(local => {
-                            return this.assembly.render({
-                                component: "push-pull-button",
-                                param: ""
-                            })
-                        }, "*", "push-pull")}
+                    <FlexBox width={percent(100)} gap={theme.gaps.smallGab}>
+
+                        <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab} width={percent(100)} justifyContent={Justify.SPACE_BETWEEN} align={Align.CENTER}>
+                            {this.renderHistoryButton()}
+
+                            <Switch checked={this.local.state.masterOpenDialogOnCommandResponse} text={<Text text={"Auto dialog opening"} bold uppercase type={TextType.secondaryDescription} fontSize={px(12)}/>} onChange={(event, checked) => {
+                                this.local.setState({
+                                    masterOpenDialogOnCommandResponse: checked
+                                });
+                            }}/>
+                        </FlexBox>
+
+                        <FlexBox align={Align.CENTER} justifyContent={Justify.SPACE_BETWEEN} gap={theme.gaps.smallGab} flexDir={FlexDirection.ROW} width={percent(100)} height={percent(100)}>
+                            {this.component(local => {
+                                return this.assembly.render({
+                                    component: "input-controls"
+                                })
+                            }, "*", "input-controls")}
+                            {this.component(local => {
+                                return this.assembly.render({
+                                    component: "push-pull-button",
+                                    param: ""
+                                })
+                            }, "*", "push-pull")}
+                        </FlexBox>
                     </FlexBox>
+
+
 
                     <FlexBox flexDir={FlexDirection.ROW} width={percent(100)} gap={theme.gaps.smallGab}>
                         <CodeEditor
@@ -305,115 +293,56 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
 
     private createEditorMainAssembly() {
         this.assembly.assembly("main", (theme, props) => {
-            const Line = styled.span`
-              position: absolute;
-              height: 100%;
-              width: fit-content;
-              
-              &::before {
-                content: ' ';
-                width: 2px;
-                height: 100%;
-                position: absolute;
-                left: 0;
-                background-color: ${theme.colors.backgroundHighlightColor200.css()};
-              }
-            `;
+            const fdh: FormDataHub = this.local.state.fdh;
 
             return (
-                <FlexBox height={percent(100)} width={percent(100)} gap={theme.gaps.smallGab}  flexDir={FlexDirection.COLUMN}>
-                    <Text text={"Database output"} bold uppercase type={TextType.secondaryDescription}/>
-                    <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab} width={percent(100)} justifyContent={Justify.SPACE_BETWEEN} align={Align.CENTER}>
-                        {this.renderHistoryButton()}
-
-                        <Switch checked={this.local.state.masterOpenDialogOnCommandResponse} text={<Text text={"Auto dialog opening"} bold uppercase type={TextType.secondaryDescription} fontSize={px(12)}/>} onChange={(event, checked) => {
-                            this.local.setState({
-                                masterOpenDialogOnCommandResponse: checked
-                            });
-                        }}/>
-                    </FlexBox>
-
-                    <FlexBox width={percent(100)} height={percent(100)} align={Align.END} justifyContent={Justify.FLEX_END} gap={px()}>
-                        <FlexBox flexDir={FlexDirection.ROW} width={percent(100)}>
-                            <Box visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} noPadding width={px(38)} height={px(38)} children={
-                                <FlexBox width={percent(100)} height={percent(100)} justifyContent={Justify.CENTER} align={Align.CENTER} children={
-                                    <Icon icon={<ProfileIcon/>}/>
-                                }/>
-                            }/>
-                            <FlexBox gap={px(0)} width={percent(100)}>
-                                <Box width={percent(100)} opaque visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} arrow={{
-                                    enable: true,
-                                    bgColor: theme.colors.backgroundColor
-                                }} noBGColor children={
-                                    <FlexBox width={percent(100)}>
-                                        <Text text={"SQL basic update"} type={TextType.smallHeader}/>
-                                        <CodeDisplay extensions={[sql()]} code={["show tables from information-scheme"]}/>
-                                    </FlexBox>
-                                }/>
-
-                                <FlexBox overflowXBehaviour={OverflowBehaviour.SCROLL} width={percent(100)}>
-                                    <FlexBox flexDir={FlexDirection.ROW} height={percent(100)} padding paddingY={theme.gaps.defaultGab} style={{position: "relative"}} align={Align.CENTER} margin={createMargin(0, 0, 0, theme.gaps.smallGab.measurand)}>
-                                        <Line/>
-
-                                        <Icon icon={<ProfileIcon/>} style={{
-                                            marginLeft: "-9px",
-                                            borderRadius: "9999px",
-                                            boxShadow: `0 0 0 ${theme.paddings.defaultTextIconPadding.withPlus(1).css()} ${theme.colors.backgroundColor.css()}`,
-                                            backgroundColor: theme.colors.backgroundColor.css()
-                                        }} size={px(20)}/>
-
-                                        <FlexBox gap={px(1)}>
-                                            <Text text={"Processing sql instruction on node **bvss-1**  [Open a ticket]()"} type={TextType.secondaryDescription}/>
-                                            <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab}>
-                                                <Text text={"EPD:"} type={TextType.secondaryDescription} fontSize={px(14)}/>
-                                                <Text text={"7ms"} coloredText visualMeaning={ObjectVisualMeaning.INFO} type={TextType.secondaryDescription} fontSize={px(14)}/>
-                                            </FlexBox>
-                                        </FlexBox>
-
-
-                                    </FlexBox>
-                                </FlexBox>
-
+                <FlexBox width={percent(100)} gap={theme.gaps.smallGab} height={percent(100)} flexDir={FlexDirection.COLUMN} style={{
+                    flexGrow: 0,
+                    overflowY: "scroll"
+                }} children={
+                    <FlexBox align={Align.CENTER} width={percent(100)} height={percent(100)}>
+                        {this.component(() => (
+                            <FlexBox width={percent(100)} gap={px()}>
+                                <Tabs sx={{maxWidth: "100%"}} value={fdh.get("main-tab-index", 0)} textColor="inherit" aria-label="full width tabs example" centered variant="scrollable" scrollButtons allowScrollButtonsMobile onChange={(ev, value) => {
+                                    fdh.set("main-tab-index", value as number, true);
+                                    this.rerender("main-tab-tabs", "main-tab-nav");
+                                }}>
+                                    <Tab label={"Dashboard"}/>
+                                    <Tab label={"Structure"}/>
+                                    <Tab label={"SQL"}/>
+                                    <Tab label={"Search"}/>
+                                    <Tab label={"Query"}/>
+                                    <Tab label={"Export"}/>
+                                    <Tab label={"Import"}/>
+                                    <Tab label={"Operations"}/>
+                                    <Tab label={"Routines"}/>
+                                    <Tab label={"Events"}/>
+                                    <Tab label={"Triggers"}/>
+                                    <Tab label={"Privileges"}/>
+                                </Tabs>
+                                <Separator orientation={Orientation.HORIZONTAL}/>
                             </FlexBox>
-                        </FlexBox>
+                        ), "main-tab-nav")}
 
-                        <FlexBox flexDir={FlexDirection.ROW} width={percent(100)} >
-                            <Box visualMeaning={ObjectVisualMeaning.ERROR} noPadding width={px(38)} height={px(38)} children={
-                                <FlexBox width={percent(100)} height={percent(100)} justifyContent={Justify.CENTER} align={Align.CENTER} children={
-                                    <Icon icon={<ErrorIcon/>}/>
-                                }/>
-                            }/>
-                            <FlexBox gap={px(0)} width={percent(100)}>
-                                <Box width={percent(100)} opaque visualMeaning={ObjectVisualMeaning.ERROR} arrow={{
-                                    enable: true,
-                                    bgColor: theme.colors.backgroundColor
-                                }} noBGColor children={
-                                    <FlexBox width={percent(100)} overflowXBehaviour={OverflowBehaviour.SCROLL} gap={theme.gaps.smallGab}>
-                                        <Text text={"Unable to execute SQL instruction"} type={TextType.smallHeader}/>
-                                        <Text text={"Please check the instruction for errors"} fontSize={px(12)} type={TextType.secondaryDescription}/>
-
-                                        <Separator style={{marginBottom: theme.gaps.defaultGab.css()}}/>
-
-                                        <FlexBox gap={px(1)}>
-                                            <Text text={"Error type"} uppercase bold fontSize={px(12)}/>
-                                            <Text text={"org.h2.jdbc.JdbcSQLNonTransientException"} />
-                                        </FlexBox>
-
-                                        <FlexBox gap={px(1)}>
-                                            <Text text={"Message"} uppercase bold fontSize={px(12)}/>
-                                            <Text text={"Method is not allowed for a query. Use execute or executeQuery instead of executeUpdate; SQL statement: show tables [90001-200]"} />
-                                        </FlexBox>
-
-                                    </FlexBox>
-                                }/>
-                            </FlexBox>
-                        </FlexBox>
+                        {this.component(() => (
+                            <SwipeableViews
+                                index={fdh.get("main-tab-index", 0)}
+                                style={{
+                                    width: "100%",
+                                    height: "100%",
+                                }}
+                                onChangeIndex={(index: number) => {
+                                    fdh.set("main-tab-index", index, true);
+                                    this.rerender("main-tab-nav");
+                                }}
+                            >
+                                <StructureTab companion={this.local.state.companion as EditorLogicCompanion} fdh={this.local.state.fdh} editor={this}/>
+                            </SwipeableViews>
+                        ), "main-tab-tabs")}
                     </FlexBox>
-
-                    <If condition={App.app().config.debugMode} ifTrue={this.renderDBHistory()}/>
-                </FlexBox>
+                }/>
             );
-        })
+        });
     }
 
     private createHeaderAssembly() {
@@ -433,7 +362,7 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                             <FlexBox align={Align.CENTER} justifyContent={Justify.FLEX_END} flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab}>
                                 <Icon icon={<CloseIcon/>} onClick={() => this.closeSession()}/>
                                 <Separator orientation={Orientation.VERTICAL}/>
-                                <ServerConnectionIcon openConnectionMetricsDialog/>
+                                <ServerConnectionIcon openConnectionMetricsDialog pulse={false}/>
                             </FlexBox>
                         </LiteGrid>
                     </FlexBox>
@@ -548,14 +477,6 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                     }</Button>
                 ]}/>
             )
-        });
-    }
-
-    private setSQLInput(sql: string): void {
-        this.local.setStateWithChannels({
-            command: sql
-        }, ["input"], () => {
-            this.local.state.debouncedCommandStoreFunc(sql);
         });
     }
 
@@ -790,7 +711,6 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                         //     }
                         // />
                     ]}/>
-
                     <Group orientation={Orientation.HORIZONTAL} opaque height={percent(100)} elements={[
                         // Clear the sql input
                         <Button
@@ -808,18 +728,10 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                             visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
                             opaque={false}
                             shrinkOnClick={true} children={
-                                <CopyIcon copyValueProducer={() => this.local.state.command} displayValueAsHover={false}/>
-                            }
+                            <CopyIcon copyValueProducer={() => this.local.state.command} displayValueAsHover={false}/>
+                        }
                         />,
                     ]}/>
-
-                    {/*<ContextCompound wrapMenu={false} menu={<QuickActionPanel/>} children={
-                        <Button
-                            children={
-                                <Icon icon={<QuickPanelIcon/>}/>
-                            }
-                        />
-                    }/>*/}
                 </FlexBox>
             );
         })
@@ -861,6 +773,38 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                 );
             } else return <>Data is undefined</>;
         });
+    }
+
+    /**
+     * LOGIC COMPONENT
+     */
+
+    private companion(): EditorLogicCompanion {
+        return this.local.state.companion as EditorLogicCompanion;
+    }
+
+    private setSQLInput(sql: string): void {
+        this.local.setStateWithChannels({
+            command: sql
+        }, ["input"], () => {
+            this.local.state.debouncedCommandStoreFunc(sql);
+        });
+    }
+
+    private deleteSavedCommand(command: SavedCommand): void {
+        const commands = this.local.state.savedCommands;
+        const index = commands.indexOf(command);
+        if (index > -1) {
+            commands.splice(index, 1);
+            this.local.setStateWithChannels({
+                savedCommands: commands
+            }, ["bookmarks"]);
+
+            // todo remove this
+            this.setState({
+                openMainDialog: false
+            });
+        }
     }
 
     private initProtocolHandlers() {
@@ -943,92 +887,39 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
         this.goto("dashboard/");
     }
 
-    private async sendCommand(type: SessionCommandType, command?: string) {
-        // todo set working state to true
-
-        const apiRequest = async () => {
-            const dbID = App.app().shard<DBSessionCacheShard>("db-session-cache").currentInfoData?.id;
-            App.app().getConnector().call({
-                protocol: "main",
-                packetID: "SessionCommandPacketData",
-                data: {
-                    type: type,
-                    raw: command === undefined ? this.local.state.command : command,
-                    attributes: new Map<string, string>(),
-                    dbID: dbID
-                } as SessionCommand,
-                callback: {
-                    handle: (connector1, packet) => {
-                        this.local.setStateWithChannels({
-                            processPushCommand: false,
-                        }, ["*", "push-pull"]);
-                    }
-                }
-            });
-        };
-
-        switch (type) {
-            case SessionCommandType.PULL:
-                this.local.setState({
-                    processPullCommand: true,
-                    error: undefined,
-                    lastSQLCommandResponseType: undefined,
-                    lastSQLCommandResponse: undefined
-                }, new Map([["channels", ["*", "push-pull", "error"]]]), () => apiRequest());
-                break;
-            case SessionCommandType.PUSH:
-                this.local.setState({
-                    processPushCommand: true,
-                    error: undefined,
-                    lastSQLCommandResponseType: undefined,
-                    lastSQLCommandResponse: undefined
-                }, new Map([["channels", ["*", "push-pull", "error"]]]), () => apiRequest());
-                break;
-        }
-
-        // setTimeout(() => {
-        //     switch (type) {
-        //         case SessionCommandType.PULL:
-        //             this.local.setState({
-        //                 processPullCommand: false
-        //             }, new Map([["channels", ["*", "push-pull"]]]));
-        //             break;
-        //         case SessionCommandType.PUSH:
-        //             this.local.setState({
-        //                 processPushCommand: false
-        //             }, new Map([["channels", ["*", "push-pull"]]]));
-        //             break;
-        //     }
-        // }, 10000);
-    }
-
     // noinspection JSMethodCanBeStatic
     private renderSessionUndefinedErrorPage() {
         return (
-            <Screen>
-                <Centered fullHeight={true}>
+            <Screen children={
+                <Centered fullHeight={true} children={
                     <Box visualMeaning={ObjectVisualMeaning.ERROR} opaque={true}>
-                        <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} justifyContent={Justify.CENTER}>
-                            <Icon icon={<ErrorIcon/>} visualMeaning={ObjectVisualMeaning.ERROR} colored={true}/>
-                            <FlexBox>
-                                <Text text={"Error while rendering dashboard"} type={TextType.smallHeader}/>
-                                {/* todo change link */}
-                                <Text text={"Session data is undefined, but shouldn't be undefined\nThis error can be caused by reloading the editor page. Its not a bug, but a yet un-implemented feature.\nIf you still think, this might be an error, contact the project administrator [here](mailto:name@email.com)"}/>
-                                <Text text={"**Goto dashboard**"}
-                                      type={TextType.secondaryDescription} visualMeaning={ObjectVisualMeaning.ERROR}
-                                      uppercase={true}
-                                      cursor={Cursor.pointer}
-                                      coloredText={true}
-                                      highlight={true}
-                                      enableLeftAppendix={true}
-                                      onClick={() => this.goto("/dashboard")}
-                                      leftAppendix={<Icon icon={<RedirectIcon/>} visualMeaning={ObjectVisualMeaning.ERROR} colored={true}/>}
-                                />
-                            </FlexBox>
+                        <FlexBox>
+                            <Text type={TextType.smallHeader} text={"Error while rendering dashboard"} />
+                            <Text type={TextType.secondaryDescription} text={""} texts={[
+                                "Session data is undefined, but shouldn't be undefined",
+                                "This error can be caused by reloading the editor page. Its not a bug, but a yet un-implemented feature.",
+                                "If you still think, this might be an error, contact the project administrator [here](mailto:name@email.com)"
+                            ]}/>
+
+                            <Button
+                                border={false}
+                                bgColorOnDefault={false}
+                                visualMeaning={ObjectVisualMeaning.ERROR}
+                                opaque
+                                children={
+                                    <Text text={"**Goto dashboard**"}
+                                          type={TextType.secondaryDescription} visualMeaning={ObjectVisualMeaning.ERROR}
+                                          uppercase={true}
+                                          cursor={Cursor.pointer}
+                                          coloredText={true}
+                                          onClick={() => this.goto("/dashboard")}
+                                    />
+                                }
+                            />
                         </FlexBox>
                     </Box>
-                </Centered>
-            </Screen>
+                }/>
+            }/>
         );
     }
 
@@ -1081,34 +972,6 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                 />
             );
         } else return <></>
-    }
-
-    private renderDBHistory(): JSX.Element {
-        const theme: Themeable.Theme = utilizeGlobalTheme();
-
-        /*
-        <DBTask data={{
-            timestamp: new Date(),
-            client: {
-                type: ClientType.USER,
-                id: v4(),
-                username: "root"
-            }
-        }}/>
-         */
-        // height={percent(100)}
-        return (
-            <Box height={percent(100)} gapY={theme.gaps.smallGab} overflowYBehaviour={OverflowBehaviour.SCROLL} width={percent(100)}>
-                <DBTaskCard/>
-                <DBTaskCard/>
-                <DBTaskCard/>
-                <FlexBox gap={theme.gaps.smallGab} overflowYBehaviour={OverflowBehaviour.SCROLL} children={arrayFactory(() => (
-                    <RoadmapEntry status={"completed"} children={
-                        <Text text={"Hallo world! this is a message."}/>
-                    }/>
-                ), 0)}/>
-            </Box>
-        );
     }
 
     private renderHistoryButton(): JSX.Element {
@@ -1184,14 +1047,11 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
         return (
             <Screen>
                 {this.renderDialog()}
-                <FlexBox height={percent(100)} flexDir={FlexDirection.COLUMN} gap={theme.gaps.defaultGab} overflowXBehaviour={OverflowBehaviour.VISIBLE} overflowYBehaviour={OverflowBehaviour.VISIBLE} justifyContent={Justify.SPACE_BETWEEN}>
-                    {this.component(local => this.assembly.render({
-                        component: "header",
-                        param: session
-                    }), "header")}
-                    <Separator/>
+                <FlexBox height={percent(100)} flexDir={FlexDirection.COLUMN} gap={theme.gaps.defaultGab} overflowXBehaviour={OverflowBehaviour.HIDDEN} overflowYBehaviour={OverflowBehaviour.SCROLL} justifyContent={Justify.SPACE_BETWEEN}>
+                    {this.component(local => this.assembly.render({component: "header", param: session}), "header")}
+
                     {this.component(local => this.assembly.liteRender("main"), "main")}
-                    <Separator orientation={Orientation.HORIZONTAL}/>
+
                     {this.component(local => this.assembly.liteRender("input"), "input")}
                 </FlexBox>
             </Screen>
@@ -1210,6 +1070,65 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                 type: type
             });
         }
+    }
+
+    private async sendCommand(type: SessionCommandType, command?: string) {
+        // todo set working state to true
+
+        const apiRequest = async () => {
+            const dbID = App.app().shard<DBSessionCacheShard>("db-session-cache").currentInfoData?.id;
+            App.app().getConnector().call({
+                protocol: "main",
+                packetID: "SessionCommandPacketData",
+                data: {
+                    type: type,
+                    raw: command === undefined ? this.local.state.command : command,
+                    attributes: new Map<string, string>(),
+                    dbID: dbID
+                } as SessionCommand,
+                callback: {
+                    handle: (connector1, packet) => {
+                        this.local.setStateWithChannels({
+                            processPushCommand: false,
+                        }, ["*", "push-pull"]);
+                    }
+                }
+            });
+        };
+
+        switch (type) {
+            case SessionCommandType.PULL:
+                this.local.setState({
+                    processPullCommand: true,
+                    error: undefined,
+                    lastSQLCommandResponseType: undefined,
+                    lastSQLCommandResponse: undefined
+                }, new Map([["channels", ["*", "push-pull", "error"]]]), () => apiRequest());
+                break;
+            case SessionCommandType.PUSH:
+                this.local.setState({
+                    processPushCommand: true,
+                    error: undefined,
+                    lastSQLCommandResponseType: undefined,
+                    lastSQLCommandResponse: undefined
+                }, new Map([["channels", ["*", "push-pull", "error"]]]), () => apiRequest());
+                break;
+        }
+
+        // setTimeout(() => {
+        //     switch (type) {
+        //         case SessionCommandType.PULL:
+        //             this.local.setState({
+        //                 processPullCommand: false
+        //             }, new Map([["channels", ["*", "push-pull"]]]));
+        //             break;
+        //         case SessionCommandType.PUSH:
+        //             this.local.setState({
+        //                 processPushCommand: false
+        //             }, new Map([["channels", ["*", "push-pull"]]]));
+        //             break;
+        //     }
+        // }, 10000);
     }
 
     componentDidMount() {
