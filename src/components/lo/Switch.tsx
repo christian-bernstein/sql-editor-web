@@ -24,7 +24,7 @@ export class Switch extends BernieComponent<SwitchProps, any, any> {
         const checked = getOr(p.checked, false);
         // todo check if 3 width-settings affect the 'auto-result-open'-button in the editor
         const Wrapper = styled.span`       
-          width: 100%;
+          // width: 100%;
           
           .MuiFormControlLabel-root {
             margin-right: 0;

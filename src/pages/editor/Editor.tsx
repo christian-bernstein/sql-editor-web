@@ -8,7 +8,7 @@ import {Justify} from "../../logic/style/Justify";
 import {Icon} from "../../components/lo/Icon";
 import {ReactComponent as MenuIcon} from "../../assets/icons/ic-20/ic20-menu.svg";
 import {ReactComponent as PushIcon, ReactComponent as UploadIcon} from "../../assets/icons/ic-16/ic16-upload.svg";
-import {ReactComponent as PullIcon, ReactComponent as DownloadIcon} from "../../assets/icons/ic-16/ic16-download.svg";
+import {ReactComponent as PullIcon} from "../../assets/icons/ic-16/ic16-download.svg";
 import {ReactComponent as CloseIcon} from "../../assets/icons/ic-20/ic20-close.svg";
 import {ReactComponent as DeleteIcon} from "../../assets/icons/ic-20/ic20-delete.svg";
 import {ReactComponent as HistoryIcon} from "../../assets/icons/ic-20/ic20-book.svg";
@@ -64,7 +64,6 @@ import {ContextCompound} from "../../components/ho/contextCompound/ContextCompou
 import {ContextMenuElement} from "../../components/lo/ContextMenuElement";
 import {Badge} from "../../components/lo/Badge";
 import {SavedCommand} from "./SavedCommand";
-import {CommandHistoryElement} from "../../components/ho/commandHistoryElement/CommandHistoryElement";
 import {SavedCommandType} from "./SavedCommandType";
 import {Default, Mobile} from "../../components/logic/Media";
 import {SQLCommandBookmarksDialog} from "../sqlCommandBookmarks/SQLCommandBookmarksDialog";
@@ -209,26 +208,52 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                         })
                     }, "*", "error")}
 
-                    <FlexBox width={percent(100)} gap={theme.gaps.smallGab}>
+                    <Mobile children={
+                        <FlexBox width={percent(100)} gap={theme.gaps.smallGab}>
+                            <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab} width={percent(100)} justifyContent={Justify.SPACE_BETWEEN} align={Align.CENTER}>
+                                {this.renderHistoryButton()}
 
-                        <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab} width={percent(100)} justifyContent={Justify.SPACE_BETWEEN} align={Align.CENTER}>
-                            {this.renderHistoryButton()}
+                                {/* this.local.state.masterOpenDialogOnCommandResponse */}
+                                <Switch checked={this.local.state.fdh.get("auto-dialog-opening", true)} text={<Text text={"Auto dialog opening"} bold uppercase type={TextType.secondaryDescription} fontSize={px(12)}/>} onChange={(event, checked) => {
+                                    this.local.setState({
+                                        masterOpenDialogOnCommandResponse: checked
+                                    });
+                                    this.local.state.fdh.set("auto-dialog-opening", checked, true);
+                                }}/>
+                            </FlexBox>
 
-                            {/* this.local.state.masterOpenDialogOnCommandResponse */}
-                            <Switch checked={this.local.state.fdh.get("auto-dialog-opening", true)} text={<Text text={"Auto dialog opening"} bold uppercase type={TextType.secondaryDescription} fontSize={px(12)}/>} onChange={(event, checked) => {
-                                this.local.setState({
-                                    masterOpenDialogOnCommandResponse: checked
-                                });
-                                this.local.state.fdh.set("auto-dialog-opening", checked, true);
-                            }}/>
+                            <FlexBox align={Align.CENTER} justifyContent={Justify.SPACE_BETWEEN} gap={theme.gaps.smallGab} flexDir={FlexDirection.ROW} width={percent(100)} height={percent(100)}>
+                                {this.component(local => {
+                                    return this.assembly.render({
+                                        component: "input-controls"
+                                    })
+                                }, "*", "input-controls")}
+                                {this.component(local => {
+                                    return this.assembly.render({
+                                        component: "push-pull-button",
+                                        param: ""
+                                    })
+                                }, "*", "push-pull")}
+                            </FlexBox>
                         </FlexBox>
+                    }/>
 
+                    <Default children={
                         <FlexBox align={Align.CENTER} justifyContent={Justify.SPACE_BETWEEN} gap={theme.gaps.smallGab} flexDir={FlexDirection.ROW} width={percent(100)} height={percent(100)}>
-                            {this.component(local => {
-                                return this.assembly.render({
-                                    component: "input-controls"
-                                })
-                            }, "*", "input-controls")}
+                            <FlexBox width={percent(100)} flexDir={FlexDirection.ROW} align={Align.CENTER}>
+                                {this.renderHistoryButton()}
+                                {this.component(local => {
+                                    return this.assembly.render({
+                                        component: "input-controls"
+                                    })
+                                }, "*", "input-controls")}
+                                <Switch checked={this.local.state.fdh.get("auto-dialog-opening", true)} text={<Text text={"Auto dialog opening"} bold uppercase type={TextType.secondaryDescription} fontSize={px(12)}/>} onChange={(event, checked) => {
+                                    this.local.setState({
+                                        masterOpenDialogOnCommandResponse: checked
+                                    });
+                                    this.local.state.fdh.set("auto-dialog-opening", checked, true);
+                                }}/>
+                            </FlexBox>
                             {this.component(local => {
                                 return this.assembly.render({
                                     component: "push-pull-button",
@@ -236,7 +261,9 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                                 })
                             }, "*", "push-pull")}
                         </FlexBox>
-                    </FlexBox>
+                    }/>
+
+
 
 
 
