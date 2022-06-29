@@ -64,6 +64,44 @@ export class StructureTab extends BernieComponent<StructureTabProps, any, Struct
                 }/>
             ),
             run: (instance, tables) => {}
+        },
+
+        {
+            allowedRange: {min: 1, max: 1},
+            actionButtonRenderer: (instance, config) => (
+                <Button border={false} bgColorOnDefault={false} opaqueValue={.6} children={
+                    <Text type={TextType.secondaryDescription} cursor={Cursor.pointer} text={"Search"} enableLeftAppendix leftAppendix={<Icon icon={<SearchIcon/>}/>}/>
+                }/>
+            ),
+            run: (instance, tables) => {}
+        },
+
+        {
+            allowedRange: {min: 1, max: 1},
+            actionButtonRenderer: (instance, config) => (
+                <Button border={false} bgColorOnDefault={false} opaqueValue={.6} children={
+                    <Text type={TextType.secondaryDescription} cursor={Cursor.pointer} text={"Insert"} enableLeftAppendix leftAppendix={<Icon icon={<InsertIcon/>}/>}/>
+                }/>
+            ),
+            run: (instance, tables) => {}
+        },
+
+        {
+            actionButtonRenderer: (instance, config) => (
+                <Button border={false} visualMeaning={ObjectVisualMeaning.ERROR} bgColorOnDefault={false} opaque children={
+                    <Text type={TextType.secondaryDescription} highlight cursor={Cursor.pointer} visualMeaning={ObjectVisualMeaning.ERROR} text={"Empty"} enableLeftAppendix/>
+                }/>
+            ),
+            run: (instance, tables) => {}
+        },
+
+        {
+            actionButtonRenderer: (instance, config) => (
+                <Button border={false} visualMeaning={ObjectVisualMeaning.ERROR} bgColorOnDefault={false} opaque children={
+                    <Text type={TextType.secondaryDescription} highlight cursor={Cursor.pointer} visualMeaning={ObjectVisualMeaning.ERROR} text={"Drop"} enableLeftAppendix/>
+                }/>
+            ),
+            run: (instance, tables) => {}
         }
     ];
 
@@ -72,7 +110,6 @@ export class StructureTab extends BernieComponent<StructureTabProps, any, Struct
             tables: [],
             loadingTables: false,
             selected: []
-            // selected: new Map<number, boolean>()
         });
     }
 
@@ -100,7 +137,7 @@ export class StructureTab extends BernieComponent<StructureTabProps, any, Struct
             simulatedDelay: () => 5000,
             packet: {
                 attributes: new Map<string, string>(),
-                raw: "show tables from public",
+                raw: `show tables `,
                 type: SessionCommandType.PULL,
                 dbID: this.props.projectInfo.id
             }
@@ -122,11 +159,11 @@ export class StructureTab extends BernieComponent<StructureTabProps, any, Struct
                         pagination={"local"}
                         // theme={t.mode === "dark" ? "green-dark" : "green-light"}
                         theme={t.mode === "dark" ? "blue-dark" : "green-light"}
-                        selected={local.state.selected}
+                        defaultSelected={local.state.selected}
                         onSelectionChange={config => {
                             this.local.setStateWithChannels({
                                 selected: config.selected
-                            }, ["filters"]);
+                            }, ["table-actions"]);
                         }}
                         checkboxColumn
                         idProperty={"name"}
@@ -141,48 +178,36 @@ export class StructureTab extends BernieComponent<StructureTabProps, any, Struct
                         style={gridStyle as {[p: string]: string | number}}
                     />
 
-                    <If condition={Object.keys(this.local.state.selected as object).length > 0} ifTrue={
-                        <FlexBox width={percent(100)} align={Align.CENTER} justifyContent={Justify.FLEX_START} flexDir={FlexDirection.ROW} gap={px()}>
-                            <Icon icon={<ArrowLeftUpIcon/>} size={px(40)} style={{
-                                top: -6,
-                                left: 0,
-                                marginRight: t.gaps.smallGab.css(),
-                                marginLeft: 8,
-                            }}/>
-                            <FlexBox flexDir={FlexDirection.ROW} gap={px()} align={Align.CENTER} overflowXBehaviour={OverflowBehaviour.SCROLL}>
-                                {
-                                    StructureTab.tableActions.filter(act => {
-                                        const selectedCount = Object.keys(this.local.state.selected as object).length;
-                                        let allowed = true;
-                                        if (getOr(act.allowedRange?.min, 1) > selectedCount) {
-                                            allowed = false;
-                                        }
-                                        if (act.allowedRange?.max !== undefined && (act.allowedRange.max as number) < selectedCount) {
-                                            allowed = false
-                                        }
-                                        return allowed;
+                    {
+                        this.component(local => (
+                            <If condition={Object.keys(this.local.state.selected as object).length > 0} ifTrue={
+                                <FlexBox width={percent(100)} align={Align.CENTER} justifyContent={Justify.FLEX_START} flexDir={FlexDirection.ROW} gap={px()}>
+                                    <Icon icon={<ArrowLeftUpIcon/>} size={px(40)} style={{
+                                        top: -6,
+                                        left: 0,
+                                        marginRight: t.gaps.smallGab.css(),
+                                        marginLeft: 8,
+                                    }}/>
+                                    <FlexBox flexDir={FlexDirection.ROW} gap={px()} align={Align.CENTER} overflowXBehaviour={OverflowBehaviour.SCROLL}>
+                                        {
+                                            StructureTab.tableActions.filter(act => {
+                                                const selectedCount = Object.keys(this.local.state.selected as object).length;
+                                                let allowed = true;
+                                                if (getOr(act.allowedRange?.min, 1) > selectedCount) {
+                                                    allowed = false;
+                                                }
+                                                if (act.allowedRange?.max !== undefined && (act.allowedRange.max as number) < selectedCount) {
+                                                    allowed = false
+                                                }
+                                                return allowed;
 
-                                    }).map(act => act.actionButtonRenderer(this, act))
-                                }
-
-                                <Button border={false} bgColorOnDefault={false} opaqueValue={.6} children={
-                                    <Text type={TextType.secondaryDescription} cursor={Cursor.pointer} text={"Structure"} enableLeftAppendix/>
-                                }/>
-                                <Button border={false} bgColorOnDefault={false} opaqueValue={.6} children={
-                                    <Text type={TextType.secondaryDescription} cursor={Cursor.pointer} text={"Search"} enableLeftAppendix leftAppendix={<Icon icon={<SearchIcon/>}/>}/>
-                                }/>
-                                <Button border={false} bgColorOnDefault={false} opaqueValue={.6} children={
-                                    <Text type={TextType.secondaryDescription} cursor={Cursor.pointer} text={"Insert"} enableLeftAppendix leftAppendix={<Icon icon={<InsertIcon/>}/>}/>
-                                }/>
-                                <Button border={false} visualMeaning={ObjectVisualMeaning.ERROR} bgColorOnDefault={false} opaque children={
-                                    <Text type={TextType.secondaryDescription} highlight cursor={Cursor.pointer} visualMeaning={ObjectVisualMeaning.ERROR} text={"Empty"} enableLeftAppendix/>
-                                }/>
-                                <Button border={false} visualMeaning={ObjectVisualMeaning.ERROR} bgColorOnDefault={false} opaque children={
-                                    <Text type={TextType.secondaryDescription} highlight cursor={Cursor.pointer} visualMeaning={ObjectVisualMeaning.ERROR} text={"Drop"} enableLeftAppendix/>
-                                }/>
-                            </FlexBox>
-                        </FlexBox>
-                    }/>
+                                            }).map(act => act.actionButtonRenderer(this, act))
+                                        }
+                                    </FlexBox>
+                                </FlexBox>
+                            }/>
+                        ), "table-actions")
+                    }
                 </FlexBox>
             );
         }, "tables", "filters");
