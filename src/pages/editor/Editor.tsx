@@ -214,10 +214,12 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                         <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab} width={percent(100)} justifyContent={Justify.SPACE_BETWEEN} align={Align.CENTER}>
                             {this.renderHistoryButton()}
 
-                            <Switch checked={this.local.state.masterOpenDialogOnCommandResponse} text={<Text text={"Auto dialog opening"} bold uppercase type={TextType.secondaryDescription} fontSize={px(12)}/>} onChange={(event, checked) => {
+                            {/* this.local.state.masterOpenDialogOnCommandResponse */}
+                            <Switch checked={this.local.state.fdh.get("auto-dialog-opening", true)} text={<Text text={"Auto dialog opening"} bold uppercase type={TextType.secondaryDescription} fontSize={px(12)}/>} onChange={(event, checked) => {
                                 this.local.setState({
                                     masterOpenDialogOnCommandResponse: checked
                                 });
+                                this.local.state.fdh.set("auto-dialog-opening", checked, true);
                             }}/>
                         </FlexBox>
 
@@ -542,8 +544,6 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                                                     <Icon icon={<SaveIcon/>}/>
                                                 </FlexBox>
                                             )}/>
-
-
                                             <ContextMenuElement title={"Insert datasets"} icon={() => <Icon icon={<UploadIcon/>}/>} onClick={() => {
                                                 const dbID = App.app().dbSessionCacheShard().currentInfoData?.id;
                                                 if (dbID !== undefined) {
@@ -557,8 +557,6 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                                                     console.error("currentInfoData in dbSessionCacheShard return undefined for key 'id', cannot execute intrinsic sql session command routine.");
                                                 }
                                             }}/>
-
-
                                             <ContextMenuElement title={"Format sql"} onClick={() => this.formatSQL()}/>
                                         </FlexBox>
                                     </FlexBox>
@@ -587,10 +585,6 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                                                     <Icon icon={<SaveIcon/>}/>
                                                 </FlexBox>
                                             )}/>
-
-
-
-
                                             <ContextMenuElement title={"Insert datasets"} icon={() => <Icon icon={<UploadIcon/>}/>} onClick={() => {
                                                 const dbID = App.app().dbSessionCacheShard().currentInfoData?.id;
                                                 App.app().callAction(Constants.openMainDialogWithParamsAction, {
@@ -600,15 +594,7 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                                                     } as ImportDatasetDialogProps
                                                 });
                                             }}/>
-
-
-
-
-                                            <ContextMenuElement title={"Download data"} icon={() => (
-                                                <FlexBox flexDir={FlexDirection.ROW} gap={theme.gaps.defaultGab} align={Align.CENTER}>
-                                                    <Icon icon={<DownloadIcon/>}/>
-                                                </FlexBox>
-                                            )}/>
+                                            <ContextMenuElement title={"Format sql"} onClick={() => this.formatSQL()}/>
                                         </FlexBox>
                                         {/*<Text text={"Import data from your device. \nAllowed file formats: **.dat**, **.csv**, **.xls** *(Excel spreadsheet)*."}/>
                                 <InformationBox visualMeaning={ObjectVisualMeaning.BETA}>
