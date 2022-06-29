@@ -111,7 +111,7 @@ export class StructureTab extends BernieComponent<StructureTabProps, any, Struct
                         dataSource={local.state.tables}
                         style={gridStyle as {[p: string]: string | number}}
                     />
-                    <FlexBox width={percent(100)} align={Align.CENTER} justifyContent={Justify.CENTER} flexDir={FlexDirection.ROW} gap={t.gaps.smallGab}>
+                    <FlexBox width={percent(100)} align={Align.CENTER} justifyContent={Justify.CENTER} flexDir={FlexDirection.ROW} gap={px()}>
                         <Icon icon={<ArrowLeftUpIcon/>} size={px(40)} style={{
                             top: -6,
                             left: 0
