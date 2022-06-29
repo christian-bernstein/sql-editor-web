@@ -1072,7 +1072,7 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
         }
     }
 
-    private async sendCommand(type: SessionCommandType, command?: string) {
+    public async sendCommand(type: SessionCommandType, command?: string) {
         // todo set working state to true
 
         const apiRequest = async () => {
