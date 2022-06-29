@@ -59,8 +59,7 @@ export type SQLQueryResultDialogProps = {
 
 export type SQLQueryResultDialogLocalState = {
     localData: SQLCommandQueryResponsePacketData[],
-    current: number,
-    loadTable: boolean
+    current: number
 }
 
 export class SQLQueryResultDialog extends BernieComponent<SQLQueryResultDialogProps, any, SQLQueryResultDialogLocalState> {
@@ -68,8 +67,7 @@ export class SQLQueryResultDialog extends BernieComponent<SQLQueryResultDialogPr
     constructor(props: SQLQueryResultDialogProps) {
         super(props, undefined, {
             localData: props.data,
-            current: props.startingIndex,
-            loadTable: true
+            current: props.startingIndex
         });
 
         this.registerResultSwitcher();
@@ -78,13 +76,6 @@ export class SQLQueryResultDialog extends BernieComponent<SQLQueryResultDialogPr
         this.registerTelemetryViewer();
         this.registerHeader();
         this.registerContextMenu();
-    }
-
-    componentDidMount() {
-        super.componentDidMount();
-        this.local.setStateWithChannels({
-            loadTable: false
-        }, ["loader"]);
     }
 
     private dataset(): SQLCommandQueryResponsePacketData {
@@ -366,12 +357,7 @@ export class SQLQueryResultDialog extends BernieComponent<SQLQueryResultDialogPr
         return (
             <Screen>
                 {this.component(() => this.assembly.render({component: "header"}), "header")}
-                {this.component((local) => (
-                    <If condition={local.state.loadTable}
-                        ifTrue={this.assembly.render({component: "dataset-viewer"})}
-                        ifFalse={this.component(() => this.assembly.render({component: "dataset-viewer"}), "data")}
-                    />
-                ), "loader")}
+                {this.component(() => this.assembly.render({component: "dataset-viewer"}), "data")}
                 {this.component(() => this.assembly.render({component: "telemetry"}), "data")}
                 {this.component(() => this.assembly.render({component: "result-switcher"}), "data")}
                 {this.component(() => this.assembly.render({component: "result-switcher-v2"}), "data")}

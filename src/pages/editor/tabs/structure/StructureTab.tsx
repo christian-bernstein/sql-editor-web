@@ -137,7 +137,7 @@ export class StructureTab extends BernieComponent<StructureTabProps, any, Struct
             simulatedDelay: () => 5000,
             packet: {
                 attributes: new Map<string, string>(),
-                raw: `show tables `,
+                raw: `show tables from public`,
                 type: SessionCommandType.PULL,
                 dbID: this.props.projectInfo.id
             }

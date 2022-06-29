@@ -7,7 +7,6 @@ import {Align} from "../../logic/style/Align";
 import {Justify} from "../../logic/style/Justify";
 import {Icon} from "../../components/lo/Icon";
 import {ReactComponent as MenuIcon} from "../../assets/icons/ic-20/ic20-menu.svg";
-import {ReactComponent as ErrorIcon} from "../../assets/icons/ic-20/ic20-alert.svg";
 import {ReactComponent as PushIcon, ReactComponent as UploadIcon} from "../../assets/icons/ic-16/ic16-upload.svg";
 import {ReactComponent as PullIcon, ReactComponent as DownloadIcon} from "../../assets/icons/ic-16/ic16-download.svg";
 import {ReactComponent as CloseIcon} from "../../assets/icons/ic-20/ic20-close.svg";
@@ -74,14 +73,8 @@ import {ImportDatasetDialogProps} from "../importDatasets/ImportDatasetDialog";
 import {EditorLogicCompanion} from "../../logic/editor/EditorLogicCompanion";
 import _ from "lodash";
 import {format} from "sql-formatter";
-import {ReactComponent as ProfileIcon} from "../../assets/icons/ic-20/ic20-user.svg";
-import {CodeDisplay} from "../../components/lo/CodeDisplay";
-import {createMargin} from "../../logic/style/Margin";
-import styled from "styled-components";
-import {TabPanel} from "../../logic/misc/TabPanel";
 import SwipeableViews from "react-swipeable-views";
 import {FormDataHub} from "../../tests/epicure/components/FormDataHub";
-import {arrayFactory} from "../../logic/Utils";
 import {StructureTab} from "./tabs/structure/StructureTab";
 
 export type DebugEditorProps = {
@@ -358,6 +351,8 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                             </FlexBox>
                             <FlexBox align={Align.CENTER} justifyContent={Justify.CENTER}>
                                 <Text uppercase align={Align.CENTER} type={TextType.smallHeader} text={"SQL Editor"} />
+
+                                <Text text={session.title} whitespace={"nowrap"} type={TextType.secondaryDescription} fontSize={px(12)}/>
                             </FlexBox>
                             <FlexBox align={Align.CENTER} justifyContent={Justify.FLEX_END} flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab}>
                                 <Icon icon={<CloseIcon/>} onClick={() => this.closeSession()}/>
@@ -1049,9 +1044,7 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                 {this.renderDialog()}
                 <FlexBox height={percent(100)} flexDir={FlexDirection.COLUMN} gap={theme.gaps.defaultGab} overflowXBehaviour={OverflowBehaviour.HIDDEN} overflowYBehaviour={OverflowBehaviour.SCROLL} justifyContent={Justify.SPACE_BETWEEN}>
                     {this.component(local => this.assembly.render({component: "header", param: session}), "header")}
-
                     {this.component(local => this.assembly.liteRender("main"), "main")}
-
                     {this.component(local => this.assembly.liteRender("input"), "input")}
                 </FlexBox>
             </Screen>
