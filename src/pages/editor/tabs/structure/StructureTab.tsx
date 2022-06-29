@@ -24,6 +24,7 @@ import {Icon} from "../../../../components/lo/Icon";
 import {ObjectVisualMeaning} from "../../../../logic/style/ObjectVisualMeaning";
 import {TypeRowSelection} from "@inovua/reactdatagrid-community/types";
 import {Button} from "../../../../components/lo/Button";
+import {OverflowBehaviour} from "../../../../logic/style/OverflowBehaviour";
 
 export type StructureTabProps = TabProps & {
 }
@@ -111,31 +112,34 @@ export class StructureTab extends BernieComponent<StructureTabProps, any, Struct
                         dataSource={local.state.tables}
                         style={gridStyle as {[p: string]: string | number}}
                     />
-                    <FlexBox width={percent(100)} align={Align.CENTER} justifyContent={Justify.CENTER} flexDir={FlexDirection.ROW} gap={px()}>
+                    <FlexBox width={percent(100)} align={Align.CENTER} justifyContent={Justify.FLEX_START} flexDir={FlexDirection.ROW} gap={px()}>
                         <Icon icon={<ArrowLeftUpIcon/>} size={px(40)} style={{
                             top: -6,
                             left: 0,
                             marginRight: t.gaps.smallGab.css()
                         }}/>
 
-                        <Button border={false} bgColorOnDefault={false} opaqueValue={.6} children={
-                            <Text type={TextType.secondaryDescription} cursor={Cursor.pointer} text={"Browse"} enableLeftAppendix leftAppendix={<Icon icon={<BrowseIcon/>}/>}/>
-                        }/>
-                        <Button border={false} bgColorOnDefault={false} opaqueValue={.6} children={
-                            <Text type={TextType.secondaryDescription} cursor={Cursor.pointer} text={"Structure"} enableLeftAppendix/>
-                        }/>
-                        <Button border={false} bgColorOnDefault={false} opaqueValue={.6} children={
-                            <Text type={TextType.secondaryDescription} cursor={Cursor.pointer} text={"Search"} enableLeftAppendix leftAppendix={<Icon icon={<SearchIcon/>}/>}/>
-                        }/>
-                        <Button border={false} bgColorOnDefault={false} opaqueValue={.6} children={
-                            <Text type={TextType.secondaryDescription} cursor={Cursor.pointer} text={"Insert"} enableLeftAppendix leftAppendix={<Icon icon={<InsertIcon/>}/>}/>
-                        }/>
-                        <Button border={false} visualMeaning={ObjectVisualMeaning.ERROR} bgColorOnDefault={false} opaqueValue={.6} children={
-                            <Text type={TextType.secondaryDescription} cursor={Cursor.pointer} visualMeaning={ObjectVisualMeaning.ERROR} text={"Empty"} enableLeftAppendix/>
-                        }/>
-                        <Button border={false} visualMeaning={ObjectVisualMeaning.ERROR} bgColorOnDefault={false} opaqueValue={.6} children={
-                            <Text type={TextType.secondaryDescription} cursor={Cursor.pointer} visualMeaning={ObjectVisualMeaning.ERROR} text={"Drop"} enableLeftAppendix/>
-                        }/>
+                        <FlexBox flexDir={FlexDirection.ROW} gap={px()} align={Align.CENTER} overflowXBehaviour={OverflowBehaviour.SCROLL}>
+                            <Button border={false} bgColorOnDefault={false} opaqueValue={.6} children={
+                                <Text type={TextType.secondaryDescription} cursor={Cursor.pointer} text={"Browse"} enableLeftAppendix leftAppendix={<Icon icon={<BrowseIcon/>}/>}/>
+                            }/>
+                            <Button border={false} bgColorOnDefault={false} opaqueValue={.6} children={
+                                <Text type={TextType.secondaryDescription} cursor={Cursor.pointer} text={"Structure"} enableLeftAppendix/>
+                            }/>
+                            <Button border={false} bgColorOnDefault={false} opaqueValue={.6} children={
+                                <Text type={TextType.secondaryDescription} cursor={Cursor.pointer} text={"Search"} enableLeftAppendix leftAppendix={<Icon icon={<SearchIcon/>}/>}/>
+                            }/>
+                            <Button border={false} bgColorOnDefault={false} opaqueValue={.6} children={
+                                <Text type={TextType.secondaryDescription} cursor={Cursor.pointer} text={"Insert"} enableLeftAppendix leftAppendix={<Icon icon={<InsertIcon/>}/>}/>
+                            }/>
+                            <Button border={false} visualMeaning={ObjectVisualMeaning.ERROR} bgColorOnDefault={false} opaque children={
+                                <Text type={TextType.secondaryDescription} highlight cursor={Cursor.pointer} visualMeaning={ObjectVisualMeaning.ERROR} text={"Empty"} enableLeftAppendix/>
+                            }/>
+                            <Button border={false} visualMeaning={ObjectVisualMeaning.ERROR} bgColorOnDefault={false} opaque children={
+                                <Text type={TextType.secondaryDescription} highlight cursor={Cursor.pointer} visualMeaning={ObjectVisualMeaning.ERROR} text={"Drop"} enableLeftAppendix/>
+                            }/>
+                        </FlexBox>
+
                     </FlexBox>
                 </FlexBox>
             );
