@@ -114,7 +114,8 @@ export class StructureTab extends BernieComponent<StructureTabProps, any, Struct
                     <FlexBox width={percent(100)} align={Align.CENTER} justifyContent={Justify.CENTER} flexDir={FlexDirection.ROW} gap={px()}>
                         <Icon icon={<ArrowLeftUpIcon/>} size={px(40)} style={{
                             top: -6,
-                            left: 0
+                            left: 0,
+                            marginRight: t.gaps.smallGab.css()
                         }}/>
 
                         <Button border={false} bgColorOnDefault={false} opaqueValue={.6} children={
@@ -129,10 +130,10 @@ export class StructureTab extends BernieComponent<StructureTabProps, any, Struct
                         <Button border={false} bgColorOnDefault={false} opaqueValue={.6} children={
                             <Text type={TextType.secondaryDescription} cursor={Cursor.pointer} text={"Insert"} enableLeftAppendix leftAppendix={<Icon icon={<InsertIcon/>}/>}/>
                         }/>
-                        <Button border={false} bgColorOnDefault={false} opaqueValue={.6} children={
+                        <Button border={false} visualMeaning={ObjectVisualMeaning.ERROR} bgColorOnDefault={false} opaqueValue={.6} children={
                             <Text type={TextType.secondaryDescription} cursor={Cursor.pointer} visualMeaning={ObjectVisualMeaning.ERROR} text={"Empty"} enableLeftAppendix/>
                         }/>
-                        <Button border={false} bgColorOnDefault={false} opaqueValue={.6} children={
+                        <Button border={false} visualMeaning={ObjectVisualMeaning.ERROR} bgColorOnDefault={false} opaqueValue={.6} children={
                             <Text type={TextType.secondaryDescription} cursor={Cursor.pointer} visualMeaning={ObjectVisualMeaning.ERROR} text={"Drop"} enableLeftAppendix/>
                         }/>
                     </FlexBox>
