@@ -1,9 +1,12 @@
 import {EditorLogicCompanion} from "../../../logic/editor/EditorLogicCompanion";
 import {FormDataHub} from "../../../tests/epicure/components/FormDataHub";
 import {Editor} from "../Editor";
+import {ProjectInfoData} from "../../../logic/data/ProjectInfoData";
 
 export type TabProps = {
     companion: EditorLogicCompanion,
     fdh: FormDataHub,
-    editor: Editor
+    editor: Editor,
+    projectInfo: ProjectInfoData
+
 }
