@@ -191,7 +191,9 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                     this.setState({
                         openMainDialog: false
                     });
-                }} onDelete={command => this.deleteSavedCommand(command)}/>
+                }} onDelete={command => {
+                    this.deleteSavedCommand(command)
+                }}/>
             );
         });
     }
@@ -449,7 +451,7 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                     }</Button>,
                     <Button visualMeaning={working ? ObjectVisualMeaning.UI_NO_HIGHLIGHT : ObjectVisualMeaning.INFO} opaque={true} onClick={() => {
                         if (!working) {
-                            this.sendCommand(SessionCommandType.PULL);
+                            this.sendCommand(SessionCommandType.PULL).then(() => {});
                         }
                     }}>{
                         localState.processPullCommand ? (
@@ -511,40 +513,12 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                                 }/>
                             }
                         />,
-                        <span>
-                            <Mobile children={
-                                <Button
-                                    border={false}
-                                    style={{borderRadius: "0 !important"}}
-                                    children={<span children={<Icon icon={<HistoryIcon/>}/>}/>}
-                                    onClick={() => this.openMainDialog("sql-bookmarks")}
-                                />
-                            }/>
-                            <Default children={
-                                <ContextCompound width={percent(100)} menu={
-                                    <FlexBox width={percent(100)} padding paddingX={theme.gaps.smallGab} paddingY={theme.gaps.smallGab}>
-                                        <ElementHeader icon={<HistoryIcon/>} wrapIcon title={"Saved commands"} boldHeader/>
-                                        <Separator/>
-                                        <LiteGrid responsive minResponsiveWidth={percent(30)} gap={theme.gaps.smallGab}>
-                                            {this.local.state.savedCommands.map(saved => {
-                                                return (
-                                                    <CommandHistoryElement command={saved} onSelect={(command, element) => {
-                                                        this.setSQLInput(command.command);
-                                                    }} onDelete={command => this.deleteSavedCommand(command)}/>
-                                                );
-                                            })}
-                                        </LiteGrid>
-                                    </FlexBox>
-                                } children={
-                                    <Button
-                                        shrinkOnClick
-                                        border={false}
-                                        visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
-                                        children={<span children={<Icon icon={<HistoryIcon/>}/>}/>}
-                                    />
-                                }/>
-                            }/>
-                        </span>,
+                        <Button
+                            border={false}
+                            style={{borderRadius: "0 !important"}}
+                            children={<span children={<Icon icon={<HistoryIcon/>}/>}/>}
+                            onClick={() => this.openMainDialog("sql-bookmarks")}
+                        />,
 
                         <span>
                             <Mobile children={
