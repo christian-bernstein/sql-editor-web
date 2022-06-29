@@ -349,10 +349,8 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                             <FlexBox align={Align.START} justifyContent={Justify.CENTER}>
                                 <Icon icon={<MenuIcon/>} onClick={() => App.app().openMenu()}/>
                             </FlexBox>
-                            <FlexBox align={Align.CENTER} justifyContent={Justify.CENTER}>
+                            <FlexBox align={Align.CENTER} justifyContent={Justify.CENTER} gap={px()}>
                                 <Text uppercase align={Align.CENTER} type={TextType.smallHeader} text={"SQL Editor"} />
-
-                                <Text text={session.title} whitespace={"nowrap"} type={TextType.secondaryDescription} fontSize={px(12)}/>
                             </FlexBox>
                             <FlexBox align={Align.CENTER} justifyContent={Justify.FLEX_END} flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab}>
                                 <Icon icon={<CloseIcon/>} onClick={() => this.closeSession()}/>
@@ -361,6 +359,10 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                             </FlexBox>
                         </LiteGrid>
                     </FlexBox>
+
+                    {/*<FlexBox width={percent(100)} align={Align.CENTER}>
+                        <Text text={session.title} whitespace={"nowrap"} type={TextType.secondaryDescription} fontSize={px(12)}/>
+                    </FlexBox>*/}
 
                     <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} gap={px(1)} width={percent(100)}>
                         <Text text={`${App.app().config.connectorConfig.address}/`}/>
