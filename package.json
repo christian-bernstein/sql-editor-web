@@ -13,7 +13,7 @@
     "@emotion/styled": "^11.3.0",
     "@inovua/reactdatagrid-community": "^4.8.3",
     "@material-ui/lab": "^4.0.0-alpha.60",
-    "@monaco-editor/react": "^4.3.1",
+    "@monaco-editor/react": "^4.4.5",
     "@mui/icons-material": "^5.0.0",
     "@mui/material": "^5.0.0",
     "@react-hook/debounce": "^4.0.0",

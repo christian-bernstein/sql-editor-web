@@ -75,6 +75,7 @@ import {format} from "sql-formatter";
 import SwipeableViews from "react-swipeable-views";
 import {FormDataHub} from "../../tests/epicure/components/FormDataHub";
 import {StructureTab} from "./tabs/structure/StructureTab";
+import {DatabaseScriptingTab} from "./tabs/scripting/DatabaseScriptingTab";
 
 export type DebugEditorProps = {
 }
@@ -332,6 +333,7 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                                     this.rerender("main-tab-tabs", "main-tab-nav");
                                 }}>
                                     <Tab label={"Dashboard"}/>
+                                    <Tab label={"Scripting"}/>
                                     <Tab label={"Structure"}/>
                                     <Tab label={"SQL"}/>
                                     <Tab label={"Search"}/>
@@ -361,6 +363,7 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                                 }}
                             >
                                 <StructureTab companion={this.local.state.companion as EditorLogicCompanion} fdh={this.local.state.fdh} editor={this} projectInfo={App.app().dbSessionCacheShard().currentInfoData as ProjectInfoData}/>
+                                <DatabaseScriptingTab/>
                             </SwipeableViews>
                         ), "main-tab-tabs")}
                     </FlexBox>
