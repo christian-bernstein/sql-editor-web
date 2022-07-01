@@ -13,8 +13,9 @@ import {getOr} from "../../../../logic/Utils";
 import {Button} from "../../../../components/lo/Button";
 import {FlexBox} from "../../../../components/lo/FlexBox";
 import {Dimension} from "../../../../logic/style/Dimension";
+import {TabProps} from "../TabProps";
 
-export type DatabaseScriptingTabProps = {
+export type DatabaseScriptingTabProps = TabProps & {
 }
 
 export type DatabaseScriptingTabLocalState = {
@@ -44,7 +45,7 @@ export class DatabaseScriptingTab extends BernieComponent<DatabaseScriptingTabPr
                 } onClick={() => {
                     const code: string = l.fdh.get("code", "");
                     if (code.length > 0) {
-                        new Function("editor", code)(this);
+                        new Function("editor", code)(p.editor);
                     }
                 }}/>
                 <FlexBox width={percent(100)} style={{
@@ -53,6 +54,16 @@ export class DatabaseScriptingTab extends BernieComponent<DatabaseScriptingTabPr
                     <Editor
                         saveViewState
                         beforeMount={monaco => {
+                            monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+                                noSemanticValidation: true,
+                                noSyntaxValidation: false
+                            });
+
+                            monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
+                                target: monaco.languages.typescript.ScriptTarget.Latest,
+                                allowNonTsExtensions: true
+                            });
+
                             monaco.editor.defineTheme("ses-x-dark-tritanopia", {
                                 base: "vs-dark",
                                 inherit: true,
@@ -69,7 +80,22 @@ export class DatabaseScriptingTab extends BernieComponent<DatabaseScriptingTabPr
                             });
 
 
-                            // monaco.languages.typescript.typescriptDefaults.addExtraLib(readFileSync("../../logic/scripting/TestAPI.ts", "utf-8"))
+                            const libUri = 'ts:filename/facts.d.ts';
+
+                            const libSource = [
+                                'declare class Editor {',
+                                'public setSQLInput(sql: string): void',
+                                '}',
+                                'declare const editor: Editor;',
+                                'declare const push: (sql: string) => void;'
+                            ].join('\n');
+
+                            monaco.languages.typescript.javascriptDefaults.addExtraLib(libSource, libUri);
+
+                            try {
+                                monaco.editor.createModel(libSource, 'typescript', monaco.Uri.parse(libUri));
+                            } catch (e) {
+                            }
                         }}
                         theme={"ses-x-dark-tritanopia"}
                         defaultLanguage="typescript"

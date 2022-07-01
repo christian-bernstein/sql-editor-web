@@ -7,6 +7,6 @@ import {DatabaseScriptingTab} from "../editor/tabs/scripting/DatabaseScriptingTa
 export class UnitTestPage extends BernieComponent<any, any, any> {
 
     componentRender(p: any, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
-        return <DatabaseScriptingTab />
+        return <></>
     }
 }

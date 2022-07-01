@@ -363,7 +363,7 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
                                 }}
                             >
                                 <StructureTab companion={this.local.state.companion as EditorLogicCompanion} fdh={this.local.state.fdh} editor={this} projectInfo={App.app().dbSessionCacheShard().currentInfoData as ProjectInfoData}/>
-                                <DatabaseScriptingTab/>
+                                <DatabaseScriptingTab companion={this.local.state.companion as EditorLogicCompanion} fdh={this.local.state.fdh} editor={this} projectInfo={App.app().dbSessionCacheShard().currentInfoData as ProjectInfoData}/>
                             </SwipeableViews>
                         ), "main-tab-tabs")}
                     </FlexBox>
