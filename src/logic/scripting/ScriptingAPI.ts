@@ -15,7 +15,7 @@ export class ScriptingAPI {
         this.project = project;
     }
 
-    public push(sql: string, internal: boolean = true): void {
+    public push(sql: string, internal: boolean = false): void {
         if (internal) {
             App.app().net().intrinsicSQLUpdate({
                 packet: {
@@ -30,7 +30,7 @@ export class ScriptingAPI {
         }
     }
 
-    public pull(sql: string, internal: boolean = true): Promise<SQLCommandQueryResponsePacketData> {
+    public pull(sql: string, internal: boolean = false): Promise<SQLCommandQueryResponsePacketData> {
         return new Promise<SQLCommandQueryResponsePacketData>((resolve, reject) => {
             if (internal) {
                 App.app().net().intrinsicSQLQuery({
@@ -45,7 +45,7 @@ export class ScriptingAPI {
                     }
                 });
             } else {
-                this.editor.sendCommand(SessionCommandType.PUSH, sql).then(() => {});
+                this.editor.sendCommand(SessionCommandType.PULL, sql).then(() => {});
             }
         });
 

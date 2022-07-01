@@ -57,6 +57,16 @@ export class DatabaseScriptingTab extends BernieComponent<DatabaseScriptingTabPr
                 }}>
                     <Editor
                         saveViewState
+                        onMount={(editor, monaco) => {
+                            editor.addCommand(monaco.KeyCode.F8, () => {
+                                const code: string = l.fdh.get("code", "");
+                                if (code.length > 0) {
+                                    new Function("api", code)(
+                                        new ScriptingAPI(p.editor, p.projectInfo)
+                                    );
+                                }
+                            }, "")
+                        }}
                         beforeMount={monaco => {
                             monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
                                 noSemanticValidation: true,
@@ -82,7 +92,6 @@ export class DatabaseScriptingTab extends BernieComponent<DatabaseScriptingTabPr
                                     "editor.lineHighlightBackground":  t.colors.backgroundHighlightColor200.toHex(),
                                 }
                             });
-
 
                             const libUri = 'ts:filename/facts.d.ts';
 
