@@ -72,12 +72,15 @@ export class ContextCompound extends React.Component<ContextMenuProps, ContextMe
                 </div>
                 <Menu
                     id="basic-menu"
-
                     anchorOrigin={{
                         horizontal: "right",
                         vertical: "bottom"
                     }}
-
+                    transitionDuration={{
+                        appear: 0,
+                        enter: 100,
+                        exit: 100
+                }}
                     anchorReference={"anchorEl"}
                     anchorEl={this.state.anchorEl}
                     open={this.state.open}

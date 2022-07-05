@@ -48,7 +48,5 @@ export class ScriptingAPI {
                 this.editor.sendCommand(SessionCommandType.PULL, sql).then(() => {});
             }
         });
-
     }
-
 }

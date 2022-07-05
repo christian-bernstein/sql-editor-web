@@ -2,16 +2,30 @@ import {BernieComponent} from "../../logic/BernieComponent";
 import {Assembly} from "../../logic/assembly/Assembly";
 import {Themeable} from "../../logic/style/Themeable";
 import {Fragment, PropsWithChildren} from "react";
-import {getOr} from "../../logic/Utils";
+import {array, getOr} from "../../logic/Utils";
+import {AF} from "./ArrayFragment";
 
 export type MapProps<T> = {
     data: T[],
     renderer: (item: T, data: T[], component: Map<T>) => JSX.Element,
     wrapper?: (props: PropsWithChildren<any>) => JSX.Element,
-    renderWrapperOnEmpty?: boolean
+    renderWrapperOnEmpty?: boolean,
+    staticPrefix?: (props: MapProps<T>) => JSX.Element,
+    staticPrefixDuplicationCount?: number,
+    staticAppendix?: (props: MapProps<T>) => JSX.Element,
 }
 
 export class Map<T> extends BernieComponent<MapProps<T>, any, any> {
+
+    private renderChildren(p: MapProps<T>): JSX.Element {
+        return (
+            <AF elements={[
+                array(p.staticPrefix?.(p), getOr(p.staticPrefixDuplicationCount, 1)).filter(e => e) as Array<JSX.Element>,
+                p.data.map(item => p.renderer(item, p.data, this)),
+                p.staticAppendix?.(p)
+            ]}/>
+        );
+    }
 
     componentRender(p: MapProps<T>, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         if (p.data.length === 0) {
@@ -24,17 +38,9 @@ export class Map<T> extends BernieComponent<MapProps<T>, any, any> {
 
         if (p.wrapper !== undefined) {
             return p.wrapper({
-                children: (
-                    <Fragment children={
-                        p.data.map(item => p.renderer(item, p.data, this))
-                    }/>
-                )
+                children: this.renderChildren(p)
             });
         }
-        return (
-            <Fragment children={
-                p.data.map(item => p.renderer(item, p.data, this))
-            }/>
-        );
+        return this.renderChildren(p);
     }
 }

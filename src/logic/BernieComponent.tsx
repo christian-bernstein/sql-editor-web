@@ -17,7 +17,7 @@ import {Text} from "../components/lo/Text";
 
 export type BernieComponentConfig = {
     enableLocalDialog: boolean,
-    componentID?: string
+    componentID?: string,
 }
 
 export class BernieComponent<RProps, RState, LState extends object> extends React.Component<RProps, RState> {

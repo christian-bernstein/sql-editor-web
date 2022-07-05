@@ -28,16 +28,21 @@ import {Backdrop, CloseReason, OpenReason, SpeedDial, SpeedDialAction, SpeedDial
 import {Constants} from "../../logic/misc/Constants";
 import {OverflowBehaviour} from "../../logic/style/OverflowBehaviour";
 import {Input} from "../../components/lo/Input";
-import {ProfilePicture} from "../../components/lo/ProfilePicture";
-import {Badge} from "../../components/lo/Badge";
 import {PuffLoader} from "react-spinners";
 import {If} from "../../components/logic/If";
 import {CockpitButton} from "../../components/ho/cockpitButton/CockpitButton";
 import {CockpitButtonType} from "../../components/ho/cockpitButton/CockpitButtonType";
 import {ProjectFilter} from "./ProjectFilter";
 import {BernieComponent} from "../../logic/BernieComponent";
-import {DashboardToolbox} from "./DashboardToolbox";
 import {ClientDisplay} from "../../components/ho/clientDisplay/ClientDisplay";
+import {ReactComponent as FolderIcon} from "../../assets/icons/ic-20/ic20-folder.svg";
+import {ObjectCategoryCover} from "../../components/ho/objectCategoryCover/ObjectCategoryCover";
+import {Map as ElementMapper} from "../../components/logic/Map";
+import {SideScroller} from "../../components/layout/SideScroller";
+import {createMargin} from "../../logic/style/Margin";
+import {Dimension} from "../../logic/style/Dimension";
+import {FolderData} from "../../logic/data/FolderData";
+import {Folder} from "../../components/ho/folder/Folder";
 
 export type DashboardPageProps = {
 }
@@ -76,6 +81,8 @@ export default class DashboardPage extends BernieComponent<DashboardPageProps, D
                 }, ["filter", "project"]);
             }, 700)
         });
+
+        this.folderAssembly();
     }
 
     private static async init() {
@@ -91,6 +98,7 @@ export default class DashboardPage extends BernieComponent<DashboardPageProps, D
             }
         });
     }
+
 
     private static createFilters(): Array<ProjectFilter> {
         return [
@@ -302,9 +310,37 @@ export default class DashboardPage extends BernieComponent<DashboardPageProps, D
         );
     }
 
+    private onFolderSelect(data: FolderData) {
+
+    }
+
+    private folderAssembly() {
+        this.assembly.assembly("folders", theme => {
+            return (
+                <FlexBox width={percent(100)}>
+                    <FlexBox width={percent(100)} gap={theme.gaps.smallGab}>
+                        <Text text={"Folders"} uppercase type={TextType.smallHeader} fontSize={px(20)}/>
+                        <Text text={"Structure you projects, documents etc."} type={TextType.secondaryDescription} fontSize={px(12)}/>
+                    </FlexBox>
+
+                    <ElementMapper<FolderData>
+                        data={[{
+                            title: "root",
+                            parentFolderID: "root",
+                            subFolderIDs: new Array<string>()
+                        }]}
+                        wrapper={props => <LiteGrid gap={theme.gaps.smallGab} responsive minResponsiveWidth={px(200)} {...props}/>}
+                        renderer={(item, data, component) => (
+                            <Folder data={item} onSelect={this.onFolderSelect}/>
+                        )}
+                    />
+                </FlexBox>
+            );
+        });
+    }
+
     private renderPage(): JSX.Element {
         const theme: Themeable.Theme = utilizeGlobalTheme();
-
         const profile = App.app().userData;
 
         return (
@@ -359,6 +395,14 @@ export default class DashboardPage extends BernieComponent<DashboardPageProps, D
                             <ClientDisplay clientID={App.app().userData?.id} onlyImage/>
                         </FlexBox>
                     </LiteGrid>
+
+                    {this.a("folders")}
+
+                    <FlexBox width={percent(100)} gap={theme.gaps.smallGab} margin={createMargin(theme.gaps.defaultGab.measurand, 0, 0, 0, Dimension.px)}>
+                        <Text text={"Projects"} uppercase type={TextType.smallHeader} fontSize={px(20)}/>
+                        <Text text={"All your projects at-a-glance"} type={TextType.secondaryDescription} fontSize={px(12)}/>
+                    </FlexBox>
+
                     <Centered>
                         {this.renderSubtitle()}
                     </Centered>
