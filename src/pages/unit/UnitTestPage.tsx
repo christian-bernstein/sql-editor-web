@@ -9,6 +9,7 @@ import {ReactComponent as FolderIcon} from "../../assets/icons/ic-20/ic20-folder
 import {Icon} from "../../components/lo/Icon";
 import {px} from "../../logic/style/DimensionalMeasured";
 import {ObjectVisualMeaning} from "../../logic/style/ObjectVisualMeaning";
+import {WFCComponent} from "../../tests/wfc/WFC";
 
 export class UnitTestPage extends BernieComponent<any, any, any> {
 
@@ -16,10 +17,8 @@ export class UnitTestPage extends BernieComponent<any, any, any> {
         return (
             <Screen children={
                 <Centered fullHeight children={
-                    <ObjectCategoryCover
-                        icon={props => <Icon icon={<FolderIcon/>} colored visualMeaning={ObjectVisualMeaning.BETA}/>}
-                        objectCount={4572}
-                        title={"Projects"}
+                    <WFCComponent
+                        dimension={3}
                     />
                 }/>
             }/>
