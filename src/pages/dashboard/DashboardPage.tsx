@@ -12,6 +12,7 @@ import {LiteGrid} from "../../components/lo/LiteGrid";
 import {ReactComponent as MenuIcon} from "../../assets/icons/ic-20/ic20-menu.svg";
 import {ReactComponent as CreateIcon} from "../../assets/icons/ic-20/ic20-plus.svg";
 import {ReactComponent as SyncIcon} from "../../assets/icons/ic-20/ic20-refresh.svg";
+import {ReactComponent as CreateFolderIcon} from "../../assets/icons/ic-20/ic20-folder-add.svg";
 import {Icon} from "../../components/lo/Icon";
 import {getOr} from "../../logic/Utils";
 import {Centered} from "../../components/lo/PosInCenter";
@@ -35,14 +36,13 @@ import {CockpitButtonType} from "../../components/ho/cockpitButton/CockpitButton
 import {ProjectFilter} from "./ProjectFilter";
 import {BernieComponent} from "../../logic/BernieComponent";
 import {ClientDisplay} from "../../components/ho/clientDisplay/ClientDisplay";
-import {ReactComponent as FolderIcon} from "../../assets/icons/ic-20/ic20-folder.svg";
-import {ObjectCategoryCover} from "../../components/ho/objectCategoryCover/ObjectCategoryCover";
 import {Map as ElementMapper} from "../../components/logic/Map";
-import {SideScroller} from "../../components/layout/SideScroller";
 import {createMargin} from "../../logic/style/Margin";
 import {Dimension} from "../../logic/style/Dimension";
 import {FolderData} from "../../logic/data/FolderData";
 import {Folder} from "../../components/ho/folder/Folder";
+import {AF} from "../../components/logic/ArrayFragment";
+import {Button} from "../../components/lo/Button";
 
 export type DashboardPageProps = {
 }
@@ -60,11 +60,6 @@ export type DashboardPageLocalState = {
     debouncedFilterChange: (filter: string) => void,
 }
 
-/**
- * <CircularProgress variant={"indeterminate"} size={20} sx={{
- *     color: theme.colors.primaryHighlightColor.css()
- * }}/>
- */
 export default class DashboardPage extends BernieComponent<DashboardPageProps, DashboardPageState, DashboardPageLocalState> {
 
     constructor(props: DashboardPageProps) {
@@ -81,11 +76,16 @@ export default class DashboardPage extends BernieComponent<DashboardPageProps, D
                 }, ["filter", "project"]);
             }, 700)
         });
-
-        this.folderAssembly();
     }
 
-    private static async init() {
+    init() {
+        super.init();
+        this.bodyAssembly();
+        this.folderAssembly();
+        this.projectsAssembly();
+    }
+
+    private static async prepare() {
         App.app().triggerLoginIfNotLoggedIn({
             processSuccessful: () => {
                 // console.log("try to load projects after successful login")
@@ -98,7 +98,6 @@ export default class DashboardPage extends BernieComponent<DashboardPageProps, D
             }
         });
     }
-
 
     private static createFilters(): Array<ProjectFilter> {
         return [
@@ -136,6 +135,28 @@ export default class DashboardPage extends BernieComponent<DashboardPageProps, D
                 index: 2
             }
         ];
+    }
+
+    // LOGIC COMPARTMENT
+
+    private getFilter(name: string): ProjectFilter {
+        let filters = this.state.filters.filter(f => f.name === name);
+        if (filters.length !== 1) {
+            throw new Error(`Error filter ${name} wasn't found on dashboard's filter list. (${filters})`);
+        }
+        return filters[0] as ProjectFilter;
+    }
+
+    private updateFilter(name: string, updater: (f: ProjectFilter) => ProjectFilter, rerender: boolean = true) {
+        let f = this.getFilter(name);
+        const indexOf = this.state.filters.indexOf(f);
+        this.state.filters.splice(indexOf, 1);
+        f = updater(f);
+        this.state.filters.push(f);
+        this.state.filters.sort((a, b) => a.index - b.index);
+        if (rerender) {
+            this.controller.rerender("*", "project", "filter");
+        }
     }
 
     private getFilteredProjects(): ProjectInfoData[] {
@@ -194,26 +215,6 @@ export default class DashboardPage extends BernieComponent<DashboardPageProps, D
         }
     }
 
-    private getFilter(name: string): ProjectFilter {
-        let filters = this.state.filters.filter(f => f.name === name);
-        if (filters.length !== 1) {
-            throw new Error(`Error filter ${name} wasn't found on dashboard's filter list. (${filters})`);
-        }
-        return filters[0] as ProjectFilter;
-    }
-
-    private updateFilter(name: string, updater: (f: ProjectFilter) => ProjectFilter, rerender: boolean = true) {
-        let f = this.getFilter(name);
-        const indexOf = this.state.filters.indexOf(f);
-        this.state.filters.splice(indexOf, 1);
-        f = updater(f);
-        this.state.filters.push(f);
-        this.state.filters.sort((a, b) => a.index - b.index);
-        if (rerender) {
-            this.controller.rerender("*", "project", "filter");
-        }
-    }
-
     private closeSpeedDial(muiEventRelay: boolean, muiEventRelayData?: {event: React.SyntheticEvent<{}>, reason: CloseReason}) {
         this.local.setState({
             speedDialOpen: false
@@ -225,6 +226,12 @@ export default class DashboardPage extends BernieComponent<DashboardPageProps, D
             speedDialOpen: true
         }, new Map([["channels", ["*", "dial"]]]));
     }
+
+    private onFolderSelect(data: FolderData) {
+
+    }
+
+    // ASSEMBLY COMPARTMENT
 
     private renderFilterButtons(): JSX.Element {
         const theme = utilizeGlobalTheme();
@@ -293,6 +300,93 @@ export default class DashboardPage extends BernieComponent<DashboardPageProps, D
         }, "project");
     }
 
+    private folderAssembly() {
+        this.assembly.assembly("folders", theme => {
+            return (
+                <FlexBox width={percent(100)}>
+
+                    <FlexBox width={percent(100)} align={Align.CENTER} justifyContent={Justify.SPACE_BETWEEN} flexDir={FlexDirection.ROW}>
+                        <FlexBox gap={theme.gaps.smallGab}>
+                            <Text text={"Folders"} uppercase type={TextType.smallHeader} fontSize={px(18)}/>
+                            <Text text={"Structure you projects, documents etc."} type={TextType.secondaryDescription} fontSize={px(12)}/>
+                        </FlexBox>
+
+                        <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER}>
+                            <Button shrinkOnClick children={
+                                <Icon icon={<CreateFolderIcon/>}/>
+                            }/>
+                        </FlexBox>
+                    </FlexBox>
+
+                    <ElementMapper<FolderData>
+                        data={[{
+                            title: "root",
+                            parentFolderID: "root",
+                            subFolderIDs: new Array<string>()
+                        }, {
+                            title: "ses",
+                            parentFolderID: "root",
+                            subFolderIDs: new Array<string>()
+                        }]}
+                        wrapper={props => <LiteGrid gap={theme.gaps.smallGab} responsive minResponsiveWidth={px(150)} {...props}/>}
+                        renderer={(item, data, component) => (
+                            <Folder data={item} onSelect={this.onFolderSelect}/>
+                        )}
+                    />
+                </FlexBox>
+            );
+        });
+    }
+
+    private projectsAssembly() {
+        this.assembly.assembly("projects", theme => {
+            return (
+                <FlexBox width={percent(100)} gap={theme.gaps.defaultGab} margin={createMargin(theme.gaps.defaultGab.measurand, 0, 0, 0, Dimension.px)}>
+                    <FlexBox gap={theme.gaps.smallGab}>
+                        <Text text={"Projects"} uppercase type={TextType.smallHeader} fontSize={px(18)}/>
+                        <Text text={"All your projects at-a-glance"} type={TextType.secondaryDescription} fontSize={px(12)}/>
+                    </FlexBox>
+
+                    {this.renderSubtitle()}
+                    <If condition={this.state.loading} ifTrue={
+                        <Centered fullHeight children={
+                            <FlexBox gap={theme.gaps.defaultGab} align={Align.CENTER} justifyContent={Justify.CENTER}>
+                                <PuffLoader color={theme.colors.warnHighlightColor.css()}/>
+                                <Text text={"Loading from server"} bold uppercase coloredText visualMeaning={ObjectVisualMeaning.WARNING}/>
+                            </FlexBox>
+                        }/>
+                    } ifFalse={
+                        <FlexBox height={percent(100)} width={percent(100)} overflowYBehaviour={OverflowBehaviour.SCROLL} children={
+                            this.renderProjects()
+                        }/>
+                    }/>
+                </FlexBox>
+            );
+        });
+    }
+
+    private bodyAssembly() {
+        this.assembly.assembly("body", theme => {
+            return (
+                <If condition={this.state.loading} ifTrue={
+                    <Centered fullHeight children={
+                        <FlexBox gap={theme.gaps.defaultGab} align={Align.CENTER} justifyContent={Justify.CENTER}>
+                            <PuffLoader color={theme.colors.warnHighlightColor.css()}/>
+                            <Text text={"Loading from server"} bold uppercase coloredText visualMeaning={ObjectVisualMeaning.WARNING}/>
+                        </FlexBox>
+                    }/>
+                } ifFalse={
+                    <FlexBox height={percent(100)} width={percent(100)} overflowYBehaviour={OverflowBehaviour.SCROLL} children={
+                        <AF elements={[
+                            this.a("folders"),
+                            this.a("projects")
+                        ]}/>
+                    }/>
+                }/>
+            );
+        });
+    }
+
     private renderSubtitle(): JSX.Element {
         return (
             <If condition={this.state.loading} ifFalse={
@@ -310,39 +404,7 @@ export default class DashboardPage extends BernieComponent<DashboardPageProps, D
         );
     }
 
-    private onFolderSelect(data: FolderData) {
-
-    }
-
-    private folderAssembly() {
-        this.assembly.assembly("folders", theme => {
-            return (
-                <FlexBox width={percent(100)}>
-                    <FlexBox width={percent(100)} gap={theme.gaps.smallGab}>
-                        <Text text={"Folders"} uppercase type={TextType.smallHeader} fontSize={px(20)}/>
-                        <Text text={"Structure you projects, documents etc."} type={TextType.secondaryDescription} fontSize={px(12)}/>
-                    </FlexBox>
-
-                    <ElementMapper<FolderData>
-                        data={[{
-                            title: "root",
-                            parentFolderID: "root",
-                            subFolderIDs: new Array<string>()
-                        }]}
-                        wrapper={props => <LiteGrid gap={theme.gaps.smallGab} responsive minResponsiveWidth={px(200)} {...props}/>}
-                        renderer={(item, data, component) => (
-                            <Folder data={item} onSelect={this.onFolderSelect}/>
-                        )}
-                    />
-                </FlexBox>
-            );
-        });
-    }
-
     private renderPage(): JSX.Element {
-        const theme: Themeable.Theme = utilizeGlobalTheme();
-        const profile = App.app().userData;
-
         return (
             <>
                 <If condition={this.state.loading} ifFalse={this.renderSpeedDial()}/>
@@ -376,49 +438,11 @@ export default class DashboardPage extends BernieComponent<DashboardPageProps, D
                                     }
                                 </span>
                             </CustomTooltip>
-                            {/*<Separator orientation={Orientation.VERTICAL}/>
-                            <CustomTooltip title={(
-                                <Text text={"**Create a new project**\nBlank project or choose a template."}/>
-                            )} arrow noBorder>
-                                <span>
-                                    <Icon icon={<CreateIcon/>} visualMeaning={ObjectVisualMeaning.INFO} colored={true} onClick={() => this.createProject()}/>
-                                </span>
-                            </CustomTooltip>*/}
-                            {/*<CustomTooltip title={(
-                                <Text text={"Implement.."} rightAppendix={Badge.beta()} enableRightAppendix/>
-                            )} arrow noBorder>
-                                <span>
-                                    <ProfilePicture name={"username"}/>
-                                </span>
-                            </CustomTooltip>*/}
 
                             <ClientDisplay clientID={App.app().userData?.id} onlyImage/>
                         </FlexBox>
                     </LiteGrid>
-
-                    {this.a("folders")}
-
-                    <FlexBox width={percent(100)} gap={theme.gaps.smallGab} margin={createMargin(theme.gaps.defaultGab.measurand, 0, 0, 0, Dimension.px)}>
-                        <Text text={"Projects"} uppercase type={TextType.smallHeader} fontSize={px(20)}/>
-                        <Text text={"All your projects at-a-glance"} type={TextType.secondaryDescription} fontSize={px(12)}/>
-                    </FlexBox>
-
-                    <Centered>
-                        {this.renderSubtitle()}
-                    </Centered>
-
-                    <If condition={this.state.loading} ifTrue={
-                        <Centered fullHeight>
-                            <FlexBox gap={theme.gaps.defaultGab} align={Align.CENTER} justifyContent={Justify.CENTER}>
-                                <PuffLoader color={theme.colors.warnHighlightColor.css()}/>
-                                <Text text={"Loading from server"} bold uppercase coloredText visualMeaning={ObjectVisualMeaning.WARNING}/>
-                            </FlexBox>
-                        </Centered>
-                    } ifFalse={
-                        <FlexBox height={percent(100)} width={percent(100)} overflowYBehaviour={OverflowBehaviour.SCROLL}>
-                            {this.renderProjects()}
-                        </FlexBox>
-                    }/>
+                    {this.a("body")}
                 </Screen>
             </>
         );
@@ -474,8 +498,22 @@ export default class DashboardPage extends BernieComponent<DashboardPageProps, D
                 >
                     <SpeedDialAction
                         key={"create-empty-action"}
+                        icon={<CreateFolderIcon/>}
+                        tooltipTitle={
+                            <FlexBox gap={px(1)}>
+                                <Text whitespace={"nowrap"} text={"Create folder"}/>
+                                <Text whitespace={"nowrap"} text={`In *${"/root"}*`} type={TextType.secondaryDescription} fontSize={px(11)}/>
+                            </FlexBox>
+                        }
+                        tooltipOpen
+                        style={{
+                            whiteSpace: "nowrap"
+                        }}
+                    />
+                    <SpeedDialAction
+                        key={"create-empty-action"}
                         icon={<CreateIcon/>}
-                        tooltipTitle={"Create empty"}
+                        tooltipTitle={"Create empty project"}
                         tooltipOpen
                         style={{
                             whiteSpace: "nowrap"
@@ -500,7 +538,7 @@ export default class DashboardPage extends BernieComponent<DashboardPageProps, D
     }
 
     componentDidMount() {
-        DashboardPage.init().then(() => {
+        DashboardPage.prepare().then(() => {
             if (this.state.projects === undefined || this.state.projects.length === 0 && !this.state.loading) {
                 this.loadProjects();
             }

@@ -17,6 +17,7 @@ import React from "react";
 import {Text} from "../../lo/Text";
 import {Cursor} from "../../../logic/style/Cursor";
 import {FolderData} from "../../../logic/data/FolderData";
+import {OverflowBehaviour} from "../../../logic/style/OverflowBehaviour";
 
 export type FolderProps = {
     data: FolderData,
@@ -51,10 +52,12 @@ export class Folder extends BernieComponent<FolderProps, any, any> {
         return (
             <Box highlight cursor={Cursor.pointer} width={percent(100)} onClick={this.onWrapperClick} children={
                 <FlexBox width={percent(100)} align={Align.CENTER} flexDir={FlexDirection.ROW} justifyContent={Justify.SPACE_BETWEEN}>
-                    <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER}>
-                        <Icon icon={<FolderIcon/>}/>
+                    <Icon icon={<FolderIcon/>}/>
 
-                        <Text text={p.data.title}/>
+                    <FlexBox width={percent(100)} overflowXBehaviour={OverflowBehaviour.SCROLL}>
+                        <FlexBox overflowXBehaviour={OverflowBehaviour.SCROLL}>
+                            <Text text={p.data.title} whitespace={"nowrap"}/>
+                        </FlexBox>
                     </FlexBox>
 
                     <FlexBox flexDir={FlexDirection.ROW_REVERSE} align={Align.CENTER}>
