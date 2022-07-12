@@ -10,18 +10,13 @@ import {Icon} from "../../components/lo/Icon";
 import {px} from "../../logic/style/DimensionalMeasured";
 import {ObjectVisualMeaning} from "../../logic/style/ObjectVisualMeaning";
 import {WFCComponent} from "../../tests/wfc/WFC";
+import {BoardingPageV2} from "../boarding/BoardingPageV2";
 
 export class UnitTestPage extends BernieComponent<any, any, any> {
 
     componentRender(p: any, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
-            <Screen children={
-                <Centered fullHeight children={
-                    <WFCComponent
-                        dimension={3}
-                    />
-                }/>
-            }/>
+            <BoardingPageV2/>
         );
     }
 }

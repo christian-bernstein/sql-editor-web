@@ -14,10 +14,12 @@ import {Screen} from "../components/lo/Page";
 import {Centered} from "../components/lo/PosInCenter";
 import {ObjectVisualMeaning} from "./style/ObjectVisualMeaning";
 import {Text} from "../components/lo/Text";
+import {Default, Mobile} from "../components/logic/Media";
 
 export type BernieComponentConfig = {
     enableLocalDialog: boolean,
     componentID?: string,
+    deviceRenderSeparation?: boolean
 }
 
 export class BernieComponent<RProps, RState, LState extends object> extends React.Component<RProps, RState> {
@@ -44,9 +46,18 @@ export class BernieComponent<RProps, RState, LState extends object> extends Reac
 
     private renderLocalForegroundDialogGenerator?: (component: BernieComponent<RProps, RState, LState>) => JSX.Element;
 
-    constructor(props: RProps, state: RState, local: LState, config?: BernieComponentConfig) {
+    constructor(props: RProps, state: RState, local: LState, config?: Partial<BernieComponentConfig>) {
         super(props);
-        this.config = getOr(config, BernieComponent.defaultConfig);
+
+        // todo test
+        this.config = {
+            ...{
+                deviceRenderSeparation: false,
+                enableLocalDialog: false,
+            },
+            ...config
+        };
+
         this.state = state;
         this._local = cs(local);
         this._controller = new RenderController();
@@ -160,6 +171,14 @@ export class BernieComponent<RProps, RState, LState extends object> extends Reac
         } else throw new Error("Cannot call / open a local dialog if 'enableLocalDialog' is disabled in the (Bernie)-Components config");
     }
 
+    public renderDefault(p: RProps, s: RState, l: LState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
+        return this.componentRender(p, s, l, t, a);
+    }
+
+    public renderMobile(p: RProps, s: RState, l: LState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
+        return this.componentRender(p, s, l, t, a);
+    }
+
     public componentRender(p: RProps, s: RState, l: LState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return undefined;
     }
@@ -193,8 +212,13 @@ export class BernieComponent<RProps, RState, LState extends object> extends Reac
                     this.renderLocalForegroundDialog = false;
                     this.rerender("foreground-dialog");
                 }} sx={{
-                    '& .MuiDialog-paper': {
+                    '& .MuiPaper-root': {
                         background: "transparent",
+                        backdropFilter: "blur(10px)"
+                    },
+                    '& .MuiDialog-paper': {
+                        // background: "transparent",
+                        background: "red",
                         maxHeight: "100vh !important",
                         maxWidth: "100vw !important",
                         margin: "0 !important",
@@ -235,12 +259,27 @@ export class BernieComponent<RProps, RState, LState extends object> extends Reac
                         ) : undefined
                     }
                     {
-                        this.componentRender(
-                            this.props,
-                            this.state,
-                            this.local.state,
-                            utilizeGlobalTheme(),
-                            this.assembly
+                        this.config.deviceRenderSeparation ? (
+                            <>
+                                {
+                                    // <Default children={
+                                    //     this.renderDefault(this.props, this.state, this.local.state, utilizeGlobalTheme(), this.assembly)
+                                    // }/>
+                                }
+                                {
+                                    // <Mobile children={
+                                    //     this.renderMobile(this.props, this.state, this.local.state, utilizeGlobalTheme(), this.assembly)
+                                    // }/>
+                                }
+                            </>
+                        ) : (
+                            this.componentRender(
+                                this.props,
+                                this.state,
+                                this.local.state,
+                                utilizeGlobalTheme(),
+                                this.assembly
+                            )
                         )
                     }
                 </>
