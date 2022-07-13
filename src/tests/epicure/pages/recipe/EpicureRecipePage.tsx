@@ -183,5 +183,4 @@ export class EpicureRecipePage extends BernieComponent<EpicureRecipePageProps, a
             }/>
         );
     }
-
 }

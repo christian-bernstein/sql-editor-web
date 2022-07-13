@@ -127,7 +127,7 @@ export class EpicureHubPage extends BernieComponent<any, any, EpicureHubPageLoca
                     <AppHeader title={"Epicure Hub"} right={
                         this.component(() => {
                             const len = EpicureAPI.api().filters.length;
-                            const showBadge = len != 0;
+                            const showBadge = len !== 0;
 
                             return (
                                 <If condition={showBadge} ifTrue={

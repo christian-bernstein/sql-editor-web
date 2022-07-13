@@ -289,6 +289,7 @@ export namespace Environment {
         }
 
         private baseSend(payload: string): void {
+
             if (this.socket !== undefined) {
                 if (this.socket.readyState === WebSocket.OPEN) {
                     // Websocket is ready, message can be send.
@@ -425,7 +426,12 @@ export namespace Environment {
                         this._reconnectLock = false;
                         // Fire 'open' event
                         this.fireSocketEvent(SocketEventTypes.ON_OPEN, ev);
-                        App.app().rerenderGlobally();
+
+                        // todo connector can be used without
+                        if (App.isInitiated()) {
+                            App.app().rerenderGlobally();
+                        }
+
                     };
                     this._socket.onclose = ev => {
                         this.fireSocketEvent(SocketEventTypes.ON_CLOSE, ev)

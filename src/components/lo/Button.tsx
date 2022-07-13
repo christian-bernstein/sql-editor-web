@@ -24,13 +24,25 @@ export type ButtonProps = {
     zIndex?: number,
     border?: boolean,
     bgColorOnDefault?: boolean,
-    highlight?: boolean
+    highlight?: boolean,
+    vibrateOnClick?: boolean,
+    vibrationPattern?: number[]
+
 }
 
 export class Button extends React.Component<ButtonProps, any> {
 
     constructor(props: ButtonProps) {
         super(props);
+    }
+
+    private onClick(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+        if (this.props.vibrateOnClick && window.navigator.vibrate !== undefined) {
+            window.navigator.vibrate(getOr(this.props.vibrationPattern, [200]));
+        }
+        if (this.props.onClick !== undefined) {
+            this.props.onClick?.(event);
+        }
     }
 
     render() {
@@ -40,17 +52,14 @@ export class Button extends React.Component<ButtonProps, any> {
 
         const Button = styled.div`
           border-radius: ${theme.radii.defaultObjectRadius.css()};
-          
           background-color: ${getOr(this.props.bgColorOnDefault, true) ? bgColor.css() : "transparent"};
-          
           border: ${getOr(this.props.border, true) ? `1px solid ${meaningfulColors.lighter.css()}` : "none"};
           padding: ${getOr(this.props.padding, theme.paddings.defaultButtonPadding).css()};
           color: ${theme.colors.fontPrimaryColor.css()};
           font-family: ${theme.texts.fontFamily};
           width: ${getOr(this.props.width?.css(), "auto")};
           height: ${getOr(this.props.height?.css(), "auto")};
-          display: flex;         
-          
+          display: flex;
           align-content: center;
           justify-content: center;
           cursor: ${getOr(this.props.cursor, Cursor.pointer)};
@@ -92,7 +101,7 @@ export class Button extends React.Component<ButtonProps, any> {
         `;
 
         return (
-            <Button onClick={event => getOr(this.props.onClick, () => {})(event)} style={getOr(this.props.style, {} as CSSProperties)}>
+            <Button onClick={event => this.onClick(event)} style={getOr(this.props.style, {} as CSSProperties)}>
                 {this.props.children}
             </Button>
         );

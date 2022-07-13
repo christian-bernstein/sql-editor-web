@@ -269,7 +269,8 @@ export namespace Themeable {
             opaqueUI: .1
         },
         radii: {
-            defaultObjectRadius: px(6)
+            // defaultObjectRadius: px(6)
+            defaultObjectRadius: px(8)
         },
         margins: {
             smallTextVerticalMargin: px(3)
