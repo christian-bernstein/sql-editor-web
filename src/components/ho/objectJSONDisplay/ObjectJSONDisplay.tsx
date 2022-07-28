@@ -23,7 +23,8 @@ export type ObjectJSONDisplayProps = WithVisualMeaning & {
     showControls?: boolean,
     pure?: boolean,
     opaque?: boolean,
-    enableClipboard?: boolean
+    enableClipboard?: boolean,
+    defaultCollapsed?: boolean
 }
 
 export type ObjectJSONDisplayState = {
@@ -35,14 +36,15 @@ export class ObjectJSONDisplay extends React.Component<ObjectJSONDisplayProps, O
     constructor(props: ObjectJSONDisplayProps) {
         super(props);
         this.state = {
-            collapsed: true
+            collapsed: getOr(props.defaultCollapsed, true)
         };
     }
 
-    private toggleCollapse(collapse?: boolean) {
+    private toggleCollapse(collapse?: boolean): ObjectJSONDisplay {
         this.setState({
             collapsed: getOr(collapse, !this.state.collapsed)
         });
+        return this;
     }
 
     private renderTitle(): JSX.Element {

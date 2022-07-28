@@ -35,7 +35,15 @@ export type BoxProps = {
     cursor?: Cursor,
     bgColor?: Color,
     noBGColor?: boolean,
-    arrow?: BoxArrowConfig
+    arrow?: BoxArrowConfig,
+    borderRadiiConfig?: {
+        enableCustomBorderRadii?: boolean,
+        fallbackCustomBorderRadii?: DimensionalMeasured,
+        topLeft?: DimensionalMeasured,
+        topRight?: DimensionalMeasured,
+        bottomLeft?: DimensionalMeasured,
+        bottomRight?: DimensionalMeasured
+    }
 }
 
 export type BoxArrowConfig = {
@@ -65,7 +73,24 @@ export class Box extends React.Component<BoxProps, any> {
 
           // position: relative;
           background-color: ${getOr(this.props.noBGColor, false) ? "none" : bgColor.css()};
-          border-radius: ${theme.radii.defaultObjectRadius.css()};
+          // border-radius: ${theme.radii.defaultObjectRadius.css()};
+          
+          
+          border-radius: ${(() => {
+              const config = this.props.borderRadiiConfig;
+              if (config !== undefined && config.enableCustomBorderRadii) {
+                const radii = getOr(config.fallbackCustomBorderRadii, theme.radii.defaultObjectRadius);
+                const topLeft: DimensionalMeasured = getOr(config.topLeft, radii);
+                const topRight: DimensionalMeasured = getOr(config.topRight, radii);
+                const bottomLeft: DimensionalMeasured = getOr(config.bottomLeft, radii);
+                const bottomRight: DimensionalMeasured = getOr(config.bottomRight, radii);
+                return `${topLeft.css()} ${topRight.css()} ${bottomLeft.css()} ${bottomRight.css()}`;
+              } else {
+                  return theme.radii.defaultObjectRadius.css();
+              }
+          })()};
+          
+          
           border: ${this.props.borderless ? "none" : `1px solid ${meaningfulColors.lighter.css()}`};
           padding: ${this.props.noPadding ? "0" : (getOr(this.props.paddingY, theme.paddings.defaultObjectPadding).css() + " " + getOr(this.props.paddingX, theme.paddings.defaultObjectPadding).css())};
           width: ${getOr(this.props.width?.css(), "auto")};

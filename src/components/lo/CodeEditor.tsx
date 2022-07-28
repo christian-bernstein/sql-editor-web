@@ -22,7 +22,10 @@ export type CodeEditorProps = WithVisualMeaning & {
     height?: DimensionalMeasured,
     editable?: boolean,
     hoverEffect?: boolean,
-    onKeyPress?: (event: React.KeyboardEvent<HTMLDivElement>) => void
+    onKeyPress?: (event: React.KeyboardEvent<HTMLDivElement>) => void,
+    onKeyUp?: (event: React.KeyboardEvent<HTMLDivElement>) => void,
+    onKeyDown?: (event: React.KeyboardEvent<HTMLDivElement>) => void,
+    autoFocus?: boolean
 }
 
 export class CodeEditor extends React.PureComponent<CodeEditorProps, any> {
@@ -62,7 +65,7 @@ export class CodeEditor extends React.PureComponent<CodeEditorProps, any> {
           display: flex;
           justify-content: center;
           align-items: center;
-          border-radius: ${theme.radii.defaultObjectRadius.css()};
+          border-radius: ${theme.radii.defaultObjectRadius.css()}; 
             // background-color: ${theme.colors.backgroundHighlightColor.css()};
           border: 1px solid ${theme.colors.borderPrimaryColor.css()};
           background-color: #282c34;
@@ -148,7 +151,10 @@ export class CodeEditor extends React.PureComponent<CodeEditorProps, any> {
         return (
             <Editor>
                 <ReactCodeMirror
+                    autoFocus={this.props.autoFocus}
                     onKeyPress={this.props.onKeyPress}
+                    onKeyUp={this.props.onKeyUp}
+                    onKeyDown={this.props.onKeyDown}
                     value={getOr(this.props.value, "")}
                     editable={getOr(this.props.editable, true)}
                     indentWithTab={true}

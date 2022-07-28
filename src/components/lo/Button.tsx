@@ -7,6 +7,7 @@ import {getOr} from "../../logic/Utils";
 import {Color} from "../../logic/style/Color";
 import {DimensionalMeasured} from "../../logic/style/DimensionalMeasured";
 import {Cursor} from "../../logic/style/Cursor";
+import {Text} from "./Text";
 
 export type ButtonProps = {
     style?: CSSProperties,
@@ -26,7 +27,8 @@ export type ButtonProps = {
     bgColorOnDefault?: boolean,
     highlight?: boolean,
     vibrateOnClick?: boolean,
-    vibrationPattern?: number[]
+    vibrationPattern?: number[],
+    text?: string
 
 }
 
@@ -102,6 +104,9 @@ export class Button extends React.Component<ButtonProps, any> {
 
         return (
             <Button onClick={event => this.onClick(event)} style={getOr(this.props.style, {} as CSSProperties)}>
+                {this.props.text === undefined ? undefined : (
+                    <Text text={this.props.text}/>
+                )}
                 {this.props.children}
             </Button>
         );

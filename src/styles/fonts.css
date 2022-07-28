@@ -26,5 +26,20 @@
   src: url("../assets/fonts/operatormono/OperatorMono-Light.otf") format("opentype");
   font-weight: 350;
 }
+@font-face {
+  font-family: "Whitney";
+  src: url("../assets/fonts/whitney/whitneymedium.otf") format("opentype");
+  font-weight: normal;
+}
+@font-face {
+  font-family: "Whitney";
+  src: url("../assets/fonts/whitney/whitneybold.otf") format("opentype");
+  font-weight: bold;
+}
+@font-face {
+  font-family: "Whitney";
+  src: url("../assets/fonts/whitney/whitneylight.otf") format("opentype");
+  font-weight: 100;
+}
 
 /*# sourceMappingURL=fonts.css.map */
