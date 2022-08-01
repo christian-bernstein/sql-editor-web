@@ -46,5 +46,7 @@ const getMeaningfulIcon: (vm: ObjectVisualMeaning) => JSX.Element = vm => {
             return <ErrorIcon/>;
         case ObjectVisualMeaning.BETA:
             return <BetaIcon/>
+        case ObjectVisualMeaning.SUCCESS_DEFAULT:
+            return <SuccessIcon/>;
     }
 }

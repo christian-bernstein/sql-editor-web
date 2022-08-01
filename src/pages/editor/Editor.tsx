@@ -137,6 +137,8 @@ export class Editor extends BernieComponent<DebugEditorProps, DebugEditorState, 
             }, 2500),
             companion: App.app().dbSessionCacheShard().currentInfoData === undefined ? undefined : new EditorLogicCompanion(App.app().dbSessionCacheShard().currentInfoData as ProjectInfoData),
             fdh: new FormDataHub("SQLEditorPage").loadFromLocalStore()
+        }, {
+            enableLocalDialog: true
         });
         this.initAssembly();
         this.initProtocolHandlers();

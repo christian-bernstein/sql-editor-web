@@ -25,7 +25,8 @@ export type CodeEditorProps = WithVisualMeaning & {
     onKeyPress?: (event: React.KeyboardEvent<HTMLDivElement>) => void,
     onKeyUp?: (event: React.KeyboardEvent<HTMLDivElement>) => void,
     onKeyDown?: (event: React.KeyboardEvent<HTMLDivElement>) => void,
-    autoFocus?: boolean
+    autoFocus?: boolean,
+    fullSizeMode?: boolean
 }
 
 export class CodeEditor extends React.PureComponent<CodeEditorProps, any> {
@@ -64,7 +65,7 @@ export class CodeEditor extends React.PureComponent<CodeEditorProps, any> {
           box-sizing: border-box;
           display: flex;
           justify-content: center;
-          align-items: center;
+          ${this.props.fullSizeMode ? "" : "align-items: center"};
           border-radius: ${theme.radii.defaultObjectRadius.css()}; 
             // background-color: ${theme.colors.backgroundHighlightColor.css()};
           border: 1px solid ${theme.colors.borderPrimaryColor.css()};

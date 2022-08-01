@@ -279,7 +279,22 @@ export class MenuPageV2 extends BernieComponent<MenuPageV2Props, any, MenuPageV2
     componentRender(p: any, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return this.component(local => {
             if (local.state.state === MenuState.HIDDEN) {
-                return this.props.children;
+                // return this.props.children;
+                return (
+                    <>
+                        <Default children={
+                            this.assembly.render({
+                                component: "menu-small-wrapper"
+                            })
+                        }/>
+
+                        <Mobile children={
+                            this.assembly.render({
+                                component: "menu-mobile-wrapper"
+                            })
+                        }/>
+                    </>
+                );
             } else {
                 return (
                     <>
@@ -297,6 +312,6 @@ export class MenuPageV2 extends BernieComponent<MenuPageV2Props, any, MenuPageV2
                     </>
                 );
             }
-        }, "main")
+        }, "main");
     }
 }

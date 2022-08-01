@@ -59,6 +59,14 @@ export function getMeaningfulColors(meaning: ObjectVisualMeaning, theme: Themeab
                 icon: theme.colors.iconColor,
                 shadowColor: theme.colors.betaHighlightColor.withAlpha(0.1)
             }
+        case ObjectVisualMeaning.SUCCESS_DEFAULT:
+            return {
+                main: theme.colors.green,
+                lighter: theme.colors.greenHighlight,
+                iconColored: theme.colors.greenHighlight,
+                icon: theme.colors.greenHighlight,
+                shadowColor: theme.colors.greenHighlight.withAlpha(0.1)
+            };
     }
 }
 
@@ -113,7 +121,9 @@ export namespace Themeable {
         borderPrimaryShadowColor: Color,
         backdropColor: Color,
         betaColor: Color,
-        betaHighlightColor: Color
+        betaHighlightColor: Color,
+        green: Color,
+        greenHighlight: Color
     }
 
     export type Theme = {
@@ -189,7 +199,9 @@ export namespace Themeable {
         borderPrimaryShadowColor: Color.ofHex("#71D99E", .13),
         backdropColor: Color.ofHex("#171717", .8),
         betaColor: Color.ofHex("#8957e5"),
-        betaHighlightColor: Color.ofHex("#a371f7")
+        betaHighlightColor: Color.ofHex("#a371f7"),
+        green: Color.ofHex("#71D99E"),
+        greenHighlight: Color.ofHex("#A9E5C3"),
     }
 
     export const darkTritanopiaThemePallet: ColorPallet = {
@@ -217,7 +229,9 @@ export namespace Themeable {
         borderPrimaryShadowColor: Color.ofHex("#388bfd", .13),
         backdropColor: Color.ofHex("#171717", .8),
         betaColor: Color.ofHex("#8957e5"),
-        betaHighlightColor: Color.ofHex("#a371f7")
+        betaHighlightColor: Color.ofHex("#a371f7"),
+        green: Color.ofHex("#71D99E"),
+        greenHighlight: Color.ofHex("#A9E5C3"),
     }
 
     export const lightThemePallet: ColorPallet = createColorPallet({
