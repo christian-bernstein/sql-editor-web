@@ -257,10 +257,8 @@ export class DatabaseScriptingTab extends BernieComponent<DatabaseScriptingTabPr
             try {
                 const code: string = l.fdh.get("code", "");
                 if (code.trim().length > 0) {
-
                     // const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor
                     const f = new Function("api", code);
-
 
                     this.local.setStateWithChannels({
                         runningState: RunningState.RUNNING
@@ -299,7 +297,6 @@ export class DatabaseScriptingTab extends BernieComponent<DatabaseScriptingTabPr
                                 );
                             }
 
-
                             this.local.setStateWithChannels({
                                 runningState: RunningState.SUCCESS,
                                 scriptResult: apiResult
@@ -310,8 +307,6 @@ export class DatabaseScriptingTab extends BernieComponent<DatabaseScriptingTabPr
                                     }, ["exe"])
                                 }, 5000);
                             })
-
-
                         } catch (e) {
                             console.error(e);
                             setError()

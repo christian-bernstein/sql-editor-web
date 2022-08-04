@@ -3,7 +3,7 @@
  * 1 | @import "src/styles/themes";
  *   |         ^^^^^^^^^^^^^^^^^^^
  *   '
- *   input.scss 1:9  root stylesheet */
+ *   Input.scss 1:9  root stylesheet */
 
 body::before {
   font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono",
@@ -13,5 +13,5 @@ body::before {
   padding: 1em;
   margin-bottom: 1em;
   border-bottom: 2px solid black;
-  content: "Error: Can't find stylesheet to import.\a   \2577 \a 1 \2502  @import \"src/styles/themes\";\d\a   \2502          ^^^^^^^^^^^^^^^^^^^\a   \2575 \a   input.scss 1:9  root stylesheet";
+  content: "Error: Can't find stylesheet to import.\a   \2577 \a 1 \2502  @import \"src/styles/themes\";\d\a   \2502          ^^^^^^^^^^^^^^^^^^^\a   \2575 \a   Input.scss 1:9  root stylesheet";
 }

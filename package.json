@@ -36,6 +36,7 @@
     "@uiw/react-md-editor": "^3.9.4",
     "apexcharts": "^3.28.3",
     "bootstrap": "^4.6.0",
+    "caniuse-lite": "^1.0.30001373",
     "codemirror": "^5.65.0",
     "console-feed": "^3.4.0",
     "dateformat": "^5.0.2",

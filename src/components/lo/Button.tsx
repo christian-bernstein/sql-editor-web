@@ -40,7 +40,7 @@ export class Button extends React.Component<ButtonProps, any> {
 
     private onClick(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
         if (this.props.vibrateOnClick && window.navigator.vibrate !== undefined) {
-            window.navigator.vibrate(getOr(this.props.vibrationPattern, [200]));
+            window.navigator.vibrate(getOr(this.props.vibrationPattern, [1]));
         }
         if (this.props.onClick !== undefined) {
             this.props.onClick?.(event);

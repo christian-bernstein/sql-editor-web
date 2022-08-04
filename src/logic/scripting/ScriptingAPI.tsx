@@ -120,8 +120,6 @@ export class ScriptingAPI {
                 }/>
             )
         });
-
-
     }
 
     get result(): ScriptResult | undefined {
