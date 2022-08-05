@@ -48,7 +48,7 @@ export function utilizeUserProfile(defUser: UserData = {
     }
 }
 
-export function utilizeGlobalTheme(defTheme: Themeable.Theme = Themeable.lightTheme): Themeable.Theme {
+export function utilizeGlobalTheme(defTheme: Themeable.Theme = Themeable.darkTritanopiaTheme): Themeable.Theme {
     if (App.isInitiated()) {
         return App.app().getGlobalTheme();
     } else {

@@ -34,7 +34,7 @@ export class UnitTestPage extends BernieComponent<any, any, any> {
             <AF elements={[
                 <Button text={"open"} onClick={() => {
                     this._openLocalDialog(
-                        <StaticDrawerMenu
+                        <StaticDrawerMenu<string>
                             vibration={{
                                 enable: true
                             }}
@@ -48,6 +48,10 @@ export class UnitTestPage extends BernieComponent<any, any, any> {
                                     <form style={{width: "100%"}} onSubmit={event => {
                                         event.preventDefault();
                                         this.closeLocalDialog();
+                                        setTimeout(() => {
+                                            props.onClose?.();
+                                            props.onSubmit?.();
+                                        }, 1);
                                     }}>
                                         <Flex>
                                             <Flex gap={t.gaps.smallGab} width={percent(100)} margin={{top: px(50)}}>
@@ -66,14 +70,18 @@ export class UnitTestPage extends BernieComponent<any, any, any> {
                                             <LiteGrid gap={t.gaps.smallGab} columns={2}>
                                                 <Button text={"Cancel"} onClick={() => {
                                                     this.closeLocalDialog();
-                                                    props.onClose?.();
-                                                    props.onCancel?.();
+                                                    setTimeout(() => {
+                                                        props.onClose?.();
+                                                        props.onCancel?.();
+                                                    }, 1);
                                                     // reject();
                                                 }}/>
                                                 <Button text={"Done"} vibrateOnClick opaque visualMeaning={VM.SUCCESS_DEFAULT} onClick={() => {
                                                     this.closeLocalDialog();
-                                                    props.onClose?.();
-                                                    props.onSubmit?.();
+                                                    setTimeout(() => {
+                                                        props.onClose?.();
+                                                        props.onSubmit?.();
+                                                    }, 1);
                                                     // resolve(getOr(value, ""));
                                                 }}/>
                                             </LiteGrid>
@@ -89,9 +97,11 @@ export class UnitTestPage extends BernieComponent<any, any, any> {
                 }}/>,
                 <Button text={"acknowledge"} onClick={() => {
                     this._openLocalDialog(
-                        <AcknowledgeDrawer onSubmit={() => {
+                        <AcknowledgeDrawer title={"SQL executed"} description={"Main thing to notice here is the use of event.preventDefault(). Since, if you don't use it, pressing the enter key might result in submitting the form, which you obviously don't want here. You just want to press the enter key to filter the content of a Grid. So, as soon as the enter key is pressed you can get the values from the input elements and filter the grid accordingly."} onSubmit={() => {
                             this.closeLocalDialog();
-                            alert("Hello world")
+                            setTimeout(() => {
+                                alert("as")
+                            }, 10);
                         }}/>
                     )
                 }}/>

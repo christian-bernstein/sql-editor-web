@@ -8,7 +8,7 @@ import {DrawerProps} from "../../props/DrawerProps";
 import {getOr} from "../../../logic/Utils";
 import {If} from "../../logic/If";
 
-export type AcknowledgeDrawerProps = DrawerProps & {
+export type AcknowledgeDrawerProps = DrawerProps<undefined> & {
     title?: string,
     description?: string
 };
@@ -22,10 +22,11 @@ export const AcknowledgeDrawer: React.FC<AcknowledgeDrawerProps> = props => {
                     <If condition={props.description !== undefined} ifTrue={
                         <Text text={props.description as string}/>
                     }/>
-
                     <Button width={percent(100)} text={"OK"} onClick={() => {
-                        props.onClose?.();
-                        props.onSubmit?.();
+                        setTimeout(() => {
+                            props.onClose?.();
+                            props.onSubmit?.(undefined);
+                        }, 1);
                     }}/>
                 </Flex>
             );

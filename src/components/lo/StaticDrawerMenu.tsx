@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {percent, px} from "../../logic/style/DimensionalMeasured";
 import {Justify} from "../../logic/style/Justify";
 import {Align} from "../../logic/style/Align";
@@ -12,52 +12,60 @@ import {shouldVibrate, VibrationSettingsProps} from "../props/VibrationSettingsP
 import {If} from "../logic/If";
 import {Screen} from "./Page";
 import {DrawerProps} from "../props/DrawerProps";
+import {BernieComponent} from "../../logic/BernieComponent";
+import {Themeable} from "../../logic/style/Themeable";
+import {Assembly} from "../../logic/assembly/Assembly";
 
-export type StaticDrawerMenuProps = DrawerProps & {
-    body: (props: StaticDrawerMenuProps) => JSX.Element,
+export type StaticDrawerMenuProps<T> = DrawerProps<T> & {
+    body: (props: StaticDrawerMenuProps<T>) => JSX.Element,
     vibration?: VibrationSettingsProps,
     enableBlurredBackground?: boolean
 }
 
-export const StaticDrawerMenu: React.FC<StaticDrawerMenuProps> = props => {
-    const theme = utilizeGlobalTheme();
+export class StaticDrawerMenu<T> extends BernieComponent<StaticDrawerMenuProps<T>, any, any> {
 
-    useEffect(() => {
-        shouldVibrate("appear", props.vibration, pattern => {
+    componentDidMount() {
+        super.componentDidMount();
+        shouldVibrate("appear", this.props.vibration, pattern => {
             if (window.navigator.vibrate !== undefined) {
                 window.navigator.vibrate(pattern);
             }
         });
-    });
+    }
 
-    const body = (
-        <Flex height={percent(100)} justifyContent={Justify.FLEX_END} align={Align.CENTER}>
-            <Mobile children={
-                <Box borderless width={percent(100)} maxHeight={percent(100)} overflowYBehaviour={OverflowBehaviour.SCROLL} borderRadiiConfig={{
-                    enableCustomBorderRadii: true,
-                    bottomRight: px(),
-                    bottomLeft: px()
-                }} children={props.body(props)}/>
-            }/>
-            <Default children={
-                <Box borderless width={percent(30)} maxHeight={percent(100)} overflowYBehaviour={OverflowBehaviour.SCROLL} borderRadiiConfig={{
-                    enableCustomBorderRadii: true,
-                    bottomRight: px(),
-                    bottomLeft: px()
-                }} children={props.body(props)}/>
-            }/>
-        </Flex>
-    );
+    componentRender(p: StaticDrawerMenuProps<T>, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
+        const theme = utilizeGlobalTheme();
 
-    return (
-        <If condition={getOr(props.enableBlurredBackground, false)} ifTrue={
-            <Screen
-                style={{backgroundColor: "transparent"}}
-                deactivatePadding
-                children={body}
-            />
-        } ifFalse={
-            body
-        }/>
-    );
+        const body = (
+            <Flex height={percent(100)} justifyContent={Justify.FLEX_END} align={Align.CENTER}>
+                <Mobile children={
+                    <Box borderless width={percent(100)} maxHeight={percent(100)} overflowYBehaviour={OverflowBehaviour.SCROLL} borderRadiiConfig={{
+                        enableCustomBorderRadii: true,
+                        bottomRight: px(),
+                        bottomLeft: px()
+                    }} children={this.props.body(this.props)}/>
+                }/>
+                <Default children={
+                    <Box borderless width={percent(30)} maxHeight={percent(100)} overflowYBehaviour={OverflowBehaviour.SCROLL} borderRadiiConfig={{
+                        enableCustomBorderRadii: true,
+                        bottomRight: px(),
+                        bottomLeft: px()
+                    }} children={this.props.body(this.props)}/>
+                }/>
+            </Flex>
+        );
+
+        return (
+            <If condition={getOr(this.props.enableBlurredBackground, false)} ifTrue={
+                <Screen
+                    style={{backgroundColor: "transparent"}}
+                    deactivatePadding
+                    children={body}
+                />
+            } ifFalse={
+                body
+            }/>
+        );
+    }
+
 }
