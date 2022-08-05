@@ -133,6 +133,7 @@ export class DatabaseScriptingTab extends BernieComponent<DatabaseScriptingTabPr
                             '   public pull(sql: string, internal: boolean = true): Promise<object>;',
                             '   public yield(result: ScriptResult): ScriptingAPI;',
                             '   public input(config: SimpleInputConfig)',
+                            '   public notify(title: string, text: string): Promise<undefined>',
                             '}',
 
                             'declare const api: ScriptingAPI;',

@@ -60,7 +60,7 @@ import {UnitTestPage} from "../unit/UnitTestPage";
 import {MenuState} from "../menu/v2/MenuState";
 
 export type AppPageProps = {
-    mode: AppPageMode
+    mode?: AppPageMode
 }
 
 export type AppPageState = {
@@ -71,7 +71,7 @@ export type AppPageState = {
     showCommandPallet: boolean,
     showDialog: boolean,
     dialogAssembly?: string,
-    dialogProps?: any
+    dialogProps?: any,
 }
 
 let hook: undefined | (() => void);

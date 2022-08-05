@@ -10,14 +10,14 @@ import {If} from "../../logic/If";
 
 export type AcknowledgeDrawerProps = DrawerProps<undefined> & {
     title?: string,
-    description?: string
+    description?: string,
 };
 
 export const AcknowledgeDrawer: React.FC<AcknowledgeDrawerProps> = props => {
     return (
         <StaticDrawerMenu body={p => {
             return (
-                <Flex>
+                <Flex width={percent(100)}>
                     <Text text={getOr(props.title, "Acknowledge")} type={TextType.smallHeader}/>
                     <If condition={props.description !== undefined} ifTrue={
                         <Text text={props.description as string}/>

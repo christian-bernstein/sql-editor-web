@@ -34,6 +34,7 @@ export class QuickActionShard extends Shard {
                 DefaultQuickActions.rerenderQA,
                 DefaultQuickActions.reloadQA,
                 DefaultQuickActions.gotoBoardingPageQA,
+                DefaultQuickActions.test,
             );
         });
 

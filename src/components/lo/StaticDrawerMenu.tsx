@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 import {percent, px} from "../../logic/style/DimensionalMeasured";
 import {Justify} from "../../logic/style/Justify";
 import {Align} from "../../logic/style/Align";
@@ -15,6 +15,9 @@ import {DrawerProps} from "../props/DrawerProps";
 import {BernieComponent} from "../../logic/BernieComponent";
 import {Themeable} from "../../logic/style/Themeable";
 import {Assembly} from "../../logic/assembly/Assembly";
+import styled from "styled-components";
+import {AF} from "../logic/ArrayFragment";
+import {createMargin} from "../../logic/style/Margin";
 
 export type StaticDrawerMenuProps<T> = DrawerProps<T> & {
     body: (props: StaticDrawerMenuProps<T>) => JSX.Element,
@@ -34,16 +37,28 @@ export class StaticDrawerMenu<T> extends BernieComponent<StaticDrawerMenuProps<T
     }
 
     componentRender(p: StaticDrawerMenuProps<T>, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
-        const theme = utilizeGlobalTheme();
+        const Puller = styled.div`
+          width: 25%;
+          height: 6px;
+          border-radius: 50px;
+          background-color: ${t.colors.backgroundHighlightInputColor.css()};
+        `;
 
         const body = (
-            <Flex height={percent(100)} justifyContent={Justify.FLEX_END} align={Align.CENTER}>
+            <Flex margin={createMargin(0, 0, 10, 0)} padding paddingY={px()} paddingX={px(10)} height={percent(100)} justifyContent={Justify.FLEX_END} align={Align.CENTER}>
                 <Mobile children={
                     <Box borderless width={percent(100)} maxHeight={percent(100)} overflowYBehaviour={OverflowBehaviour.SCROLL} borderRadiiConfig={{
-                        enableCustomBorderRadii: true,
+                        enableCustomBorderRadii: false,
                         bottomRight: px(),
                         bottomLeft: px()
-                    }} children={this.props.body(this.props)}/>
+                    }} children={
+                        <Flex width={percent(100)} align={Align.CENTER} children={
+                            <AF elements={[
+                                <Puller/>,
+                                this.props.body(this.props)
+                            ]}/>
+                        }/>
+                    }/>
                 }/>
                 <Default children={
                     <Box borderless width={percent(30)} maxHeight={percent(100)} overflowYBehaviour={OverflowBehaviour.SCROLL} borderRadiiConfig={{

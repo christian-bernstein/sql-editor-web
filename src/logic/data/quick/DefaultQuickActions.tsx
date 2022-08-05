@@ -13,7 +13,7 @@ import {Utils} from "../../Utils";
 import {App} from "../../app/App";
 import {Icon} from "../../../components/lo/Icon";
 import React from "react";
-import {Text} from "../../../components/lo/Text";
+import {Text, TextType} from "../../../components/lo/Text";
 import {px} from "../../style/DimensionalMeasured";
 import {ReactComponent as LogIcon} from "../../../assets/icons/ic-20/ic20-bolt.svg";
 import {BadgedWrapper} from "../../../components/lo/BadgedWrapper";
@@ -21,6 +21,8 @@ import {Constants} from "../../misc/Constants";
 import {If} from "../../../components/logic/If";
 import {ServerConnectionIcon} from "../../../components/ho/serverConnectionIcon/ServerConnectionIcon";
 import {ObjectVisualMeaning} from "../../style/ObjectVisualMeaning";
+import {StaticDrawerMenu} from "../../../components/lo/StaticDrawerMenu";
+import {Align} from "../../style/Align";
 
 export namespace DefaultQuickActions {
 
@@ -119,6 +121,25 @@ export namespace DefaultQuickActions {
         onClick: (event, config) => {
             window.location.href = "/boarding"
             App.app().rerenderGlobally();
+        }
+    }
+
+    export const test: QuickActionConfig = {
+        displayName: "Goto boarding page",
+        tags: ["Goto", "Boarding", "Page"],
+        render(theme: Themeable.Theme, panel: QuickActionPanel, config: QuickActionConfig): JSX.Element {
+            return (
+                <Icon icon={
+                    <Text text={"Test"}/>
+                }/>
+            );
+        },
+        onClick: (event, config, panel) => {
+            panel._openLocalDialog(
+                <StaticDrawerMenu body={() => (
+                    <Text text={"Imke ist perfekt"} align={Align.CENTER} type={TextType.smallHeader}/>
+                )}/>
+            )
         }
     }
 

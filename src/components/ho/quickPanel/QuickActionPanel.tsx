@@ -34,21 +34,27 @@ import {Centered} from "../../lo/PosInCenter";
 import {Default, Mobile} from "../../logic/Media";
 import {Cursor} from "../../../logic/style/Cursor";
 
+export type QuickActionPanelProps = {
+    noPadding?: boolean
+}
+
 export type QuickActionPanelLocalState = {
     updating: boolean,
     rawFilter?: string
 }
 
-export class QuickActionPanel extends BernieComponent<any, any, QuickActionPanelLocalState> {
+export class QuickActionPanel extends BernieComponent<QuickActionPanelProps, any, QuickActionPanelLocalState> {
 
-    constructor() {
-        super(undefined, undefined, {
+    constructor(props: QuickActionPanelProps) {
+        super(props, undefined, {
             updating: false
+        }, {
+            enableLocalDialog: true
         });
     }
 
-    private static handleQAClick(event: React.MouseEvent<HTMLSpanElement, MouseEvent>, qa: QuickActionConfig) {
-        qa.onClick?.(event, qa);
+    private static handleQAClick(event: React.MouseEvent<HTMLSpanElement, MouseEvent>, qa: QuickActionConfig, panel: QuickActionPanel) {
+        qa.onClick?.(event, qa, panel);
     }
 
     private applyLocalFilter(qac: QuickActionCategory, actions: QuickActionConfig[]): QuickActionConfig[] {
@@ -85,7 +91,7 @@ export class QuickActionPanel extends BernieComponent<any, any, QuickActionPanel
                             const allowedAction: boolean = config.isAllowedAction === undefined ? true : config.isAllowedAction();
 
                             return (
-                                <span onClick={event => QuickActionPanel.handleQAClick(event, config)} children={
+                                <span onClick={event => QuickActionPanel.handleQAClick(event, config, this)} children={
                                     <If condition={getOr(config.wrapInDefaultButton, true)} ifTrue={
                                         <Button cursor={allowedAction ? Cursor.pointer : Cursor.notAllowed} padding={theme.paddings.defaultObjectPadding} shrinkOnClick opaque={getOr(config.opaque, config.beta)} visualMeaning={config.visualMeaning ? config.visualMeaning : (config.beta ? ObjectVisualMeaning.BETA : ObjectVisualMeaning.UI_NO_HIGHLIGHT)} children={
                                             config.render(t, this, config)
@@ -154,9 +160,9 @@ export class QuickActionPanel extends BernieComponent<any, any, QuickActionPanel
         }
     }
 
-    componentRender(p: any, s: any, l: QuickActionPanelLocalState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
+    componentRender(p: QuickActionPanelProps, s: any, l: QuickActionPanelLocalState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
-            <Box width={percent(100)} maxHeight={DimensionalMeasured.of(100, Dimension.vw)} borderless gapY={t.gaps.defaultGab}>
+            <Box noPadding={getOr(p.noPadding, false)} width={percent(100)} maxHeight={DimensionalMeasured.of(100, Dimension.vw)} borderless gapY={t.gaps.defaultGab}>
                 <ElementHeader title={"Quick-actions"} icon={
                     this.component(local => {
                         return (

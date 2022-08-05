@@ -18,6 +18,8 @@ import {LiteGrid} from "../../components/lo/LiteGrid";
 import {Button} from "../../components/lo/Button";
 import {getOr} from "../Utils";
 import {If} from "../../components/logic/If";
+import {AcknowledgeDrawer} from "../../components/lo/scripting/AcknowledgeDrawer";
+import React from "react";
 
 export class ScriptingAPI {
 
@@ -71,6 +73,19 @@ export class ScriptingAPI {
     public yield(result: ScriptResult): ScriptingAPI {
         this._result = result;
         return this;
+    }
+
+    public notify(title: string, text: string): Promise<undefined> {
+        return new Promise((resolve, reject) => {
+            this.editor._openLocalDialog(
+                <AcknowledgeDrawer title={title} description={text} onSubmit={() => {
+                    this.editor.closeLocalDialog();
+                    setTimeout(() => {
+                        resolve(undefined);
+                    }, 10);
+                }}/>
+            )
+        });
     }
 
     public input(config: SimpleInputConfig): Promise<string> {

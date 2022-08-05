@@ -1,23 +1,29 @@
 import {BernieComponent} from "../../logic/BernieComponent";
 import {Assembly} from "../../logic/assembly/Assembly";
 import {Themeable} from "../../logic/style/Themeable";
-import React from "react";
-import {Screen, screenedAndCentered} from "../../components/lo/Page";
+import React, {useEffect, useState} from "react";
+import {Screen} from "../../components/lo/Page";
 import {percent, px} from "../../logic/style/DimensionalMeasured";
-import {Flex} from "../../components/lo/FlexBox";
+import {Flex, FlexBox} from "../../components/lo/FlexBox";
 import {Button} from "../../components/lo/Button";
-import {Box} from "../../components/lo/Box";
 import {Justify} from "../../logic/style/Justify";
-import {Text, TextType} from "../../components/lo/Text";
-import {InformationBox} from "../../components/ho/informationBox/InformationBox";
-import {ObjectVisualMeaning, VM} from "../../logic/style/ObjectVisualMeaning";
-import {If} from "../../components/logic/If";
-import {Input} from "../../components/lo/Input";
-import {getOr} from "../../logic/Utils";
 import {LiteGrid} from "../../components/lo/LiteGrid";
 import {StaticDrawerMenu} from "../../components/lo/StaticDrawerMenu";
-import {AF} from "../../components/logic/ArrayFragment";
-import {AcknowledgeDrawer} from "../../components/lo/scripting/AcknowledgeDrawer";
+import {ReactComponent as ReleaseIcon} from "../../assets/icons/ic-24/ic24-globe.svg";
+import {ReactComponent as DevelopmentIcon} from "../../assets/icons/ic-24/ic24-bug.svg";
+import {ReactComponent as UnittestIcon} from "../../assets/icons/ic-24/ic24-extension.svg";
+import {Icon} from "../../components/lo/Icon";
+import {Align} from "../../logic/style/Align";
+import {Text, TextType} from "../../components/lo/Text";
+import {utilizeGlobalTheme} from "../../logic/app/App";
+import {AppPageMode} from "../app/AppPageMode";
+import {getOr} from "../../logic/Utils";
+import {ObjectVisualMeaning, VM} from "../../logic/style/ObjectVisualMeaning";
+import {ProgressTracker} from "../../components/indev/ProgressTracker";
+import {Step as MUIStep, StepContent, StepLabel, Stepper} from "@mui/material";
+import {createMargin} from "../../logic/style/Margin";
+import {HOCWrapper} from "../../components/HOCWrapper";
+import {QuickActionPanel} from "../../components/ho/quickPanel/QuickActionPanel";
 
 export class UnitTestPage extends BernieComponent<any, any, any> {
 
@@ -29,83 +35,213 @@ export class UnitTestPage extends BernieComponent<any, any, any> {
 
     componentRender(p: any, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
 
+        const confirmBody = (requestClose: () => void, submit: () => void) => (
+            <StaticDrawerMenu vibration={{
+                enable: true,
+                pattern: [100],
+                activeChannels: ["appear"]
+            }} onCancel={() => {
+                requestClose();
+            }} onSubmit={() => {
+                requestClose();
+                submit();
+            }} body={p => (
+                <Flex width={percent(100)} gap={t.gaps.smallGab}>
+                    <Text text={"Apply changes?"} type={TextType.smallHeader}/>
+                    <Text text={"Applying changes will cause the website to reload."} type={TextType.secondaryDescription} fontSize={px(12)}/>
+                    <LiteGrid columns={2} gap={t.gaps.smallGab}>
+                        <Button text={"Cancel"} onClick={() => p.onCancel?.()}/>
+                        <Button text={"Apply"} visualMeaning={ObjectVisualMeaning.WARNING} opaque onClick={() => p.onSubmit?.()}/>
+                    </LiteGrid>
+                </Flex>
+            )}/>
+        );
 
-        return screenedAndCentered(
-            <AF elements={[
-                <Button text={"open"} onClick={() => {
-                    this._openLocalDialog(
-                        <StaticDrawerMenu<string>
-                            vibration={{
-                                enable: true
-                            }}
-                            body={props => (
-                                <Flex>
-                                    <Text text={"Script-generated input"} type={TextType.smallHeader}/>
-                                    <InformationBox width={percent(100)} visualMeaning={VM.WARNING} children={
-                                        <Text text={"**Never** enter sensitive information into a script-generated input! This data could be exploited by the script creator!"}/>
-                                    }/>
+        return (
+            <Screen children={
+                <Flex width={percent(100)} height={percent(100)} justifyContent={Justify.FLEX_END} align={Align.CENTER}>
 
-                                    <form style={{width: "100%"}} onSubmit={event => {
-                                        event.preventDefault();
-                                        this.closeLocalDialog();
-                                        setTimeout(() => {
-                                            props.onClose?.();
-                                            props.onSubmit?.();
-                                        }, 1);
-                                    }}>
-                                        <Flex>
-                                            <Flex gap={t.gaps.smallGab} width={percent(100)} margin={{top: px(50)}}>
-                                                <If condition={true} ifTrue={
-                                                    <Text text={"Title"} type={TextType.smallHeader}/>
-                                                }/>
 
-                                                <If condition={true} ifTrue={
-                                                    <Text text={"Description"} type={TextType.secondaryDescription} fontSize={px(12)}/>
-                                                }/>
-                                                <Input defaultValue={getOr(undefined, "")} placeholder={undefined} onChange={ev => {
 
-                                                }}/>
-                                            </Flex>
-
-                                            <LiteGrid gap={t.gaps.smallGab} columns={2}>
-                                                <Button text={"Cancel"} onClick={() => {
-                                                    this.closeLocalDialog();
-                                                    setTimeout(() => {
-                                                        props.onClose?.();
-                                                        props.onCancel?.();
-                                                    }, 1);
-                                                    // reject();
-                                                }}/>
-                                                <Button text={"Done"} vibrateOnClick opaque visualMeaning={VM.SUCCESS_DEFAULT} onClick={() => {
-                                                    this.closeLocalDialog();
-                                                    setTimeout(() => {
-                                                        props.onClose?.();
-                                                        props.onSubmit?.();
-                                                    }, 1);
-                                                    // resolve(getOr(value, ""));
-                                                }}/>
-                                            </LiteGrid>
-                                        </Flex>
-                                    </form>
-                                </Flex>
-                            )}
-                            onSubmit={() => {
-                                alert("Hello world")
-                            }}
-                        />
-                    )
-                }}/>,
-                <Button text={"acknowledge"} onClick={() => {
-                    this._openLocalDialog(
-                        <AcknowledgeDrawer title={"SQL executed"} description={"Main thing to notice here is the use of event.preventDefault(). Since, if you don't use it, pressing the enter key might result in submitting the form, which you obviously don't want here. You just want to press the enter key to filter the content of a Grid. So, as soon as the enter key is pressed you can get the values from the input elements and filter the grid accordingly."} onSubmit={() => {
-                            this.closeLocalDialog();
-                            setTimeout(() => {
-                                alert("as")
-                            }, 10);
+                    <HOCWrapper body={wrapper => (
+                        <Button text={"QA-Panel"} onClick={() => {
+                            wrapper._openLocalDialog(
+                                <StaticDrawerMenu body={props => (
+                                    <QuickActionPanel noPadding/>
+                                )}/>
+                            );
                         }}/>
-                    )
-                }}/>
-            ]}/>
-        )
+                    )}/>
+
+
+
+                    <Button text={"App settings"} onClick={() => {
+                        const mode: AppPageMode = Number(getOr(window.localStorage.getItem("app-page-mode"), AppPageMode.UNIT_TEST.toString()))
+                        const t = utilizeGlobalTheme();
+                        this._openLocalDialog(
+                            <StaticDrawerMenu body={props => {
+
+                                class AppModeChooser extends BernieComponent<any, any, any> {
+                                    constructor() {
+                                        super(undefined, undefined, undefined, {
+                                            enableLocalDialog: true
+                                        });
+                                    }
+                                    componentRender(p: any, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
+
+                                        const ProgressTracker: React.FC<{
+                                            onComplete: (success: boolean) => void,
+                                            actions: Array<{
+                                                title: string,
+                                                text: string,
+                                                action: () => void
+                                            }>
+                                        }> = props => {
+                                            const [state, setState] = useState({
+                                                step: 0,
+                                                success: true
+                                            });
+
+                                            useEffect(() => {
+                                                const runner = setInterval(() => {
+                                                    if (state.step === props.actions.length - 1 || !state.success) {
+                                                        clearInterval(runner);
+                                                        props.onComplete(state.success);
+                                                    } else {
+                                                        props.actions[state.step].action();
+                                                        setState(prevState => ({
+                                                            ...prevState,
+                                                            step: prevState.step + 1,
+                                                        }));
+                                                    }
+                                                }, 2000);
+                                            });
+
+                                            return (
+                                                <Stepper activeStep={state.step} orientation="vertical" sx={{width: "100%"}}>
+                                                    {
+                                                        props.actions.map(action => (
+                                                            <MUIStep key={String(0)}>
+                                                                <StepLabel optional={
+                                                                    <Text fontSize={px(11)} text={"optional"} uppercase visualMeaning={ObjectVisualMeaning.WARNING} coloredText/>
+                                                                } children={
+                                                                    <Text bold fontSize={px(13)} text={action.title}/>
+                                                                }/>
+                                                                <StepContent children={
+                                                                    <FlexBox width={percent(100)}>
+                                                                        <Text text={action.text}/>
+                                                                    </FlexBox>
+                                                                }/>
+                                                            </MUIStep>
+                                                        ))
+                                                    }
+                                                </Stepper>
+                                            );
+                                        }
+
+                                        const reloadWebsite = () => {
+                                            setTimeout(() => {
+                                                this._openLocalDialog(
+                                                    <HOCWrapper body={wrapper => <></>} componentDidMount={wrapper => {
+                                                        wrapper.openLocalDialog(component => (
+                                                            <StaticDrawerMenu body={props => (
+                                                                <Flex width={percent(100)} align={Align.CENTER}>
+                                                                    <Text text={"Preparing website restart"} type={TextType.smallHeader}/>
+                                                                    <Text margin={createMargin(0, 0, 30, 0)} align={Align.CENTER} text={"This usually takes a couple seconds. Please don't manually reload the website, unless the website tells you to reload the site. After completing the shutdown, the website will automatically reload."} type={TextType.secondaryDescription} fontSize={px(12)}/>
+
+                                                                    <ProgressTracker onComplete={() => {
+                                                                        wrapper.closeLocalDialog();
+                                                                        window.location.reload();
+                                                                    }} actions={[
+                                                                        {
+                                                                            title: "Saving local data",
+                                                                            text: "Trying to save all local data, like forms, settings & other information. *It cannot be guarantied, that all data can be persisted throughout the reloading.*",
+                                                                            action: () => {}
+                                                                        }, {
+                                                                            title: "Disengage connection to node",
+                                                                            text: "Closing all existing network websocket connections.",
+                                                                            action: () => {}
+                                                                        }
+                                                                    ]}/>
+
+                                                                    <Text margin={createMargin(30, 0, 0, 0)} align={Align.CENTER} text={"[Help center]()"} type={TextType.secondaryDescription} fontSize={px(12)}/>
+                                                                </Flex>
+                                                            )}/>
+                                                        ));
+                                                    }}/>
+                                                );
+                                            }, 100);
+                                        };
+
+                                        return (
+                                            <LiteGrid columns={3} gap={t.gaps.defaultGab}>
+                                                <Button onClick={() => {
+                                                    if (mode === AppPageMode.RELEASE) {
+                                                        return;
+                                                    }
+
+                                                    this._openLocalDialog(confirmBody(() => this.closeLocalDialog(), () => {
+                                                        window.localStorage.setItem("app-page-mode", AppPageMode.RELEASE.toString());
+                                                        reloadWebsite();
+                                                    }));
+                                                }} visualMeaning={mode === AppPageMode.RELEASE ? VM.SUCCESS_DEFAULT : VM.UI_NO_HIGHLIGHT} opaque width={percent(100)} padding={px()} highlight children={
+                                                    <Flex width={percent(100)} paddingX={px()} padding paddingY={px(20)} gap={t.gaps.smallGab} justifyContent={Justify.CENTER} align={Align.CENTER}>
+                                                        <Icon size={px(24)} icon={<ReleaseIcon/>}/>
+                                                        <Text text={"Live"} type={TextType.secondaryDescription} fontSize={px(12)}/>
+                                                    </Flex>
+                                                }/>
+
+                                                <Button onClick={() => {
+                                                    if (mode === AppPageMode.DEVELOPMENT) {
+                                                        return;
+                                                    }
+
+                                                    this._openLocalDialog(confirmBody(() => this.closeLocalDialog(), () => {
+                                                        window.localStorage.setItem("app-page-mode", AppPageMode.DEVELOPMENT.toString())
+                                                        reloadWebsite();
+                                                    }));
+                                                }} visualMeaning={mode === AppPageMode.DEVELOPMENT ? VM.SUCCESS_DEFAULT : VM.UI_NO_HIGHLIGHT} opaque highlight padding={px()} children={
+                                                    <Flex width={percent(100)} padding paddingY={px(20)} gap={t.gaps.smallGab} justifyContent={Justify.CENTER} align={Align.CENTER}>
+                                                        <Icon size={px(24)} icon={<DevelopmentIcon/>}/>
+                                                        <Text text={"Development"} type={TextType.secondaryDescription} fontSize={px(12)}/>
+                                                    </Flex>
+                                                }/>
+
+                                                <Button onClick={() => {
+                                                    if (mode === AppPageMode.UNIT_TEST) {
+                                                        return;
+                                                    }
+
+                                                    this._openLocalDialog(confirmBody(() => {
+                                                        this.closeLocalDialog();
+                                                    }, () => {
+                                                        window.localStorage.setItem("app-page-mode", AppPageMode.UNIT_TEST.toString())
+                                                        reloadWebsite();
+                                                    }));
+
+                                                }} visualMeaning={mode === AppPageMode.UNIT_TEST ? VM.SUCCESS_DEFAULT : VM.UI_NO_HIGHLIGHT} opaque highlight padding={px()} children={
+                                                    <Flex width={percent(100)} padding paddingY={px(20)} gap={t.gaps.smallGab} justifyContent={Justify.CENTER} align={Align.CENTER}>
+                                                        <Icon size={px(24)} icon={<UnittestIcon/>}/>
+                                                        <Text text={"Unittest"} type={TextType.secondaryDescription} fontSize={px(12)}/>
+                                                    </Flex>
+                                                }/>
+                                            </LiteGrid>
+                                        );
+                                    }
+                                }
+
+                                return (
+                                    <Flex>
+                                        <Text text={"App mode"} type={TextType.smallHeader}/>
+                                        <AppModeChooser/>
+                                        <Text text={"Choose the app mode. **Changing the app mode causes the website to reload. Unsaved data e.g. forms will be deleted**"} fontSize={px(12)} type={TextType.secondaryDescription}/>
+                                    </Flex>
+                                );
+                            }}/>
+                        );
+                    }}/>
+                </Flex>
+            }/>
+        );
     }
 }

@@ -76,7 +76,6 @@ export class Box extends React.Component<BoxProps, any> {
           background-color: ${getOr(this.props.noBGColor, false) ? "none" : bgColor.css()};
           // border-radius: ${theme.radii.defaultObjectRadius.css()};
           
-          
           border-radius: ${(() => {
               const config = this.props.borderRadiiConfig;
               if (config !== undefined && config.enableCustomBorderRadii) {
