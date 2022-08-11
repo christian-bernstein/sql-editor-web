@@ -33,6 +33,8 @@ import {QuickActionPanel} from "../../../components/ho/quickPanel/QuickActionPan
 import {Default, Mobile} from "../../../components/logic/Media";
 import {SwipeableDrawer} from "@mui/material";
 import {MobileMenuPage} from "../../mobileMenu/MobileMenuPage";
+import {StaticDrawerMenu} from "../../../components/lo/StaticDrawerMenu";
+import {AppModeSwitcher} from "../../../components/ho/appModeSwitcher/AppModeSwitcher";
 
 export type MenuPageV2Props = {
     children: JSX.Element
@@ -52,6 +54,8 @@ export class MenuPageV2 extends BernieComponent<MenuPageV2Props, any, MenuPageV2
             // state: MenuState.SMALL,
             state: MenuState.HIDDEN,
             qaPanelOpenState: false
+        }, {
+            enableLocalDialog: true
         });
         this.headerAssembly();
         this.mainAssembly();
@@ -153,6 +157,7 @@ export class MenuPageV2 extends BernieComponent<MenuPageV2Props, any, MenuPageV2
                                     <ServerConnectionIcon openConnectionMetricsDialog pulse={false}/>
                                     <Separator orientation={Orientation.HORIZONTAL}/>
 
+                                    {/*
                                     <ContextCompound open={this.local.state.qaPanelOpenState} onClose={() => {
                                         this.local.setState({
                                             qaPanelOpenState: false
@@ -164,6 +169,16 @@ export class MenuPageV2 extends BernieComponent<MenuPageV2Props, any, MenuPageV2
                                             })
                                         }}/>
                                     }/>
+                                    */}
+
+                                    <Icon icon={<QuickPanelIcon/>} onClick={() => {
+                                        this._openLocalDialog(
+                                            <StaticDrawerMenu width={percent(40)} body={() => (
+                                                <QuickActionPanel noPadding/>
+                                            )}/>
+                                        )
+                                    }}/>
+
                                 </FlexBox>
                             </Box>
                         </FlexBox>

@@ -35,6 +35,21 @@ export class Badge extends React.Component<BadgeProps, any>{
         )
     }
 
+    public static badge(text: string, config: WithVisualMeaning & {
+        theme?: Themeable.Theme,
+        backgroundColor?: Color
+    }): JSX.Element {
+        const theme = getOr(config.theme, utilizeGlobalTheme());
+        const vm = getOr(config.visualMeaning, ObjectVisualMeaning.BETA)
+        const color = getOr(config.backgroundColor, theme.colors.betaHighlightColor)
+
+        return (
+            <Badge background={color} visualMeaning={vm} padding opaque>
+                <Text text={text} bold uppercase fontSize={px(12)} visualMeaning={vm} coloredText/>
+            </Badge>
+        )
+    }
+
     constructor(props: BadgeProps) {
         super(props);
     }

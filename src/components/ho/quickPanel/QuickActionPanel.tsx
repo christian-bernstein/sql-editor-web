@@ -24,7 +24,7 @@ import {If} from "../../logic/If";
 import {Input} from "../../lo/Input";
 import {FlexDirection} from "../../../logic/style/FlexDirection";
 import {Align} from "../../../logic/style/Align";
-import {CircularProgress} from "@mui/material";
+import {CircularProgress, Slider} from "@mui/material";
 import {Justify} from "../../../logic/style/Justify";
 import {Orientation} from "../../../logic/style/Orientation";
 import {OverflowBehaviour} from "../../../logic/style/OverflowBehaviour";
@@ -33,6 +33,9 @@ import {QuickActionCategory} from "../../../logic/data/quick/QuickActionCategory
 import {Centered} from "../../lo/PosInCenter";
 import {Default, Mobile} from "../../logic/Media";
 import {Cursor} from "../../../logic/style/Cursor";
+import {AF} from "../../logic/ArrayFragment";
+import {SideScroller} from "../../layout/SideScroller";
+import {Map} from "../../logic/Map";
 
 export type QuickActionPanelProps = {
     noPadding?: boolean
@@ -91,10 +94,17 @@ export class QuickActionPanel extends BernieComponent<QuickActionPanelProps, any
                             const allowedAction: boolean = config.isAllowedAction === undefined ? true : config.isAllowedAction();
 
                             return (
-                                <span onClick={event => QuickActionPanel.handleQAClick(event, config, this)} children={
+                                <span style={{width: "100%", height: "100%"}} onClick={event => QuickActionPanel.handleQAClick(event, config, this)} children={
                                     <If condition={getOr(config.wrapInDefaultButton, true)} ifTrue={
-                                        <Button cursor={allowedAction ? Cursor.pointer : Cursor.notAllowed} padding={theme.paddings.defaultObjectPadding} shrinkOnClick opaque={getOr(config.opaque, config.beta)} visualMeaning={config.visualMeaning ? config.visualMeaning : (config.beta ? ObjectVisualMeaning.BETA : ObjectVisualMeaning.UI_NO_HIGHLIGHT)} children={
-                                            config.render(t, this, config)
+                                        <Button cursor={allowedAction ? Cursor.pointer : Cursor.notAllowed} height={percent(100)} padding={theme.paddings.defaultObjectPadding} shrinkOnClick opaque={getOr(config.opaque, config.beta)} visualMeaning={config.visualMeaning ? config.visualMeaning : (config.beta ? ObjectVisualMeaning.BETA : ObjectVisualMeaning.UI_NO_HIGHLIGHT)} children={
+                                            <FlexBox align={Align.CENTER} width={percent(100)} height={percent(100)} children={
+                                                <AF elements={[
+                                                    config.render(t, this, config),
+                                                    <FlexBox width={percent(100)} overflowXBehaviour={OverflowBehaviour.SCROLL} children={
+                                                        <Text whitespace={"nowrap"} text={getOr(config.canonicalDisplayName, config.displayName)} type={TextType.secondaryDescription} fontSize={px(11)}/>
+                                                    }/>
+                                                ]}/>
+                                            }/>
                                         }/>
                                     } ifFalse={
                                         config.render(t, this, config)
@@ -112,37 +122,39 @@ export class QuickActionPanel extends BernieComponent<QuickActionPanelProps, any
                                     </FlexBox>
                                 }/>
 
-                                <LiteGrid gap={t.gaps.smallGab} columns={8} rows={1}>
-                                    {actions.map(config => {
-                                        if (config.renderHover !== undefined) {
-                                            return (
-                                                <CustomTooltip enterDelay={700} wrapperStyle={config.wrapperStyleOverwrite} arrow title={config.renderHover(t, this)} children={renderBase(config)}/>
-                                            );
-                                        } else {
-                                            return (
-                                                <CustomTooltip enterDelay={700} wrapperStyle={config.wrapperStyleOverwrite} arrow noPadding noBorder title={
-                                                    <Box width={percent(100)} gapY={theme.gaps.defaultGab}>
-                                                        <ElementHeader title={config.displayName} boldHeader icon={<
-                                                            Icon icon={<RunIcon/>}/>
-                                                        } beta={getOr(config.beta, false)} appendix={
-                                                            <FlexBox gap={theme.gaps.smallGab} overflowXBehaviour={OverflowBehaviour.SCROLL} flexDir={FlexDirection.ROW} children={config.tags.map(tag => {
-                                                                return (
-                                                                    <Button padding={theme.paddings.defaultBadgePadding} visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} children={
-                                                                        <Text text={tag} fontSize={px(12)} uppercase type={TextType.secondaryDescription}/>
-                                                                    }/>
-                                                                );
-                                                            })}/>
-                                                        }/>
+                                <SideScroller useMouseDragging children={
+                                    <LiteGrid gap={t.gaps.smallGab} style={{width: "100%"}} columns={8} rows={1}>
+                                        {actions.map(config => {
+                                            if (config.renderHover !== undefined) {
+                                                return (
+                                                    <CustomTooltip enterDelay={700} wrapperStyle={config.wrapperStyleOverwrite} arrow title={config.renderHover(t, this)} children={renderBase(config)}/>
+                                                );
+                                            } else {
+                                                return (
+                                                    <CustomTooltip enterDelay={700} wrapperStyle={config.wrapperStyleOverwrite} arrow noPadding noBorder title={
+                                                        <Box width={percent(100)} overflowXBehaviour={OverflowBehaviour.SCROLL} gapY={theme.gaps.defaultGab}>
+                                                            <ElementHeader title={config.displayName} boldHeader icon={<
+                                                                Icon icon={<RunIcon/>}/>
+                                                            } beta={getOr(config.beta, false)} appendix={
+                                                                <FlexBox gap={theme.gaps.smallGab} overflowXBehaviour={OverflowBehaviour.SCROLL} flexDir={FlexDirection.ROW} children={config.tags.map(tag => {
+                                                                    return (
+                                                                        <Button padding={theme.paddings.defaultBadgePadding} visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} children={
+                                                                            <Text text={tag} fontSize={px(12)} uppercase type={TextType.secondaryDescription}/>
+                                                                        }/>
+                                                                    );
+                                                                })}/>
+                                                            }/>
 
-                                                        <If condition={config.description !== undefined} ifTrue={
-                                                            <Text text={config.description as string}/>
-                                                        }/>
-                                                    </Box>
-                                                } children={renderBase(config)}/>
-                                            );
-                                        }
-                                    })}
-                                </LiteGrid>
+                                                            <If condition={config.description !== undefined} ifTrue={
+                                                                <Text text={config.description as string}/>
+                                                            }/>
+                                                        </Box>
+                                                    } children={renderBase(config)}/>
+                                                );
+                                            }
+                                        })}
+                                    </LiteGrid>
+                                }/>
                             </>
                         );
                     })
@@ -221,12 +233,18 @@ export class QuickActionPanel extends BernieComponent<QuickActionPanelProps, any
                     </FlexBox>
                 }/>
 
+                {/*
                 <FlexBox overflowYBehaviour={OverflowBehaviour.SCROLL} width={percent(100)}>
                     <FlexBox width={percent(100)}>
                         <FlexBox height={percent(100)} width={percent(100)}>
                             {this.component(() => this.renderBody(), "updating_finished")}
                         </FlexBox>
                     </FlexBox>
+                </FlexBox>
+                */}
+
+                <FlexBox height={percent(100)} width={percent(100)} overflowXBehaviour={OverflowBehaviour.SCROLL}>
+                    {this.component(() => this.renderBody(), "updating_finished")}
                 </FlexBox>
             </Box>
         );

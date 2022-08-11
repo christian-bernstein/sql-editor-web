@@ -13,6 +13,7 @@ import {ReactComponent as CheckIcon} from "../../assets/icons/ic-20/ic20-check.s
 import {px} from "../../logic/style/DimensionalMeasured";
 import {ObjectVisualMeaning} from "../../logic/style/ObjectVisualMeaning";
 import {ReactComponent as DarkThemeIcon} from "../../assets/icons/ic-20/ic20-brightness-low.svg";
+import {ReactComponent as LightThemeIcon} from "../../assets/icons/ic-20/ic20-brightness-high.svg";
 
 export class QuickActionShard extends Shard {
 
@@ -33,8 +34,7 @@ export class QuickActionShard extends Shard {
                 DefaultQuickActions.clearLogQA,
                 DefaultQuickActions.rerenderQA,
                 DefaultQuickActions.reloadQA,
-                DefaultQuickActions.gotoBoardingPageQA,
-                DefaultQuickActions.test,
+                DefaultQuickActions.gotoBoardingPageQA
             );
         });
 
@@ -52,15 +52,18 @@ export class QuickActionShard extends Shard {
                     displayName: `Toggle ${name}-theme`,
                     tags: [name, String(theme.mode), "Theme"],
                     render(theme: Themeable.Theme, panel: QuickActionPanel, config: QuickActionConfig): JSX.Element {
+
+                        const icon = theme.mode === "dark" ? <DarkThemeIcon/> : <LightThemeIcon/>;
+
                         return (
                             <If condition={App.app().globalThemeName === name} ifTrue={
                                 <BadgedWrapper badge={
                                     <Icon icon={<CheckIcon/>} size={px(12)} colored visualMeaning={ObjectVisualMeaning.INFO}/>
                                 } showBadgeInitially>
-                                    <Icon icon={<DarkThemeIcon/>}/>
+                                    <Icon icon={icon}/>
                                 </BadgedWrapper>
                             } ifFalse={
-                                <Icon icon={<DarkThemeIcon/>}/>
+                                <Icon icon={icon}/>
                             }/>
                         );
                     },
@@ -70,6 +73,15 @@ export class QuickActionShard extends Shard {
                     }
                 })
             })
+        });
+
+        this.addCategory(new QuickActionCategory({
+            id: "development",
+            displayName: "Development"
+        }), qac => {
+            qac.registerQuickAction(
+                DefaultQuickActions.appModeSwitcherQA,
+            );
         });
     }
 

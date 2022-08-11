@@ -1,5 +1,5 @@
 import React from "react";
-import {percent, px} from "../../logic/style/DimensionalMeasured";
+import {DimensionalMeasured, percent, px} from "../../logic/style/DimensionalMeasured";
 import {Justify} from "../../logic/style/Justify";
 import {Align} from "../../logic/style/Align";
 import {Default, Mobile} from "../logic/Media";
@@ -22,7 +22,10 @@ import {createMargin} from "../../logic/style/Margin";
 export type StaticDrawerMenuProps<T> = DrawerProps<T> & {
     body: (props: StaticDrawerMenuProps<T>) => JSX.Element,
     vibration?: VibrationSettingsProps,
-    enableBlurredBackground?: boolean
+    enableBlurredBackground?: boolean,
+    width?: DimensionalMeasured,
+    align?: Align,
+    justifyContent?: Justify
 }
 
 export class StaticDrawerMenu<T> extends BernieComponent<StaticDrawerMenuProps<T>, any, any> {
@@ -45,29 +48,33 @@ export class StaticDrawerMenu<T> extends BernieComponent<StaticDrawerMenuProps<T
         `;
 
         const body = (
-            <Flex margin={createMargin(0, 0, 10, 0)} padding paddingY={px()} paddingX={px(10)} height={percent(100)} justifyContent={Justify.FLEX_END} align={Align.CENTER}>
+            <AF elements={[
                 <Mobile children={
-                    <Box borderless width={percent(100)} maxHeight={percent(100)} overflowYBehaviour={OverflowBehaviour.SCROLL} borderRadiiConfig={{
-                        enableCustomBorderRadii: false,
-                        bottomRight: px(),
-                        bottomLeft: px()
-                    }} children={
-                        <Flex width={percent(100)} align={Align.CENTER} children={
-                            <AF elements={[
-                                <Puller/>,
-                                this.props.body(this.props)
-                            ]}/>
+                    <Flex margin={createMargin(0, 0, 10, 0)} padding paddingY={px()} paddingX={px(10)} height={percent(100)} justifyContent={Justify.FLEX_END} align={Align.CENTER}>
+                        <Box borderless width={percent(100)} maxHeight={percent(100)} overflowYBehaviour={OverflowBehaviour.SCROLL} borderRadiiConfig={{
+                            enableCustomBorderRadii: false,
+                            bottomRight: px(),
+                            bottomLeft: px()
+                        }} children={
+                            <Flex width={percent(100)} align={Align.CENTER} children={
+                                <AF elements={[
+                                    <Puller/>,
+                                    this.props.body(this.props)
+                                ]}/>
+                            }/>
                         }/>
-                    }/>
-                }/>
+                    </Flex>
+                }/>,
                 <Default children={
-                    <Box borderless width={percent(30)} maxHeight={percent(100)} overflowYBehaviour={OverflowBehaviour.SCROLL} borderRadiiConfig={{
-                        enableCustomBorderRadii: true,
-                        bottomRight: px(),
-                        bottomLeft: px()
-                    }} children={this.props.body(this.props)}/>
+                    <Flex padding paddingY={px()} paddingX={px(10)} height={percent(100)} justifyContent={getOr(p.justifyContent, Justify.FLEX_END)} align={getOr(p.align, Align.CENTER)}>
+                        <Box borderless width={getOr(p.width, percent(30))} maxHeight={percent(100)} overflowYBehaviour={OverflowBehaviour.SCROLL} borderRadiiConfig={{
+                            enableCustomBorderRadii: true,
+                            bottomRight: px(),
+                            bottomLeft: px()
+                        }} children={this.props.body(this.props)}/>
+                    </Flex>
                 }/>
-            </Flex>
+            ]}/>
         );
 
         return (

@@ -20,7 +20,7 @@ import {DebugEditor} from "../editor/debug/DebugEditor";
 import {DBSessionCacheShard} from "../../shards/dbSessionCache/DBSessionCacheShard";
 import {RegexPage} from "../../tests/regex/RegexPage";
 import {Assembly} from "../../logic/assembly/Assembly";
-import {Dialog, Slide, SwipeableDrawer, ThemeProvider} from "@mui/material";
+import {Slide, SwipeableDrawer, ThemeProvider} from "@mui/material";
 import {TransitionProps} from "@mui/material/transitions";
 import {Screen} from "../../components/lo/Page";
 import {FlexBox} from "../../components/lo/FlexBox";
@@ -58,6 +58,9 @@ import {NetworkShard} from "../../shards/network/NetworkShard";
 import {LocalStorageShard} from "../../shards/localStorage/LocalStorageShard";
 import {UnitTestPage} from "../unit/UnitTestPage";
 import {MenuState} from "../menu/v2/MenuState";
+import {BernieComponent} from "../../logic/BernieComponent";
+import {QuickActionPanel} from "../../components/ho/quickPanel/QuickActionPanel";
+import {StaticDrawerMenu} from "../../components/lo/StaticDrawerMenu";
 
 export type AppPageProps = {
     mode?: AppPageMode
@@ -78,7 +81,11 @@ let hook: undefined | (() => void);
 
 let instance: AppPage | undefined = undefined;
 
-export class AppPage extends React.Component<AppPageProps, AppPageState> {
+export function getInstance(): AppPage | undefined {
+    return instance;
+}
+
+export class AppPage extends BernieComponent<AppPageProps, AppPageState, any> {
 
     private readonly DialogTransition = React.forwardRef((props: TransitionProps & {children?: React.ReactElement<any, any>}, ref: ForwardedRef<unknown>) => {
         return <Slide direction="up" mountOnEnter ref={ref} {...props} />;
@@ -86,27 +93,25 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
 
     private mounted: boolean = false;
 
-    private readonly assembly: Assembly;
-
     private readonly specialPageRenderers: Map<string, (params: any) => JSX.Element> = new Map<string, (params: any) => JSX.Element>([
         [DefaultSpecialPages.UNIT_TEST, () => <UnitTestPage/>],
         [DefaultSpecialPages.BOARDING, () => <></>],
         [DefaultSpecialPages.SELECT_APP_CONFIG, (params) => <SelectAppConfigPageV2 onSelection={data => {
-            this.init(data.config);
+            this.appInit(data.config);
             this.deactivateSpecialPage();
         }} configs={params as AppConfigSelectionData[]}/>],
     ]);
 
     constructor(props: AppPageProps) {
-        super(props);
-        this.state = {
+        super(props, {
             showMenu: false,
             // todo remove variable
             updateSlave: 0,
             showCommandPallet: false,
             showDialog: false
-        };
-        this.assembly = new Assembly();
+        }, undefined, {
+            enableLocalDialog: true
+        });
     }
 
     componentDidMount() {
@@ -124,7 +129,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                 this.openAppConfigSelector();
                 return;
             case AppPageMode.RELEASE:
-                this.init({
+                this.appInit({
                     appTitle: "SQL Editor",
                     debugMode: false,
                     defaultAppRoute: "/boarding",
@@ -388,7 +393,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
         } else console.error("Trying to rerender globally, but app-page isn't mounted");
     }
 
-    render() {
+    componentRender(p: AppPageProps, s: AppPageState, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
             <div className={"app"}>
                 {this.renderModals()}
@@ -466,7 +471,7 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
         this.assembly.assembly(Constants.projectPreviewDialog, (theme, props: ProjectPreviewProps) => <Centered fullHeight children={<ProjectPreview {...props}/>}/>);
     }
 
-    private init(config?: AppConfig) {
+    private appInit(config?: AppConfig) {
         instance = this;
         App.appOrCreate(config ? config : {
             appTitle: "SQL Editor",
@@ -549,11 +554,32 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                 }
             });
 
+            app.registerAction("open-qa-panel", () => {
+                if (getInstance()) {
+                    if (getInstance()?.mounted) {
+                        console.log("opening qa panel")
+                        getInstance()?._openLocalDialog(
+                            <StaticDrawerMenu justifyContent={Justify.CENTER} width={percent(40)} body={() => (
+                                <QuickActionPanel noPadding/>
+                            )}/>
+                        );
+                    }
+                }
+            })
+
             // Open the command pallet when ctrl + k is pressed
             document.addEventListener("keydown", ev => {
                 if (ev.ctrlKey && ev.key === "k") {
                     ev.preventDefault();
                     app.callAction("open-command-pallet");
+                }
+            });
+
+            // Open the quick action pallet when ctrl + q is pressed
+            document.addEventListener("keydown", ev => {
+                if (ev.ctrlKey && ev.key === "q") {
+                    ev.preventDefault();
+                    app.callAction("open-qa-panel");
                 }
             });
 
@@ -567,7 +593,10 @@ export class AppPage extends React.Component<AppPageProps, AppPageState> {
                         ev.preventDefault();
                         const menu = MenuPageV2.instance;
                         if (menu !== undefined) {
-                            MenuPageV2.setMenuState(menu.local.state.state === MenuState.HIDDEN ? MenuState.EXTENDED : MenuState.HIDDEN);
+                            const newState = menu.local.state.state === MenuState.HIDDEN ? MenuState.EXTENDED : MenuState.HIDDEN;
+                            console.log(`Set menu state to '${newState}'.`)
+                            MenuPageV2.setMenuState(newState);
+
                         }
                     }
                 }

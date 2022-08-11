@@ -25,7 +25,7 @@ export type BernieComponentConfig = {
 export class BernieComponent<RProps, RState, LState extends object> extends React.Component<RProps, RState> {
 
     private static readonly defaultConfig: BernieComponentConfig = {
-        enableLocalDialog: false,
+        enableLocalDialog: true,
     };
 
     private readonly _local: State<LState>;
@@ -214,7 +214,8 @@ export class BernieComponent<RProps, RState, LState extends object> extends Reac
                 }} sx={{
                     '& .MuiPaper-root': {
                         background: "transparent",
-                        backdropFilter: "blur(10px)"
+                        // backdropFilter: "blur(10px)",
+                        boxShadow: "none"
                     },
                     '& .MuiDialog-paper': {
                         // background: "transparent",

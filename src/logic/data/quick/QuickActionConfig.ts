@@ -7,6 +7,7 @@ export interface QuickActionConfig {
     tags: string[],
     description?: string,
     displayName: string,
+    canonicalDisplayName?: string,
     opaque?: boolean,
     isAllowedAction?: () => boolean,
     visualMeaning?: ObjectVisualMeaning,

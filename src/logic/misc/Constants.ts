@@ -15,4 +15,6 @@ export class Constants {
     public static jsonDatasetInsertDialog: string = "json-dataset-insert-dialog";
 
     public static openMainDialogWithParamsAction: string = "open-main-dialog-with-params";
+
+    public static quickActionsDialog: string = "qa-dialog";
 }

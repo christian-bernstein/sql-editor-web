@@ -9,6 +9,8 @@ import {ReactComponent as ReloadIcon} from "../../../assets/icons/ic-20/ic20-ref
 import {ReactComponent as BrowserIcon} from "../../../assets/icons/ic-20/ic20-globe.svg";
 import {ReactComponent as DeleteIcon} from "../../../assets/icons/ic-20/ic20-delete.svg";
 import {ReactComponent as CheckIcon} from "../../../assets/icons/ic-20/ic20-check.svg";
+import {ReactComponent as SwitchIcon} from "../../../assets/icons/ic-20/ic20-apps.svg";
+import {ReactComponent as PageIcon} from "../../../assets/icons/ic-20/ic20-desktop.svg";
 import {Utils} from "../../Utils";
 import {App} from "../../app/App";
 import {Icon} from "../../../components/lo/Icon";
@@ -23,11 +25,14 @@ import {ServerConnectionIcon} from "../../../components/ho/serverConnectionIcon/
 import {ObjectVisualMeaning} from "../../style/ObjectVisualMeaning";
 import {StaticDrawerMenu} from "../../../components/lo/StaticDrawerMenu";
 import {Align} from "../../style/Align";
+import {HOCWrapper} from "../../../components/HOCWrapper";
+import {AppModeSwitcher} from "../../../components/ho/appModeSwitcher/AppModeSwitcher";
 
 export namespace DefaultQuickActions {
 
     export const fullscreenQA: QuickActionConfig = {
         displayName: "Toggle fullscreen",
+        canonicalDisplayName: "Fullscreen",
         tags: ["Fullscreen", "F11"],
         render(theme: Themeable.Theme, panel: QuickActionPanel, config: QuickActionConfig): JSX.Element {
             return (
@@ -113,9 +118,7 @@ export namespace DefaultQuickActions {
         tags: ["Goto", "Boarding", "Page"],
         render(theme: Themeable.Theme, panel: QuickActionPanel, config: QuickActionConfig): JSX.Element {
             return (
-                <Icon icon={
-                    <Text text={"B"}/>
-                }/>
+                <Icon icon={<PageIcon/>}/>
             );
         },
         onClick: (event, config) => {
@@ -124,21 +127,18 @@ export namespace DefaultQuickActions {
         }
     }
 
-    export const test: QuickActionConfig = {
-        displayName: "Goto boarding page",
-        tags: ["Goto", "Boarding", "Page"],
+    export const appModeSwitcherQA: QuickActionConfig = {
+        displayName: "Switch app mode",
+        tags: ["Switch", "Mode", "App", "Config", "Development", "Debug"],
+        beta: true,
         render(theme: Themeable.Theme, panel: QuickActionPanel, config: QuickActionConfig): JSX.Element {
             return (
-                <Icon icon={
-                    <Text text={"Test"}/>
-                }/>
+                <Icon icon={<SwitchIcon/>}/>
             );
         },
         onClick: (event, config, panel) => {
             panel._openLocalDialog(
-                <StaticDrawerMenu body={() => (
-                    <Text text={"Imke ist perfekt"} align={Align.CENTER} type={TextType.smallHeader}/>
-                )}/>
+                <AppModeSwitcher/>
             )
         }
     }
