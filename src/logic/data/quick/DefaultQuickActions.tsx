@@ -11,6 +11,7 @@ import {ReactComponent as DeleteIcon} from "../../../assets/icons/ic-20/ic20-del
 import {ReactComponent as CheckIcon} from "../../../assets/icons/ic-20/ic20-check.svg";
 import {ReactComponent as SwitchIcon} from "../../../assets/icons/ic-20/ic20-apps.svg";
 import {ReactComponent as PageIcon} from "../../../assets/icons/ic-20/ic20-desktop.svg";
+import {ReactComponent as ZoomIcon} from "../../../assets/icons/ic-20/ic20-zoom-in.svg";
 import {Utils} from "../../Utils";
 import {App} from "../../app/App";
 import {Icon} from "../../../components/lo/Icon";
@@ -51,6 +52,7 @@ export namespace DefaultQuickActions {
 
     export const logQA: QuickActionConfig = {
         displayName: "Open logs",
+        canonicalDisplayName: "Logs",
         tags: ["Open logs", "logs"],
         wrapperStyleOverwrite: {
             gridColumn: "span 1",
@@ -115,6 +117,7 @@ export namespace DefaultQuickActions {
 
     export const gotoBoardingPageQA: QuickActionConfig = {
         displayName: "Goto boarding page",
+        canonicalDisplayName: "Boarding page",
         tags: ["Goto", "Boarding", "Page"],
         render(theme: Themeable.Theme, panel: QuickActionPanel, config: QuickActionConfig): JSX.Element {
             return (
@@ -129,6 +132,7 @@ export namespace DefaultQuickActions {
 
     export const appModeSwitcherQA: QuickActionConfig = {
         displayName: "Switch app mode",
+        canonicalDisplayName: "App mode",
         tags: ["Switch", "Mode", "App", "Config", "Development", "Debug"],
         beta: true,
         render(theme: Themeable.Theme, panel: QuickActionPanel, config: QuickActionConfig): JSX.Element {
@@ -137,7 +141,7 @@ export namespace DefaultQuickActions {
             );
         },
         onClick: (event, config, panel) => {
-            panel._openLocalDialog(
+            panel.dialog(
                 <AppModeSwitcher/>
             )
         }
@@ -181,6 +185,7 @@ export namespace DefaultQuickActions {
 
     export const reloadQA: QuickActionConfig = {
         displayName: "Reload webpage",
+        canonicalDisplayName: "Reload",
         tags: ["Reload", "F5"],
         render(theme: Themeable.Theme, panel: QuickActionPanel, config: QuickActionConfig): JSX.Element {
             return (
@@ -198,10 +203,12 @@ export namespace DefaultQuickActions {
 
     export const serverQuickViewQA: QuickActionConfig = {
         displayName: "Server quick view",
+        canonicalDisplayName: "Server",
+        description: "Hello world",
         tags: ["Server", "Connection"],
         render(theme: Themeable.Theme, panel: QuickActionPanel, config: QuickActionConfig): JSX.Element {
             return (
-                <ServerConnectionIcon renderTooltip={false} pulse={false} openConnectionMetricsDialog/>
+                <ServerConnectionIcon renderTooltip={false} pulse={false} openConnectionMetricsDialog iconSize={px(20)}/>
             );
         },
         onClick: (event, config) => {

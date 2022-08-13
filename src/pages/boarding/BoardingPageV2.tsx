@@ -149,7 +149,7 @@ export class BoardingPageV2 extends BernieComponent<any, any, any> {
             }}/>
         );
 
-        this._openLocalDialog(
+        this.dialog(
             <FlexBox width={percent(100)} padding justifyContent={Justify.CENTER} align={Align.CENTER} children={
                 <AF elements={[
                     <Default children={
@@ -174,7 +174,7 @@ export class BoardingPageV2 extends BernieComponent<any, any, any> {
             maxConnectAttempts: 10,
             onError: () => {},
             onConnectionFailed: () => {
-                this._openLocalDialog(
+                this.dialog(
                     <NoConnectionDialog/>
                 );
             },

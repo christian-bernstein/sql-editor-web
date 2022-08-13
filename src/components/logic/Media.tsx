@@ -58,11 +58,22 @@ export const Tablet: React.FC<any> = props => {
 }
 
 export const Mobile: React.FC<any> = props => {
-    const isMobile = useMediaQuery({ maxWidth: 767 })
-    return isMobile ? props.children : null
+    try {
+        const isMobile = useMediaQuery({ maxWidth: 767 })
+        return isMobile ? props.children : null
+    } catch (e) {
+        console.error(e);
+        return null;
+    }
+
 }
 
 export const Default: React.FC<any> = props => {
-    const isNotMobile = useMediaQuery({ minWidth: 768 })
-    return isNotMobile ? props.children : null
+    try {
+        const isNotMobile = useMediaQuery({ minWidth: 768 })
+        return isNotMobile ? props.children : null
+    } catch (e) {
+        console.error(e);
+        return null;
+    }
 }

@@ -30,6 +30,10 @@ export type StaticDrawerMenuProps<T> = DrawerProps<T> & {
 
 export class StaticDrawerMenu<T> extends BernieComponent<StaticDrawerMenuProps<T>, any, any> {
 
+    constructor(props: StaticDrawerMenuProps<T>) {
+        super(props, undefined, undefined);
+    }
+
     componentDidMount() {
         super.componentDidMount();
         shouldVibrate("appear", this.props.vibration, pattern => {

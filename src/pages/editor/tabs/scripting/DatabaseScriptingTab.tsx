@@ -270,7 +270,7 @@ export class DatabaseScriptingTab extends BernieComponent<DatabaseScriptingTabPr
                             const apiResult = api.result;
 
                             if (typeof result === 'object' && !Array.isArray(result) && result !== null) {
-                                this._openLocalDialog(
+                                this.dialog(
                                     <Screen style={{backgroundColor: "transparent"}} children={
                                         <Centered fullHeight children={
                                             <AF elements={[
@@ -287,7 +287,7 @@ export class DatabaseScriptingTab extends BernieComponent<DatabaseScriptingTabPr
                                     }/>
                                 );
                             } else if (result !== undefined) {
-                                this._openLocalDialog(
+                                this.dialog(
                                     <Screen style={{backgroundColor: "transparent"}} children={
                                         <Centered fullHeight children={
                                             <Box children={
@@ -326,7 +326,7 @@ export class DatabaseScriptingTab extends BernieComponent<DatabaseScriptingTabPr
 
     private openSettingsDialog() {
         const t = utilizeGlobalTheme();
-        this._openLocalDialog(
+        this.dialog(
             <Screen deactivatePadding style={{backgroundColor: "transparent"}} children={
                 <FlexBox width={percent(100)} height={percent(100)} overflowXBehaviour={OverflowBehaviour.SCROLL} justifyContent={Justify.FLEX_END} children={
                     <Box minHeight={percent(50)} borderless borderRadiiConfig={{

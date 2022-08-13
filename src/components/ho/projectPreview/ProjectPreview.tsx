@@ -42,7 +42,7 @@ import {ProjectPreviewContext} from "./ProjectPreviewContext";
 import {Dimension} from "../../../logic/style/Dimension";
 import {App} from "../../../logic/app/App";
 import {Constants} from "../../../logic/misc/Constants";
-import {Default, Media, Mobile} from "../../logic/Media";
+import {Default, Mobile} from "../../logic/Media";
 import {Screen} from "../../lo/Page";
 import {AppHeader} from "../../lo/AppHeader";
 

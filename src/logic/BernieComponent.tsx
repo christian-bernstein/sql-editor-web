@@ -15,6 +15,17 @@ import {Centered} from "../components/lo/PosInCenter";
 import {ObjectVisualMeaning} from "./style/ObjectVisualMeaning";
 import {Text} from "../components/lo/Text";
 import {Default, Mobile} from "../components/logic/Media";
+import {StaticDrawerMenu} from "../components/lo/StaticDrawerMenu";
+import {Flex} from "../components/lo/FlexBox";
+import {percent, px} from "./style/DimensionalMeasured";
+import {Align} from "./style/Align";
+import {Badge} from "../components/lo/Badge";
+import {AppAnomalyData} from "./data/AppAnomalyData";
+import {createMargin} from "./style/Margin";
+import {Justify} from "./style/Justify";
+import {Box} from "../components/lo/Box";
+import {OverflowBehaviour} from "./style/OverflowBehaviour";
+import {AF} from "../components/logic/ArrayFragment";
 
 export type BernieComponentConfig = {
     enableLocalDialog: boolean,
@@ -23,10 +34,6 @@ export type BernieComponentConfig = {
 }
 
 export class BernieComponent<RProps, RState, LState extends object> extends React.Component<RProps, RState> {
-
-    private static readonly defaultConfig: BernieComponentConfig = {
-        enableLocalDialog: true,
-    };
 
     private readonly _local: State<LState>;
 
@@ -53,7 +60,7 @@ export class BernieComponent<RProps, RState, LState extends object> extends Reac
         this.config = {
             ...{
                 deviceRenderSeparation: false,
-                enableLocalDialog: false,
+                enableLocalDialog: true,
             },
             ...config
         };
@@ -154,7 +161,7 @@ export class BernieComponent<RProps, RState, LState extends object> extends Reac
     public init() {
     }
 
-    public _openLocalDialog(component: JSX.Element) {
+    public dialog(component: JSX.Element) {
         this.openLocalDialog(() => component);
     }
 
@@ -164,11 +171,25 @@ export class BernieComponent<RProps, RState, LState extends object> extends Reac
     }
 
     public openLocalDialog(generator: (component: BernieComponent<RProps, RState, LState>) => JSX.Element) {
-        if (this.config.enableLocalDialog) {
-            this.renderLocalForegroundDialog = true;
-            this.renderLocalForegroundDialogGenerator = generator;
-            this.rerender("foreground-dialog");
-        } else throw new Error("Cannot call / open a local dialog if 'enableLocalDialog' is disabled in the (Bernie)-Components config");
+        const openRoutine = () => {
+            if (this.config.enableLocalDialog) {
+                this.renderLocalForegroundDialog = true;
+                this.renderLocalForegroundDialogGenerator = generator;
+                this.rerender("foreground-dialog");
+            } else {
+                throw new Error("Cannot call / open a local dialog if 'enableLocalDialog' is disabled in the (Bernie)-Components config");
+            }
+
+        }
+
+        if (this.renderLocalForegroundDialog) {
+            this.closeLocalDialog();
+            setTimeout(() => {
+                openRoutine();
+            }, 50);
+        } else {
+            openRoutine();
+        }
     }
 
     public renderDefault(p: RProps, s: RState, l: LState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {

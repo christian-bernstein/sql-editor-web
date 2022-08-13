@@ -159,12 +159,18 @@ export namespace Themeable {
         },
         texts: {
             fontFamily: string,
+            displayFontFamily: string,
             complete: {
+                // Monospaced style category
                 boldLargeHeader: CSSProperties,
                 boldSmallHeader: CSSProperties,
                 defaultText: CSSProperties,
                 boldSmallHeaderDeactivated: CSSProperties,
-                secondaryDescription: CSSProperties
+                secondaryDescription: CSSProperties,
+
+                // Display is a style category with non-monospaced fonts
+                displayText: CSSProperties,
+                displayDescription: CSSProperties,
             }
         },
         libraries: {
@@ -310,6 +316,7 @@ export namespace Themeable {
         texts: {
             // todo implement global font family
             fontFamily: "Operator Mono",
+            displayFontFamily: "Whitney",
             complete: {
                 boldLargeHeader: {
                     fontFamily: "OperatorMono",
@@ -366,7 +373,30 @@ export namespace Themeable {
                     alignItems: "center",
                     //letterSpacing: "0.03em",
                     color: `${defaultThemePallet.fontSecondaryColor.css()}`
-                }
+                },
+                displayText: {
+                    margin: 0,
+                    fontFamily: "Whitney",
+                    fontStyle: "normal",
+                    fontWeight: 350,
+                    fontSize: "14px",
+                    // lineHeight: "19px",
+                    display: "flex",
+                    alignItems: "center",
+                    color: `${defaultThemePallet.fontPrimaryColor.css()}`
+                },
+                displayDescription: {
+                    margin: 0,
+                    fontFamily: "Whitney",
+                    fontStyle: "normal",
+                    fontWeight: 350,
+                    fontSize: "14px",
+                    lineHeight: "17px",
+                    display: "flex",
+                    alignItems: "center",
+                    //letterSpacing: "0.03em",
+                    color: `${defaultThemePallet.fontSecondaryColor.css()}`
+                },
             }
         },
         libraries: {
@@ -421,6 +451,7 @@ export namespace Themeable {
         texts: {
             // todo implement global font family
             fontFamily: "Operator Mono",
+            displayFontFamily: "Whitney",
             complete: {
                 boldLargeHeader: {
                     fontFamily: "OperatorMono",
@@ -477,7 +508,30 @@ export namespace Themeable {
                     alignItems: "center",
                     //letterSpacing: "0.03em",
                     color: `${defaultThemePallet.fontSecondaryColor.css()}`
-                }
+                },
+                displayText: {
+                    margin: 0,
+                    fontFamily: "Whitney",
+                    fontStyle: "normal",
+                    fontWeight: 350,
+                    fontSize: "14px",
+                    // lineHeight: "19px",
+                    display: "flex",
+                    alignItems: "center",
+                    color: `${defaultThemePallet.fontPrimaryColor.css()}`
+                },
+                displayDescription: {
+                    margin: 0,
+                    fontFamily: "Whitney",
+                    fontStyle: "normal",
+                    fontWeight: 350,
+                    fontSize: "14px",
+                    lineHeight: "17px",
+                    display: "flex",
+                    alignItems: "center",
+                    //letterSpacing: "0.03em",
+                    color: `${defaultThemePallet.fontSecondaryColor.css()}`
+                },
             }
         },
         libraries: {
@@ -532,6 +586,7 @@ export namespace Themeable {
         texts: {
             // todo implement global font family
             fontFamily: "Operator Mono",
+            displayFontFamily: "Whitney",
             complete: {
                 boldLargeHeader: {
                     fontFamily: "OperatorMono",
@@ -589,7 +644,30 @@ export namespace Themeable {
                     alignItems: "center",
                     letterSpacing: "0.03em",
                     color: `${lightThemePallet.fontSecondaryColor.css()}`
-                }
+                },
+                displayText: {
+                    margin: 0,
+                    fontFamily: "Whitney",
+                    fontStyle: "normal",
+                    fontWeight: 350,
+                    fontSize: "14px",
+                    // lineHeight: "19px",
+                    display: "flex",
+                    alignItems: "center",
+                    color: `${defaultThemePallet.fontPrimaryColor.css()}`
+                },
+                displayDescription: {
+                    margin: 0,
+                    fontFamily: "Whitney",
+                    fontStyle: "normal",
+                    fontWeight: 350,
+                    fontSize: "14px",
+                    lineHeight: "17px",
+                    display: "flex",
+                    alignItems: "center",
+                    //letterSpacing: "0.03em",
+                    color: `${defaultThemePallet.fontSecondaryColor.css()}`
+                },
             }
         },
         libraries: {

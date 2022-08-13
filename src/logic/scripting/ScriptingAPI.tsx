@@ -77,7 +77,7 @@ export class ScriptingAPI {
 
     public notify(title: string, text: string): Promise<undefined> {
         return new Promise((resolve, reject) => {
-            this.editor._openLocalDialog(
+            this.editor.dialog(
                 <AcknowledgeDrawer title={title} description={text} onSubmit={() => {
                     this.editor.closeLocalDialog();
                     setTimeout(() => {
@@ -92,7 +92,7 @@ export class ScriptingAPI {
         const t = utilizeGlobalTheme();
         return new Promise((resolve, reject) => {
             let value = config.defaultValue;
-            this.editor._openLocalDialog(
+            this.editor.dialog(
                 <Screen style={{backgroundColor: "transparent"}} deactivatePadding children={
                     <Flex height={percent(100)} justifyContent={Justify.FLEX_END}>
                         <Box borderless width={percent(100)} borderRadiiConfig={{

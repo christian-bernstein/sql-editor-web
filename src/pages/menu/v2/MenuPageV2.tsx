@@ -172,8 +172,8 @@ export class MenuPageV2 extends BernieComponent<MenuPageV2Props, any, MenuPageV2
                                     */}
 
                                     <Icon icon={<QuickPanelIcon/>} onClick={() => {
-                                        this._openLocalDialog(
-                                            <StaticDrawerMenu width={percent(40)} body={() => (
+                                        this.dialog(
+                                            <StaticDrawerMenu body={() => (
                                                 <QuickActionPanel noPadding/>
                                             )}/>
                                         )

@@ -14,6 +14,12 @@ import {LinkPreview} from "@dhaiwat10/react-link-preview";
 import {CustomTooltip} from "./CustomTooltip";
 import {Image} from "./Image";
 
+// todo implement
+export type FontOptions = {
+    display?: boolean,
+    fontFamily?: string[]
+}
+
 export type TextProps = {
     text: string,
     texts?: string[],
@@ -33,11 +39,13 @@ export type TextProps = {
     align?: Align,
     uppercase?: boolean,
     onClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void,
+    onMouseOver?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void,
+    onMouseLeave?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void,
     cursor?: Cursor,
     whitespace?: "normal" | "pre-wrap" | "nowrap",
     renderMarkdown?: boolean,
     bold?: boolean,
-    advancedLinkRendering?: boolean
+    advancedLinkRendering?: boolean,
 }
 
 export enum TextType {
@@ -46,6 +54,8 @@ export enum TextType {
     defaultText = "default-text",
     secondaryDescription = "secondary-description",
     smallHeaderDeactivated = "small-header-deactivated",
+    displayText = "display-text",
+    displayDescription = "display-description",
 }
 
 const textTypeToThemeMapping: Map<TextType, (theme: Themeable.Theme) => CSSProperties> = new Map<TextType, (theme: Themeable.Theme) => CSSProperties>([
@@ -54,6 +64,8 @@ const textTypeToThemeMapping: Map<TextType, (theme: Themeable.Theme) => CSSPrope
     [TextType.defaultText, theme => theme.texts.complete.defaultText],
     [TextType.secondaryDescription, theme => theme.texts.complete.secondaryDescription],
     [TextType.smallHeaderDeactivated, theme => theme.texts.complete.boldSmallHeaderDeactivated],
+    [TextType.displayText, theme => theme.texts.complete.displayText],
+    [TextType.displayDescription, theme => theme.texts.complete.displayDescription]
 ]);
 
 export const Text: React.FC<TextProps> = props => {
@@ -71,6 +83,7 @@ export const Text: React.FC<TextProps> = props => {
     }
     let text = getOr(props.bold, false) ? `**${props.text}**` : props.text;
     const meaningfulColors: MeaningfulColors = getMeaningfulColors(getOr(props.visualMeaning, ObjectVisualMeaning.UI_NO_HIGHLIGHT), theme);
+
     const Wrapper = styled.div`
       display: flex;
       align-items: center;
@@ -116,7 +129,7 @@ export const Text: React.FC<TextProps> = props => {
     }
 
     return (
-        <Wrapper style={style} onClick={event => getOr(props.onClick, () => {})(event)}>
+        <Wrapper style={style} onMouseLeave={event => props.onMouseLeave?.(event)} onMouseOver={event => props.onMouseOver?.(event)} onClick={event => getOr(props.onClick, () => {})(event)}>
             {props.enableLeftAppendix ? props.leftAppendix : <></>}
 
             {renderMD ? (

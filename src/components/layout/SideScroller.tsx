@@ -9,7 +9,8 @@ import {Align} from "../../logic/style/Align";
 import ScrollContainer from "react-indiana-drag-scroll";
 
 export type SideScrollerProps = {
-    useMouseDragging?: boolean
+    useMouseDragging?: boolean,
+
 }
 
 export class SideScroller extends BernieComponent<SideScrollerProps, any, any> {

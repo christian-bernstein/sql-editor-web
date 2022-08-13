@@ -20,7 +20,7 @@ import {DebugEditor} from "../editor/debug/DebugEditor";
 import {DBSessionCacheShard} from "../../shards/dbSessionCache/DBSessionCacheShard";
 import {RegexPage} from "../../tests/regex/RegexPage";
 import {Assembly} from "../../logic/assembly/Assembly";
-import {Slide, SwipeableDrawer, ThemeProvider} from "@mui/material";
+import {BottomNavigation, BottomNavigationAction, Slide, SwipeableDrawer, ThemeProvider} from "@mui/material";
 import {TransitionProps} from "@mui/material/transitions";
 import {Screen} from "../../components/lo/Page";
 import {FlexBox} from "../../components/lo/FlexBox";
@@ -400,6 +400,7 @@ export class AppPage extends BernieComponent<AppPageProps, AppPageState, any> {
                 {this.renderDialog()}
                 <CommandPallet isOpen={this.state.showCommandPallet}/>
                 {this.state.currentSpecialPage !== undefined ? this.renderSpecialPage() : this.renderDefaultPage()}
+
             </div>
         );
     }
@@ -558,8 +559,8 @@ export class AppPage extends BernieComponent<AppPageProps, AppPageState, any> {
                 if (getInstance()) {
                     if (getInstance()?.mounted) {
                         console.log("opening qa panel")
-                        getInstance()?._openLocalDialog(
-                            <StaticDrawerMenu justifyContent={Justify.CENTER} width={percent(40)} body={() => (
+                        getInstance()?.dialog(
+                            <StaticDrawerMenu justifyContent={Justify.CENTER} body={() => (
                                 <QuickActionPanel noPadding/>
                             )}/>
                         );

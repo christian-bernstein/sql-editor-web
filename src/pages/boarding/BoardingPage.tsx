@@ -50,6 +50,7 @@ import {QuickActionPanel} from "../../components/ho/quickPanel/QuickActionPanel"
 import {ReactComponent as QuickPanelIcon} from "../../assets/icons/ic-20/ic20-view-boxes.svg";
 import {ContextCompound} from "../../components/ho/contextCompound/ContextCompound";
 import {Default, Desktop, Mobile} from "../../components/logic/Media";
+import {StaticDrawerMenu} from "../../components/lo/StaticDrawerMenu";
 
 export type BoardingPageProps = {}
 
@@ -62,7 +63,9 @@ export class BoardingPage extends BernieComponent<BoardingPageProps, BoardingPag
     constructor(props: Readonly<BoardingPageProps> | BoardingPageProps) {
         super(props, {
             id: v4()
-        }, undefined);
+        }, undefined, {
+            enableLocalDialog: true
+        });
 
         App.use(app => {
             app.removeInvalidSessionHistoryEntries();
@@ -334,10 +337,16 @@ export class BoardingPage extends BernieComponent<BoardingPageProps, BoardingPag
                                 </FlexBox>
 
                                 <FlexBox align={Align.CENTER} justifyContent={Justify.CENTER} height={percent(100)} children={
-                                    <ContextCompound wrapMenu={false} menu={<QuickActionPanel/>} children={
-                                        <Icon icon={<QuickPanelIcon/>}/>
-                                    }/>
+                                    <Icon icon={<QuickPanelIcon/>} onClick={() => {
+                                        this.dialog(
+                                            <StaticDrawerMenu width={percent(40)} body={() => (
+                                                <QuickActionPanel noPadding/>
+                                            )}/>
+                                        )
+                                    }}/>
                                 }/>
+
+
 
 
                             </FlexBox>

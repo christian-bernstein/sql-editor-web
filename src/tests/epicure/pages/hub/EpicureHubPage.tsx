@@ -107,7 +107,7 @@ export class EpicureHubPage extends BernieComponent<any, any, EpicureHubPageLoca
                         }}
                         tooltipOpen
                         onClick={event => {
-                            this._openLocalDialog(<EpicureAddPage onAdd={() => {
+                            this.dialog(<EpicureAddPage onAdd={() => {
                                 this.rerender("recipes");
                                 this.closeLocalDialog();
                                 this.toggleSpeedDial(false);
@@ -167,7 +167,7 @@ export class EpicureHubPage extends BernieComponent<any, any, EpicureHubPageLoca
                                             <RecipeCard recipe={recipe} ctx={{
                                                 onOpen: {
                                                     on: (recipe, param) => {
-                                                        this._openLocalDialog(screenedAndCentered(<EpicureRecipePage recipe={recipe}/>));
+                                                        this.dialog(screenedAndCentered(<EpicureRecipePage recipe={recipe}/>));
                                                     }
                                                 },
                                                 onDelete: {

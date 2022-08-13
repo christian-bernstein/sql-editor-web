@@ -2,12 +2,22 @@ import React, {CSSProperties} from "react";
 import {Themeable} from "../../logic/style/Themeable";
 import {utilizeGlobalTheme} from "../../logic/app/App";
 import styled from "styled-components";
-import {DimensionalMeasured} from "../../logic/style/DimensionalMeasured";
+import {DimensionalMeasured, px} from "../../logic/style/DimensionalMeasured";
 import {getOr} from "../../logic/Utils";
 
 import Background from "../../assets/images/img-2.png";
 import {Image} from "./Image";
 import {Centered} from "./PosInCenter";
+import {BottomNavigation, BottomNavigationAction} from "@mui/material";
+import {Text, TextType} from "./Text";
+import {Icon} from "./Icon";
+import {ReactComponent as LogoIcon} from "../../assets/logo.svg";
+import {ObjectVisualMeaning} from "../../logic/style/ObjectVisualMeaning";
+import {ReactComponent as ReleaseIcon} from "../../assets/icons/ic-24/ic24-globe.svg";
+import {StaticDrawerMenu} from "./StaticDrawerMenu";
+import {QuickActionPanel} from "../ho/quickPanel/QuickActionPanel";
+import {ReactComponent as SettingsIcon} from "../../assets/icons/ic-24/ic24-settings.svg";
+import {AppModeSwitcher} from "../ho/appModeSwitcher/AppModeSwitcher";
 
 export type PageProps = {
     gapX?: DimensionalMeasured,
@@ -70,6 +80,8 @@ export const Screen: React.FC<PageProps> = React.memo(props => {
         <Wrapper onDoubleClick={event => getOr(props.onDoubleClick, () => {})(event)} style={getOr(props.style, {})} className={getOr(props.classnames?.join(" "), "")}>
             {/*<BG children={<Image pure src={Background}/>}/>*/}
             <Content children={props.children}/>
+
+
         </Wrapper>
     );
 });

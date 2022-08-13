@@ -24,6 +24,13 @@ import {Badge} from "../../lo/Badge";
 import {utilizeGlobalTheme} from "../../../logic/app/App";
 
 export class AppModeSwitcher extends BernieComponent<any, any, any> {
+
+    constructor() {
+        super(undefined, undefined, undefined, {
+            enableLocalDialog: true
+        });
+    }
+
     componentRender(p: any, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         const confirmBody = (requestClose: () => void, submit: () => void) => (
             <StaticDrawerMenu vibration={{
@@ -101,7 +108,7 @@ export class AppModeSwitcher extends BernieComponent<any, any, any> {
 
         const reloadWebsite = () => {
             setTimeout(() => {
-                this._openLocalDialog(
+                this.dialog(
                     <HOCWrapper body={wrapper => <></>} componentDidMount={wrapper => {
                         wrapper.openLocalDialog(component => (
                             <StaticDrawerMenu body={props => (
@@ -138,7 +145,7 @@ export class AppModeSwitcher extends BernieComponent<any, any, any> {
                 return;
             }
 
-            this._openLocalDialog(confirmBody(() => {
+            this.dialog(confirmBody(() => {
                 this.closeLocalDialog();
             }, () => {
                 window.localStorage.setItem("app-page-mode", nextMode.toString())

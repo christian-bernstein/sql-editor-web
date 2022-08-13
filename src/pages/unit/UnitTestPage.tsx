@@ -1,9 +1,9 @@
 import {BernieComponent} from "../../logic/BernieComponent";
 import {Assembly} from "../../logic/assembly/Assembly";
 import {Themeable} from "../../logic/style/Themeable";
-import React, {useEffect, useState} from "react";
+import React, {FC, useEffect, useState} from "react";
 import {Screen} from "../../components/lo/Page";
-import {percent, px} from "../../logic/style/DimensionalMeasured";
+import {DimensionalMeasured, percent, px} from "../../logic/style/DimensionalMeasured";
 import {Flex, FlexBox} from "../../components/lo/FlexBox";
 import {Button} from "../../components/lo/Button";
 import {Justify} from "../../logic/style/Justify";
@@ -12,18 +12,35 @@ import {StaticDrawerMenu} from "../../components/lo/StaticDrawerMenu";
 import {ReactComponent as ReleaseIcon} from "../../assets/icons/ic-24/ic24-globe.svg";
 import {ReactComponent as DevelopmentIcon} from "../../assets/icons/ic-24/ic24-bug.svg";
 import {ReactComponent as UnittestIcon} from "../../assets/icons/ic-24/ic24-extension.svg";
+import {ReactComponent as SettingsIcon} from "../../assets/icons/ic-24/ic24-settings.svg";
+import {ReactComponent as LogoIcon} from "../../assets/logo.svg";
 import {Icon} from "../../components/lo/Icon";
 import {Align} from "../../logic/style/Align";
 import {Text, TextType} from "../../components/lo/Text";
-import {utilizeGlobalTheme} from "../../logic/app/App";
+import {App, utilizeGlobalTheme} from "../../logic/app/App";
 import {AppPageMode} from "../app/AppPageMode";
 import {getOr} from "../../logic/Utils";
 import {ObjectVisualMeaning, VM} from "../../logic/style/ObjectVisualMeaning";
 import {ProgressTracker} from "../../components/indev/ProgressTracker";
-import {Step as MUIStep, StepContent, StepLabel, Stepper} from "@mui/material";
+import {
+    BottomNavigation,
+    BottomNavigationAction,
+    Step as MUIStep,
+    StepContent,
+    StepLabel,
+    Stepper
+} from "@mui/material";
 import {createMargin} from "../../logic/style/Margin";
 import {HOCWrapper} from "../../components/HOCWrapper";
 import {QuickActionPanel} from "../../components/ho/quickPanel/QuickActionPanel";
+import {AppModeSwitcher} from "../../components/ho/appModeSwitcher/AppModeSwitcher";
+import {AnomalyInfo} from "../../components/ho/anomalyInfo/AnomalyInfo";
+import {AnomalyLevel} from "../../logic/data/AnomalyLevel";
+import {EnumSelector} from "../../components/logic/EnumSelector";
+import {Box} from "../../components/lo/Box";
+import {Input} from "../../components/lo/Input";
+import {Dimension} from "../../logic/style/Dimension";
+import AnimateHeight from "react-animate-height";
 
 export class UnitTestPage extends BernieComponent<any, any, any> {
 
@@ -60,12 +77,9 @@ export class UnitTestPage extends BernieComponent<any, any, any> {
         return (
             <Screen children={
                 <Flex width={percent(100)} height={percent(100)} justifyContent={Justify.FLEX_END} align={Align.CENTER}>
-
-
-
                     <HOCWrapper body={wrapper => (
                         <Button text={"QA-Panel"} onClick={() => {
-                            wrapper._openLocalDialog(
+                            wrapper.dialog(
                                 <StaticDrawerMenu body={props => (
                                     <QuickActionPanel noPadding/>
                                 )}/>
@@ -73,12 +87,10 @@ export class UnitTestPage extends BernieComponent<any, any, any> {
                         }}/>
                     )}/>
 
-
-
                     <Button text={"App settings"} onClick={() => {
                         const mode: AppPageMode = Number(getOr(window.localStorage.getItem("app-page-mode"), AppPageMode.UNIT_TEST.toString()))
                         const t = utilizeGlobalTheme();
-                        this._openLocalDialog(
+                        this.dialog(
                             <StaticDrawerMenu body={props => {
 
                                 class AppModeChooser extends BernieComponent<any, any, any> {
@@ -141,7 +153,7 @@ export class UnitTestPage extends BernieComponent<any, any, any> {
 
                                         const reloadWebsite = () => {
                                             setTimeout(() => {
-                                                this._openLocalDialog(
+                                                this.dialog(
                                                     <HOCWrapper body={wrapper => <></>} componentDidMount={wrapper => {
                                                         wrapper.openLocalDialog(component => (
                                                             <StaticDrawerMenu body={props => (
@@ -180,7 +192,7 @@ export class UnitTestPage extends BernieComponent<any, any, any> {
                                                         return;
                                                     }
 
-                                                    this._openLocalDialog(confirmBody(() => this.closeLocalDialog(), () => {
+                                                    this.dialog(confirmBody(() => this.closeLocalDialog(), () => {
                                                         window.localStorage.setItem("app-page-mode", AppPageMode.RELEASE.toString());
                                                         reloadWebsite();
                                                     }));
@@ -196,7 +208,7 @@ export class UnitTestPage extends BernieComponent<any, any, any> {
                                                         return;
                                                     }
 
-                                                    this._openLocalDialog(confirmBody(() => this.closeLocalDialog(), () => {
+                                                    this.dialog(confirmBody(() => this.closeLocalDialog(), () => {
                                                         window.localStorage.setItem("app-page-mode", AppPageMode.DEVELOPMENT.toString())
                                                         reloadWebsite();
                                                     }));
@@ -212,7 +224,7 @@ export class UnitTestPage extends BernieComponent<any, any, any> {
                                                         return;
                                                     }
 
-                                                    this._openLocalDialog(confirmBody(() => {
+                                                    this.dialog(confirmBody(() => {
                                                         this.closeLocalDialog();
                                                     }, () => {
                                                         window.localStorage.setItem("app-page-mode", AppPageMode.UNIT_TEST.toString())
@@ -240,6 +252,64 @@ export class UnitTestPage extends BernieComponent<any, any, any> {
                             }}/>
                         );
                     }}/>
+
+                    <Button text={"Anomaly"} onClick={() => {
+                        this.dialog(
+                            <EnumSelector from={AnomalyLevel} onSubmit={element => {
+                                this.dialog(
+                                    <AnomalyInfo anomaly={{
+                                        level: AnomalyLevel[element as keyof typeof AnomalyLevel]
+                                    }}/>
+                                );
+                            }}/>
+                        );
+                    }}/>
+
+                    <BottomNavigation
+                        showLabels
+                        sx={{
+                            width: "100%",
+                            backgroundColor: t.colors.backgroundHighlightColor.css(),
+                            borderRadius: t.radii.defaultObjectRadius.css()
+                        }}
+                        value={"app"}
+                        onChange={(event, newValue) => {
+
+                        }}
+                    >
+                        <BottomNavigationAction value={"app"} label={
+                            <Text text={"App"} type={TextType.secondaryDescription} fontSize={px(11)}/>
+                        } icon={
+                            <Icon icon={<LogoIcon/>} visualMeaning={ObjectVisualMeaning.SUCCESS} colored/>
+                        }/>
+                        <BottomNavigationAction value={"qa"} label={
+                            <Text text={"Quick actions"} whitespace={"nowrap"} type={TextType.secondaryDescription} fontSize={px(11)}/>
+                        } icon={
+                            <Icon icon={<ReleaseIcon/>}/>
+                        } onClick={() => {
+                            if (App.app()?.shortcuts !== undefined) {
+                                this.dialog(
+                                    <StaticDrawerMenu body={() => <QuickActionPanel/>}/>
+                                );
+                            } else {
+                                this.dialog(
+                                    <AnomalyInfo anomaly={{
+                                        level: AnomalyLevel.ERROR,
+                                        description: "Cannot open Quick-actions panel, because **App.app()** returned *undefined*. This mostly happens, when the app isn't initialized."
+                                    }}/>
+                                );
+                            }
+                        }}/>
+                        <BottomNavigationAction value={"settings"} label={
+                            <Text text={"Settings"} type={TextType.secondaryDescription} fontSize={px(11)}/>
+                        } icon={
+                            <Icon icon={<SettingsIcon/>}/>
+                        }  onClick={() => {
+                            this.dialog(
+                                <AppModeSwitcher/>
+                            );
+                        }}/>
+                    </BottomNavigation>
                 </Flex>
             }/>
         );

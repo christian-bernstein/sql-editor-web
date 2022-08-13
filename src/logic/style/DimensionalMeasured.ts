@@ -48,6 +48,12 @@ export class DimensionalMeasured implements IToCSSConvertable {
         return dm;
     }
 
+    public times(n: number): DimensionalMeasured {
+        const dm = this.copy();
+        dm.measurand = dm.measurand * n;
+        return dm;
+    }
+
     public static of(measurand: number, dimension: Dimension): DimensionalMeasured {
         return new DimensionalMeasured(measurand, dimension);
     }

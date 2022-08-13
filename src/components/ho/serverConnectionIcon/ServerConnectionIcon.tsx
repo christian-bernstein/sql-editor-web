@@ -6,7 +6,7 @@ import {App, utilizeGlobalTheme} from "../../../logic/app/App";
 import {ObjectVisualMeaning} from "../../../logic/style/ObjectVisualMeaning";
 import {Environment} from "../../../logic/Environment";
 import {getMeaningfulColors, Themeable} from "../../../logic/style/Themeable";
-import {px} from "../../../logic/style/DimensionalMeasured";
+import {DimensionalMeasured, px} from "../../../logic/style/DimensionalMeasured";
 import {getOr} from "../../../logic/Utils";
 import {CustomTooltip} from "../../lo/CustomTooltip";
 import {FlexBox} from "../../lo/FlexBox";
@@ -24,7 +24,8 @@ import {LatencyDisplay} from "../../../tests/chart/LatencyDisplay";
 export type ServerConnectionIconProps = {
     openConnectionMetricsDialog?: boolean,
     pulse?: boolean,
-    renderTooltip?: boolean
+    renderTooltip?: boolean,
+    iconSize?: DimensionalMeasured
 }
 
 export const ServerConnectionIcon: React.FC<ServerConnectionIconProps> = props => {
@@ -47,7 +48,7 @@ export const ServerConnectionIcon: React.FC<ServerConnectionIconProps> = props =
                     case 2:
                         return <>Stopping</>;
                     case 3:
-                        return renderNoConnection(theme, connector);
+                        return renderNoConnection(props, theme, connector);
                     default:
                         return <></>
                 }
@@ -100,7 +101,7 @@ export const renderOnline: (props: ServerConnectionIconProps, theme: Themeable.T
                               size={10}/>
             </Badge>
         }>
-            <Icon colored size={px(24)} icon={<ServerIcon/>} visualMeaning={ObjectVisualMeaning.SUCCESS}/>
+            <Icon colored size={getOr(props.iconSize, px(24))} icon={<ServerIcon/>} visualMeaning={ObjectVisualMeaning.SUCCESS}/>
         </BadgedWrapper>
     );
 }
@@ -112,14 +113,14 @@ export const renderConnecting: (props: ServerConnectionIconProps, theme: Themeab
                               size={10}/>
             </Badge>
         }>
-            <Icon colored size={px(24)} icon={<ServerIcon/>} visualMeaning={ObjectVisualMeaning.WARNING}/>
+            <Icon colored size={getOr(props.iconSize, px(24))} icon={<ServerIcon/>} visualMeaning={ObjectVisualMeaning.WARNING}/>
         </BadgedWrapper>
     );
 }
 
 
-export const renderNoConnection: (theme: Themeable.Theme, con: Environment.Connector) => JSX.Element = (theme, con) => {
+export const renderNoConnection: (props: ServerConnectionIconProps, theme: Themeable.Theme, con: Environment.Connector) => JSX.Element = (props, theme, con) => {
     return (
-        <Icon colored size={px(24)} icon={<ServerIcon/>} visualMeaning={ObjectVisualMeaning.ERROR}/>
+        <Icon colored size={getOr(props.iconSize, px(24))} icon={<ServerIcon/>} visualMeaning={ObjectVisualMeaning.ERROR}/>
     );
 }
