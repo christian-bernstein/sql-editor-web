@@ -25,7 +25,8 @@ export type StaticDrawerMenuProps<T> = DrawerProps<T> & {
     enableBlurredBackground?: boolean,
     width?: DimensionalMeasured,
     align?: Align,
-    justifyContent?: Justify
+    justifyContent?: Justify,
+    componentDidMount?: (drawer: StaticDrawerMenu<T>) => void
 }
 
 export class StaticDrawerMenu<T> extends BernieComponent<StaticDrawerMenuProps<T>, any, any> {
@@ -41,6 +42,7 @@ export class StaticDrawerMenu<T> extends BernieComponent<StaticDrawerMenuProps<T
                 window.navigator.vibrate(pattern);
             }
         });
+        this.props.componentDidMount?.(this);
     }
 
     componentRender(p: StaticDrawerMenuProps<T>, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {

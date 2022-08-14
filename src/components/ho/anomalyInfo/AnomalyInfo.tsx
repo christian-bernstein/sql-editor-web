@@ -5,7 +5,7 @@ import {Flex} from "../../lo/FlexBox";
 import {percent, px} from "../../../logic/style/DimensionalMeasured";
 import {Align} from "../../../logic/style/Align";
 import {Badge} from "../../lo/Badge";
-import {ObjectVisualMeaning} from "../../../logic/style/ObjectVisualMeaning";
+import {ObjectVisualMeaning, VM} from "../../../logic/style/ObjectVisualMeaning";
 import {Text, TextType} from "../../lo/Text";
 import {createMargin} from "../../../logic/style/Margin";
 import {FlexDirection} from "../../../logic/style/FlexDirection";
@@ -19,9 +19,11 @@ import React from "react";
 import {AppAnomalyData} from "../../../logic/data/AppAnomalyData";
 import {If} from "../../logic/If";
 import {AnomalyLevel} from "../../../logic/data/AnomalyLevel";
+import {getOr} from "../../../logic/Utils";
 
 export type AnomalyInfoProps = {
-    anomaly: AppAnomalyData
+    anomaly: AppAnomalyData,
+    mapDescriptionVMToAnomalyLevel?: boolean
 }
 
 export class AnomalyInfo extends BernieComponent<AnomalyInfoProps, any, any> {
@@ -58,6 +60,21 @@ export class AnomalyInfo extends BernieComponent<AnomalyInfoProps, any, any> {
         });
     }
 
+    private anomalyLevelToVisualMeaning(level: AnomalyLevel): VM {
+        switch (level) {
+            case AnomalyLevel.DEBUG:
+                return VM.BETA;
+            case AnomalyLevel.INFO:
+                return VM.UI_NO_HIGHLIGHT;
+            case AnomalyLevel.WARN:
+                return VM.WARNING;
+            case AnomalyLevel.ERROR:
+                return VM.ERROR;
+            case AnomalyLevel.CRITICAL:
+                return VM.ERROR;
+        }
+    }
+
     componentRender(p: AnomalyInfoProps, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
             <StaticDrawerMenu body={props => {
@@ -75,8 +92,8 @@ export class AnomalyInfo extends BernieComponent<AnomalyInfoProps, any, any> {
                                 align={Align.CENTER}
                                 margin={createMargin(40, 0, 40, 0)}
                                 text={p.anomaly.description as string}
-                                visualMeaning={ObjectVisualMeaning.ERROR}
-                                coloredText
+                                visualMeaning={getOr(p.mapDescriptionVMToAnomalyLevel, false) ? this.anomalyLevelToVisualMeaning(getOr(p.anomaly.level, AnomalyLevel.INFO)) : VM.ERROR}
+                                coloredText={getOr(p.anomaly.level, AnomalyLevel.INFO) !== AnomalyLevel.INFO}
                             />
                         } ifFalse={
                             <Text

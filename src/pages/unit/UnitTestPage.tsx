@@ -1,9 +1,9 @@
 import {BernieComponent} from "../../logic/BernieComponent";
 import {Assembly} from "../../logic/assembly/Assembly";
 import {Themeable} from "../../logic/style/Themeable";
-import React, {FC, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Screen} from "../../components/lo/Page";
-import {DimensionalMeasured, percent, px} from "../../logic/style/DimensionalMeasured";
+import {percent, px} from "../../logic/style/DimensionalMeasured";
 import {Flex, FlexBox} from "../../components/lo/FlexBox";
 import {Button} from "../../components/lo/Button";
 import {Justify} from "../../logic/style/Justify";
@@ -33,14 +33,18 @@ import {
 import {createMargin} from "../../logic/style/Margin";
 import {HOCWrapper} from "../../components/HOCWrapper";
 import {QuickActionPanel} from "../../components/ho/quickPanel/QuickActionPanel";
-import {AppModeSwitcher} from "../../components/ho/appModeSwitcher/AppModeSwitcher";
 import {AnomalyInfo} from "../../components/ho/anomalyInfo/AnomalyInfo";
 import {AnomalyLevel} from "../../logic/data/AnomalyLevel";
 import {EnumSelector} from "../../components/logic/EnumSelector";
-import {Box} from "../../components/lo/Box";
-import {Input} from "../../components/lo/Input";
-import {Dimension} from "../../logic/style/Dimension";
-import AnimateHeight from "react-animate-height";
+import {SettingsElement} from "../../components/ho/settingsElement/SettingsElement";
+import {Group} from "../../components/lo/Group";
+import {Orientation} from "../../logic/style/Orientation";
+import {FlexDirection} from "../../logic/style/FlexDirection";
+import {Dot} from "../../components/lo/Dot";
+import {Color} from "../../logic/style/Color";
+import {SettingsGroup} from "../../components/lo/SettingsGroup";
+import {SettingsPage} from "../../components/ho/settingsPage/SettingsPage";
+import {FormatSize, Notifications, Speaker} from "@mui/icons-material";
 
 export class UnitTestPage extends BernieComponent<any, any, any> {
 
@@ -265,6 +269,104 @@ export class UnitTestPage extends BernieComponent<any, any, any> {
                         );
                     }}/>
 
+
+
+
+
+                    <Button text={"Open settings"} onClick={() => {
+
+
+
+
+                        this.dialog(
+                            <SettingsPage pageName={"Settings"} description={"Settings page, the hub for all settings, configurations & information"} onExit={this.closeLocalDialog} content={page => (
+                                <FlexBox width={percent(100)} align={Align.CENTER}>
+
+                                    <SettingsGroup elements={[
+                                        <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Notifications"} iconConfig={
+                                            {enable: true, color: Color.ofHex("#ff453a"), iconGenerator: (element) => <Notifications/>}
+                                        } quickChildElements={element => [
+                                            <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"1"} iconConfig={{enable: true, color: Color.ofHex("#ff453a"), iconGenerator: (element) => <>?</>}}/>,
+                                            <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"2"} iconConfig={{enable: true, color: Color.ofHex("#ff453a"), iconGenerator: (element) => <>?</>}}/>,
+                                            <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"3"} iconConfig={{enable: true, color: Color.ofHex("#ff453a"), iconGenerator: (element) => <>?</>}}/>
+                                        ]}/>,
+                                        <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Sounds & Haptics"} iconConfig={
+                                            {enable: true, color: Color.ofHex("#ff375f"), iconGenerator: (element) => <Speaker/>}
+                                        }/>,
+                                        <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Appearance"} iconConfig={
+                                            {enable: true, color: Color.ofHex("#0a84ff"), iconGenerator: (element) => <FormatSize/>}
+                                        }/>,
+                                    ]}/>
+
+
+
+
+                                    <SettingsGroup elements={[
+                                        <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Open subpage"} onClick={element => {
+
+                                            // Open the subpage
+                                            page.subpage(settingsPage => (
+                                                <SettingsPage pageName={"Subpage"} parentPageName={"Settings"} onExit={() => page.closeSubpage()} content={() => (
+                                                    <>end</>
+                                                )}/>
+                                            ));
+
+                                        }}/>,
+                                        <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Set Status"} appendixGenerator={element => (
+                                            <Flex gap={t.gaps.smallGab} flexDir={FlexDirection.ROW} align={Align.CENTER}>
+                                                <Dot/>
+                                                <Text text={"Invisible"} type={TextType.secondaryDescription} fontSize={px(11)}/>
+                                            </Flex>
+                                        )} iconConfig={{enable: true, color: Color.ofHex("#ffffff"), iconGenerator: (element) => <>?</>}} subpage={element => (
+
+
+                                            <Flex width={percent(100)}>
+                                                <SettingsGroup title={"Billing settings"} elements={[
+                                                    <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Get Nitro"} iconConfig={{enable: true, color: Color.ofHex("#ffffff"), iconGenerator: (element) => <>?</>}}/>,
+                                                    <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Server Boost"} iconConfig={{enable: true, color: Color.ofHex("#ffffff"), iconGenerator: (element) => <>?</>}}/>,
+                                                    <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Nitro Gifting"} iconConfig={{enable: true, color: Color.ofHex("#ffffff"), iconGenerator: (element) => <>?</>}}/>
+                                                ]}/>
+                                            </Flex>
+
+
+                                        )}/>,
+                                        <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Account"} iconConfig={{enable: true, color: Color.ofHex("#ff3b30"), iconGenerator: (element) => <>?</>}}/>,
+                                        <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"User Profile"} iconConfig={{enable: true, color: Color.ofHex("#ff9500"), iconGenerator: (element) => <>?</>}}/>,
+                                        <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Privacy & Safety"} iconConfig={{enable: true, color: Color.ofHex("#4cd964"), iconGenerator: (element) => <>?</>}}/>,
+                                        <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Authorized Aps"} iconConfig={{enable: true, color: Color.ofHex("#ffffff"), iconGenerator: (element) => <>?</>}}/>,
+                                        <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Connections"} iconConfig={{enable: true, color: Color.ofHex("#007aff"), iconGenerator: (element) => <>?</>}}/>,
+                                        <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Friend Requests"} iconConfig={{enable: true, color: Color.ofHex("#5956d6"), iconGenerator: (element) => <>?</>}}/>,
+                                        <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Scan QR Code"} iconConfig={{enable: true, color: Color.ofHex("#ffffff"), iconGenerator: (element) => <>?</>}}/>
+                                    ]}/>
+
+                                    <SettingsGroup title={"Billing settings"} elements={[
+                                        <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Get Nitro"} iconConfig={{enable: true, color: Color.ofHex("#ffffff"), iconGenerator: (element) => <>?</>}}/>,
+                                        <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Server Boost"} iconConfig={{enable: true, color: Color.ofHex("#ffffff"), iconGenerator: (element) => <>?</>}}/>,
+                                        <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Nitro Gifting"} iconConfig={{enable: true, color: Color.ofHex("#ffffff"), iconGenerator: (element) => <>?</>}}/>
+                                    ]}/>
+
+                                    <SettingsGroup title={"App settings"} elements={[
+                                        <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Language"} appendixGenerator={element => (
+                                            <Text text={"English, UK"} type={TextType.secondaryDescription} fontSize={px(11)}/>
+                                        )} iconConfig={{enable: true, color: Color.ofHex("#ffffff"), iconGenerator: (element) => <>?</>}}/>,
+                                    ]}/>
+
+                                    <Group width={percent(100)} orientation={Orientation.VERTICAL} removeChildBorders elements={[
+                                        <SettingsElement groupDisplayMode title={"Log Out"} iconConfig={{enable: true, color: Color.ofHex("#ffffff"), iconGenerator: (element) => <>?</>}} promiseBasedOnClick={element => {
+                                            return new Promise((resolve, reject) => setTimeout(() => resolve(undefined), 3000));
+                                        }}/>,
+                                    ]}/>
+                                </FlexBox>
+                            )}/>
+                        );
+                    }}/>
+
+
+
+
+
+
+
                     <BottomNavigation
                         showLabels
                         sx={{
@@ -306,7 +408,78 @@ export class UnitTestPage extends BernieComponent<any, any, any> {
                             <Icon icon={<SettingsIcon/>}/>
                         }  onClick={() => {
                             this.dialog(
-                                <AppModeSwitcher/>
+
+
+
+
+
+
+                                <StaticDrawerMenu body={props => {
+                                    return (
+                                        <FlexBox width={percent(100)} align={Align.CENTER}>
+                                            <SettingsGroup elements={[
+                                                <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Set Status"} appendixGenerator={element => (
+                                                    <Flex gap={t.gaps.smallGab} flexDir={FlexDirection.ROW} align={Align.CENTER}>
+                                                        <Dot/>
+                                                        <Text text={"Invisible"} type={TextType.secondaryDescription} fontSize={px(11)}/>
+                                                    </Flex>
+                                                )} iconConfig={{enable: true, color: Color.ofHex("#ffffff"), iconGenerator: (element) => <>?</>}} subpage={element => (
+
+
+                                                    <Flex width={percent(100)}>
+                                                        <SettingsGroup title={"Billing settings"} elements={[
+                                                            <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Get Nitro"} iconConfig={{enable: true, color: Color.ofHex("#ffffff"), iconGenerator: (element) => <>?</>}}/>,
+                                                            <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Server Boost"} iconConfig={{enable: true, color: Color.ofHex("#ffffff"), iconGenerator: (element) => <>?</>}}/>,
+                                                            <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Nitro Gifting"} iconConfig={{enable: true, color: Color.ofHex("#ffffff"), iconGenerator: (element) => <>?</>}}/>
+                                                        ]}/>
+                                                    </Flex>
+
+
+                                                )}/>,
+                                                <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Account"} iconConfig={{enable: true, color: Color.ofHex("#ff3b30"), iconGenerator: (element) => <>?</>}}/>,
+                                                <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"User Profile"} iconConfig={{enable: true, color: Color.ofHex("#ff9500"), iconGenerator: (element) => <>?</>}}/>,
+                                                <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Privacy & Safety"} iconConfig={{enable: true, color: Color.ofHex("#4cd964"), iconGenerator: (element) => <>?</>}}/>,
+                                                <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Authorized Aps"} iconConfig={{enable: true, color: Color.ofHex("#ffffff"), iconGenerator: (element) => <>?</>}}/>,
+                                                <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Connections"} iconConfig={{enable: true, color: Color.ofHex("#007aff"), iconGenerator: (element) => <>?</>}}/>,
+                                                <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Friend Requests"} iconConfig={{enable: true, color: Color.ofHex("#5956d6"), iconGenerator: (element) => <>?</>}}/>,
+                                                <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Scan QR Code"} iconConfig={{enable: true, color: Color.ofHex("#ffffff"), iconGenerator: (element) => <>?</>}}/>
+                                            ]}/>
+
+                                            <SettingsGroup title={"Billing settings"} elements={[
+                                                <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Get Nitro"} iconConfig={{enable: true, color: Color.ofHex("#ffffff"), iconGenerator: (element) => <>?</>}}/>,
+                                                <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Server Boost"} iconConfig={{enable: true, color: Color.ofHex("#ffffff"), iconGenerator: (element) => <>?</>}}/>,
+                                                <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Nitro Gifting"} iconConfig={{enable: true, color: Color.ofHex("#ffffff"), iconGenerator: (element) => <>?</>}}/>
+                                            ]}/>
+
+                                            <SettingsGroup title={"App settings"} elements={[
+                                                <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Language"} appendixGenerator={element => (
+                                                    <Text text={"English, UK"} type={TextType.secondaryDescription} fontSize={px(11)}/>
+                                                )} iconConfig={{enable: true, color: Color.ofHex("#ffffff"), iconGenerator: (element) => <>?</>}}/>,
+                                            ]}/>
+
+                                            <Group width={percent(100)} orientation={Orientation.VERTICAL} removeChildBorders elements={[
+                                                <SettingsElement groupDisplayMode title={"Log Out"} iconConfig={{enable: true, color: Color.ofHex("#ffffff"), iconGenerator: (element) => <>?</>}} promiseBasedOnClick={element => {
+                                                    return new Promise((resolve, reject) => setTimeout(() => resolve(undefined), 3000));
+                                                }}/>,
+                                            ]}/>
+                                        </FlexBox>
+                                    );
+                                }}/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                             );
                         }}/>
                     </BottomNavigation>

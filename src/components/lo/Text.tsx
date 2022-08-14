@@ -13,6 +13,7 @@ import {Cursor} from "../../logic/style/Cursor";
 import {LinkPreview} from "@dhaiwat10/react-link-preview";
 import {CustomTooltip} from "./CustomTooltip";
 import {Image} from "./Image";
+import rehypeRaw from "rehype-raw";
 
 // todo implement
 export type FontOptions = {
@@ -133,7 +134,7 @@ export const Text: React.FC<TextProps> = props => {
             {props.enableLeftAppendix ? props.leftAppendix : <></>}
 
             {renderMD ? (
-                <ReactMarkdown className={"md"} children={text} components={{
+                <ReactMarkdown rehypePlugins={[rehypeRaw]} className={"md"} children={text} components={{
                     a: (mdProps, context) => {
                         if (getOr(props.advancedLinkRendering, false)) {
                             return (
@@ -159,7 +160,8 @@ export const Text: React.FC<TextProps> = props => {
                         return (
                             <Image src={getOr(props1.src, "")}/>
                         );
-                    }
+                    },
+                    u: ({node, ...props}) => <u style={{textDecoration: 'underline'}} {...props} />
                 }}/>
             ) : (
                 <p>{text}</p>
