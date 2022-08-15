@@ -274,10 +274,6 @@ export class UnitTestPage extends BernieComponent<any, any, any> {
 
 
                     <Button text={"Open settings"} onClick={() => {
-
-
-
-
                         this.dialog(
                             <SettingsPage pageName={"Settings"} description={"Settings page, the hub for all settings, configurations & information"} onExit={this.closeLocalDialog} content={page => (
                                 <FlexBox width={percent(100)} align={Align.CENTER}>
@@ -285,11 +281,7 @@ export class UnitTestPage extends BernieComponent<any, any, any> {
                                     <SettingsGroup elements={[
                                         <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Notifications"} iconConfig={
                                             {enable: true, color: Color.ofHex("#ff453a"), iconGenerator: (element) => <Notifications/>}
-                                        } quickChildElements={element => [
-                                            <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"1"} iconConfig={{enable: true, color: Color.ofHex("#ff453a"), iconGenerator: (element) => <>?</>}}/>,
-                                            <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"2"} iconConfig={{enable: true, color: Color.ofHex("#ff453a"), iconGenerator: (element) => <>?</>}}/>,
-                                            <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"3"} iconConfig={{enable: true, color: Color.ofHex("#ff453a"), iconGenerator: (element) => <>?</>}}/>
-                                        ]}/>,
+                                        }/>,
                                         <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Sounds & Haptics"} iconConfig={
                                             {enable: true, color: Color.ofHex("#ff375f"), iconGenerator: (element) => <Speaker/>}
                                         }/>,
@@ -349,6 +341,29 @@ export class UnitTestPage extends BernieComponent<any, any, any> {
                                         <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Language"} appendixGenerator={element => (
                                             <Text text={"English, UK"} type={TextType.secondaryDescription} fontSize={px(11)}/>
                                         )} iconConfig={{enable: true, color: Color.ofHex("#ffffff"), iconGenerator: (element) => <>?</>}}/>,
+                                    ]}/>
+
+                                    <SettingsGroup elements={[
+                                        <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Developer settings"} iconConfig={{enable: true, color: t.colors.betaHighlightColor, iconGenerator: (element) => <DevelopmentIcon/>}} onClick={element => {
+                                            // Open the Developer settings-subpage
+                                            page.subpage(settingsPage => (
+                                                <SettingsPage pageName={"Developer settings"} parentPageName={"Settings"} onExit={() => page.closeSubpage()} content={() => (
+                                                    <Flex width={percent(100)} align={Align.CENTER}>
+                                                        <SettingsGroup title={"Billing settings"} elements={[
+                                                            <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Get Nitro"} iconConfig={{enable: true, color: Color.ofHex("#ffffff"), iconGenerator: (element) => <>?</>}}/>,
+                                                            <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Server Boost"} iconConfig={{enable: true, color: Color.ofHex("#ffffff"), iconGenerator: (element) => <>?</>}}/>,
+                                                            <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Nitro Gifting"} iconConfig={{enable: true, color: Color.ofHex("#ffffff"), iconGenerator: (element) => <>?</>}}/>
+                                                        ]}/>
+
+                                                        <SettingsGroup title={"App settings"} elements={[
+                                                            <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Language"} appendixGenerator={element => (
+                                                                <Text text={"English, UK"} type={TextType.secondaryDescription} fontSize={px(11)}/>
+                                                            )} iconConfig={{enable: true, color: Color.ofHex("#ffffff"), iconGenerator: (element) => <>?</>}}/>,
+                                                        ]}/>
+                                                    </Flex>
+                                                )}/>
+                                            ));
+                                        }}/>,
                                     ]}/>
 
                                     <Group width={percent(100)} orientation={Orientation.VERTICAL} removeChildBorders elements={[

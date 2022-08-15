@@ -72,18 +72,10 @@ export class SettingsElement extends BernieComponent<SettingsElementProps, any, 
                 processing: true
             }, ["processing"], () => {
 
-
-
-
                 if (this.props.subpage !== undefined) {
-
                     setTimeout(() => {
                         this.dialog(
-                            <StaticDrawerMenu componentDidMount={() => {
-                                this.local.setStateWithChannels({
-                                    processing: false
-                                }, ["processing"]);
-                            }} body={props => {
+                            <StaticDrawerMenu body={props => {
                                 return (
                                     <Flex width={percent(100)} height={percent(100)}>
                                         <DrawerHeader header={"Set Status"} description={"Update your status"}/>
@@ -93,16 +85,13 @@ export class SettingsElement extends BernieComponent<SettingsElementProps, any, 
                                 );
                             }}/>
                         );
-                    }, 50);
 
+                        this.local.setStateWithChannels({
+                            processing: false
+                        }, ["processing"]);
+                    }, 50);
                     return;
                 }
-
-
-
-
-
-
 
                 if (this.props.promiseBasedOnClick !== undefined && this.props.onClick === undefined) {
                     // Unambiguously able to call 'promiseBasedOnClick'

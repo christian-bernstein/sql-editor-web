@@ -20,12 +20,12 @@ import {DebugEditor} from "../editor/debug/DebugEditor";
 import {DBSessionCacheShard} from "../../shards/dbSessionCache/DBSessionCacheShard";
 import {RegexPage} from "../../tests/regex/RegexPage";
 import {Assembly} from "../../logic/assembly/Assembly";
-import {BottomNavigation, BottomNavigationAction, Slide, SwipeableDrawer, ThemeProvider} from "@mui/material";
+import {Slide, SwipeableDrawer, ThemeProvider} from "@mui/material";
 import {TransitionProps} from "@mui/material/transitions";
 import {Screen} from "../../components/lo/Page";
 import {FlexBox} from "../../components/lo/FlexBox";
 import {FlexDirection} from "../../logic/style/FlexDirection";
-import {percent} from "../../logic/style/DimensionalMeasured";
+import {DimensionalMeasured, percent, px} from "../../logic/style/DimensionalMeasured";
 import {Icon} from "../../components/lo/Icon";
 import {ReactComponent as CloseIcon} from "../../assets/icons/ic-20/ic20-close.svg";
 import {ObjectVisualMeaning} from "../../logic/style/ObjectVisualMeaning";
@@ -61,6 +61,12 @@ import {MenuState} from "../menu/v2/MenuState";
 import {BernieComponent} from "../../logic/BernieComponent";
 import {QuickActionPanel} from "../../components/ho/quickPanel/QuickActionPanel";
 import {StaticDrawerMenu} from "../../components/lo/StaticDrawerMenu";
+import {Dimension} from "../../logic/style/Dimension";
+import {OverflowBehaviour} from "../../logic/style/OverflowBehaviour";
+import {Box} from "../../components/lo/Box";
+import {AF} from "../../components/logic/ArrayFragment";
+import {MobileNavigation} from "../../components/ho/bottomNavigation/MobileNavigation";
+import {Mobile} from "../../components/logic/Media";
 
 export type AppPageProps = {
     mode?: AppPageMode
@@ -411,6 +417,12 @@ export class AppPage extends BernieComponent<AppPageProps, AppPageState, any> {
         );
     }
 
+    /**
+     * {this.getRouts()}
+     * {App.app().screenManager.renderRoutes()}
+     *
+     * @private
+     */
     private renderDefaultPage(): JSX.Element {
         if (App.isInitiated()) {
             const theme = utilizeGlobalTheme();
@@ -420,11 +432,27 @@ export class AppPage extends BernieComponent<AppPageProps, AppPageState, any> {
                     <BrowserRouter children={
                         <MenuPage showMenuInitially={false} doubleClickMenuOpen={false} children={
                             <MenuPageV2 children={
-                                <Switch>
-                                    {this.getRouts()}
+                                <FlexBox gap={px()} style={{backgroundColor: theme.colors.backgroundColor.css()}} height={DimensionalMeasured.of(100, Dimension.vh)} width={percent(100)}>
+                                    {/* Main content */}
+                                    <FlexBox width={percent(100)} style={{flex: "1 1 auto"}} overflowYBehaviour={OverflowBehaviour.SCROLL} children={
+                                        <Switch>
+                                            <AF elements={[
+                                                this.getRouts(),
+                                                App.app().screenManager.renderRoutes()
+                                            ]}/>
+                                        </Switch>
 
-                                    {App.app().screenManager.renderRoutes()}
-                                </Switch>
+                                    }/>
+
+
+                                    {/* Bottom navigation menu */}
+                                    {/* TODO: Only show on mobile devices */}
+                                    <Mobile children={
+                                        <FlexBox padding={false} width={percent(100)} style={{flex: "0 1 auto", backgroundColor: theme.colors.backgroundHighlightColor.css()}} children={
+                                            <MobileNavigation/>
+                                        }/>
+                                    }/>
+                                </FlexBox>
                             }/>
                         }/>
                     }/>
