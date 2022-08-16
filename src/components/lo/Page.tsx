@@ -41,9 +41,9 @@ export const Screen: React.FC<PageProps> = React.memo(props => {
     const theme: Themeable.Theme = utilizeGlobalTheme();
     const Wrapper = styled.div`
       padding: ${props.deactivatePadding ? 0 : theme.paddings.defaultObjectPadding.css()};
-      // width: 100%;
+      width: 100%;
       // height: 100%;
-      width: 100vw;
+      // width: 100vw;
       height: 100vh;
       display: flex;
       flex-direction: column;
