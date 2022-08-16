@@ -417,12 +417,6 @@ export class AppPage extends BernieComponent<AppPageProps, AppPageState, any> {
         );
     }
 
-    /**
-     * {this.getRouts()}
-     * {App.app().screenManager.renderRoutes()}
-     *
-     * @private
-     */
     private renderDefaultPage(): JSX.Element {
         if (App.isInitiated()) {
             const theme = utilizeGlobalTheme();
@@ -432,28 +426,32 @@ export class AppPage extends BernieComponent<AppPageProps, AppPageState, any> {
                     <BrowserRouter children={
                         <MenuPage showMenuInitially={false} doubleClickMenuOpen={false} children={
                             <MenuPageV2 children={
-                                <FlexBox gap={px()} style={{backgroundColor: theme.colors.backgroundColor.css()}} height={DimensionalMeasured.of(100, Dimension.vh)} width={percent(100)}>
-                                    {/* Main content */}
-                                    {/* TODO: Add element id to flexbox properties */}
-                                    <FlexBox width={percent(100)} style={{flex: "1 1 auto"}} overflowYBehaviour={OverflowBehaviour.SCROLL} children={
-                                        <Switch>
-                                            <AF elements={[
-                                                this.getRouts(),
-                                                App.app().screenManager.renderRoutes()
-                                            ]}/>
-                                        </Switch>
+                                <FlexBox gap={px()} style={{backgroundColor: theme.colors.backgroundColor.css()}} height={DimensionalMeasured.of(100, Dimension.vh)} width={percent(100)} children={
+                                    <AF elements={[
+                                        /**
+                                         * Main content
+                                         * TODO: Add element id to flexbox properties
+                                         */
+                                        <FlexBox width={percent(100)} style={{flex: "1 1 auto"}} overflowYBehaviour={OverflowBehaviour.SCROLL} children={
+                                            <Switch children={
+                                                <AF elements={[
+                                                    this.getRouts(),
+                                                    App.app().screenManager.renderRoutes()
+                                                ]}/>
+                                            }/>
+                                        }/>,
 
-                                    }/>
-
-
-                                    {/* Bottom navigation menu */}
-                                    {/* TODO: Only show on mobile devices */}
-                                    <Mobile children={
-                                        <FlexBox padding={false} width={percent(100)} style={{flex: "0 1 auto", backgroundColor: theme.colors.backgroundHighlightColor.css()}} children={
-                                            <MobileNavigation/>
+                                        /**
+                                         * Bottom navigation menu
+                                         * TODO: Only show on mobile devices
+                                         */
+                                        <Mobile children={
+                                            <FlexBox padding={false} width={percent(100)} style={{flex: "0 1 auto", backgroundColor: theme.colors.backgroundHighlightColor.css()}} children={
+                                                <MobileNavigation/>
+                                            }/>
                                         }/>
-                                    }/>
-                                </FlexBox>
+                                    ]}/>
+                                }/>
                             }/>
                         }/>
                     }/>

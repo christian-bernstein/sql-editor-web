@@ -48,9 +48,7 @@ export const Screen: React.FC<PageProps> = React.memo(props => {
       display: flex;
       flex-direction: column;
       overflow-y: scroll;
-      
       position: relative;
-      
       background-color: ${theme.colors.backgroundColor.css()};
       gap: ${getOr(props.deactivateGap, false) ? 0 : getOr(props.gapY?.css(), theme.gaps.defaultGab.css())} ${getOr(props.deactivateGap, false) ? 0 : getOr(props.gapX?.css(), theme.gaps.defaultGab.css())}
     `;
