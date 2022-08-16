@@ -48,18 +48,11 @@ export const Screen: React.FC<PageProps> = React.memo(props => {
       display: flex;
       flex-direction: column;
       overflow-y: scroll;
+      
+      position: relative;
+      
       background-color: ${theme.colors.backgroundColor.css()};
       gap: ${getOr(props.deactivateGap, false) ? 0 : getOr(props.gapY?.css(), theme.gaps.defaultGab.css())} ${getOr(props.deactivateGap, false) ? 0 : getOr(props.gapX?.css(), theme.gaps.defaultGab.css())}
-    `;
-
-    const BG = styled.div`
-      z-index: 1;
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      left: 0;
-      top: 0;
-      filter: opacity(.1);
     `;
 
     const Content = styled.div`
@@ -78,10 +71,7 @@ export const Screen: React.FC<PageProps> = React.memo(props => {
 
     return (
         <Wrapper onDoubleClick={event => getOr(props.onDoubleClick, () => {})(event)} style={getOr(props.style, {})} className={getOr(props.classnames?.join(" "), "")}>
-            {/*<BG children={<Image pure src={Background}/>}/>*/}
             <Content children={props.children}/>
-
-
         </Wrapper>
     );
 });

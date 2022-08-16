@@ -434,6 +434,7 @@ export class AppPage extends BernieComponent<AppPageProps, AppPageState, any> {
                             <MenuPageV2 children={
                                 <FlexBox gap={px()} style={{backgroundColor: theme.colors.backgroundColor.css()}} height={DimensionalMeasured.of(100, Dimension.vh)} width={percent(100)}>
                                     {/* Main content */}
+                                    {/* TODO: Add element id to flexbox properties */}
                                     <FlexBox width={percent(100)} style={{flex: "1 1 auto"}} overflowYBehaviour={OverflowBehaviour.SCROLL} children={
                                         <Switch>
                                             <AF elements={[

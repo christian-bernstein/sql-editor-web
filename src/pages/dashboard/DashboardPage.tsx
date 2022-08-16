@@ -407,8 +407,10 @@ export default class DashboardPage extends BernieComponent<DashboardPageProps, D
     private renderPage(): JSX.Element {
         return (
             <>
-                <If condition={this.state.loading} ifFalse={this.renderSpeedDial()}/>
+
                 <Screen>
+                    <If condition={this.state.loading} ifFalse={this.renderSpeedDial()}/>
+
                     <LiteGrid columns={3}>
                         <FlexBox align={Align.START} justifyContent={Justify.CENTER}>
                             <Icon icon={(
