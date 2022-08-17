@@ -11,12 +11,12 @@ import {ReactComponent as DeleteIcon} from "../../../assets/icons/ic-20/ic20-del
 import {ReactComponent as CheckIcon} from "../../../assets/icons/ic-20/ic20-check.svg";
 import {ReactComponent as SwitchIcon} from "../../../assets/icons/ic-20/ic20-apps.svg";
 import {ReactComponent as PageIcon} from "../../../assets/icons/ic-20/ic20-desktop.svg";
-import {ReactComponent as ZoomIcon} from "../../../assets/icons/ic-20/ic20-zoom-in.svg";
+import {ReactComponent as SettingsIcon} from "../../../assets/icons/ic-20/ic20-settings.svg";
 import {Utils} from "../../Utils";
 import {App} from "../../app/App";
 import {Icon} from "../../../components/lo/Icon";
 import React from "react";
-import {Text, TextType} from "../../../components/lo/Text";
+import {Text} from "../../../components/lo/Text";
 import {px} from "../../style/DimensionalMeasured";
 import {ReactComponent as LogIcon} from "../../../assets/icons/ic-20/ic20-bolt.svg";
 import {BadgedWrapper} from "../../../components/lo/BadgedWrapper";
@@ -24,10 +24,10 @@ import {Constants} from "../../misc/Constants";
 import {If} from "../../../components/logic/If";
 import {ServerConnectionIcon} from "../../../components/ho/serverConnectionIcon/ServerConnectionIcon";
 import {ObjectVisualMeaning} from "../../style/ObjectVisualMeaning";
-import {StaticDrawerMenu} from "../../../components/lo/StaticDrawerMenu";
-import {Align} from "../../style/Align";
-import {HOCWrapper} from "../../../components/HOCWrapper";
 import {AppModeSwitcher} from "../../../components/ho/appModeSwitcher/AppModeSwitcher";
+import {AnomalyInfo} from "../../../components/ho/anomalyInfo/AnomalyInfo";
+import {AnomalyLevel} from "../AnomalyLevel";
+import {SettingsPlayground} from "../../../components/ho/settingsPlayground/SettingsPlayground";
 
 export namespace DefaultQuickActions {
 
@@ -213,6 +213,52 @@ export namespace DefaultQuickActions {
         },
         onClick: (event, config) => {
             App.app().callAction("open-main-dialog", Constants.serverConnectionDialog);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    export const settingsPlayGroundQA: QuickActionConfig = {
+        displayName: "Settings playground",
+        canonicalDisplayName: "S. playground",
+        tags: ["Settings", "Playground", "Debug", "Development"],
+        beta: true,
+        render(theme: Themeable.Theme, panel: QuickActionPanel, config: QuickActionConfig): JSX.Element {
+            return (
+                <Icon icon={<SettingsIcon/>}/>
+            );
+        },
+        onClick: (event, config, panel) => {
+            if (App.app().settings() === undefined) {
+                panel.dialog(
+                    <AnomalyInfo anomaly={{
+                        level: AnomalyLevel.ERROR,
+                        description: "<u>**Settings playground QA</u>**\n Cannot call settings QA routine, because *SettingsShard* in **App.app().settings()** is undefined"
+                    }}/>
+                );
+                return;
+            }
+
+            panel.dialog(
+                <SettingsPlayground/>
+            );
         }
     }
 }

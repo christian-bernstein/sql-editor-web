@@ -67,6 +67,7 @@ import {Box} from "../../components/lo/Box";
 import {AF} from "../../components/logic/ArrayFragment";
 import {MobileNavigation} from "../../components/ho/bottomNavigation/MobileNavigation";
 import {Mobile} from "../../components/logic/Media";
+import {SettingsShard} from "../../shards/settings/SettingsShard";
 
 export type AppPageProps = {
     mode?: AppPageMode
@@ -149,7 +150,8 @@ export class AppPage extends BernieComponent<AppPageProps, AppPageState, any> {
                         ["db-session-cache", () => new DBSessionCacheShard()],
                         ["quick-actions-shard", () => new QuickActionShard()],
                         ["network-shard", () => new NetworkShard()],
-                        ["local-storage-shard", () => new LocalStorageShard()]
+                        ["local-storage-shard", () => new LocalStorageShard()],
+                        ["settings-shard", () => new SettingsShard()],
                     ]),
                     themes: Themeable.getAllThemes(),
                     connectorConfig: {
@@ -185,7 +187,8 @@ export class AppPage extends BernieComponent<AppPageProps, AppPageState, any> {
                         ["db-session-cache", () => new DBSessionCacheShard()],
                         ["quick-actions-shard", () => new QuickActionShard()],
                         ["network-shard", () => new NetworkShard()],
-                        ["local-storage-shard", () => new LocalStorageShard()]
+                        ["local-storage-shard", () => new LocalStorageShard()],
+                        ["settings-shard", () => new SettingsShard()],
                     ]),
                     themes: Themeable.getAllThemes(),
                     connectorConfig: {
@@ -216,7 +219,8 @@ export class AppPage extends BernieComponent<AppPageProps, AppPageState, any> {
                         ["db-session-cache", () => new DBSessionCacheShard()],
                         ["quick-actions-shard", () => new QuickActionShard()],
                         ["network-shard", () => new NetworkShard()],
-                        ["local-storage-shard", () => new LocalStorageShard()]
+                        ["local-storage-shard", () => new LocalStorageShard()],
+                        ["settings-shard", () => new SettingsShard()],
                     ]),
                     themes: Themeable.getAllThemes(),
                     connectorConfig: {
@@ -250,7 +254,8 @@ export class AppPage extends BernieComponent<AppPageProps, AppPageState, any> {
                         ["db-session-cache", () => new DBSessionCacheShard()],
                         ["quick-actions-shard", () => new QuickActionShard()],
                         ["network-shard", () => new NetworkShard()],
-                        ["local-storage-shard", () => new LocalStorageShard()]
+                        ["local-storage-shard", () => new LocalStorageShard()],
+                        ["settings-shard", () => new SettingsShard()],
                     ]),
                     themes: Themeable.getAllThemes(),
                     connectorConfig: {

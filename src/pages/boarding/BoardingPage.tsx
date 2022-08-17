@@ -7,12 +7,9 @@ import {ReactComponent as FullscreenExitIcon} from "../../assets/icons/ic-20/ic2
 import {ReactComponent as LogIcon} from "../../assets/icons/ic-20/ic20-bolt.svg";
 import {ReactComponent as DiscordBlackIcon} from "../../assets/discord/Discord-Logo-Black.svg";
 import {ReactComponent as DiscordWhiteIcon} from "../../assets/discord/Discord-Logo-White.svg";
-import {ReactComponent as LoginIcon} from "../../assets/icons/ic-20/ic20-user.svg";
 
 // todo remove completely
 // import "../../styles/pages/BoardingPage.scss";
-import {_Button} from "../../components/deprecated/_Button";
-import {ComponentStyle} from "../../logic/style/ComponentStyle";
 import {ContinueAs} from "../../components/ho/continueAs/ContinueAs";
 import {App} from "../../logic/app/App";
 import {SessionHistoryEntry} from "../../logic/misc/SessionHistoryEntry";
@@ -24,7 +21,7 @@ import styled from "styled-components";
 import {Themeable} from "../../logic/style/Themeable";
 import {ServerConnectionIcon} from "../../components/ho/serverConnectionIcon/ServerConnectionIcon";
 import {Button} from "../../components/lo/Button";
-import {ObjectVisualMeaning} from "../../logic/style/ObjectVisualMeaning";
+import {ObjectVisualMeaning, VM} from "../../logic/style/ObjectVisualMeaning";
 import {percent, px} from "../../logic/style/DimensionalMeasured";
 import {Centered} from "../../components/lo/PosInCenter";
 import {Cursor} from "../../logic/style/Cursor";
@@ -48,9 +45,13 @@ import {ReactComponent as DashboardIcon} from "../../assets/icons/ic-16/ic16-ope
 import {Debug} from "../../components/logic/Debug";
 import {QuickActionPanel} from "../../components/ho/quickPanel/QuickActionPanel";
 import {ReactComponent as QuickPanelIcon} from "../../assets/icons/ic-20/ic20-view-boxes.svg";
-import {ContextCompound} from "../../components/ho/contextCompound/ContextCompound";
-import {Default, Desktop, Mobile} from "../../components/logic/Media";
+import {Default, Mobile} from "../../components/logic/Media";
 import {StaticDrawerMenu} from "../../components/lo/StaticDrawerMenu";
+import {SettingsAPI} from "../../logic/settings/SettingsAPI";
+import {AnomalyInfo} from "../../components/ho/anomalyInfo/AnomalyInfo";
+import {AnomalyLevel} from "../../logic/data/AnomalyLevel";
+import {AF} from "../../components/logic/ArrayFragment";
+import {ObjectJSONDisplay} from "../../components/ho/objectJSONDisplay/ObjectJSONDisplay";
 
 export type BoardingPageProps = {}
 
@@ -413,6 +414,57 @@ export class BoardingPage extends BernieComponent<BoardingPageProps, BoardingPag
                             ) : (
                                 <></>
                             )}
+
+
+
+
+
+                            <LiteGrid style={{marginBottom: t.gaps.defaultGab.css()}} gap={t.gaps.smallGab} columns={2} children={
+                                <AF elements={[
+                                    <Button opaque width={percent(100)} visualMeaning={VM.BETA} text={"Run single test"} onClick={() => {
+                                        new SettingsAPI().request("a").then(value => {
+                                            this.dialog(
+                                                <StaticDrawerMenu body={() => (
+                                                    <Centered fullHeight children={
+                                                        <Text text={String(value)}/>
+                                                    }/>
+                                                )}/>
+                                            );
+                                        }).catch(reason => {
+                                            this.dialog(
+                                                <AnomalyInfo anomaly={{
+                                                    data: reason,
+                                                    level: AnomalyLevel.ERROR,
+                                                    description: `Error while testing SettingsAPI ${reason}`
+                                                }}/>
+                                            );
+                                        })
+                                    }}/>,
+                                    <Button opaque width={percent(100)} visualMeaning={VM.BETA} text={"Run compound test"} onClick={() => {
+                                        new SettingsAPI().requestCompound("b").then(value => {
+                                            this.dialog(
+                                                <StaticDrawerMenu body={() => (
+                                                    <Centered fullHeight children={
+                                                        <ObjectJSONDisplay object={value}/>
+                                                    }/>
+                                                )}/>
+                                            );
+                                        }).catch(reason => {
+                                            this.dialog(
+                                                <AnomalyInfo anomaly={{
+                                                    data: reason,
+                                                    level: AnomalyLevel.ERROR,
+                                                    description: `Error while testing SettingsAPI ${reason}`
+                                                }}/>
+                                            );
+                                        })
+                                    }}/>
+                                ]}/>
+                            }/>
+
+
+
+
 
                             <If condition={App.app().getConnector().currentProtocol === "main"} ifTrue={
                                 <LiteGrid columns={2} gap={theme.gaps.smallGab}>

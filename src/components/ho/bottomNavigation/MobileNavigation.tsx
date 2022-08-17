@@ -33,24 +33,13 @@ export class MobileNavigation extends BernieComponent<any, any, any> {
 
     componentRender(p: any, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
-            <BottomNavigation
-                showLabels
-                sx={{
-                    width: "100%",
-                    backgroundColor: t.colors.backgroundHighlightColor.css(),
-                    marginY: px(3).css(),
-                    // borderRadius: t.radii.defaultObjectRadius.css()
-                }}
-                value={"app"}
-                onChange={(event, newValue) => {
-
-                }}
-            >
+            <BottomNavigation showLabels value={"app"} sx={{width: "100%", backgroundColor: t.colors.backgroundHighlightColor.css(), marginY: px(3).css()}}>
                 <BottomNavigationAction value={"app"} label={
                     <Text text={"App"} type={TextType.secondaryDescription} fontSize={px(11)}/>
                 } icon={
                     <Icon icon={<LogoIcon/>} visualMeaning={ObjectVisualMeaning.SUCCESS} colored/>
                 }/>
+
                 <BottomNavigationAction value={"qa"} label={
                     <Text text={"Quick actions"} whitespace={"nowrap"} type={TextType.secondaryDescription} fontSize={px(11)}/>
                 } icon={
@@ -69,6 +58,7 @@ export class MobileNavigation extends BernieComponent<any, any, any> {
                         );
                     }
                 }}/>
+
                 <BottomNavigationAction value={"settings"} label={
                     <Text text={"Settings"} type={TextType.secondaryDescription} fontSize={px(11)}/>
                 } icon={

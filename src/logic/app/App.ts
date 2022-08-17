@@ -29,6 +29,7 @@ import {ModalDisplay} from "../modal/ModalDisplay";
 import {NetworkShard} from "../../shards/network/NetworkShard";
 import {DBSessionCacheShard} from "../../shards/dbSessionCache/DBSessionCacheShard";
 import {LocalStorageShard} from "../../shards/localStorage/LocalStorageShard";
+import {SettingsShard} from "../../shards/settings/SettingsShard";
 
 export function utilizeApp(): App {
     return App.app();
@@ -193,6 +194,10 @@ export class App {
 
     public net(): NetworkShard {
         return this.shard("network-shard");
+    }
+
+    public settings(): SettingsShard {
+        return this.shard("settings-shard");
     }
 
     public getLastSessionHistoryEntry(): SessionHistoryEntry | undefined {

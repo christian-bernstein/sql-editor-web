@@ -4,20 +4,7 @@ import {utilizeGlobalTheme} from "../../logic/app/App";
 import styled from "styled-components";
 import {DimensionalMeasured, px} from "../../logic/style/DimensionalMeasured";
 import {getOr} from "../../logic/Utils";
-
-import Background from "../../assets/images/img-2.png";
-import {Image} from "./Image";
 import {Centered} from "./PosInCenter";
-import {BottomNavigation, BottomNavigationAction} from "@mui/material";
-import {Text, TextType} from "./Text";
-import {Icon} from "./Icon";
-import {ReactComponent as LogoIcon} from "../../assets/logo.svg";
-import {ObjectVisualMeaning} from "../../logic/style/ObjectVisualMeaning";
-import {ReactComponent as ReleaseIcon} from "../../assets/icons/ic-24/ic24-globe.svg";
-import {StaticDrawerMenu} from "./StaticDrawerMenu";
-import {QuickActionPanel} from "../ho/quickPanel/QuickActionPanel";
-import {ReactComponent as SettingsIcon} from "../../assets/icons/ic-24/ic24-settings.svg";
-import {AppModeSwitcher} from "../ho/appModeSwitcher/AppModeSwitcher";
 
 export type PageProps = {
     gapX?: DimensionalMeasured,
@@ -42,8 +29,6 @@ export const Screen: React.FC<PageProps> = React.memo(props => {
     const Wrapper = styled.div`
       padding: ${props.deactivatePadding ? 0 : theme.paddings.defaultObjectPadding.css()};
       width: 100%;
-      // height: 100%;
-      // width: 100vw;
       height: 100vh;
       display: flex;
       flex-direction: column;
@@ -95,6 +80,4 @@ export class Page extends React.Component<PageProps, any>{
             </Wrapper>
         );
     }
-
-    // {this.props.children}
 }
