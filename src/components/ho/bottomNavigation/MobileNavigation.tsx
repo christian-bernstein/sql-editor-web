@@ -6,8 +6,7 @@ import {Text, TextType} from "../../lo/Text";
 import {percent, px} from "../../../logic/style/DimensionalMeasured";
 import {Icon} from "../../lo/Icon";
 import {ReactComponent as LogoIcon} from "../../../assets/logo.svg";
-import {ObjectVisualMeaning} from "../../../logic/style/ObjectVisualMeaning";
-import {ReactComponent as ReleaseIcon} from "../../../assets/icons/ic-24/ic24-globe.svg";
+import {ObjectVisualMeaning, VM} from "../../../logic/style/ObjectVisualMeaning";
 import {App} from "../../../logic/app/App";
 import {StaticDrawerMenu} from "../../lo/StaticDrawerMenu";
 import {QuickActionPanel} from "../quickPanel/QuickActionPanel";
@@ -28,6 +27,14 @@ import React from "react";
 import {SettingsPage} from "../settingsPage/SettingsPage";
 import {FormatSize, Notifications, Speaker} from "@mui/icons-material";
 import {ReactComponent as DevelopmentIcon} from "../../../assets/icons/ic-24/ic24-bug.svg";
+import {Route, Switch} from "react-router-dom";
+import {getOr} from "../../../logic/Utils";
+import {AF} from "../../logic/ArrayFragment";
+import {DrawerHeader} from "../../lo/DrawerHeader";
+import {Justify} from "../../../logic/style/Justify";
+import {If} from "../../logic/If";
+import {Badge} from "../../lo/Badge";
+import {createMargin} from "../../../logic/style/Margin";
 
 export class MobileNavigation extends BernieComponent<any, any, any> {
 
@@ -38,7 +45,75 @@ export class MobileNavigation extends BernieComponent<any, any, any> {
                     <Text text={"App"} type={TextType.secondaryDescription} fontSize={px(11)}/>
                 } icon={
                     <Icon icon={<LogoIcon/>} visualMeaning={ObjectVisualMeaning.SUCCESS} colored/>
-                }/>
+                } onClick={() => {
+                    this.dialog(
+                        <StaticDrawerMenu body={props => {
+                            return (
+                                <Switch children={
+                                    <AF elements={
+                                        App.app().screenManager.screens.map((screen, index) => {
+
+                                            return (
+                                                <Route exact={getOr(screen.routeExact, false)} path={screen.location} render={props => (
+                                                    <Flex width={percent(100)} align={Align.CENTER} gap={px(40)}>
+                                                        <DrawerHeader
+                                                            header={`Locations at *${screen.location}*`}
+                                                            enableBadge
+                                                            badgeVM={VM.UI_NO_HIGHLIGHT}
+                                                            badgeText={"Screen-Manager"}
+                                                            description={`All available locations at *${screen.location}* are listed here. Choose one to switch to`}
+                                                        />
+
+                                                        <SettingsGroup elements={
+                                                            screen.viewFactory(screen).map(view => {
+                                                                let loc = App.app().screenManager.viewLocations.get(screen.location);
+                                                                if (loc === undefined || loc === null) loc = screen.defaultView;
+                                                                const active = view.id === loc;
+
+                                                                return (
+                                                                    <SettingsElement forceRenderSubpageIcon={!active} groupDisplayMode title={view.displayName} iconConfig={{
+                                                                        enable: true,
+                                                                        color: Color.ofHex("#ffbd29"),
+                                                                        iconGenerator: element => {
+                                                                            return view.iconRenderer.render({
+                                                                                screenConfig: screen,
+                                                                                viewConfig: view,
+                                                                                active: active,
+                                                                                viewLocation: loc as string
+                                                                            });
+                                                                        }
+                                                                    }} appendixGenerator={element => {
+                                                                        return (
+                                                                            <Flex margin={active ? createMargin(0, t.gaps.smallGab.withPlus(2).measurand,0, 0) : undefined} flexDir={FlexDirection.ROW} align={Align.CENTER} justifyContent={Justify.CENTER} height={percent(100)}>
+                                                                                <If condition={active} ifTrue={
+                                                                                    Badge.badge("current", {
+                                                                                        visualMeaning: VM.INFO,
+                                                                                        theme: t
+                                                                                    })
+                                                                                }/>
+                                                                            </Flex>
+                                                                        );
+                                                                    }} onClick={element => {
+                                                                        if (loc != null && !active) {
+                                                                            App.use(app => {
+                                                                                app.screenManager.viewLocations.set(screen.location, view.id);
+                                                                                app.rerenderGlobally();
+                                                                            });
+                                                                        }
+                                                                    }}/>
+                                                                );
+                                                            })
+                                                        }/>
+                                                    </Flex>
+                                                )}/>
+                                            );
+                                        })
+                                    }/>
+                                }/>
+                            );
+                        }}/>
+                    );
+                }}/>
 
                 <BottomNavigationAction value={"qa"} label={
                     <Text text={"Quick actions"} whitespace={"nowrap"} type={TextType.secondaryDescription} fontSize={px(11)}/>

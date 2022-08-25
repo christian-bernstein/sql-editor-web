@@ -42,7 +42,7 @@ export class ScreenManager {
      */
     private static hasRenderedRedirectToDefaultPage: boolean = false;
 
-    private readonly screens: Array<ScreenConfig> = new Array<ScreenConfig>({
+    public readonly screens: Array<ScreenConfig> = new Array<ScreenConfig>({
             defaultView: "def",
             routeExact: true,
             id: "/",
@@ -58,9 +58,7 @@ export class ScreenManager {
                     iconRenderer: {
                         render(ctx: ViewRenderContext): JSX.Element {
                             return (
-                                <Box borderless cursor={Cursor.pointer} noBGColor={!ctx.active}>
-                                    <Icon icon={<TestIcon/>} visualMeaning={ObjectVisualMeaning.ERROR} colored/>
-                                </Box>
+                                <Icon icon={<TestIcon/>} visualMeaning={ObjectVisualMeaning.ERROR} colored/>
                             );
                         }
                     },
@@ -95,9 +93,7 @@ export class ScreenManager {
                 iconRenderer: {
                     render(ctx: ViewRenderContext): JSX.Element {
                         return (
-                            <Box highlight cursor={Cursor.pointer} noBGColor={!ctx.active}>
-                                <Icon icon={<HubIcon/>}/>
-                            </Box>
+                            <Icon icon={<HubIcon/>}/>
                         );
                     }
                 },
@@ -118,9 +114,7 @@ export class ScreenManager {
                 iconRenderer: {
                     render(ctx: ViewRenderContext): JSX.Element {
                         return (
-                            <Box highlight cursor={Cursor.pointer} width={percent(100)} noBGColor={!ctx.active}>
-                                <Icon icon={<InformationIcon/>}/>
-                            </Box>
+                            <Icon icon={<InformationIcon/>}/>
                         );
                     }
                 },
@@ -141,9 +135,7 @@ export class ScreenManager {
                 iconRenderer: {
                     render(ctx: ViewRenderContext): JSX.Element {
                         return (
-                            <Box highlight cursor={Cursor.pointer} width={percent(100)} noBGColor={!ctx.active}>
-                                <Icon icon={<DocsIcon/>}/>
-                            </Box>
+                            <Icon icon={<DocsIcon/>}/>
                         );
                     }
                 },
@@ -164,9 +156,7 @@ export class ScreenManager {
                 iconRenderer: {
                     render(ctx: ViewRenderContext): JSX.Element {
                         return (
-                            <Box highlight cursor={Cursor.pointer} width={percent(100)} noBGColor={!ctx.active}>
-                                <Icon icon={<DebugIcon/>}/>
-                            </Box>
+                            <Icon icon={<DebugIcon/>}/>
                         );
                     }
                 },
@@ -186,9 +176,7 @@ export class ScreenManager {
                 iconRenderer: {
                     render(ctx: ViewRenderContext): JSX.Element {
                         return (
-                            <Box highlight cursor={Cursor.pointer} noBGColor={!ctx.active}>
-                                <Icon icon={<EpicureIcon/>}/>
-                            </Box>
+                            <Icon icon={<EpicureIcon/>}/>
                         );
                     }
                 },
@@ -216,9 +204,7 @@ export class ScreenManager {
                 iconRenderer: {
                     render(ctx: ViewRenderContext): JSX.Element {
                         return (
-                            <Box highlight cursor={Cursor.pointer} noBGColor={!ctx.active}>
-                                <Icon icon={<HubIcon/>}/>
-                            </Box>
+                            <Icon icon={<HubIcon/>}/>
                         );
                     }
                 },
@@ -239,9 +225,7 @@ export class ScreenManager {
                 iconRenderer: {
                     render(ctx: ViewRenderContext): JSX.Element {
                         return (
-                            <Box highlight cursor={Cursor.pointer} width={percent(100)} noBGColor={!ctx.active}>
-                                <Icon icon={<InformationIcon/>}/>
-                            </Box>
+                            <Icon icon={<InformationIcon/>}/>
                         );
                     }
                 },
@@ -256,7 +240,7 @@ export class ScreenManager {
         }
     });
 
-    private readonly viewLocations: Map<string, string> = new Map<string, string>();
+    public readonly viewLocations: Map<string, string> = new Map<string, string>();
 
     private loadAndRenderRoutes(): JSX.Element[] {
         const app = App.app();
@@ -330,12 +314,19 @@ export class ScreenManager {
                                                     <Text text={"1"}/>
                                                 }/>
                                             } showBadgeInitially={false} children={
-                                                view.iconRenderer.render({
-                                                    screenConfig: screen,
-                                                    viewConfig: view,
-                                                    viewLocation: loc,
-                                                    active: active
-                                                })
+
+                                                <Box highlight cursor={Cursor.pointer} noBGColor={!active}>
+                                                    {
+                                                        view.iconRenderer.render({
+                                                            screenConfig: screen,
+                                                            viewConfig: view,
+                                                            viewLocation: loc,
+                                                            active: active
+                                                        })
+                                                    }
+                                                </Box>
+
+
                                             }/>
                                         }/>
                                     }/>

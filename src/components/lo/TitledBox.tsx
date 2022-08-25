@@ -33,8 +33,6 @@ export type TitledBoxLocalState = {
 export class TitledBox extends BernieComponent<TitledBoxProps, any, TitledBoxLocalState> {
 
     constructor(props: TitledBoxProps) {
-        console.log("box", props.body)
-
         super(props, undefined, {
             showBody: getOr(props.showBody, true),
             body: getOr(props.body, "default"),
@@ -68,10 +66,8 @@ export class TitledBox extends BernieComponent<TitledBoxProps, any, TitledBoxLoc
     }
 
     componentRender(p: TitledBoxProps, s: any, l: TitledBoxLocalState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
-        console.log("render box", p.body)
-
         return this.component(local => (
-            <Group height={p.height} width={p.width} orientation={Orientation.VERTICAL} elements={[
+            <Group className={"titled-box"} height={p.height} width={p.width} orientation={Orientation.VERTICAL} elements={[
                 <Box color={t.colors.backgroundColor}
                      width={percent(100)}
                      children={p.titleRenderer(this)}

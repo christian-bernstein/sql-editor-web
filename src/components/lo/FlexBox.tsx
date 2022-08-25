@@ -28,7 +28,7 @@ export type FlexBoxProps = {
     paddingY?: DimensionalMeasured,
     padding?: boolean,
 
-    id?: string
+    id?: string,
 }
 
 export const FlexBox: React.FC<FlexBoxProps> = props => {

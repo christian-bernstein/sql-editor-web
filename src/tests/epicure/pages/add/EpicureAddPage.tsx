@@ -5,7 +5,7 @@ import {Assembly} from "../../../../logic/assembly/Assembly";
 import {Themeable} from "../../../../logic/style/Themeable";
 import {AppHeader} from "../../../../components/lo/AppHeader";
 import {FlexBox} from "../../../../components/lo/FlexBox";
-import {percent, px} from "../../../../logic/style/DimensionalMeasured";
+import {percent, px, vh} from "../../../../logic/style/DimensionalMeasured";
 import {OverflowBehaviour} from "../../../../logic/style/OverflowBehaviour";
 import {Input} from "../../../../components/lo/Input";
 import {TextArea} from "../../../../components/lo/TextArea";
@@ -31,6 +31,10 @@ import {Group} from "../../../../components/lo/Group";
 import {SourceMode} from "../../SourceMode";
 import Source, {MagazineSourceData} from "../../Source";
 import {SourceType} from "../../SourceType";
+import {AF} from "../../../../components/logic/ArrayFragment";
+import {MobileNavigation} from "../../../../components/ho/bottomNavigation/MobileNavigation";
+import React from "react";
+import {Box} from "../../../../components/lo/Box";
 
 export type EpicureAddPageProps = {
     onAdd: () => void
@@ -398,10 +402,15 @@ export class EpicureAddPage extends BernieComponent<EpicureAddPageProps, any, Ep
     private ingredientsAssembly() {
         this.assembly.assembly("ingredients", (theme, props) => {
             return (
-                <FlexBox width={percent(100)} overflowYBehaviour={OverflowBehaviour.SCROLL}>
-                    <FlexBox width={percent(100)}>
+                <FlexBox id={"ingredients-tab"} width={percent(100)} height={percent(100)} style={{maxHeight: "100%"}}>
 
-                    </FlexBox>
+                    <FlexBox id={"epicure-ingredients"} width={percent(100)} style={{flex: "1 1 auto"}} overflowYBehaviour={OverflowBehaviour.SCROLL} children={
+                        <></>
+                    }/>
+
+                    <FlexBox id={"epicure-ingredients-input"} padding={false} width={percent(100)} style={{flex: "0 1 auto", backgroundColor: theme.colors.backgroundHighlightColor.css()}} children={
+                        <Box width={percent(100)} height={px(50)}/>
+                    }/>
                 </FlexBox>
             );
         })
@@ -471,36 +480,46 @@ export class EpicureAddPage extends BernieComponent<EpicureAddPageProps, any, Ep
         return (
             <Screen children={
                 <Centered fullHeight>
-                    <FlexBox width={percent(100)} height={percent(100)}>
-                        <AppHeader title={"Add recipe"} right={
-                            <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER}>
-                                <Button border={false} bgColorOnDefault={false} opaque visualMeaning={ObjectVisualMeaning.INFO} onClick={() => this.saveRecipe()} children={
-                                    <Text text={"save"} uppercase highlight coloredText visualMeaning={ObjectVisualMeaning.INFO}/>
+                    <FlexBox width={percent(100)} height={percent(100)} children={
+                        <AF elements={[
+                            /**
+                             * Static-height, Header of the page
+                             */
+                            <FlexBox width={percent(100)} style={{flex: "0 1 auto"}} children={
+                                <AppHeader title={"Add recipe"} right={
+                                    <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER}>
+                                        <Button border={false} bgColorOnDefault={false} opaque visualMeaning={ObjectVisualMeaning.INFO} onClick={() => this.saveRecipe()} children={
+                                            <Text text={"save"} uppercase highlight coloredText visualMeaning={ObjectVisualMeaning.INFO}/>
+                                        }/>
+                                    </FlexBox>
                                 }/>
-                            </FlexBox>
-                        }/>
+                            }/>,
 
-                        {
-                            this.component(local => {
-                                return (
-                                    <TitledBox width={percent(100)} headerBoxStyle={{paddingBottom: "0", paddingTop: t.gaps.smallGab.css()}} showFooter={true} height={percent(100)} body={this.local.state.currentTab} titleRenderer={instance => this.a("nav-header", instance)} bodyRenderers={new Map<string, (instance: TitledBox) => JSX.Element>([
-                                        ["default", instance => {
-                                            return this.a("details");
-                                        }],
-                                        ["source", instance => {
-                                            return this.a("source");
-                                        }],
-                                        ["ingredients", instance => {
-                                            return this.a("ingredients");
-                                        }],
-                                        ["comment", instance => {
-                                            return this.a("comment");
-                                        }]
-                                    ])}/>
-                                );
-                            }, "containers")
-                        }
-                    </FlexBox>
+                            /**
+                             * Dynamic-height (fill page), Setup body
+                             */
+                            <FlexBox width={percent(100)} overflowYBehaviour={OverflowBehaviour.HIDDEN} style={{flex: "1 1 auto"}} children={
+                                this.component(local => {
+                                    return (
+                                        <TitledBox width={percent(100)} headerBoxStyle={{paddingBottom: "0", paddingTop: t.gaps.smallGab.css()}} showFooter={true} height={percent(100)} body={this.local.state.currentTab} titleRenderer={instance => this.a("nav-header", instance)} bodyRenderers={new Map<string, (instance: TitledBox) => JSX.Element>([
+                                            ["default", instance => {
+                                                return this.a("details");
+                                            }],
+                                            ["source", instance => {
+                                                return this.a("source");
+                                            }],
+                                            ["ingredients", instance => {
+                                                return this.a("ingredients");
+                                            }],
+                                            ["comment", instance => {
+                                                return this.a("comment");
+                                            }]
+                                        ])}/>
+                                    );
+                                }, "containers")
+                            }/>
+                        ]}/>
+                    }/>
                 </Centered>
             }/>
         );

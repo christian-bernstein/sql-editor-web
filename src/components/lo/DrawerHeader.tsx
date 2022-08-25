@@ -33,7 +33,7 @@ export class DrawerHeader extends BernieComponent<DrawerHeaderProps, any, any> {
                     <FlexBox width={percent(100)} gap={t.gaps.smallGab} align={Align.CENTER}>
                         <Text text={p.header} type={TextType.smallHeader}/>
                         <If condition={p.description !== undefined} ifTrue={
-                            <Text text={p.description as string} type={TextType.secondaryDescription} fontSize={px(11)}/>
+                            <Text text={p.description as string} align={Align.CENTER} type={TextType.secondaryDescription} fontSize={px(11)}/>
                         }/>
                     </FlexBox>
                 ]}/>

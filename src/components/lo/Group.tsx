@@ -25,7 +25,9 @@ export type GroupProps = WithVisualMeaning & {
     height?: DimensionalMeasured,
     width?: DimensionalMeasured,
     type?: 'div' | 'form',
-    opaque?: boolean
+    opaque?: boolean,
+    id?: string
+    className?: string
 }
 
 export class Group extends BernieComponent<GroupProps, any, any> {
@@ -48,9 +50,9 @@ export class Group extends BernieComponent<GroupProps, any, any> {
         `;
 
         return (
-            <Wrapper>
-                <Box opaque={p.opaque} visualMeaning={vm} noPadding width={percent(100)} height={percent(100)} gapY={px(0)} gapX={px(0)} overflowXBehaviour={OverflowBehaviour.HIDDEN} overflowYBehaviour={OverflowBehaviour.HIDDEN}>
-                    <FlexBox align={Align.CENTER} justifyContent={Justify.CENTER} type={type} height={percent(100)} flexDir={orientation === Orientation.HORIZONTAL ? FlexDirection.ROW : FlexDirection.COLUMN} width={percent(100)} gap={px(0)} children={
+            <Wrapper className={[p.className, "group"].join(" ")} id={p.id}>
+                <Box classNames={["group-box"]} opaque={p.opaque} visualMeaning={vm} noPadding width={percent(100)} height={percent(100)} gapY={px(0)} gapX={px(0)} overflowXBehaviour={OverflowBehaviour.HIDDEN} overflowYBehaviour={OverflowBehaviour.HIDDEN}>
+                    <FlexBox classnames={["group-flex-container"]} overflowYBehaviour={OverflowBehaviour.VISIBLE} align={Align.CENTER} justifyContent={Justify.CENTER} type={type} flexDir={orientation === Orientation.HORIZONTAL ? FlexDirection.ROW : FlexDirection.COLUMN} width={percent(100)} gap={px(0)} children={
                         this.props.elements.filter(e => e !== undefined).filter(e => !ReactIs.isFragment(e)).map((e, index, array) => {
                             if (index === array.length - 1) {
                                 return e;

@@ -75,6 +75,11 @@ export function percent(measurand: number = 0): DimensionalMeasured {
 }
 
 // noinspection SpellCheckingInspection
+export function vh(measurand: number = 0): DimensionalMeasured {
+    return dimension(measurand, Dimension.vh);
+}
+
+// noinspection SpellCheckingInspection
 export function em(measurand: number = 0): DimensionalMeasured {
     return dimension(measurand, Dimension.em);
 }
