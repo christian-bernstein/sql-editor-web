@@ -54,8 +54,8 @@ export const Screen: React.FC<PageProps> = React.memo(props => {
     `;
 
     return (
-        <Wrapper onDoubleClick={event => getOr(props.onDoubleClick, () => {})(event)} style={getOr(props.style, {})} className={getOr(props.classnames?.join(" "), "")}>
-            <Content children={props.children}/>
+        <Wrapper id={props.id} onDoubleClick={event => getOr(props.onDoubleClick, () => {})(event)} style={getOr(props.style, {})} className={getOr(props.classnames?.join(" "), "")}>
+            <Content id={`${props.id}-content`} children={props.children}/>
         </Wrapper>
     );
 });
