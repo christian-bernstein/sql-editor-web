@@ -3,8 +3,12 @@ import {Themeable} from "../../logic/style/Themeable";
 import {Assembly} from "../../logic/assembly/Assembly";
 import styled from "styled-components";
 
-export class Dot extends BernieComponent<any, any, any> {
-    componentRender(p: any, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
+export type DotProps = {
+    className?: string
+}
+
+export class Dot extends BernieComponent<DotProps, any, any> {
+    componentRender(p: DotProps, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         const Styled = styled.span`
           width: 3px;
           height: 3px;
@@ -13,7 +17,7 @@ export class Dot extends BernieComponent<any, any, any> {
         `;
 
         return (
-            <Styled/>
+            <Styled className={p.className}/>
         );
     }
 }
