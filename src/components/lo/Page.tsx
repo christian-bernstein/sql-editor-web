@@ -13,7 +13,8 @@ export type PageProps = {
     style?: CSSProperties,
     classnames?: string[],
     deactivatePadding?: boolean
-    onDoubleClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
+    onDoubleClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void,
+    id?: string
 }
 
 export function screenedAndCentered(child: JSX.Element): JSX.Element {
@@ -75,7 +76,7 @@ export class Page extends React.Component<PageProps, any>{
         `;
 
         return (
-            <Wrapper className={getOr(this.props.classnames?.join(" "), "")}>
+            <Wrapper id={this.props.id} className={getOr(this.props.classnames?.join(" "), "")}>
                 {this.props.children}
             </Wrapper>
         );
