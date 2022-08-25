@@ -26,7 +26,9 @@ export type FlexBoxProps = {
     type?: 'div' | 'form',
     paddingX?: DimensionalMeasured,
     paddingY?: DimensionalMeasured,
-    padding?: boolean
+    padding?: boolean,
+
+    id?: string
 }
 
 export const FlexBox: React.FC<FlexBoxProps> = props => {
@@ -51,7 +53,7 @@ export const FlexBox: React.FC<FlexBoxProps> = props => {
           margin-right: ${margin.right?.css()};
         `;
     return (
-        <Wrapper as={getOr(props.type, "div")} style={getOr(props.style, {})} className={getOr(props.classnames?.join(" "), "")}>
+        <Wrapper id={props.id} as={getOr(props.type, "div")} style={getOr(props.style, {})} className={getOr(props.classnames?.join(" "), "")}>
             {props.children}
         </Wrapper>
     );

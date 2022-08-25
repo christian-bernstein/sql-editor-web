@@ -100,7 +100,7 @@ export class SettingsPage extends BernieComponent<SettingsPageProps, any, Settin
         return (
             <AF elements={[
                 this.component(() => this.renderSubpageDialog(), "subpage-dialog"),
-                <Screen children={
+                <Screen style={{width: "100vw"}} children={
                     <FlexBox width={percent(100)} height={DimensionalMeasured.of(100, Dimension.vh)} overflowYBehaviour={OverflowBehaviour.HIDDEN}>
 
 
