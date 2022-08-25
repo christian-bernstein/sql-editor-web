@@ -10,8 +10,6 @@ import ReactMarkdown from 'react-markdown'
 import {Link} from "./Link";
 import {Align} from "../../logic/style/Align";
 import {Cursor} from "../../logic/style/Cursor";
-import {LinkPreview} from "@dhaiwat10/react-link-preview";
-import {CustomTooltip} from "./CustomTooltip";
 import {Image} from "./Image";
 import rehypeRaw from "rehype-raw";
 

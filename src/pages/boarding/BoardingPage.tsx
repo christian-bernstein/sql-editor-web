@@ -415,57 +415,6 @@ export class BoardingPage extends BernieComponent<BoardingPageProps, BoardingPag
                                 <></>
                             )}
 
-
-
-
-
-                            <LiteGrid style={{marginBottom: t.gaps.defaultGab.css()}} gap={t.gaps.smallGab} columns={2} children={
-                                <AF elements={[
-                                    <Button opaque width={percent(100)} visualMeaning={VM.BETA} text={"Run single test"} onClick={() => {
-                                        new SettingsAPI().request("a").then(value => {
-                                            this.dialog(
-                                                <StaticDrawerMenu body={() => (
-                                                    <Centered fullHeight children={
-                                                        <Text text={String(value)}/>
-                                                    }/>
-                                                )}/>
-                                            );
-                                        }).catch(reason => {
-                                            this.dialog(
-                                                <AnomalyInfo anomaly={{
-                                                    data: reason,
-                                                    level: AnomalyLevel.ERROR,
-                                                    description: `Error while testing SettingsAPI ${reason}`
-                                                }}/>
-                                            );
-                                        })
-                                    }}/>,
-                                    <Button opaque width={percent(100)} visualMeaning={VM.BETA} text={"Run compound test"} onClick={() => {
-                                        new SettingsAPI().requestCompound("b").then(value => {
-                                            this.dialog(
-                                                <StaticDrawerMenu body={() => (
-                                                    <Centered fullHeight children={
-                                                        <ObjectJSONDisplay object={value}/>
-                                                    }/>
-                                                )}/>
-                                            );
-                                        }).catch(reason => {
-                                            this.dialog(
-                                                <AnomalyInfo anomaly={{
-                                                    data: reason,
-                                                    level: AnomalyLevel.ERROR,
-                                                    description: `Error while testing SettingsAPI ${reason}`
-                                                }}/>
-                                            );
-                                        })
-                                    }}/>
-                                ]}/>
-                            }/>
-
-
-
-
-
                             <If condition={App.app().getConnector().currentProtocol === "main"} ifTrue={
                                 <LiteGrid columns={2} gap={theme.gaps.smallGab}>
                                     <Button visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} opaque>

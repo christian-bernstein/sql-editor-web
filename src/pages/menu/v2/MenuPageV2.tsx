@@ -85,7 +85,7 @@ export class MenuPageV2 extends BernieComponent<MenuPageV2Props, any, MenuPageV2
     private mainAssembly() {
         this.assembly.assembly("main", theme => {
             return (
-                <Screen deactivatePadding>
+                <Screen style={{width: "100vw"}} deactivatePadding>
                     <LiteGrid rows={3} height={percent(100)}>
                         {this.assembly.render({
                             component: "header"
@@ -234,11 +234,13 @@ export class MenuPageV2 extends BernieComponent<MenuPageV2Props, any, MenuPageV2
             return this.component(local => {
 
                 return (
-                    <div style={{
-                        position: "relative"
+                    <div id={"asdasd"} style={{
+                        position: "relative",
+                        width: "100vw"
                     }}>
                         <div style={{
-                            position: "absolute"
+                            position: "absolute",
+                            width: "100vw"
                         }} children={
                             <SwipeableDrawer
                                 anchor={"left"}
@@ -258,7 +260,7 @@ export class MenuPageV2 extends BernieComponent<MenuPageV2Props, any, MenuPageV2
                                 }
                             />
                         }/>
-                        <Screen deactivatePadding children={this.props.children} onDoubleClick={() => {
+                        <Screen style={{width: "100vw !important"}} deactivatePadding children={this.props.children} onDoubleClick={() => {
                             this.local.setStateWithChannels({
                                 state: MenuState.EXTENDED
                             }, ["menu-extender"]);

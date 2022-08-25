@@ -3,13 +3,8 @@ import {Assembly} from "../../logic/assembly/Assembly";
 import {Themeable} from "../../logic/style/Themeable";
 import {Img} from "react-image";
 import React, {CSSProperties} from "react";
-import {Text} from "./Text";
-// import Sample from "../assets/images/img-2.png";
-// import Sample from "../assets/images/img-4.gif";
 import {DimensionalMeasured, percent} from "../../logic/style/DimensionalMeasured";
 import {getOr} from "../../logic/Utils";
-import {Skeleton} from "@mui/material";
-import styled, {CSSProp} from "styled-components";
 import {PuffLoader} from "react-spinners";
 import {Box} from "./Box";
 

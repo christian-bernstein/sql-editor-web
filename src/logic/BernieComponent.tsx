@@ -9,23 +9,10 @@ import {Redirect} from "react-router-dom";
 import {getOr} from "./Utils";
 import {Assembly} from "./assembly/Assembly";
 import {SwipeableDrawer} from "@mui/material";
-import {If} from "../components/logic/If";
 import {Screen} from "../components/lo/Page";
 import {Centered} from "../components/lo/PosInCenter";
 import {ObjectVisualMeaning} from "./style/ObjectVisualMeaning";
 import {Text} from "../components/lo/Text";
-import {Default, Mobile} from "../components/logic/Media";
-import {StaticDrawerMenu} from "../components/lo/StaticDrawerMenu";
-import {Flex} from "../components/lo/FlexBox";
-import {percent, px} from "./style/DimensionalMeasured";
-import {Align} from "./style/Align";
-import {Badge} from "../components/lo/Badge";
-import {AppAnomalyData} from "./data/AppAnomalyData";
-import {createMargin} from "./style/Margin";
-import {Justify} from "./style/Justify";
-import {Box} from "../components/lo/Box";
-import {OverflowBehaviour} from "./style/OverflowBehaviour";
-import {AF} from "../components/logic/ArrayFragment";
 
 export type BernieComponentConfig = {
     enableLocalDialog: boolean,

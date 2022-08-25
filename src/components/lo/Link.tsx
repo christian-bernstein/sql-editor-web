@@ -5,7 +5,6 @@ import {getMeaningfulColors, MeaningfulColors, Themeable} from "../../logic/styl
 import {utilizeGlobalTheme} from "../../logic/app/App";
 import {getOr} from "../../logic/Utils";
 import {ReactComponent as LinkIcon} from "../../assets/icons/ic-16/ic16-link.svg";
-import ReactTooltip from "react-tooltip";
 import {LinkPreview} from "@dhaiwat10/react-link-preview";
 import {CustomTooltip} from "./CustomTooltip";
 import {If} from "../logic/If";
