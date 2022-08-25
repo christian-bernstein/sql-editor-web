@@ -22,7 +22,7 @@ export class MobileMenuPage extends BernieComponent<any, any, any> {
 
     componentRender(p: any, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
-            <Screen id={"mobile-menu-page"} style={{width: "100vw !important"}}>
+            <Screen id={"mobile-menu-page"} style={{width: "100vw"}}>
                 <FlexBox height={percent(100)} width={percent(100)} justifyContent={Justify.SPACE_BETWEEN}>
                     <FlexBox width={percent(100)}>
                         <AppHeader title={"Menu"} left={
