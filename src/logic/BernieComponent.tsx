@@ -296,3 +296,33 @@ export class BernieComponent<RProps, RState, LState extends object> extends Reac
         }
     }
 }
+
+export {
+    BernieComponent as Component,
+    BernieComponent as BC
+}
+
+/**
+ * todo implement!
+ */
+export type CProps<T, S, V extends object> = {
+    render?: ((i: BernieComponent<T, S, V>, p: T, s: S, l: V) => (JSX.Element | undefined))
+}
+
+// export function createComponentClass<T, S, V extends object>(props: CProps<T, S, V>): typeof BernieComponent {
+//
+//     return class CCImpl<T, S, V extends object> extends BernieComponent<T, S, V> {
+//
+//         componentRender(p: T, s: S, l: V, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
+//             const abc: CCImpl<T, S, V> = this;
+//
+//             return props.render === undefined ? (
+//                 super.componentRender(p, s, l, t, a)
+//             ) : (
+//                 props.render(this, p, s, l)
+//             );
+//         }
+//
+//     };
+//
+// }
