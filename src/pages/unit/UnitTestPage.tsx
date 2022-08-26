@@ -2,7 +2,7 @@ import {BernieComponent} from "../../logic/BernieComponent";
 import {Assembly} from "../../logic/assembly/Assembly";
 import {Themeable} from "../../logic/style/Themeable";
 import React from "react";
-import {screenedAndCentered} from "../../components/lo/Page";
+import {Screen, screenedAndCentered} from "../../components/lo/Page";
 import {Flex} from "../../components/lo/FlexBox";
 import {Align} from "../../logic/style/Align";
 import {array} from "../../logic/Utils";
@@ -21,6 +21,14 @@ import {javascript} from "@codemirror/lang-javascript";
 import {oneDark} from "@codemirror/theme-one-dark";
 import {HighlightStyle, tags} from "@codemirror/highlight";
 import {Dimension} from "../../logic/style/Dimension";
+import {HOCWrapper} from "../../components/HOCWrapper";
+import {FlexDirection} from "../../logic/style/FlexDirection";
+import {StaticDrawerMenu} from "../../components/lo/StaticDrawerMenu";
+import {QuickActionPanel} from "../../components/ho/quickPanel/QuickActionPanel";
+import {EnumSelector} from "../../components/logic/EnumSelector";
+import {AnomalyLevel} from "../../logic/data/AnomalyLevel";
+import {AnomalyInfo} from "../../components/ho/anomalyInfo/AnomalyInfo";
+import {AppModeSwitcher} from "../../components/ho/appModeSwitcher/AppModeSwitcher";
 
 export class UnitTestPage extends BernieComponent<any, any, any> {
 
@@ -198,7 +206,6 @@ export class UnitTestPage extends BernieComponent<any, any, any> {
 
                 return screenedAndCentered(
                     <Flex align={Align.CENTER} width={percent(50)}>
-
                         <Box overflowXBehaviour={OverflowBehaviour.HIDDEN} overflowYBehaviour={OverflowBehaviour.HIDDEN} noPadding borderRadiiConfig={{enableCustomBorderRadii: true, fallbackCustomBorderRadii: px(0)}}  children={
                             <Monitor children={
                                 this.component(local => (
@@ -220,7 +227,6 @@ export class UnitTestPage extends BernieComponent<any, any, any> {
                                 ), "buffer")
                             }/>
                         }/>
-
                         <Editor children={
                             <CodeEditor theme={oneDark} width={dimension(10, Dimension.rem)} classnames={["cm"]} extensions={[
                                 javascript({ jsx: true, typescript: true }),
@@ -253,40 +259,40 @@ export class UnitTestPage extends BernieComponent<any, any, any> {
             }
         }
 
-        return (
-            <CodePage dim={10} cellSize={20}/>
-        );
-
         // return (
-        //     <Screen children={
-        //         <Flex width={percent(100)} overflowXBehaviour={OverflowBehaviour.SCROLL} flexDir={FlexDirection.ROW} height={percent(100)} justifyContent={Justify.CENTER} align={Align.CENTER}>
-        //             <HOCWrapper body={wrapper => (
-        //                 <Button text={"QA-Panel"} onClick={() => {
-        //                     wrapper.dialog(
-        //                         <StaticDrawerMenu body={props => (
-        //                             <QuickActionPanel noPadding/>
-        //                         )}/>
-        //                     );
-        //                 }}/>
-        //             )}/>
-        //             <Button text={"Anomaly"} onClick={() => {
-        //                 this.dialog(
-        //                     <EnumSelector from={AnomalyLevel} onSubmit={element => {
-        //                         this.dialog(
-        //                             <AnomalyInfo anomaly={{
-        //                                 level: AnomalyLevel[element as keyof typeof AnomalyLevel]
-        //                             }}/>
-        //                         );
-        //                     }}/>
-        //                 );
-        //             }}/>
-        //             <Button text={"Switch app mode"} onClick={() => {
-        //                 this.dialog(
-        //                     <AppModeSwitcher/>
-        //                 );
-        //             }}/>
-        //         </Flex>
-        //     }/>
+        //     <CodePage dim={10} cellSize={20}/>
         // );
+
+        return (
+            <Screen children={
+                <Flex width={percent(100)} overflowXBehaviour={OverflowBehaviour.SCROLL} flexDir={FlexDirection.ROW} height={percent(100)} justifyContent={Justify.CENTER} align={Align.CENTER}>
+                    <HOCWrapper body={wrapper => (
+                        <Button text={"QA-Panel"} onClick={() => {
+                            wrapper.dialog(
+                                <StaticDrawerMenu body={props => (
+                                    <QuickActionPanel noPadding/>
+                                )}/>
+                            );
+                        }}/>
+                    )}/>
+                    <Button text={"Anomaly"} onClick={() => {
+                        this.dialog(
+                            <EnumSelector from={AnomalyLevel} onSubmit={element => {
+                                this.dialog(
+                                    <AnomalyInfo anomaly={{
+                                        level: AnomalyLevel[element as keyof typeof AnomalyLevel]
+                                    }}/>
+                                );
+                            }}/>
+                        );
+                    }}/>
+                    <Button text={"Switch app mode"} onClick={() => {
+                        this.dialog(
+                            <AppModeSwitcher/>
+                        );
+                    }}/>
+                </Flex>
+            }/>
+        );
     }
 }
