@@ -25,7 +25,7 @@ import {If} from "../../logic/If";
 import {Input} from "../../lo/Input";
 import {FlexDirection} from "../../../logic/style/FlexDirection";
 import {Align} from "../../../logic/style/Align";
-import {CircularProgress, styled, Switch} from "@mui/material";
+import {CircularProgress} from "@mui/material";
 import {Justify} from "../../../logic/style/Justify";
 import {Orientation} from "../../../logic/style/Orientation";
 import {OverflowBehaviour} from "../../../logic/style/OverflowBehaviour";
@@ -42,6 +42,7 @@ import {StaticDrawerMenu} from "../../lo/StaticDrawerMenu";
 import {Badge} from "../../lo/Badge";
 import _ from "lodash";
 import {IOSwitch} from "../../lo/IOSwitch";
+import {DrawerHeader} from "../../lo/DrawerHeader";
 
 export type QuickActionPanelProps = {
     noPadding?: boolean
@@ -222,19 +223,20 @@ export class QuickActionPanel extends BernieComponent<QuickActionPanelProps, any
     private preferencesAssembly() {
         this.assembly.assembly("preferences", theme => (
             <StaticDrawerMenu align={Align.CENTER} body={props => {
-                const showCanonicalNames: boolean = this.local.state.fdh.get("show-canonical-names", true);
+                const showCanonicalNames: boolean = this.local.state.fdh.get("show-canonical-names", false);
 
                 return (
                     <FlexBox align={Align.CENTER} width={percent(100)}>
-                        {Badge.badge("Development", {
-                            visualMeaning: VM.SUCCESS
-                        })}
+                        <DrawerHeader
+                            header={"Quick-actions preferences"}
+                            description={"Configure the quick-action panel as you like"}
+                            margin={createMargin(0, 0, 40, 0)}
+                            enableBadge
+                            badgeVM={ObjectVisualMeaning.SUCCESS}
+                            badgeText={"Development"}
+                        />
 
-                        <FlexBox width={percent(100)} align={Align.CENTER} gap={theme.gaps.smallGab}>
-                            <Text text={"Quick-actions preferences"} type={TextType.smallHeader}/>
-                            <Text text={"Configure the quick-action panel as you like"} type={TextType.secondaryDescription} fontSize={px(11)} margin={createMargin(0, 0, 40, 0)}/>
-                        </FlexBox>
-
+                        {/* todo switch to SettingsElement */}
                         <FlexBox width={percent(100)} align={Align.START} gap={theme.gaps.smallGab}>
                             <Box width={percent(100)} noPadding borderless bgColor={theme.colors.backgroundHighlightColor200} children={
                                 <FlexBox justifyContent={Justify.SPACE_BETWEEN} align={Align.CENTER} flexDir={FlexDirection.ROW}>
@@ -248,7 +250,7 @@ export class QuickActionPanel extends BernieComponent<QuickActionPanelProps, any
                             <Text text={"If checked, the canonical title of every quick action will be shown below it's icon"} align={Align.START} type={TextType.secondaryDescription} fontSize={px(11)}/>
                         </FlexBox>
 
-
+                        {/* todo switch to SettingsElement */}
                         <FlexBox width={percent(100)} align={Align.START} gap={theme.gaps.smallGab}>
                             <Box width={percent(100)} noPadding borderless bgColor={theme.colors.backgroundHighlightColor200} children={
                                 <FlexBox justifyContent={Justify.SPACE_BETWEEN} align={Align.CENTER} flexDir={FlexDirection.ROW}>

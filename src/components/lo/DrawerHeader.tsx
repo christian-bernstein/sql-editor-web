@@ -10,20 +10,22 @@ import {If} from "../logic/If";
 import {Badge} from "./Badge";
 import {getOr} from "../../logic/Utils";
 import {Text, TextType} from "./Text";
+import {Margin} from "../../logic/style/Margin";
 
 export type DrawerHeaderProps = {
     enableBadge?: boolean,
     badgeText?: string,
     badgeVM?: VM
     header: string,
-    description?: string
+    description?: string,
+    margin?: Margin
 }
 
 export class DrawerHeader extends BernieComponent<DrawerHeaderProps, any, any> {
 
     componentRender(p: DrawerHeaderProps, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
-            <FlexBox width={percent(100)} align={Align.CENTER} children={
+            <FlexBox width={percent(100)} align={Align.CENTER} margin={p.margin} children={
                 <AF elements={[
                     <If condition={p.enableBadge} ifTrue={
                         Badge.badge(getOr(p.badgeText, ""), {
