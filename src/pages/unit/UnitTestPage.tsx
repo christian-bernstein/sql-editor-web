@@ -2,26 +2,16 @@ import {BernieComponent} from "../../logic/BernieComponent";
 import {Assembly} from "../../logic/assembly/Assembly";
 import {Themeable} from "../../logic/style/Themeable";
 import React from "react";
-import {Screen, screenedAndCentered} from "../../components/lo/Page";
+import {Screen} from "../../components/lo/Page";
 import {Flex} from "../../components/lo/FlexBox";
 import {Align} from "../../logic/style/Align";
-import {array} from "../../logic/Utils";
 import {AF} from "../../components/logic/ArrayFragment";
-import {dimension, percent, px} from "../../logic/style/DimensionalMeasured";
+import {percent} from "../../logic/style/DimensionalMeasured";
 import {Justify} from "../../logic/style/Justify";
-import {Dot} from "../../components/lo/Dot";
-import {LiteGrid} from "../../components/lo/LiteGrid";
 import {Button} from "../../components/lo/Button";
 import {Text} from "../../components/lo/Text";
-import {Box} from "../../components/lo/Box";
-import styled from "styled-components";
 import {OverflowBehaviour} from "../../logic/style/OverflowBehaviour";
 import {ReactComponent as ControlsIcon} from "../../assets/icons/ic-20/ic20-unfold-more.svg";
-import {CodeEditor} from "../../components/lo/CodeEditor";
-import {javascript} from "@codemirror/lang-javascript";
-import {oneDark} from "@codemirror/theme-one-dark";
-import {HighlightStyle, tags} from "@codemirror/highlight";
-import {Dimension} from "../../logic/style/Dimension";
 import {HOCWrapper} from "../../components/HOCWrapper";
 import {FlexDirection} from "../../logic/style/FlexDirection";
 import {StaticDrawerMenu} from "../../components/lo/StaticDrawerMenu";
@@ -49,6 +39,25 @@ export type UnitTestPageLocalState = {
 
 export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalState> {
 
+    // TEST SECTION
+
+    /**
+     * Note: Test assembly can be re-rendered by calling the 'test' channel.
+     */
+    private testAssembly() {
+        // You may use this pre-made utility function to reload the test assembly
+        const rerender = () => this.rerender("test");
+
+        this.assembly.assembly("test", (theme, props) => {
+            // Display your test component here
+            return (
+                <>No test</>
+            );
+        })
+    }
+
+    // INTERNAL COMPONENT CODE
+
     constructor() {
         super(undefined, undefined, {
             fdh: new FormDataHub("unit-test-page")
@@ -65,6 +74,7 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
 
     init() {
         super.init();
+        this.testAssembly();
         this.headerAssembly();
         this.hoverControlButtonAssembly();
         this.toolbarAssembly();
@@ -126,6 +136,9 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
                                 this.dialog(
                                     <AppModeSwitcher/>
                                 );
+                            }}/>,
+                            <Button text={"Rerender 'test'"} onClick={() => {
+                                this.rerender("test")
                             }}/>
                         ]}/>
                     }
@@ -236,9 +249,11 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
                                 return this.a("header");
                             } else return <></>;
                         }, "data"),
-                        ComponentUtils.mui({
-                            children: undefined
-                        })
+                        <Flex style={{flex: "1 1 auto"}} align={Align.CENTER} justifyContent={Justify.CENTER} width={percent(100)} children={
+                            this.component(local => {
+                                return this.a("test");
+                            }, "test")
+                        }/>
                     ]}/>
                 }/>
             }/>
