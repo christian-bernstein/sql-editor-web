@@ -6,7 +6,7 @@ import {Screen} from "../../components/lo/Page";
 import {Flex} from "../../components/lo/FlexBox";
 import {Align} from "../../logic/style/Align";
 import {AF} from "../../components/logic/ArrayFragment";
-import {percent} from "../../logic/style/DimensionalMeasured";
+import {percent, px} from "../../logic/style/DimensionalMeasured";
 import {Justify} from "../../logic/style/Justify";
 import {Button} from "../../components/lo/Button";
 import {Text} from "../../components/lo/Text";
@@ -248,7 +248,7 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
                         <Flex flexDir={FlexDirection.ROW} align={Align.CENTER} justifyContent={Justify.CENTER} children={
                             <AF elements={[
                                 this.component(local => (
-                                    <Text whitespace={"nowrap"} text={new Date().toLocaleTimeString()}/>
+                                    <Text whitespace={"nowrap"} fontSize={px(13)} text={new Date().toLocaleTimeString()}/>
                                 ), "test"),
                                 <If condition={UnitTestPage.getAppMode() === AppPageMode.UNIT_TEST} ifTrue={
                                     <Flex align={Align.CENTER} justifyContent={Justify.CENTER} flexDir={FlexDirection.ROW} children={
@@ -260,6 +260,7 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
                                                 text={"Unit mode"}
                                                 uppercase
                                                 coloredText
+                                                fontSize={px(13)}
                                                 color={Color.ofHex("#04D939")}
                                                 visualMeaning={VM.SUCCESS_DEFAULT}
                                             />
