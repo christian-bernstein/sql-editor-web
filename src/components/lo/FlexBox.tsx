@@ -23,6 +23,7 @@ export type FlexBoxProps = {
     overflowYBehaviour?: OverflowBehaviour
     classnames?: string[],
     margin?: Margin,
+    deactivateMarginSetting?: boolean,
     type?: 'div' | 'form',
     paddingX?: DimensionalMeasured,
     paddingY?: DimensionalMeasured,
@@ -35,23 +36,29 @@ export const FlexBox: React.FC<FlexBoxProps> = props => {
     const theme: Themeable.Theme = utilizeGlobalTheme();
     const margin: Margin = getOr(props.margin, createMargin(0, 0, 0, 0));
     const Wrapper = styled['div']`
-          display: flex;
-          padding: ${!props.padding ? "0" : ((getOr(props.paddingY, theme.paddings.defaultObjectPadding).css() + " " + getOr(props.paddingX, theme.paddings.defaultObjectPadding).css()))};
-          flex-direction: ${getOr(props.flexDir, FlexDirection.COLUMN)};
-          gap: ${getOr(props.gap?.css(), theme.gaps.defaultGab.css())};
-          align-items: ${props.align || Align.START};
-          justify-content: ${getOr(props.justifyContent, Justify.FLEX_START)};
-          width: ${getOr(props.width?.css(), "auto")};
-          // todo does the removal of min-w break any 
-          // min-width: ${getOr(props.minWidth, px()).css()};
-          height: ${getOr(props.height?.css(), "auto")};
-          overflow-x: ${getOr<OverflowBehaviour>(props.overflowXBehaviour, OverflowBehaviour.VISIBLE)};
-          overflow-y: ${getOr<OverflowBehaviour>(props.overflowYBehaviour, OverflowBehaviour.VISIBLE)};
+      display: flex;
+      padding: ${!props.padding ? "0" : ((getOr(props.paddingY, theme.paddings.defaultObjectPadding).css() + " " + getOr(props.paddingX, theme.paddings.defaultObjectPadding).css()))};
+      flex-direction: ${getOr(props.flexDir, FlexDirection.COLUMN)};
+      gap: ${getOr(props.gap?.css(), theme.gaps.defaultGab.css())};
+      align-items: ${props.align || Align.START};
+      justify-content: ${getOr(props.justifyContent, Justify.FLEX_START)};
+      width: ${getOr(props.width?.css(), "auto")};
+      // todo does the removal of min-w break any 
+        // min-width: ${getOr(props.minWidth, px()).css()};
+      height: ${getOr(props.height?.css(), "auto")};
+      overflow-x: ${getOr<OverflowBehaviour>(props.overflowXBehaviour, OverflowBehaviour.VISIBLE)};
+      overflow-y: ${getOr<OverflowBehaviour>(props.overflowYBehaviour, OverflowBehaviour.VISIBLE)};
+      
+      ${
+        props.deactivateMarginSetting ? '' : `
           margin-top: ${margin.top?.css()};
           margin-bottom: ${margin.bottom?.css()};
           margin-left: ${margin.left?.css()};
           margin-right: ${margin.right?.css()};
-        `;
+        `
+      }
+    `;
+
     return (
         <Wrapper id={props.id} as={getOr(props.type, "div")} style={getOr(props.style, {})} className={getOr(props.classnames?.join(" "), "")}>
             {props.children}

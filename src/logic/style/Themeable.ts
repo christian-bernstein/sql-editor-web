@@ -243,11 +243,13 @@ export namespace Themeable {
 
     export const lightThemePallet: ColorPallet = createColorPallet({
         backgroundColor: Color.ofHex("#ffffff"),
-        backgroundColorOuter: Color.ofHex("#EDF2F8"),
-        backgroundHighlightColor: Color.ofHex("#EDF2F8"),
-        backgroundHighlightColor200: Color.ofHex("#e1e1e1"),
+        backgroundColorOuter: Color.ofHex("#ffffff"),
+        // backgroundColorOuter: Color.ofHex("#EDF2F8"),
+        backgroundHighlightColor: Color.ofHex("#ffffff"),
+        // backgroundHighlightColor: Color.ofHex("#f0f2f5"),
+        backgroundHighlightColor200: Color.ofHex("#ffffff"),
         backgroundHighlightInputColor: Color.ofHex("#ffffff"),
-        backgroundDeactivatedColor: Color.ofHex("#e8e8e8"),
+        backgroundDeactivatedColor: Color.ofHex("#ffffff"),
         // tooltipBackgroundColor: Color.ofHex("#323335"),
         tooltipBackgroundColor: Color.ofHex("#171717"),
         tooltipPrimaryFontColor: Color.ofHex("#DEDFE0"),

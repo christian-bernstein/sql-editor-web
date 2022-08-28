@@ -18,7 +18,7 @@ export class SideScroller extends BernieComponent<SideScrollerProps, any, any> {
     componentRender(p: SideScrollerProps, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         if (p.useMouseDragging) {
             return (
-                <ScrollContainer style={{width: "100%"}} horizontal children={
+                <ScrollContainer style={{width: "100%"}} horizontal  children={
                     <FlexBox width={percent(100)} flexDir={FlexDirection.ROW} align={Align.CENTER} children={
                         this.props.children
                     }/>

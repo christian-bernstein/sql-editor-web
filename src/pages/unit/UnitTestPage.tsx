@@ -36,7 +36,6 @@ import {Orientation} from "../../logic/style/Orientation";
 import {AppPageMode} from "../app/AppPageMode";
 import {getOr} from "../../logic/Utils";
 import {Dot} from "../../components/lo/Dot";
-import {Color} from "../../logic/style/Color";
 
 export type UnitTestPageLocalState = {
     fdh: FormDataHub
@@ -107,49 +106,53 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
         this.assembly.assembly("toolbar", theme => {
             return (
                 <Flex
-                    width={percent(100)}
                     margin={createMargin(0, 0, 40, 0)}
-                    overflowXBehaviour={OverflowBehaviour.SCROLL}
                     flexDir={FlexDirection.ROW}
+                    width={percent(100)}
+                    overflowXBehaviour={OverflowBehaviour.SCROLL}
                     justifyContent={Justify.CENTER}
                     align={Align.CENTER}
                     children={
-                        <AF elements={[
-                            <HOCWrapper body={wrapper => (
-                                <If condition={App.app() !== undefined} ifTrue={
-                                    <Button text={"QA-Panel"} onClick={() => {
-                                        wrapper.dialog(
-                                            <StaticDrawerMenu body={props => (
-                                                <QuickActionPanel noPadding/>
-                                            )}/>
-                                        );
-                                    }}/>
-                                } ifFalse={
-                                    <Button cursor={Cursor.notAllowed} opaque children={
-                                        <Text whitespace={"nowrap"} text={"QA-Panel"} coloredText visualMeaning={VM.UI_NO_HIGHLIGHT}/>
+                        <Flex align={Align.CENTER} flexDir={FlexDirection.ROW} children={
+                            <AF elements={[
+                                <HOCWrapper body={wrapper => (
+                                    <If condition={App.app() !== undefined} ifTrue={
+                                        <Button text={"QA-Panel"} onClick={() => {
+                                            wrapper.dialog(
+                                                <StaticDrawerMenu body={props => (
+                                                    <QuickActionPanel noPadding/>
+                                                )}/>
+                                            );
+                                        }}/>
+                                    } ifFalse={
+                                        <Button cursor={Cursor.notAllowed} opaque children={
+                                            <Text whitespace={"nowrap"} text={"QA-Panel"} coloredText visualMeaning={VM.UI_NO_HIGHLIGHT}/>
+                                        }/>
                                     }/>
-                                }/>
-                            )}/>,
-                            <Button text={"Anomaly"} onClick={() => {
-                                this.dialog(
-                                    <EnumSelector from={AnomalyLevel} onSubmit={element => {
-                                        this.dialog(
-                                            <AnomalyInfo anomaly={{
-                                                level: AnomalyLevel[element as keyof typeof AnomalyLevel]
-                                            }}/>
+                                )}/>,
+                                <Button text={"Anomaly"} onClick={() => {
+                                    this.dialog(
+                                        <EnumSelector from={AnomalyLevel} onSubmit={element => {
+                                            this.dialog(
+                                                <AnomalyInfo anomaly={{
+                                                    level: AnomalyLevel[element as keyof typeof AnomalyLevel]
+                                                }}/>
+                                            );
+                                        }}/>
+                                    );
+                                }}/>,
+                                <HOCWrapper body={wrapper => (
+                                    <Button text={"App mode"} onClick={() => {
+                                        wrapper.dialog(
+                                            <AppModeSwitcher/>
                                         );
                                     }}/>
-                                );
-                            }}/>,
-                            <Button text={"App mode"} onClick={() => {
-                                this.dialog(
-                                    <AppModeSwitcher/>
-                                );
-                            }}/>,
-                            <Button text={"Rerender 'test'"} onClick={() => {
-                                this.rerender("test")
-                            }}/>
-                        ]}/>
+                                )}/>,
+                                <Button text={"Rerender 'test'"} onClick={() => {
+                                    this.rerender("test")
+                                }}/>
+                            ]}/>
+                        }/>
                     }
                 />
             );
@@ -239,6 +242,7 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
                         badgeVM={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
                         badgeText={"Unit-test"}
                     />
+
                     {
                         this.a("toolbar")
                     }
@@ -254,6 +258,7 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
                                         text={new Date().toLocaleTimeString()}
                                     />
                                 ), "test"),
+
                                 <If condition={UnitTestPage.getAppMode() === AppPageMode.UNIT_TEST} ifTrue={
                                     <Flex align={Align.CENTER} justifyContent={Justify.CENTER} flexDir={FlexDirection.ROW} children={
                                         <AF elements={[
