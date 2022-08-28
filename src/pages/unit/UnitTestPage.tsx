@@ -12,6 +12,8 @@ import {Button} from "../../components/lo/Button";
 import {Text} from "../../components/lo/Text";
 import {OverflowBehaviour} from "../../logic/style/OverflowBehaviour";
 import {ReactComponent as ControlsIcon} from "../../assets/icons/ic-20/ic20-unfold-more.svg";
+import {ReactComponent as VolumeDownIcon} from "../../assets/icons/ic-20/ic20-volume-min.svg";
+import {ReactComponent as SourceIcon} from "../../assets/icons/ic-20/ic20-bluetooth.svg";
 import {HOCWrapper} from "../../components/HOCWrapper";
 import {FlexDirection} from "../../logic/style/FlexDirection";
 import {StaticDrawerMenu} from "../../components/lo/StaticDrawerMenu";
@@ -36,6 +38,8 @@ import {Orientation} from "../../logic/style/Orientation";
 import {AppPageMode} from "../app/AppPageMode";
 import {getOr} from "../../logic/Utils";
 import {Dot} from "../../components/lo/Dot";
+import {Slider} from "@mui/material";
+import {Box} from "../../components/lo/Box";
 
 export type UnitTestPageLocalState = {
     fdh: FormDataHub
@@ -54,10 +58,30 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
 
         this.assembly.assembly("test", (theme, props) => {
             // Display your test component here
+            const pad = 12;
             return (
-                <>No test</>
+                <Box paddingY={px(pad)} paddingX={px(pad)} children={
+                    <Flex align={Align.CENTER} children={
+                        <AF elements={[
+                            <Icon icon={<SourceIcon/>}/>,
+                            <Flex style={{zIndex: 50}} children={
+                                <Slider
+                                    orientation={"vertical"}
+                                    defaultValue={50}
+                                    valueLabelDisplay={"auto"}
+                                    sx={{
+                                        height: 500,
+                                    }}
+                                />
+                            }/>,
+                            <Button border={false} highlight children={
+                                <Icon icon={<VolumeDownIcon/>}/>
+                            }/>
+                        ]}/>
+                    }/>
+                }/>
             );
-        })
+        });
     }
 
     // INTERNAL COMPONENT CODE

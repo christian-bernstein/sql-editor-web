@@ -675,7 +675,6 @@ export namespace Themeable {
         },
         libraries: {
             reactJson: {
-
                 theme: "grayscale:inverted"
             }
         }
