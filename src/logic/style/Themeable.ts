@@ -85,11 +85,12 @@ export namespace Themeable {
             ["dark-green", Themeable.defaultTheme],
             ["light-green", Themeable.lightTheme],
             ["dark-tritanopia", Themeable.darkTritanopiaTheme],
+            ["black", Themeable.blackTheme],
         ])
     }
 
-    export function createColorPallet(partial: Partial<ColorPallet> ): ColorPallet {
-        return {...defaultThemePallet, ...partial};
+    export function createColorPallet(partial: Partial<ColorPallet>, parent?: ColorPallet): ColorPallet {
+        return {...(parent === undefined ? defaultThemePallet : parent), ...partial};
     }
 
     export function theme(partial: Partial<Theme> ): Theme {
@@ -665,15 +666,25 @@ export namespace Themeable {
                     lineHeight: "17px",
                     display: "flex",
                     alignItems: "center",
-                    //letterSpacing: "0.03em",
+                    // letterSpacing: "0.03em",
                     color: `${defaultThemePallet.fontSecondaryColor.css()}`
                 },
             }
         },
         libraries: {
             reactJson: {
+
                 theme: "grayscale:inverted"
             }
         }
     }
+
+    export const blackTheme = theme({
+        colors: createColorPallet({
+            backgroundColor: Color.ofHex("#000000"),
+            backgroundHighlightColor200: Color.ofHex("#222222"),
+            backgroundHighlightColor: Color.ofHex("#171717"),
+            backgroundColorOuter: Color.ofHex("#171717")
+        }, darkTritanopiaThemePallet)
+    });
 }
