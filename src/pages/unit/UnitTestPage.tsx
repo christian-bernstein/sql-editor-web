@@ -248,7 +248,11 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
                         <Flex flexDir={FlexDirection.ROW} align={Align.CENTER} justifyContent={Justify.CENTER} children={
                             <AF elements={[
                                 this.component(local => (
-                                    <Text whitespace={"nowrap"} fontSize={px(13)} text={new Date().toLocaleTimeString()}/>
+                                    <Text
+                                        whitespace={"nowrap"}
+                                        fontSize={px(13)}
+                                        text={new Date().toLocaleTimeString()}
+                                    />
                                 ), "test"),
                                 <If condition={UnitTestPage.getAppMode() === AppPageMode.UNIT_TEST} ifTrue={
                                     <Flex align={Align.CENTER} justifyContent={Justify.CENTER} flexDir={FlexDirection.ROW} children={
@@ -261,8 +265,8 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
                                                 uppercase
                                                 coloredText
                                                 fontSize={px(13)}
-                                                color={Color.ofHex("#04D939")}
-                                                visualMeaning={VM.SUCCESS_DEFAULT}
+                                                // color={Color.ofHex("#ffbd29")}
+                                                visualMeaning={VM.WARNING}
                                             />
                                         ]}/>
                                     }/>
