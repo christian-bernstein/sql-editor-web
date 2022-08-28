@@ -12,6 +12,7 @@ import {Align} from "../../logic/style/Align";
 import {Cursor} from "../../logic/style/Cursor";
 import {Image} from "./Image";
 import rehypeRaw from "rehype-raw";
+import {Color} from "../../logic/style/Color";
 
 // todo implement
 export type FontOptions = {
@@ -45,6 +46,7 @@ export type TextProps = {
     renderMarkdown?: boolean,
     bold?: boolean,
     advancedLinkRendering?: boolean,
+    color?: Color
 }
 
 export enum TextType {
@@ -89,7 +91,7 @@ export const Text: React.FC<TextProps> = props => {
       gap: ${theme.paddings.defaultTextIconPadding.css()};
       cursor: ${getOr(props.cursor, Cursor.default)};
       // color: ${props.coloredText ? meaningfulColors.lighter.css() : theme.colors.fontPrimaryColor.css()} !important;
-      color: ${props.coloredText ? meaningfulColors.lighter.css() + "!important" : ""};
+      color: ${props.coloredText ? (props.color === undefined ? meaningfulColors.lighter.css() : props.color.css()) + "!important" : ""};
       transition: all ${theme.transitions.fastTime.css()};
       // flex-grow: 0;
       // flex-shrink: 0;

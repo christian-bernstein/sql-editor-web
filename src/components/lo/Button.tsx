@@ -105,7 +105,7 @@ export class Button extends React.Component<ButtonProps, any> {
         return (
             <Button onClick={event => this.onClick(event)} style={getOr(this.props.style, {} as CSSProperties)}>
                 {this.props.text === undefined ? undefined : (
-                    <Text text={this.props.text}/>
+                    <Text whitespace={"nowrap"} text={this.props.text}/>
                 )}
                 {this.props.children}
             </Button>

@@ -23,7 +23,6 @@ import {AppModeSwitcher} from "../../components/ho/appModeSwitcher/AppModeSwitch
 import {DrawerHeader} from "../../components/lo/DrawerHeader";
 import {ObjectVisualMeaning, VM} from "../../logic/style/ObjectVisualMeaning";
 import {createMargin} from "../../logic/style/Margin";
-import {ComponentUtils} from "../../components/ComponentUtils";
 import {App} from "../../logic/app/App";
 import {If} from "../../components/logic/If";
 import {Cursor} from "../../logic/style/Cursor";
@@ -32,6 +31,12 @@ import {FormDataHub} from "../../tests/epicure/components/FormDataHub";
 import {SettingsElement} from "../../components/ho/settingsElement/SettingsElement";
 import {IOSwitch} from "../../components/lo/IOSwitch";
 import {SettingsGroup} from "../../components/lo/SettingsGroup";
+import {Separator} from "../../components/lo/Separator";
+import {Orientation} from "../../logic/style/Orientation";
+import {AppPageMode} from "../app/AppPageMode";
+import {getOr} from "../../logic/Utils";
+import {Dot} from "../../components/lo/Dot";
+import {Color} from "../../logic/style/Color";
 
 export type UnitTestPageLocalState = {
     fdh: FormDataHub
@@ -94,6 +99,10 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
         return this.local.state.fdh.get("pure", false);
     }
 
+    private static getAppMode(): AppPageMode {
+        return Number(getOr(window.localStorage.getItem("app-page-mode"), AppPageMode.UNIT_TEST.toString()));
+    }
+
     private toolbarAssembly() {
         this.assembly.assembly("toolbar", theme => {
             return (
@@ -117,7 +126,7 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
                                     }}/>
                                 } ifFalse={
                                     <Button cursor={Cursor.notAllowed} opaque children={
-                                        <Text text={"QA-Panel"} coloredText visualMeaning={VM.UI_NO_HIGHLIGHT}/>
+                                        <Text whitespace={"nowrap"} text={"QA-Panel"} coloredText visualMeaning={VM.UI_NO_HIGHLIGHT}/>
                                     }/>
                                 }/>
                             )}/>,
@@ -233,6 +242,35 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
                     {
                         this.a("toolbar")
                     }
+
+                    <Flex width={percent(100)} align={Align.CENTER} flexDir={FlexDirection.ROW} justifyContent={Justify.CENTER}>
+                        <Separator orientation={Orientation.HORIZONTAL}/>
+                        <Flex flexDir={FlexDirection.ROW} align={Align.CENTER} justifyContent={Justify.CENTER} children={
+                            <AF elements={[
+                                this.component(local => (
+                                    <Text whitespace={"nowrap"} text={new Date().toLocaleTimeString()}/>
+                                ), "test"),
+                                <If condition={UnitTestPage.getAppMode() === AppPageMode.UNIT_TEST} ifTrue={
+                                    <Flex align={Align.CENTER} justifyContent={Justify.CENTER} flexDir={FlexDirection.ROW} children={
+                                        <AF elements={[
+                                            <Dot/>,
+                                            <Text
+                                                whitespace={"nowrap"}
+                                                bold
+                                                text={"Unit mode"}
+                                                uppercase
+                                                coloredText
+                                                color={Color.ofHex("#04D939")}
+                                                visualMeaning={VM.SUCCESS_DEFAULT}
+                                            />
+                                        ]}/>
+                                    }/>
+                                }/>
+                            ]}/>
+                        }/>
+                        <Separator orientation={Orientation.HORIZONTAL}/>
+                    </Flex>
+
                 </Flex>
             );
         })
