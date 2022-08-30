@@ -36,10 +36,11 @@ import {SettingsGroup} from "../../components/lo/SettingsGroup";
 import {Separator} from "../../components/lo/Separator";
 import {Orientation} from "../../logic/style/Orientation";
 import {AppPageMode} from "../app/AppPageMode";
-import {getOr} from "../../logic/Utils";
+import {array, getOr} from "../../logic/Utils";
 import {Dot} from "../../components/lo/Dot";
 import {Slider} from "@mui/material";
 import {Box} from "../../components/lo/Box";
+import {Default, Mobile} from "../../components/logic/Media";
 
 export type UnitTestPageLocalState = {
     fdh: FormDataHub
@@ -64,13 +65,13 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
                     <Flex align={Align.CENTER} children={
                         <AF elements={[
                             <Icon icon={<SourceIcon/>}/>,
-                            <Flex style={{zIndex: 50}} children={
+                            <Flex style={{zIndex: 50}} height={percent(100)} children={
                                 <Slider
                                     orientation={"vertical"}
                                     defaultValue={50}
                                     valueLabelDisplay={"auto"}
                                     sx={{
-                                        height: 500,
+                                        height: 250,
                                     }}
                                 />
                             }/>,
