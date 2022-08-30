@@ -200,7 +200,6 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
                             } onClick={() => {
                                 wrapper.dialog(
                                     <StaticDrawerMenu body={props => {
-
                                         return (
                                             <Flex width={percent(100)}>
                                                 <DrawerHeader
