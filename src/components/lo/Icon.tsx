@@ -15,13 +15,16 @@ export type IconProps = {
     hoverAnimation?: boolean,
     onClick?: () => void,
     style?: CSSProperties
-    // color?: Color
+    color?: Color
 } & WithVisualMeaning
 
 export const Icon: React.FC<IconProps> = React.memo(props => {
     const vm: ObjectVisualMeaning = getOr(props.visualMeaning, ObjectVisualMeaning.UI_NO_HIGHLIGHT);
     const theme: Themeable.Theme = utilizeGlobalTheme();
     const meaningfulColors: MeaningfulColors = getMeaningfulColors(vm, theme);
+
+    const color: Color = (props.color !== undefined) ? props.color : (props.colored ? meaningfulColors.iconColored : meaningfulColors.icon);
+
     const Wrapper = styled.div`
       display: flex;
       align-items: center;
@@ -45,10 +48,10 @@ export const Icon: React.FC<IconProps> = React.memo(props => {
       svg {
         width: ${(props.size || px(20)).css()};
         height: ${(props.size || px(20)).css()};
-        fill: ${(props.colored ? meaningfulColors.iconColored : meaningfulColors.icon).css()};
+        fill: ${color.css()};
         
         path {      
-          fill: ${(props.colored ? meaningfulColors.iconColored : meaningfulColors.icon).css()};
+          fill: ${color.css()};
         }
       }
       

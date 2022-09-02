@@ -41,6 +41,7 @@ import {Dot} from "../../components/lo/Dot";
 import {Slider} from "@mui/material";
 import {Box} from "../../components/lo/Box";
 import {Default, Mobile} from "../../components/logic/Media";
+import {ComponentCollection} from "./tests/ComponentCollection";
 
 export type UnitTestPageLocalState = {
     fdh: FormDataHub
@@ -59,28 +60,8 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
 
         this.assembly.assembly("test", (theme, props) => {
             // Display your test component here
-            const pad = 12;
             return (
-                <Box paddingY={px(pad)} paddingX={px(pad)} children={
-                    <Flex align={Align.CENTER} children={
-                        <AF elements={[
-                            <Icon icon={<SourceIcon/>}/>,
-                            <Flex style={{zIndex: 50}} height={percent(100)} children={
-                                <Slider
-                                    orientation={"vertical"}
-                                    defaultValue={50}
-                                    valueLabelDisplay={"auto"}
-                                    sx={{
-                                        height: 250,
-                                    }}
-                                />
-                            }/>,
-                            <Button border={false} highlight children={
-                                <Icon icon={<VolumeDownIcon/>}/>
-                            }/>
-                        ]}/>
-                    }/>
-                }/>
+                <ComponentCollection/>
             );
         });
     }
