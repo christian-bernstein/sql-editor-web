@@ -1,4 +1,4 @@
-import React from "react";
+import React, {PropsWithChildren} from "react";
 import {cs, State} from "./state/State";
 import {RenderController} from "../tests/regex/RenderController";
 import {RenderExecutor} from "../tests/regex/RenderExecutor";
@@ -8,7 +8,7 @@ import {App, utilizeGlobalTheme} from "./app/App";
 import {Redirect} from "react-router-dom";
 import {getOr} from "./Utils";
 import {Assembly} from "./assembly/Assembly";
-import {SwipeableDrawer} from "@mui/material";
+import {InputBase, styled, SwipeableDrawer} from "@mui/material";
 import {Screen} from "../components/lo/Page";
 import {Centered} from "../components/lo/PosInCenter";
 import {ObjectVisualMeaning} from "./style/ObjectVisualMeaning";

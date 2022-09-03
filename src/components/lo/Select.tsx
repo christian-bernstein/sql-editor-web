@@ -1,7 +1,7 @@
 import {BernieComponent} from "../../logic/BernieComponent";
 import {Assembly} from "../../logic/assembly/Assembly";
 import {Themeable} from "../../logic/style/Themeable";
-import {FormControl, MenuItem, Select as MUISelect} from "@mui/material";
+import {FormControl, GlobalStyles, MenuItem, Select as MUISelect} from "@mui/material";
 import React from "react";
 import {Text} from "./Text";
 import {Color} from "../../logic/style/Color";
@@ -25,8 +25,14 @@ export class Select extends BernieComponent<SelectProps, any, any> {
     componentRender(p: SelectProps, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
             <FormControl sx={{width: "100%", height: "100%"}} size="medium">
+                <GlobalStyles styles={{
+                    '.MuiList-root': {
+                        backgroundColor: getOr(p.bgColor, t.colors.backgroundHighlightColor200).css(),
+                    }
+                }}/>
                 {/* value={p.initialValue} */}
-                <MUISelect defaultValue={p.initialValue} sx={{
+                {/* defaultValue={p.initialValue} */}
+                <MUISelect value={p.initialValue} sx={{
                     backgroundColor: getOr(p.bgColor, t.colors.backgroundHighlightColor200).css(),
                     color: t.colors.fontPrimaryColor.css(),
                     '& .MuiSvgIcon-root': {

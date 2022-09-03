@@ -9,11 +9,9 @@ import {AF} from "../../components/logic/ArrayFragment";
 import {percent, px} from "../../logic/style/DimensionalMeasured";
 import {Justify} from "../../logic/style/Justify";
 import {Button} from "../../components/lo/Button";
-import {Text} from "../../components/lo/Text";
+import {Text, TextType} from "../../components/lo/Text";
 import {OverflowBehaviour} from "../../logic/style/OverflowBehaviour";
 import {ReactComponent as ControlsIcon} from "../../assets/icons/ic-20/ic20-unfold-more.svg";
-import {ReactComponent as VolumeDownIcon} from "../../assets/icons/ic-20/ic20-volume-min.svg";
-import {ReactComponent as SourceIcon} from "../../assets/icons/ic-20/ic20-bluetooth.svg";
 import {HOCWrapper} from "../../components/HOCWrapper";
 import {FlexDirection} from "../../logic/style/FlexDirection";
 import {StaticDrawerMenu} from "../../components/lo/StaticDrawerMenu";
@@ -38,8 +36,12 @@ import {Orientation} from "../../logic/style/Orientation";
 import {AppPageMode} from "../app/AppPageMode";
 import {getOr} from "../../logic/Utils";
 import {Dot} from "../../components/lo/Dot";
-import {Slider} from "@mui/material";
-import {Box} from "../../components/lo/Box";
+import {ComponentCollection} from "./tests/ComponentCollection";
+import {Select, SelectElement} from "../../components/lo/Select";
+import {UnitTestUtils} from "./UnitTestUtils";
+import {UnitTest} from "./UnitTest";
+import {ProjectCardTest} from "./tests/ProjectCardTest";
+import {cssValue} from "react-spinners/helpers";
 
 export type UnitTestPageLocalState = {
     fdh: FormDataHub
@@ -58,29 +60,42 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
 
         this.assembly.assembly("test", (theme, props) => {
             // Display your test component here
-            const pad = 12;
-            return (
-                <Box paddingY={px(pad)} paddingX={px(pad)} children={
-                    <Flex align={Align.CENTER} children={
-                        <AF elements={[
-                            <Icon icon={<SourceIcon/>}/>,
-                            <Flex style={{zIndex: 50}} children={
-                                <Slider
-                                    orientation={"vertical"}
-                                    defaultValue={50}
-                                    valueLabelDisplay={"auto"}
-                                    sx={{
-                                        height: 500,
-                                    }}
-                                />
-                            }/>,
-                            <Button border={false} highlight children={
-                                <Icon icon={<VolumeDownIcon/>}/>
-                            }/>
-                        ]}/>
-                    }/>
-                }/>
-            );
+
+            // TODO: move to better location
+            // TODO: split into 'local test' & 'external tests' -> switch to toggle between both
+
+            const fdhAddress: string = "unittest";
+            const unittestsMap: Map<string, UnitTest<any>> = UnitTestUtils.unittests;
+            const unittests: [string, UnitTest<any>][] = Array.from(unittestsMap);
+            const elements: SelectElement[] = unittests.map(([name, unit]) => ({ value: `${unit.displayName} _(${unit.name})_` } as SelectElement));
+            const activeUnittestName: string | undefined = this.local.state.fdh.get(fdhAddress);
+            const activeUnittest: UnitTest<any> | undefined = activeUnittestName !== undefined ? unittestsMap.get(activeUnittestName) : unittests[0]?.[1];
+
+            if (activeUnittestName === undefined && activeUnittest !== undefined) {
+                this.local.state.fdh.set(fdhAddress, activeUnittest.name, true);
+            }
+
+            if (activeUnittest === undefined) {
+                // todo make drawer error message & better 'no assembly' screen
+                return (
+                    <>no unittest found</>
+                );
+            }
+
+            return activeUnittest.factory(activeUnittest.element);
+        });
+    }
+
+    // ADD ALL EXTERNAL TESTS
+
+    static loadExternalUnittests() {
+        UnitTestUtils.createTest(ProjectCardTest.test);
+
+        UnitTestUtils.createTest({
+            name: "asd",
+            displayName: "ASD",
+            element: Text,
+            factory: Elem => <Elem text={"test"}/>
         });
     }
 
@@ -102,10 +117,12 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
 
     init() {
         super.init();
+        UnitTestPage.loadExternalUnittests();
         this.testAssembly();
         this.headerAssembly();
         this.hoverControlButtonAssembly();
         this.toolbarAssembly();
+        this.unitSelectorAssembly();
     }
 
     private togglePureMode(pure: boolean | undefined, rerenderDelay?: number) {
@@ -124,6 +141,44 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
 
     private static getAppMode(): AppPageMode {
         return Number(getOr(window.localStorage.getItem("app-page-mode"), AppPageMode.UNIT_TEST.toString()));
+    }
+
+    private unitSelectorAssembly() {
+        this.assembly.assembly("unit-selector", theme => {
+            const fdhAddress: string = "unittest";
+            const unittestsMap: Map<string, UnitTest<any>> = UnitTestUtils.unittests;
+            const unittests: [string, UnitTest<any>][] = Array.from(unittestsMap);
+
+            const elements: SelectElement[] = unittests.map(([name, unit]) => ({
+                value: unit.name
+            } as SelectElement));
+            const activeUnittestName: string | undefined = this.local.state.fdh.get(fdhAddress);
+
+            const activeUnittest: UnitTest<any> | undefined =
+                activeUnittestName !== undefined
+                    ? unittestsMap.get(activeUnittestName)
+                    : unittests[0]?.[1]
+
+            return (
+                <Flex width={percent(100)} children={
+                    <AF elements={[
+                        <Text text={"Unittest Selector"} uppercase bold type={TextType.secondaryDescription} fontSize={px(12)} align={Align.START}/>,
+                        <Select
+                            elements={() => elements}
+                            initialValue={activeUnittest?.name}
+                            onChange={(value: string) => {
+                                this.local.state.fdh.set(fdhAddress, value, true);
+
+                                setTimeout(() => {
+                                    // this.rerender("unittest-root");
+                                    this.rerender("data", "test");
+                                }, 1);
+                            }}
+                        />
+                    ]}/>
+                }/>
+            );
+        });
     }
 
     private toolbarAssembly() {
@@ -209,9 +264,10 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
                                                     badgeText={"Unit-test"}
                                                 />
 
-                                                {
-                                                    this.a("toolbar")
-                                                }
+                                                <AF elements={[
+                                                    this.a("toolbar"),
+                                                    this.a("unit-selector")
+                                                ]}/>
 
                                                 <Flex width={percent(100)}>
                                                     <SettingsGroup title={"UI settings"} elements={[
@@ -240,7 +296,6 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
                                                             }}
                                                         />
                                                     ]}/>
-
                                                 </Flex>
                                             </Flex>
                                         );
@@ -310,7 +365,7 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
     }
 
     componentRender(p: any, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
-        return (
+        return this.component(local => (
             <Screen children={
                 <Flex align={Align.CENTER} width={percent(100)} height={percent(100)} children={
                     <AF elements={[
@@ -320,7 +375,7 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
                                 return this.a("header");
                             } else return <></>;
                         }, "data"),
-                        <Flex style={{flex: "1 1 auto"}} align={Align.CENTER} justifyContent={Justify.CENTER} width={percent(100)} children={
+                        <Flex style={{flex: "1 1 auto"}} overflowYBehaviour={OverflowBehaviour.SCROLL} align={Align.CENTER} justifyContent={Justify.CENTER} width={percent(100)} children={
                             this.component(local => {
                                 return this.a("test");
                             }, "test")
@@ -328,6 +383,6 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
                     ]}/>
                 }/>
             }/>
-        );
+        ), "unittest-root");
     }
 }

@@ -86,6 +86,7 @@ export namespace Themeable {
             ["light-green", Themeable.lightTheme],
             ["dark-tritanopia", Themeable.darkTritanopiaTheme],
             ["black", Themeable.blackTheme],
+            ["mala", Themeable.malaTheme],
         ])
     }
 
@@ -687,5 +688,107 @@ export namespace Themeable {
             backgroundHighlightColor: Color.ofHex("#171717"),
             backgroundColorOuter: Color.ofHex("#171717")
         }, darkTritanopiaThemePallet)
+    });
+
+    export const malaPallet = createColorPallet({
+        backgroundColor: Color.ofHex("#000000"),
+        backgroundHighlightColor200: Color.ofHex("#222222"),
+        backgroundHighlightColor: Color.ofHex("#171717"),
+        backgroundColorOuter: Color.ofHex("#171717"),
+
+        primaryColor: Color.ofHex("#FFF387"),
+        primaryHighlightColor: Color.ofHex("#FFF387"),
+        fontPrimaryColor: Color.ofHex("#000000"),
+        fontSecondaryColor: Color.ofHex("#000000"),
+    }, darkTritanopiaThemePallet);
+
+    export const malaTheme = theme({
+        colors: malaPallet,
+        texts: {
+            fontFamily: "Whitney",
+            displayFontFamily: "Whitney",
+            complete: {
+                boldLargeHeader: {
+                    fontFamily: "Whitney",
+                    fontStyle: "normal",
+                    fontWeight: "bold",
+                    fontSize: px(40).css(),
+                    lineHeight: px(50).css(),
+                    display: "flex"
+                },
+                boldSmallHeader: {
+                    margin: 0,
+                    fontFamily: "Whitney",
+                    fontStyle: "normal",
+                    fontWeight: "bold",
+                    fontSize: "16px",
+                    lineHeight: "19px",
+                    display: "flex",
+                    alignItems: "center",
+                    letterSpacing: "0.03em",
+                    color: `${malaPallet.fontPrimaryColor.css()}`
+                },
+                defaultText: {
+                    margin: 0,
+                    fontFamily: "Whitney",
+                    fontStyle: "normal",
+                    fontWeight: 350,
+                    // fontSize: "14px",
+                    fontSize: "12px",
+                    lineHeight: "19px",
+                    display: "flex",
+                    alignItems: "center",
+                    letterSpacing: "0.03em",
+                    color: `${malaPallet.fontPrimaryColor.css()}`
+                },
+                boldSmallHeaderDeactivated: {
+                    margin: 0,
+                    fontFamily: "Whitney",
+                    fontStyle: "normal",
+                    fontWeight: "bold",
+                    fontSize: "16px",
+                    lineHeight: "19px",
+                    display: "flex",
+                    alignItems: "center",
+                    letterSpacing: "0.03em",
+                    color: `${malaPallet.fontDeactivatedColor.css()}`
+                },
+                secondaryDescription: {
+                    margin: 0,
+                    fontFamily: "Whitney",
+                    fontStyle: "normal",
+                    fontWeight: 350,
+                    fontSize: "14px",
+                    lineHeight: "17px",
+                    display: "flex",
+                    alignItems: "center",
+                    letterSpacing: "0.03em",
+                    color: `${malaPallet.fontSecondaryColor.css()}`
+                },
+                displayText: {
+                    margin: 0,
+                    fontFamily: "Whitney",
+                    fontStyle: "normal",
+                    fontWeight: 350,
+                    fontSize: "14px",
+                    // lineHeight: "19px",
+                    display: "flex",
+                    alignItems: "center",
+                    color: `${malaPallet.fontPrimaryColor.css()}`
+                },
+                displayDescription: {
+                    margin: 0,
+                    fontFamily: "Whitney",
+                    fontStyle: "normal",
+                    fontWeight: 350,
+                    fontSize: "14px",
+                    lineHeight: "17px",
+                    display: "flex",
+                    alignItems: "center",
+                    // letterSpacing: "0.03em",
+                    color: `${malaPallet.fontSecondaryColor.css()}`
+                },
+            }
+        }
     });
 }

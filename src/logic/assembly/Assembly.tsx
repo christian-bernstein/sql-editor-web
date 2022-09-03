@@ -36,7 +36,7 @@ export class Assembly {
             } catch (e) {
                 return (
                     <p>
-                        {e.message}
+                        {String(e)}
                     </p>
                 );
             }
