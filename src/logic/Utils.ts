@@ -35,7 +35,8 @@ export namespace Utils {
      * source: https://stackoverflow.com/a/55699349/16368544
      */
     export function randomEnum<T>(anEnum: T): T[keyof T] {
-        const enumValues = Object.keys(anEnum).map(n => Number.parseInt(n)).filter(n => !Number.isNaN(n)) as unknown as T[keyof T][];
+        // todo check if the addition of     'as {}' breaks the code
+        const enumValues = Object.keys(anEnum as {}).map(n => Number.parseInt(n)).filter(n => !Number.isNaN(n)) as unknown as T[keyof T][];
         const randomIndex = Math.floor(Math.random() * enumValues.length);
         return enumValues[randomIndex];
     }

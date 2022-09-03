@@ -152,13 +152,13 @@ export namespace Environment {
                         console.log(`Switching protocols from '${connector.currentProtocol}' to '${data.newProtocol}'`);
                         connector.currentProtocol = data.newProtocol;
 
-                        connector.protocolChangeHandlers.forEach(handler => {
+                        connector.protocolChangeHandlers.forEach((handler: (connector: Environment.Connector, switchData: SocketSwitchProtocolDataPacket) => void) => {
                             try {
                                 handler(connector, data);
                             } catch (e) {
                                 App.app().baseLog({
                                     id: v4(),
-                                    appendices: [e, handler],
+                                    appendices: [],
                                     timestamp: new Date(),
                                     level: "ERROR",
                                     creator: "network",

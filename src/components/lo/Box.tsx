@@ -154,7 +154,6 @@ export class Box extends React.Component<BoxProps, any> {
           }
         `;
 
-
         const classNames: string[] = this.props.classNames === undefined ? [] : this.props.classNames;
         const highlight: boolean = this.props.highlight === undefined ? false : this.props.highlight;
         return (

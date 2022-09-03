@@ -143,8 +143,6 @@ export class ImportDatasetDialog extends BernieComponent<ImportDatasetDialogProp
                                 };
                             })}/>
                         }/>
-
-
                     </FlexBox>
                 );
             }, "tables")
