@@ -36,11 +36,11 @@ import {Orientation} from "../../logic/style/Orientation";
 import {AppPageMode} from "../app/AppPageMode";
 import {getOr} from "../../logic/Utils";
 import {Dot} from "../../components/lo/Dot";
-import {ComponentCollection} from "./tests/ComponentCollection";
 import {Select, SelectElement} from "../../components/lo/Select";
 import {UnitTestUtils} from "./UnitTestUtils";
 import {UnitTest} from "./UnitTest";
 import {ProjectCardTest} from "./tests/ProjectCardTest";
+import {QuickTest} from "./QuickTest";
 
 export type UnitTestPageLocalState = {
     fdh: FormDataHub
@@ -48,59 +48,10 @@ export type UnitTestPageLocalState = {
 
 export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalState> {
 
-    // TEST SECTION
-
-    /**
-     * Note: Test assembly can be re-rendered by calling the 'test' channel.
-     */
-    private testAssembly() {
-        // You may use this pre-made utility function to reload the test assembly
-        const rerender = () => this.rerender("test");
-
-        this.assembly.assembly("test", (theme, props) => {
-            // Display your test component here
-
-            // TODO: move to better location
-            // TODO: split into 'local test' & 'external tests' -> switch to toggle between both
-
-            const fdhAddress: string = "unittest";
-            const unittestsMap: Map<string, UnitTest<any>> = UnitTestUtils.unittests;
-            const unittests: [string, UnitTest<any>][] = Array.from(unittestsMap);
-            const elements: SelectElement[] = unittests.map(([name, unit]) => ({ value: `${unit.displayName} _(${unit.name})_` } as SelectElement));
-            const activeUnittestName: string | undefined = this.local.state.fdh.get(fdhAddress);
-            const activeUnittest: UnitTest<any> | undefined = activeUnittestName !== undefined ? unittestsMap.get(activeUnittestName) : unittests[0]?.[1];
-
-            if (activeUnittestName === undefined && activeUnittest !== undefined) {
-                this.local.state.fdh.set(fdhAddress, activeUnittest.name, true);
-            }
-
-            if (activeUnittest === undefined) {
-                // todo make drawer error message & better 'no assembly' screen
-                return (
-                    <>no unittest found</>
-                );
-            }
-
-            return activeUnittest.factory(activeUnittest.element);
-        });
-    }
-
-
-
-    // ADD ALL EXTERNAL TESTS
-
     static loadExternalUnittests() {
+        UnitTestUtils.createTest(QuickTest.test);
         UnitTestUtils.createTest(ProjectCardTest.test);
-
-        UnitTestUtils.createTest({
-            name: "asd",
-            displayName: "ASD",
-            element: Text,
-            factory: Elem => <Elem text={"test"}/>
-        });
     }
-
-    // INTERNAL COMPONENT CODE
 
     constructor() {
         super(undefined, undefined, {
@@ -160,7 +111,7 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
                     ? unittestsMap.get(activeUnittestName)
                     : unittests[0]?.[1]
 
-            return (
+            return this.component(() => (
                 <Flex width={percent(100)} children={
                     <AF elements={[
                         <Text text={"Unittest Selector"} uppercase bold type={TextType.secondaryDescription} fontSize={px(12)} align={Align.START}/>,
@@ -171,14 +122,13 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
                                 this.local.state.fdh.set(fdhAddress, value, true);
 
                                 setTimeout(() => {
-                                    // this.rerender("unittest-root");
-                                    this.rerender("data", "test");
+                                    this.rerender("data", "test", "unit-selector");
                                 }, 1);
                             }}
                         />
                     ]}/>
                 }/>
-            );
+            ), "unit-selector");
         });
     }
 
@@ -365,10 +315,34 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
         })
     }
 
+    private testAssembly() {
+        this.assembly.assembly("test", (theme, props) => {
+            const fdhAddress: string = "unittest";
+            const unittestsMap: Map<string, UnitTest<any>> = UnitTestUtils.unittests;
+            const unittests: [string, UnitTest<any>][] = Array.from(unittestsMap);
+            const elements: SelectElement[] = unittests.map(([name, unit]) => ({ value: `${unit.displayName} _(${unit.name})_` } as SelectElement));
+            const activeUnittestName: string | undefined = this.local.state.fdh.get(fdhAddress);
+            const activeUnittest: UnitTest<any> | undefined = activeUnittestName !== undefined ? unittestsMap.get(activeUnittestName) : unittests[0]?.[1];
+
+            if (activeUnittestName === undefined && activeUnittest !== undefined) {
+                this.local.state.fdh.set(fdhAddress, activeUnittest.name, true);
+            }
+
+            if (activeUnittest === undefined) {
+                // todo make drawer error message & better 'no assembly' screen
+                return (
+                    <>no unittest found</>
+                );
+            }
+
+            return activeUnittest.factory(activeUnittest.element);
+        });
+    }
+
     componentRender(p: any, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return this.component(local => (
             <Screen children={
-                <Flex align={Align.CENTER} width={percent(100)} height={percent(100)} children={
+                <Flex align={Align.CENTER} style={{ maxHeight: "100%" }} width={percent(100)} height={percent(100)} children={
                     <AF elements={[
                         this.a("hover-control"),
                         this.component((local) => {

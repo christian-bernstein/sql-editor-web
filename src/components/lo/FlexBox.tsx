@@ -28,14 +28,9 @@ export type FlexBoxProps = {
     paddingX?: DimensionalMeasured,
     paddingY?: DimensionalMeasured,
     padding?: boolean,
-
     id?: string,
-
     fw?: boolean,
-    fh?: boolean,
-
-    // todo add fw: bool (100% width)
-    // todo add fh: bool (100% height)
+    fh?: boolean
 }
 
 export const FlexBox: React.FC<FlexBoxProps> = props => {
