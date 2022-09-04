@@ -41,7 +41,6 @@ import {Select, SelectElement} from "../../components/lo/Select";
 import {UnitTestUtils} from "./UnitTestUtils";
 import {UnitTest} from "./UnitTest";
 import {ProjectCardTest} from "./tests/ProjectCardTest";
-import {cssValue} from "react-spinners/helpers";
 
 export type UnitTestPageLocalState = {
     fdh: FormDataHub
@@ -85,6 +84,8 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
             return activeUnittest.factory(activeUnittest.element);
         });
     }
+
+
 
     // ADD ALL EXTERNAL TESTS
 

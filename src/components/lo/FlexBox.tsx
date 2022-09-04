@@ -31,6 +31,9 @@ export type FlexBoxProps = {
 
     id?: string,
 
+    fw?: boolean,
+    fh?: boolean,
+
     // todo add fw: bool (100% width)
     // todo add fh: bool (100% height)
 }
@@ -45,10 +48,10 @@ export const FlexBox: React.FC<FlexBoxProps> = props => {
       gap: ${getOr(props.gap?.css(), theme.gaps.defaultGab.css())};
       align-items: ${props.align || Align.START};
       justify-content: ${getOr(props.justifyContent, Justify.FLEX_START)};
-      width: ${getOr(props.width?.css(), "auto")};
+      width: ${props.fw ? "100%" : getOr(props.width?.css(), "auto")};
       // todo does the removal of min-w break any 
         // min-width: ${getOr(props.minWidth, px()).css()};
-      height: ${getOr(props.height?.css(), "auto")};
+      height: ${props.fh ? "100%" : getOr(props.height?.css(), "auto")};
       overflow-x: ${getOr<OverflowBehaviour>(props.overflowXBehaviour, OverflowBehaviour.VISIBLE)};
       overflow-y: ${getOr<OverflowBehaviour>(props.overflowYBehaviour, OverflowBehaviour.VISIBLE)};
       
