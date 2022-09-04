@@ -28,6 +28,7 @@ import {Button} from "../../lo/Button";
 import {QueryDisplay} from "../../logic/QueryDisplay";
 import {QueryError} from "../../../logic/query/QueryError";
 import {Loader} from "../../lo/Loader";
+import {If} from "../../logic/If";
 
 export type ProjectCardProps = {
     data: ProjectInfoData,
@@ -141,15 +142,21 @@ export class ProjectCard extends BernieComponent<ProjectCardProps, any, ProjectC
                         ]}/>,
                     ]}/>,
 
-                    <Text type={TextType.secondaryDescription} fontSize={px(12)} text={p.data.description}/>,
-
-                    <FlexRow gap={t.gaps.smallGab} elements={
-                        p.data.internalTags.map(s => (
-                            <Box highlightShadow={false} cursor={Cursor.pointer} highlight opaque paddingY={px(4)} paddingX={px(7)} visualMeaning={VM.SUCCESS} borderRadiiConfig={{ enableCustomBorderRadii: true, fallbackCustomBorderRadii: px(500)}} borderless children={
-                                <Text text={s} cursor={Cursor.pointer} visualMeaning={VM.SUCCESS} fontSize={px(12)} coloredText type={TextType.secondaryDescription}/>
-                            }/>
-                        ))
+                    <If condition={p.data.description !== undefined && p.data.description.trim().length > 0} ifTrue={
+                        <Text type={TextType.secondaryDescription} fontSize={px(12)} text={p.data.description}/>
                     }/>,
+
+                    <If condition={p.data.internalTags.length > 0} ifTrue={
+                        <FlexRow gap={t.gaps.smallGab} elements={
+                            p.data.internalTags.map(s => (
+                                <Box highlightShadow={false} cursor={Cursor.pointer} highlight opaque paddingY={px(4)} paddingX={px(7)} visualMeaning={VM.SUCCESS} borderRadiiConfig={{ enableCustomBorderRadii: true, fallbackCustomBorderRadii: px(500)}} borderless children={
+                                    <Text text={s} cursor={Cursor.pointer} visualMeaning={VM.SUCCESS} fontSize={px(12)} coloredText type={TextType.secondaryDescription}/>
+                                }/>
+                            ))
+                        }/>
+                    }/>,
+
+
 
                     <FlexRow elements={[
                         <Tooltip title={"DBMS H2"} arrow noBorder children={
