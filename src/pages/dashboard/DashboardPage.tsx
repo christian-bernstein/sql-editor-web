@@ -3,7 +3,7 @@ import "../../styles/pages/DashboardPage.scss";
 import {ProjectInfo} from "../../components/ho/projectInfo/ProjectInfo";
 import {App, utilizeGlobalTheme} from "../../logic/app/App";
 import {ProjectInfoData} from "../../logic/data/ProjectInfoData";
-import {FlexBox} from "../../components/lo/FlexBox";
+import {Flex, FlexBox} from "../../components/lo/FlexBox";
 import {Screen} from "../../components/lo/Page";
 import {Text, TextType} from "../../components/lo/Text";
 import {Align} from "../../logic/style/Align";
@@ -43,6 +43,7 @@ import {FolderData} from "../../logic/data/FolderData";
 import {Folder} from "../../components/ho/folder/Folder";
 import {AF} from "../../components/logic/ArrayFragment";
 import {Button} from "../../components/lo/Button";
+import {ProjectCard} from "../../components/ho/projectCard/ProjectCard";
 
 export type DashboardPageProps = {
 }
@@ -286,8 +287,16 @@ export default class DashboardPage extends BernieComponent<DashboardPageProps, D
                 } ifFalse={
                     <LiteGrid columns={4} responsive minResponsiveWidth={px(350)} gap={em(1)} children={
                         this.getFilteredProjects().map(project => {
+                            // return (
+                            //     <ProjectInfo
+                            //         key={project.id}
+                            //         onSelect={data => this.onProjectSelect(data)}
+                            //         data={project}
+                            //     />
+                            // );
+
                             return (
-                                <ProjectInfo
+                                <ProjectCard
                                     key={project.id}
                                     onSelect={data => this.onProjectSelect(data)}
                                     data={project}

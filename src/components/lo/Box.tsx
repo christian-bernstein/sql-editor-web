@@ -44,7 +44,11 @@ export type BoxProps = {
         topRight?: DimensionalMeasured,
         bottomLeft?: DimensionalMeasured,
         bottomRight?: DimensionalMeasured
-    }
+    },
+    elements?: Array<JSX.Element>,
+    fw?: boolean,
+    fh?: boolean,
+    highlightShadow?: boolean
 }
 
 export type BoxArrowConfig = {
@@ -93,9 +97,9 @@ export class Box extends React.Component<BoxProps, any> {
           
           border: ${this.props.borderless ? "none" : `1px solid ${meaningfulColors.lighter.css()}`};
           padding: ${this.props.noPadding ? "0" : (getOr(this.props.paddingY, theme.paddings.defaultObjectPadding).css() + " " + getOr(this.props.paddingX, theme.paddings.defaultObjectPadding).css())};
-          width: ${getOr(this.props.width?.css(), "auto")};
+          width: ${this.props.fw ? "100%" : getOr(this.props.width?.css(), "auto")};
             // min-width: ${getOr(this.props.width?.css(), "auto")};
-          height: ${getOr(this.props.height?.css(), "auto")};
+          height: ${this.props.fh ? "100%" : getOr(this.props.height?.css(), "auto")};
           max-height: ${getOr(this.props.maxHeight?.css(), "auto")};
           max-width: ${getOr(this.props.maxWidth?.css(), "auto")};
           min-width: ${getOr(this.props.minWidth?.css(), "auto")};
@@ -117,9 +121,11 @@ export class Box extends React.Component<BoxProps, any> {
           &.highlight:hover {
             filter: brightness(${theme.hovers.hoverLightFilter.css()});
               // border: 1px solid ${theme.colors.primaryHighlightColor.css()} !important;
-            border: 1px solid ${meaningfulColors.lighter.css()} !important;
+            border: ${this.props.borderless ? "0" : "1px"} solid ${meaningfulColors.lighter.css()} !important;
               // box-shadow: 0 0 0 4px ${theme.colors.borderPrimaryShadowColor.css()};
-            box-shadow: 0 0 0 4px ${meaningfulColors.shadowColor.css()};
+            
+            
+            box-shadow: 0 0 0 ${getOr(this.props.highlightShadow, true) ? "4px" : "0"} ${meaningfulColors.shadowColor.css()};
           }
           
           // Arrow border
@@ -158,6 +164,7 @@ export class Box extends React.Component<BoxProps, any> {
         const highlight: boolean = this.props.highlight === undefined ? false : this.props.highlight;
         return (
             <Box style={getOr(this.props.style, {})} onClick={event => getOr(this.props.onClick, () => {})(event)} className={[...classNames, "box", highlight ? "highlight" : ""].join(" ").trim()}>
+                {this.props.elements}
                 {this.props.children}
             </Box>
         );

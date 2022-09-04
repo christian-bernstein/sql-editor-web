@@ -9,6 +9,8 @@ import {Align} from "../../logic/style/Align";
 import {Justify} from "../../logic/style/Justify";
 import {OverflowBehaviour} from "../../logic/style/OverflowBehaviour";
 import {createMargin, Margin} from "../../logic/style/Margin";
+import {BernieComponent} from "../../logic/BernieComponent";
+import {Assembly} from "../../logic/assembly/Assembly";
 
 export type FlexBoxProps = {
     flexDir?: FlexDirection,
@@ -29,8 +31,9 @@ export type FlexBoxProps = {
     paddingY?: DimensionalMeasured,
     padding?: boolean,
     id?: string,
+    elements?: Array<JSX.Element>,
     fw?: boolean,
-    fh?: boolean
+    fh?: boolean,
 }
 
 export const FlexBox: React.FC<FlexBoxProps> = props => {
@@ -62,9 +65,19 @@ export const FlexBox: React.FC<FlexBoxProps> = props => {
 
     return (
         <Wrapper id={props.id} as={getOr(props.type, "div")} style={getOr(props.style, {})} className={getOr(props.classnames?.join(" "), "")}>
+            {props.elements}
             {props.children}
         </Wrapper>
     );
+}
+
+export class FlexRow extends BernieComponent<FlexBoxProps, any, any> {
+
+    componentRender(p: FlexBoxProps, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
+        return (
+            <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} {...p}/>
+        );
+    }
 }
 
 export {

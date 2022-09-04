@@ -32,6 +32,11 @@ export class QuickTest extends BernieComponent<any, any, any> {
         });
     }
 
+    init() {
+        super.init();
+        this.testAssembly();
+    }
+
     componentRender(p: any, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return this.component(() => this.a("test"), "test");
     }
