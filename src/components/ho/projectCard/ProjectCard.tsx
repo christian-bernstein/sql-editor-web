@@ -18,7 +18,6 @@ import {ReactComponent as EngineIcon} from "../../../assets/icons/ic-20/ic20-fun
 import {ReactComponent as CommitIcon} from "../../../assets/icons/ic-20/ic20-publish.svg";
 import {ReactComponent as FilesizeIcon} from "../../../assets/icons/ic-20/ic20-file.svg";
 import {ReactComponent as InformationIcon} from "../../../assets/icons/ic-20/ic20-info.svg";
-import moment from "moment";
 import {App} from "../../../logic/app/App";
 import {ProjectFileSizeRequestPacketData} from "../../../packets/out/ProjectFileSizeRequestPacketData";
 import {ProjectFileSizeResponsePacketData} from "../../../packets/in/ProjectFileSizeResponsePacketData";
@@ -28,6 +27,7 @@ import {QueryDisplay} from "../../logic/QueryDisplay";
 import {QueryError} from "../../../logic/query/QueryError";
 import {Loader} from "../../lo/Loader";
 import {If} from "../../logic/If";
+import {OverflowBehaviour} from "../../../logic/style/OverflowBehaviour";
 
 export type ProjectCardProps = {
     data: ProjectInfoData,
@@ -47,6 +47,7 @@ export class ProjectCard extends BernieComponent<ProjectCardProps, any, ProjectC
                 component: () => this,
                 fallback: 0,
                 timeout: 5000,
+                processingDelay: 2000,
                 listeners: ["file-size"],
                 process: (resolve, reject) => {
                     App.app().connector(connector => {
@@ -59,7 +60,10 @@ export class ProjectCard extends BernieComponent<ProjectCardProps, any, ProjectC
                             callback: {
                                 handle: (connector1, packet) => {
                                     const data: ProjectFileSizeResponsePacketData = packet.data;
-                                    resolve (data.fileSize);
+
+                                    console.log("calling response function")
+
+                                    resolve(data.fileSize);
                                 }
                             }
                         });
@@ -81,11 +85,11 @@ export class ProjectCard extends BernieComponent<ProjectCardProps, any, ProjectC
 
     private filesizeTagAssembly() {
         this.assembly.assembly("filesize-tag", theme => {
+            console.error("filesize-tag rendering")
+
             return (
                 <FlexRow gap={theme.gaps.smallGab.times(.5)} elements={[
                     <Icon icon={<FilesizeIcon/>} size={px(16)} color={theme.colors.fontSecondaryColor}/>,
-
-                    <Text text={this.local.state.projectFileSize.get()[1]}/>,
 
                     <QueryDisplay<number> q={this.local.state.projectFileSize} renderer={{
                         successOrNeutral(q: Queryable<number>, data: number): JSX.Element {
@@ -116,12 +120,15 @@ export class ProjectCard extends BernieComponent<ProjectCardProps, any, ProjectC
     componentRender(p: ProjectCardProps, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
             <Box width={getOr(p.width, percent(100))} elements={[
-                <Flex justifyContent={Justify.SPACE_BETWEEN} elements={[
-                    <Flex elements={[
+                <Flex fh fw justifyContent={Justify.SPACE_BETWEEN} elements={[
+                    <Flex fw elements={[
                         <FlexRow fw justifyContent={Justify.SPACE_BETWEEN} elements={[
                             <FlexRow gap={t.gaps.smallGab} elements={[
                                 // <Icon icon={<CardGenericIcon/>} size={px(16)} color={t.colors.fontSecondaryColor}/>,
-                                <Icon icon={<CardDBIcon/>} size={px(16)} color={t.colors.fontSecondaryColor}/>,
+                                <Icon icon={<CardDBIcon/>} size={px(16)} color={t.colors.fontSecondaryColor}
+                                      // TODO remove this debug code
+                                      onClick={() => this.rerender("file-size")}
+                                />,
 
                                 <Tooltip title={`Open ${p.data.title}`} arrow noBorder children={
                                     <Text bold text={p.data.title} highlight visualMeaning={VM.SUCCESS} cursor={Cursor.pointer} coloredText onClick={() => {
@@ -163,27 +170,28 @@ export class ProjectCard extends BernieComponent<ProjectCardProps, any, ProjectC
                         }/>
                     ]}/>,
 
-                    <FlexRow elements={[
-                        <Tooltip title={"DBMS H2"} arrow noBorder children={
-                            <FlexRow gap={t.gaps.smallGab.times(.5)} elements={[
-                                <Icon icon={<EngineIcon/>} size={px(16)} color={t.colors.fontSecondaryColor}/>,
-                                <Text text={`H2`} type={TextType.secondaryDescription} fontSize={px(12)}/>
-                            ]}/>
-                        }/>,
+                    <FlexRow overflowXBehaviour={OverflowBehaviour.SCROLL} justifyContent={Justify.SPACE_BETWEEN} fw elements={[
+                        <FlexRow elements={[
+                            <Tooltip title={"DBMS H2"} arrow noBorder children={
+                                <FlexRow gap={t.gaps.smallGab.times(.5)} elements={[
+                                    <Icon icon={<EngineIcon/>} size={px(16)} color={t.colors.fontSecondaryColor}/>,
+                                    <Text text={`H2`} type={TextType.secondaryDescription} fontSize={px(12)}/>
+                                ]}/>
+                            }/>,
 
-                        <Tooltip title={"45 commits"} arrow noBorder children={
-                            <FlexRow gap={t.gaps.smallGab.times(.5)} elements={[
-                                <Icon icon={<CommitIcon/>} size={px(16)} color={t.colors.fontSecondaryColor}/>,
-                                <Text text={`45`} type={TextType.secondaryDescription} fontSize={px(12)}/>
-                            ]}/>
-                        }/>,
+                            <Tooltip title={"45 commits"} arrow noBorder children={
+                                <FlexRow gap={t.gaps.smallGab.times(.5)} elements={[
+                                    <Icon icon={<CommitIcon/>} size={px(16)} color={t.colors.fontSecondaryColor}/>,
+                                    <Text text={`45`} type={TextType.secondaryDescription} fontSize={px(12)}/>
+                                ]}/>
+                            }/>,
 
-                        this.component(() => this.a("filesize-tag"), ...Q.allChannels("file-size")),
-
-                        <Text text={`${p.data.lastEdited}`}/>,
+                            this.component(() => this.a("filesize-tag"), "file-size", ...Q.allChannels("file-size"))
+                        ]}/>,
 
                         <FlexRow gap={t.gaps.smallGab.times(.5)} elements={[
-                            <Text text={`Updated ${moment(p.data.lastEdited).fromNow()}`} type={TextType.secondaryDescription} fontSize={px(12)}/>
+                            // <Text text={`Updated ${moment(p.data.lastEdited).fromNow()}`} type={TextType.secondaryDescription} fontSize={px(12)}/>
+                            <Text text={`Updated ${p.data.lastEdited}`} type={TextType.secondaryDescription} fontSize={px(12)}/>
                         ]}/>
                     ]}/>
                 ]}/>

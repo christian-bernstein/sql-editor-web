@@ -272,7 +272,6 @@ export default class DashboardPage extends BernieComponent<DashboardPageProps, D
         return this.component(state => {
             const filtered = this.getFilteredProjects();
             const projectsSize = this.state.projects.length;
-            const theme = utilizeGlobalTheme();
 
             return (
                 <If condition={filtered.length === 0} ifTrue={
@@ -286,7 +285,7 @@ export default class DashboardPage extends BernieComponent<DashboardPageProps, D
                         </Centered>
                     }/>
                 } ifFalse={
-                    <LiteGrid columns={4} responsive minResponsiveWidth={px(350)} gap={theme.gaps.smallGab} children={
+                    <LiteGrid columns={4} responsive minResponsiveWidth={px(350)} gap={em(1)} children={
                         this.getFilteredProjects().map(project => {
                             // return (
                             //     <ProjectInfo

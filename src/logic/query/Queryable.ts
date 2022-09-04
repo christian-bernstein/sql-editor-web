@@ -56,6 +56,12 @@ export class Queryable<T> {
     }
 
     private changeQueryState(to: DataQueryState) {
+        console.error("re-rendering", this.config.listeners.map(channelBase => (
+            Queryable.channels(channelBase, to)[0]
+        )))
+
+        this.config.component().ifActive(component => console.error("still active"))
+
         this.config.component().rerender(
             ...this.config.listeners.map(channelBase => (
                 Queryable.channels(channelBase, to)[0]
