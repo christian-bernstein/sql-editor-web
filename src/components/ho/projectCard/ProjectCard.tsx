@@ -24,7 +24,6 @@ import {ProjectFileSizeRequestPacketData} from "../../../packets/out/ProjectFile
 import {ProjectFileSizeResponsePacketData} from "../../../packets/in/ProjectFileSizeResponsePacketData";
 import {getOr, Utils} from "../../../logic/Utils";
 import {Q, Queryable} from "../../../logic/query/Queryable";
-import {Button} from "../../lo/Button";
 import {QueryDisplay} from "../../logic/QueryDisplay";
 import {QueryError} from "../../../logic/query/QueryError";
 import {Loader} from "../../lo/Loader";
@@ -49,19 +48,23 @@ export class ProjectCard extends BernieComponent<ProjectCardProps, any, ProjectC
                 fallback: 0,
                 timeout: 5000,
                 listeners: ["file-size"],
-                process: (resolve, reject) => App.app().connector(connector => connector.call({
-                    packetID: "ProjectFileSizeRequestPacketData",
-                    protocol: "main",
-                    data: {
-                        projectID: this.props.data.id
-                    } as ProjectFileSizeRequestPacketData,
-                    callback: {
-                        handle: (connector1, packet) => {
-                            const data: ProjectFileSizeResponsePacketData = packet.data;
-                            resolve (data.fileSize);
-                        }
-                    }
-                }))
+                process: (resolve, reject) => {
+                    App.app().connector(connector => {
+                        connector.call({
+                            packetID: "ProjectFileSizeRequestPacketData",
+                            protocol: "main",
+                            data: {
+                                projectID: this.props.data.id
+                            } as ProjectFileSizeRequestPacketData,
+                            callback: {
+                                handle: (connector1, packet) => {
+                                    const data: ProjectFileSizeResponsePacketData = packet.data;
+                                    resolve (data.fileSize);
+                                }
+                            }
+                        });
+                    });
+                }
             })
         });
     }
@@ -81,6 +84,8 @@ export class ProjectCard extends BernieComponent<ProjectCardProps, any, ProjectC
             return (
                 <FlexRow gap={theme.gaps.smallGab.times(.5)} elements={[
                     <Icon icon={<FilesizeIcon/>} size={px(16)} color={theme.colors.fontSecondaryColor}/>,
+
+                    <Text text={this.local.state.projectFileSize.get()[1]}/>,
 
                     <QueryDisplay<number> q={this.local.state.projectFileSize} renderer={{
                         successOrNeutral(q: Queryable<number>, data: number): JSX.Element {
@@ -111,52 +116,52 @@ export class ProjectCard extends BernieComponent<ProjectCardProps, any, ProjectC
     componentRender(p: ProjectCardProps, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
             <Box width={getOr(p.width, percent(100))} elements={[
-                <Flex elements={[
-                    <FlexRow fw justifyContent={Justify.SPACE_BETWEEN} elements={[
-                        <FlexRow gap={t.gaps.smallGab} elements={[
-                            // <Icon icon={<CardGenericIcon/>} size={px(16)} color={t.colors.fontSecondaryColor}/>,
-                            <Icon icon={<CardDBIcon/>} size={px(16)} color={t.colors.fontSecondaryColor}/>,
+                <Flex justifyContent={Justify.SPACE_BETWEEN} elements={[
+                    <Flex elements={[
+                        <FlexRow fw justifyContent={Justify.SPACE_BETWEEN} elements={[
+                            <FlexRow gap={t.gaps.smallGab} elements={[
+                                // <Icon icon={<CardGenericIcon/>} size={px(16)} color={t.colors.fontSecondaryColor}/>,
+                                <Icon icon={<CardDBIcon/>} size={px(16)} color={t.colors.fontSecondaryColor}/>,
 
-                            <Tooltip title={`Open ${p.data.title}`} arrow noBorder children={
-                                <Text bold text={p.data.title} highlight visualMeaning={VM.SUCCESS} cursor={Cursor.pointer} coloredText onClick={() => {
-                                    p.onSelect?.(p.data);
-                                }}/>
-                            }/>,
+                                <Tooltip title={`Open ${p.data.title}`} arrow noBorder children={
+                                    <Text bold text={p.data.title} highlight visualMeaning={VM.SUCCESS} cursor={Cursor.pointer} coloredText onClick={() => {
+                                        p.onSelect?.(p.data);
+                                    }}/>
+                                }/>,
 
-                            <Badge children={
-                                <Text text={"Private"} fontSize={px(12)} type={TextType.secondaryDescription}/>
-                            }/>
-                        ]}/>,
-
-                        <FlexRow gap={t.gaps.smallGab} elements={[
-                            <Tooltip title={"Information"} arrow noBorder children={
-                                <FlexRow elements={[
-                                    <Icon icon={<InformationIcon/>} size={px(16)} color={t.colors.fontSecondaryColor}/>,
-                                ]}/>
-                            }/>,
-                            <Tooltip title={"More options"} arrow noBorder children={
-                                <FlexRow elements={[
-                                    <Icon icon={<ContextIcon/>} size={px(16)} color={t.colors.fontSecondaryColor}/>,
-                                ]}/>
-                            }/>
-                        ]}/>,
-                    ]}/>,
-
-                    <If condition={p.data.description !== undefined && p.data.description.trim().length > 0} ifTrue={
-                        <Text type={TextType.secondaryDescription} fontSize={px(12)} text={p.data.description}/>
-                    }/>,
-
-                    <If condition={p.data.internalTags.length > 0} ifTrue={
-                        <FlexRow gap={t.gaps.smallGab} elements={
-                            p.data.internalTags.map(s => (
-                                <Box highlightShadow={false} cursor={Cursor.pointer} highlight opaque paddingY={px(4)} paddingX={px(7)} visualMeaning={VM.SUCCESS} borderRadiiConfig={{ enableCustomBorderRadii: true, fallbackCustomBorderRadii: px(500)}} borderless children={
-                                    <Text text={s} cursor={Cursor.pointer} visualMeaning={VM.SUCCESS} fontSize={px(12)} coloredText type={TextType.secondaryDescription}/>
+                                <Badge children={
+                                    <Text text={"Private"} fontSize={px(12)} type={TextType.secondaryDescription}/>
                                 }/>
-                            ))
+                            ]}/>,
+
+                            <FlexRow gap={t.gaps.smallGab} elements={[
+                                <Tooltip title={"Information"} arrow noBorder children={
+                                    <FlexRow elements={[
+                                        <Icon icon={<InformationIcon/>} size={px(16)} color={t.colors.fontSecondaryColor}/>,
+                                    ]}/>
+                                }/>,
+                                <Tooltip title={"More options"} arrow noBorder children={
+                                    <FlexRow elements={[
+                                        <Icon icon={<ContextIcon/>} size={px(16)} color={t.colors.fontSecondaryColor}/>,
+                                    ]}/>
+                                }/>
+                            ]}/>,
+                        ]}/>,
+
+                        <If condition={p.data.description !== undefined && p.data.description.trim().length > 0} ifTrue={
+                            <Text type={TextType.secondaryDescription} fontSize={px(12)} text={p.data.description}/>
+                        }/>,
+
+                        <If condition={p.data.internalTags.length > 0} ifTrue={
+                            <FlexRow gap={t.gaps.smallGab} elements={
+                                p.data.internalTags.map(s => (
+                                    <Box highlightShadow={false} cursor={Cursor.pointer} highlight opaque paddingY={px(4)} paddingX={px(7)} visualMeaning={VM.SUCCESS} borderRadiiConfig={{ enableCustomBorderRadii: true, fallbackCustomBorderRadii: px(500)}} borderless children={
+                                        <Text text={s} cursor={Cursor.pointer} visualMeaning={VM.SUCCESS} fontSize={px(12)} coloredText type={TextType.secondaryDescription}/>
+                                    }/>
+                                ))
+                            }/>
                         }/>
-                    }/>,
-
-
+                    ]}/>,
 
                     <FlexRow elements={[
                         <Tooltip title={"DBMS H2"} arrow noBorder children={
@@ -174,6 +179,8 @@ export class ProjectCard extends BernieComponent<ProjectCardProps, any, ProjectC
                         }/>,
 
                         this.component(() => this.a("filesize-tag"), ...Q.allChannels("file-size")),
+
+                        <Text text={`${p.data.lastEdited}`}/>,
 
                         <FlexRow gap={t.gaps.smallGab.times(.5)} elements={[
                             <Text text={`Updated ${moment(p.data.lastEdited).fromNow()}`} type={TextType.secondaryDescription} fontSize={px(12)}/>
