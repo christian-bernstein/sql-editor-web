@@ -18,7 +18,14 @@ import {ReactComponent as EngineIcon} from "../../../assets/icons/ic-20/ic20-fun
 import {ReactComponent as CommitIcon} from "../../../assets/icons/ic-20/ic20-publish.svg";
 import {ReactComponent as FilesizeIcon} from "../../../assets/icons/ic-20/ic20-file.svg";
 import {ReactComponent as InformationIcon} from "../../../assets/icons/ic-20/ic20-info.svg";
-import {App} from "../../../logic/app/App";
+
+import {ReactComponent as RunIcon} from "../../../assets/icons/ic-16/ic16-play.svg";
+import {ReactComponent as EditIcon} from "../../../assets/icons/ic-20/ic20-edit.svg";
+import {ReactComponent as MoveIcon} from "../../../assets/icons/ic-20/ic20-direction.svg";
+import {ReactComponent as DeleteIcon} from "../../../assets/icons/ic-20/ic20-delete.svg";
+
+
+import {App, utilizeGlobalTheme} from "../../../logic/app/App";
 import {ProjectFileSizeRequestPacketData} from "../../../packets/out/ProjectFileSizeRequestPacketData";
 import {ProjectFileSizeResponsePacketData} from "../../../packets/in/ProjectFileSizeResponsePacketData";
 import {getOr, Utils} from "../../../logic/Utils";
@@ -28,6 +35,11 @@ import {QueryError} from "../../../logic/query/QueryError";
 import {Loader} from "../../lo/Loader";
 import {If} from "../../logic/If";
 import {OverflowBehaviour} from "../../../logic/style/OverflowBehaviour";
+import {StaticDrawerMenu} from "../../lo/StaticDrawerMenu";
+import {DrawerHeader} from "../../lo/DrawerHeader";
+import {SettingsGroup} from "../../lo/SettingsGroup";
+import {SettingsElement} from "../settingsElement/SettingsElement";
+import {Color} from "../../../logic/style/Color";
 
 export type ProjectCardProps = {
     data: ProjectInfoData,
@@ -58,9 +70,6 @@ export class ProjectCard extends BernieComponent<ProjectCardProps, any, ProjectC
                             callback: {
                                 handle: (connector1, packet) => {
                                     const data: ProjectFileSizeResponsePacketData = packet.data;
-
-                                    console.log("calling response function", Utils.humanFileSize(data.fileSize))
-
                                     resolve(data.fileSize);
                                 }
                             }
@@ -83,8 +92,6 @@ export class ProjectCard extends BernieComponent<ProjectCardProps, any, ProjectC
 
     private filesizeTagAssembly() {
         this.assembly.assembly("filesize-tag", theme => {
-            console.error("filesize-tag rendering", this.local.state.projectFileSize.get())
-
             return (
                 <FlexRow gap={theme.gaps.smallGab.times(.5)} elements={[
                     <Icon icon={<FilesizeIcon/>} size={px(16)} color={theme.colors.fontSecondaryColor}/>,
@@ -113,6 +120,31 @@ export class ProjectCard extends BernieComponent<ProjectCardProps, any, ProjectC
                 ]}/>
             );
         })
+    }
+
+    private openContextMenu() {
+        this.dialog(
+            <StaticDrawerMenu body={props => {
+                const theme = utilizeGlobalTheme();
+                return (
+                    <Flex fw elements={[
+                        <DrawerHeader header={"Options"} description={"ijasghd jkagsd ajkghs djahgsd jkag shdjkashdg kjahsd kjahsd kjahsd "} enableBadge badgeVM={VM.UI_NO_HIGHLIGHT} badgeText={this.props.data.title}/>,
+                        <SettingsGroup elements={[
+                            <SettingsElement groupDisplayMode title={"Start editor"} iconConfig={{ enable: true, iconGenerator: element => <RunIcon/>}}/>
+                        ]}/>,
+                        <SettingsGroup elements={[
+                            <SettingsElement groupDisplayMode title={"Open preview"} iconConfig={{ enable: true, iconGenerator: element => <></>}}/>,
+                            <SettingsElement groupDisplayMode title={"Edit project"} iconConfig={{ enable: true, iconGenerator: element => <EditIcon/>}} forceRenderSubpageIcon/>,
+                            <SettingsElement groupDisplayMode title={"Move project"} iconConfig={{ enable: true, iconGenerator: element => <MoveIcon/>}}/>,
+                            <SettingsElement groupDisplayMode title={"Delete project"} iconConfig={{ enable: true, color: theme.colors.errorColor, iconGenerator: element => <DeleteIcon/>}} forceRenderSubpageIcon/>,
+                        ]}/>,
+                        <SettingsGroup elements={[
+                            <SettingsElement groupDisplayMode title={"Copy project id"}/>,
+                        ]}/>,
+                    ]}/>
+                );
+            }}/>
+        );
     }
 
     componentRender(p: ProjectCardProps, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
@@ -147,7 +179,7 @@ export class ProjectCard extends BernieComponent<ProjectCardProps, any, ProjectC
                                 }/>,
                                 <Tooltip title={"More options"} arrow noBorder children={
                                     <FlexRow elements={[
-                                        <Icon icon={<ContextIcon/>} size={px(16)} color={t.colors.fontSecondaryColor}/>,
+                                        <Icon onClick={() => this.openContextMenu()} icon={<ContextIcon/>} size={px(16)} color={t.colors.fontSecondaryColor}/>,
                                     ]}/>
                                 }/>
                             ]}/>,

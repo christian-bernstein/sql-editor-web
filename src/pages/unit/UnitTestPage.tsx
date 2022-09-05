@@ -41,6 +41,7 @@ import {UnitTestUtils} from "./UnitTestUtils";
 import {UnitTest} from "./UnitTest";
 import {ProjectCardTest} from "./tests/ProjectCardTest";
 import {QuickTest} from "./QuickTest";
+import {NumPadTest} from "./tests/NumPadTest";
 
 export type UnitTestPageLocalState = {
     fdh: FormDataHub
@@ -51,11 +52,12 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
     static loadExternalUnittests() {
         UnitTestUtils.createTest(QuickTest.test);
         UnitTestUtils.createTest(ProjectCardTest.test);
+        UnitTestUtils.createTest(NumPadTest.test);
     }
 
     constructor() {
         super(undefined, undefined, {
-            fdh: new FormDataHub("unit-test-page")
+            fdh: new FormDataHub("unit-test-page").loadFromLocalStore()
         }, {
             enableLocalDialog: true
         });
