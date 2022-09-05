@@ -21,26 +21,31 @@ export type QueryDisplayProps<T> = {
 export class QueryDisplay<T> extends BernieComponent<QueryDisplayProps<T>, any, any> {
 
     componentRender(p: QueryDisplayProps<T>, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
-        switch (p.q.get()[1]) {
+        console.error("QueryDisplay rendering", p.q.get());
+
+        const q = p.q;
+        const [data, status, error] = p.q.get();
+
+        switch (status) {
             case DataQueryState.NEUTRAL: {
                 if (p.renderer.neural !== undefined) {
-                    return p.renderer.neural?.(p.q);
+                    return p.renderer.neural?.(q);
                 } else {
-                    return p.renderer.successOrNeutral?.(p.q, p.q.get()[0]);
+                    return p.renderer.successOrNeutral?.(q, data);
                 }
             }
             case DataQueryState.SUCCESS: {
                 if (p.renderer.success !== undefined) {
-                    return p.renderer.success?.(p.q, p.q.get()[0]);
+                    return p.renderer.success?.(q, data);
                 } else {
-                    return p.renderer.successOrNeutral?.(p.q, p.q.get()[0]);
+                    return p.renderer.successOrNeutral?.(q, data);
                 }
             }
             case DataQueryState.ERROR: {
-                return p.renderer.error?.(p.q, p.q.get()[2])
+                return p.renderer.error?.(q, error)
             }
             case DataQueryState.PROCESSING: {
-                return p.renderer.processing?.(p.q)
+                return p.renderer.processing?.(q)
             }
         }
     }

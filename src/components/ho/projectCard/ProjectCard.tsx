@@ -46,8 +46,6 @@ export class ProjectCard extends BernieComponent<ProjectCardProps, any, ProjectC
             projectFileSize: new Q({
                 component: () => this,
                 fallback: 0,
-                timeout: 5000,
-                processingDelay: 2000,
                 listeners: ["file-size"],
                 process: (resolve, reject) => {
                     App.app().connector(connector => {
@@ -61,7 +59,7 @@ export class ProjectCard extends BernieComponent<ProjectCardProps, any, ProjectC
                                 handle: (connector1, packet) => {
                                     const data: ProjectFileSizeResponsePacketData = packet.data;
 
-                                    console.log("calling response function")
+                                    console.log("calling response function", Utils.humanFileSize(data.fileSize))
 
                                     resolve(data.fileSize);
                                 }
@@ -85,7 +83,7 @@ export class ProjectCard extends BernieComponent<ProjectCardProps, any, ProjectC
 
     private filesizeTagAssembly() {
         this.assembly.assembly("filesize-tag", theme => {
-            console.error("filesize-tag rendering")
+            console.error("filesize-tag rendering", this.local.state.projectFileSize.get())
 
             return (
                 <FlexRow gap={theme.gaps.smallGab.times(.5)} elements={[
