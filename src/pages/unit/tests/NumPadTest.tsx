@@ -49,7 +49,11 @@ export class NumPadTest extends BernieComponent<any, any, any> {
                     <Numpad
                         length={6}
                         validator={value => Number(value.join("")) === 230121}
-                        onValidationSuccess={() => this.closeLocalDialog()}
+                        onValidationSuccess={() => {
+                            setTimeout(() => {
+                                this.closeLocalDialog();
+                            }, 100);
+                        }}
                     />
                 ]}/>
             )}/>
