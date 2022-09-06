@@ -65,19 +65,6 @@ export class NumPadTest extends BernieComponent<any, any, any> {
                                         );
                                     }, 250);
                                 }, 500);
-                            },
-                            onAttemptsExceeded: component => {
-                                setTimeout(() => {
-                                    this.closeLocalDialog();
-
-                                    setTimeout(() => {
-                                        this.dialog(
-                                            <StaticDrawerMenu body={() => (
-                                                <Text text={"ATTEMPTS EXCEEDED"}/>
-                                            )}/>
-                                        );
-                                    }, 250);
-                                }, 500);
                             }
                         }}
                     />
