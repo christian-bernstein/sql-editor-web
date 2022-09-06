@@ -134,7 +134,7 @@ export class ProjectCard extends BernieComponent<ProjectCardProps, any, ProjectC
                         <SettingsGroup elements={[
                             <SettingsElement groupDisplayMode title={"Start editor"} iconConfig={{ enable: true, iconGenerator: element => <RunIcon/>}} onClick={element => {
 
-                                this.dialog(
+                                element.dialog(
                                     <StaticDrawerMenu body={p => (
                                         <PinPad length={6} maxAttempts={4} validator={i => Number(i.join("")) === 230121} actions={{
                                             onSuccess: component => {
@@ -148,7 +148,7 @@ export class ProjectCard extends BernieComponent<ProjectCardProps, any, ProjectC
                                                         level: AnomalyLevel.ERROR,
                                                         description: "Cannot start editor. An incorrect PIN was inputted 4 times."
                                                     }}/>
-                                                ), 500);
+                                                ), 750);
                                             }
                                         }}/>
                                     )}/>
