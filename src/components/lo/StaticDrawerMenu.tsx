@@ -2,7 +2,7 @@ import React from "react";
 import {DimensionalMeasured, percent, px} from "../../logic/style/DimensionalMeasured";
 import {Justify} from "../../logic/style/Justify";
 import {Align} from "../../logic/style/Align";
-import {Default, Mobile} from "../logic/Media";
+import {Default, Desktop, Mobile, Tablet} from "../logic/Media";
 import {Box} from "./Box";
 import {OverflowBehaviour} from "../../logic/style/OverflowBehaviour";
 import {Flex} from "./FlexBox";
@@ -71,7 +71,18 @@ export class StaticDrawerMenu<T> extends BernieComponent<StaticDrawerMenuProps<T
                         }/>
                     </Flex>
                 }/>,
-                <Default children={
+
+                <Tablet children={
+                    <Flex padding paddingY={px()} paddingX={px(10)} height={percent(100)} justifyContent={getOr(p.justifyContent, Justify.FLEX_END)} align={getOr(p.align, Align.CENTER)}>
+                        <Box borderless width={getOr(p.width, percent(75))} maxHeight={percent(100)} overflowYBehaviour={OverflowBehaviour.SCROLL} borderRadiiConfig={{
+                            enableCustomBorderRadii: true,
+                            bottomRight: px(),
+                            bottomLeft: px()
+                        }} children={this.props.body(this.props)}/>
+                    </Flex>
+                }/>,
+
+                <Desktop children={
                     <Flex padding paddingY={px()} paddingX={px(10)} height={percent(100)} justifyContent={getOr(p.justifyContent, Justify.FLEX_END)} align={getOr(p.align, Align.CENTER)}>
                         <Box borderless width={getOr(p.width, percent(30))} maxHeight={percent(100)} overflowYBehaviour={OverflowBehaviour.SCROLL} borderRadiiConfig={{
                             enableCustomBorderRadii: true,
