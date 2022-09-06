@@ -261,9 +261,11 @@ export class MenuPageV2 extends BernieComponent<MenuPageV2Props, any, MenuPageV2
                             />
                         }/>
                         <Screen style={{width: "100vw !important"}} deactivatePadding children={this.props.children} onDoubleClick={() => {
-                            this.local.setStateWithChannels({
-                                state: MenuState.EXTENDED
-                            }, ["menu-extender"]);
+
+                            // TODO: Remove this feature or redesign it -> Double click is triggered on mobile devices to often unintentionally
+                            // this.local.setStateWithChannels({
+                            //     state: MenuState.EXTENDED
+                            // }, ["menu-extender"]);
                         }}/>
                     </div>
                 );

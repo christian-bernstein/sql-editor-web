@@ -130,15 +130,17 @@ export class ProjectCard extends BernieComponent<ProjectCardProps, any, ProjectC
                 const theme = utilizeGlobalTheme();
                 return (
                     <Flex fw elements={[
-                        <DrawerHeader header={"Options"} description={"ijasghd jkagsd ajkghs djahgsd jkag shdjkashdg kjahsd kjahsd kjahsd "} enableBadge badgeVM={VM.UI_NO_HIGHLIGHT} badgeText={this.props.data.title}/>,
+                        <DrawerHeader header={"Options"} description={"Options for the selected project are listed here "} enableBadge badgeVM={VM.UI_NO_HIGHLIGHT} badgeText={this.props.data.title}/>,
                         <SettingsGroup elements={[
-                            <SettingsElement groupDisplayMode title={"Start editor"} iconConfig={{ enable: true, iconGenerator: element => <RunIcon/>}} onClick={element => {
+                            <SettingsElement groupDisplayMode title={"Start editor"} iconConfig={{ enable: true, color: theme.colors.primaryColor, iconGenerator: element => <RunIcon/>}} onClick={element => {
 
                                 element.dialog(
                                     <StaticDrawerMenu body={p => (
                                         <PinPad length={6} maxAttempts={4} validator={i => Number(i.join("")) === 230121} actions={{
                                             onSuccess: component => {
-                                                this.props.onSelect?.(this.props.data);
+                                                this.closeLocalDialog();
+
+                                                setTimeout(() => this.props.onSelect?.(this.props.data), 500);
                                             },
                                             onAttemptsExceeded: component => {
                                                 this.closeLocalDialog();
@@ -148,7 +150,7 @@ export class ProjectCard extends BernieComponent<ProjectCardProps, any, ProjectC
                                                         level: AnomalyLevel.ERROR,
                                                         description: "Cannot start editor. An incorrect PIN was inputted 4 times."
                                                     }}/>
-                                                ), 750);
+                                                ), 500);
                                             }
                                         }}/>
                                     )}/>
