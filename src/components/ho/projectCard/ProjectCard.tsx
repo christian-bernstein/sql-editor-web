@@ -138,9 +138,10 @@ export class ProjectCard extends BernieComponent<ProjectCardProps, any, ProjectC
                                     <StaticDrawerMenu body={p => (
                                         <PinPad length={6} maxAttempts={4} validator={i => Number(i.join("")) === 230121} actions={{
                                             onSuccess: component => {
-                                                this.closeLocalDialog();
-
-                                                setTimeout(() => this.props.onSelect?.(this.props.data), 500);
+                                                setTimeout(() => {
+                                                    element.closeLocalDialog();
+                                                    setTimeout(() => this.props.onSelect?.(this.props.data), 250);
+                                                }, 500);
                                             },
                                             onAttemptsExceeded: component => {
                                                 this.closeLocalDialog();
