@@ -13,7 +13,7 @@ import {Cursor} from "../../../logic/style/Cursor";
 
 import clickSound from "../../../assets/sound/click.mp3";
 import {DrawerHeader} from "../../../components/lo/DrawerHeader";
-import {ObjectVisualMeaning, VM} from "../../../logic/style/ObjectVisualMeaning";
+import {VM} from "../../../logic/style/ObjectVisualMeaning";
 import {Flex, FlexRow} from "../../../components/lo/FlexBox";
 import {Align} from "../../../logic/style/Align";
 import {Box} from "../../../components/lo/Box";
@@ -22,7 +22,8 @@ import styled from "styled-components";
 import {Icon} from "../../../components/lo/Icon";
 
 import {ReactComponent as DeleteIcon} from "../../../assets/icons/ic-16/ic16-chevron-left.svg";
-import {logAndReturn} from "../../../logic/Utils";
+import {SoundEffectProps} from "../../../components/props/SoundEffectProps";
+import {getOr} from "../../../logic/Utils";
 
 
 export class NumPadTest extends BernieComponent<any, any, any> {
@@ -47,12 +48,37 @@ export class NumPadTest extends BernieComponent<any, any, any> {
                     />,
 
                     <Numpad
-                        length={6}
-                        validator={value => Number(value.join("")) === 230121}
-                        onValidationSuccess={() => {
-                            setTimeout(() => {
-                                this.closeLocalDialog();
-                            }, 100);
+                        length={1}
+                        maxAttempts={3}
+                        validator={value => Number(value.join("")) === 1}
+                        enableSounds={false}
+                        actions={{
+                            onSuccess: component => {
+                                setTimeout(() => {
+                                    this.closeLocalDialog();
+
+                                    setTimeout(() => {
+                                        this.dialog(
+                                            <StaticDrawerMenu body={() => (
+                                                <Text text={"SUCCESS"}/>
+                                            )}/>
+                                        );
+                                    }, 250);
+                                }, 500);
+                            },
+                            onAttemptsExceeded: component => {
+                                setTimeout(() => {
+                                    this.closeLocalDialog();
+
+                                    setTimeout(() => {
+                                        this.dialog(
+                                            <StaticDrawerMenu body={() => (
+                                                <Text text={"ATTEMPTS EXCEEDED"}/>
+                                            )}/>
+                                        );
+                                    }, 250);
+                                }, 500);
+                            }
                         }}
                     />
                 ]}/>
@@ -72,15 +98,24 @@ export class NumPadTest extends BernieComponent<any, any, any> {
     }
 }
 
-export type NumpadProps = {
+export interface PinPadActions {
+    onSuccess?(component: Numpad): void,
+    onAttemptsExceeded?(component: Numpad): void,
+}
+
+export type NumpadProps = SoundEffectProps & {
     length: number,
     validator: (value: Array<number>) => boolean,
-    onValidationSuccess: () => void
+    maxAttempts?: number,
+    actions: PinPadActions
 }
 
 export type NumpadLocalState = {
     value: Array<number>,
-    validState: NumpadValidationState
+    validState: NumpadValidationState,
+    attempts: number,
+    numpadState: NumpadState,
+    clipboardValue?: string
 }
 
 export enum NumpadValidationState {
@@ -89,34 +124,64 @@ export enum NumpadValidationState {
     INVALID
 }
 
-export class Numpad extends BernieComponent<NumpadProps, any, NumpadLocalState> {
+export enum NumpadState {
+    VALID,
+    INTERNAL_ERROR,
+    EXCEEDED_ATTEMPTS,
+    INVALID,
+    NEUTRAL
+}
 
-    private clickAudio = new Audio(clickSound);
+export class Numpad extends BernieComponent<NumpadProps, any, NumpadLocalState> {
 
     constructor(props: NumpadProps) {
         super(props, undefined, {
             value: [],
-            validState: NumpadValidationState.NEUTRAL
+            validState: NumpadValidationState.NEUTRAL,
+            attempts: 0,
+            numpadState: NumpadState.NEUTRAL
         });
     }
 
+    private isNumpadLocked(): boolean {
+        return this.local.state.numpadState !== NumpadState.NEUTRAL
+            && this.local.state.numpadState !== NumpadState.INTERNAL_ERROR
+            && this.local.state.numpadState !== NumpadState.INVALID;
+    }
+
     private triggerValidation() {
+        const currentNumpadState = this.local.state.numpadState;
+        const lockedState = this.isNumpadLocked();
+        const attempts = this.local.state.attempts;
+
         if (this.local.state.value.length === this.props.length) {
             // Pre-Validation completed, can execute Main-Validation
             const valid = this.props.validator(this.local.state.value);
 
             if (valid) {
-
                 this.local.setStateWithChannels({
-                    validState: NumpadValidationState.VALID
+                    validState: NumpadValidationState.VALID,
+                    numpadState: NumpadState.VALID
                 }, ["pin-display"], () => {
-                    this.props.onValidationSuccess();
+                    if (this.local.state.numpadState === NumpadState.VALID) {
+                        this.props.actions.onSuccess?.(this);
+                    }
                 });
             } else {
+                this.local.setState({
+                    attempts: this.local.state.attempts + 1
+                });
 
                 this.local.setStateWithChannels({
-                    validState: NumpadValidationState.INVALID
+                    validState: NumpadValidationState.INVALID,
+                    numpadState: (this.local.state.attempts >= getOr(this.props.maxAttempts, 6))
+                        ? NumpadState.EXCEEDED_ATTEMPTS
+                        : NumpadState.INVALID
                 }, ["pin-display"], () => {
+                    if (this.local.state.numpadState === NumpadState.EXCEEDED_ATTEMPTS) {
+                        this.props.actions.onAttemptsExceeded?.(this);
+                    }
+
                     setTimeout(() => {
                         this.local.setStateWithChannels({
                             validState: NumpadValidationState.NEUTRAL,
@@ -127,10 +192,19 @@ export class Numpad extends BernieComponent<NumpadProps, any, NumpadLocalState> 
             }
         }
 
+        const channels: Array<string> = ["pin-display"];
 
+        if (currentNumpadState !== this.local.state.numpadState || attempts !== this.local.state.attempts) {
+            // Numpad state has changed
+            channels.push("information");
+        }
 
+        if (lockedState !== this.isNumpadLocked()) {
+            // Numpad-locked state has changed
+            channels.push("number-field");
+        }
 
-        this.rerender("pin-display");
+        this.rerender(...channels);
     }
 
     componentRender(p: NumpadProps, s: any, l: NumpadLocalState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
@@ -223,69 +297,135 @@ export class Numpad extends BernieComponent<NumpadProps, any, NumpadLocalState> 
                                 }/>
                             );
                     }
-
-
                 }, "pin-display"),
 
-                <LiteGrid columns={3} gap={t.gaps.smallGab} children={
-                    <AF elements={
-                        [1, 2, 3, 4, 5, 6, 7, 8, 9, "fn1", 0, "fn2"].map(i => {
-                            if (i === "fn2") {
-                                // Delete button
-                                return this.component(local => {
-                                    const nonEmpty = local.state.value.length > 0;
+                this.component(local => {
+                    return (
+                        <If condition={this.local.state.attempts > 0 && this.local.state.validState !== NumpadValidationState.VALID && this.local.state.numpadState !== NumpadState.EXCEEDED_ATTEMPTS} ifTrue={
+                            <Flex fw align={Align.CENTER} gap={t.gaps.smallGab} elements={[
+                                <Text text={"Incorrect PIN"} bold coloredText visualMeaning={VM.ERROR}/>,
+                                <Text text={`${getOr(p.maxAttempts, 6) - this.local.state.attempts} of ${getOr(p.maxAttempts, 6)} attempts left`} coloredText visualMeaning={VM.ERROR} fontSize={px(11)}/>,
+
+                                <LiteGrid gap={t.gaps.smallGab} columns={p.maxAttempts} children={
+                                    <AF elements={
+                                        Array.from(Array(p.maxAttempts).keys()).reverse().map((_, i) => (
+                                            <Flex fw fh align={Align.CENTER} children={
+                                                <If condition={this.local.state.attempts <= i} ifTrue={
+                                                    <Box noPadding width={percent(100)} opaque visualMeaning={VM.ERROR} height={px(5)} borderRadiiConfig={{
+                                                        enableCustomBorderRadii: true,
+                                                        fallbackCustomBorderRadii: px(500)
+                                                    }}/>
+                                                } ifFalse={
+                                                    <Box noPadding width={percent(100)} visualMeaning={VM.ERROR} height={px(5)} borderRadiiConfig={{
+                                                        enableCustomBorderRadii: true,
+                                                        fallbackCustomBorderRadii: px(500)
+                                                    }}/>
+                                                }/>
+                                            }/>
+                                        ))
+                                    }/>
+                                }/>
+                            ]}/>
+                        }/>
+                    );
+                }, "information"),
+
+                this.component(local => {
+                    return (
+                        <If condition={this.local.state.validState === NumpadValidationState.VALID} ifTrue={
+                            <Flex fw align={Align.CENTER} gap={t.gaps.smallGab} elements={[
+                                <Text text={"Correct PIN"} bold coloredText visualMeaning={VM.SUCCESS_DEFAULT}/>
+                            ]}/>
+                        }/>
+                    );
+                }, "information"),
+
+                this.component(local => {
+                    return (
+                        <If condition={this.local.state.numpadState === NumpadState.EXCEEDED_ATTEMPTS} ifTrue={
+                            <Flex fw align={Align.CENTER} gap={t.gaps.smallGab} elements={[
+                                <Text text={"Exceeded PIN attempts"} bold coloredText visualMeaning={VM.ERROR}/>,
+                                <Text text={"Contact an administrator of your team to reset your PIN"} align={Align.CENTER} fontSize={px(11)} coloredText visualMeaning={VM.ERROR}/>,
+                            ]}/>
+                        }/>
+                    );
+                }, "information"),
+
+                this.component(local => {
+                    return (
+                        <LiteGrid columns={3} gap={t.gaps.smallGab} children={
+                            <AF elements={
+                                [1, 2, 3, 4, 5, 6, 7, 8, 9, "fn1", 0, "fn2"].map(i => {
+                                    if (i === "fn2") {
+                                        // Delete button
+                                        return this.component(local => {
+                                            const nonEmpty = local.state.value.length > 0;
+
+                                            return (
+                                                <Button
+                                                    border={false}
+                                                    vibrationPattern={[10]}
+                                                    vibrateOnClick={nonEmpty}
+                                                    highlight={false}
+                                                    cursor={nonEmpty ? Cursor.pointer : Cursor.notAllowed}
+                                                    height={px(60)}
+                                                    width={percent(100)}
+                                                    onClick={() => {
+                                                        if (nonEmpty && local.state.validState !== NumpadValidationState.VALID) {
+                                                            this.local.state.value.pop();
+                                                            this.rerender("pin-display");
+                                                        }
+                                                    }}
+                                                    children={
+                                                        <Icon
+                                                            icon={<DeleteIcon/>}
+                                                            visualMeaning={VM.UI_NO_HIGHLIGHT}
+                                                            size={px(16)}
+                                                            colored={!nonEmpty}
+                                                        />
+                                                    }
+                                                />
+                                            );
+                                        }, "pin-display");
+                                    } else if (i === "fn1") {
+                                        return (
+                                            <span/>
+                                        );
+                                    }
 
                                     return (
-                                        <Button
-                                            border={false}
-                                            vibrationPattern={[10]}
-                                            vibrateOnClick={nonEmpty}
-                                            highlight={false}
-                                            cursor={nonEmpty ? Cursor.pointer : Cursor.notAllowed}
-                                            height={px(60)}
-                                            width={percent(100)}
-                                            onClick={() => {
-                                                if (nonEmpty && local.state.validState !== NumpadValidationState.VALID) {
-                                                    this.local.state.value.pop();
-                                                    this.rerender("pin-display");
-                                                }
-                                            }}
-                                            children={
-                                                <Icon
-                                                    icon={<DeleteIcon/>}
-                                                    visualMeaning={VM.UI_NO_HIGHLIGHT}
-                                                    size={px(16)}
-                                                    colored={!nonEmpty}
-                                                />
-                                            }
-                                        />
+                                        <If condition={i !== null} ifTrue={
+
+                                            <If condition={this.local.state.numpadState !== NumpadState.NEUTRAL && this.local.state.numpadState !== NumpadState.INTERNAL_ERROR} ifTrue={
+                                                <Button cursor={Cursor.notAllowed} height={px(60)} width={percent(100)} children={
+                                                    <Text text={String(i)} bold type={TextType.displayText} coloredText visualMeaning={VM.UI_NO_HIGHLIGHT}/>
+                                                }/>
+                                            } ifFalse={
+                                                <Button highlight vibrationPattern={[10]} vibrateOnClick cursor={Cursor.pointer} shrinkOnClick height={px(60)} width={percent(100)} children={
+                                                    <Text text={String(i)} bold type={TextType.displayText}/>
+                                                } onClick={() => {
+                                                    if (this.props.enableSounds) {
+                                                        // TODO: Get click sound from the sound-lib prop
+                                                        new Audio(clickSound).play().then(() => {});
+                                                    }
+
+                                                    this.local.state.value.push(Number(i));
+                                                    // this.rerender("pin-display");
+
+                                                    this.triggerValidation();
+                                                }}/>
+                                            }/>
+
+
+                                        } ifFalse={
+                                            <span/>
+                                        }/>
                                     );
-                                }, "pin-display");
-                            } else if (i === "fn1") {
-                                return (
-                                    <span/>
-                                );
-                            }
-
-                            return (
-                                <If condition={i !== null} ifTrue={
-                                    <Button highlight vibrationPattern={[10]} vibrateOnClick cursor={Cursor.pointer} shrinkOnClick height={px(60)} width={percent(100)} children={
-                                        <Text text={String(i)} bold type={TextType.displayText}/>
-                                    } onClick={() => {
-                                        this.clickAudio.play().then(() => this.clickAudio = new Audio(clickSound));
-
-                                        this.local.state.value.push(Number(i));
-                                        this.rerender("pin-display");
-
-                                        this.triggerValidation();
-                                    }}/>
-                                } ifFalse={
-                                    <span/>
-                                }/>
-                            );
-                        })
-                    }/>
-                }/>
+                                })
+                            }/>
+                        }/>
+                    );
+                }, "number-field")
             ]}/>
         );
     }
