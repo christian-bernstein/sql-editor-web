@@ -161,8 +161,8 @@ export class ProjectCard extends BernieComponent<ProjectCardProps, any, ProjectC
                         ]}/>,
                         <SettingsGroup elements={[
                             <SettingsElement groupDisplayMode title={"Open preview"} iconConfig={{ enable: false, iconGenerator: element => <></>}}/>,
-                            <SettingsElement groupDisplayMode title={"Edit project"} iconConfig={{ enable: true, iconGenerator: element => <EditIcon/>}} forceRenderSubpageIcon/>,
-                            <SettingsElement groupDisplayMode title={"Move project"} iconConfig={{ enable: true, iconGenerator: element => <MoveIcon/>}}/>,
+                            <SettingsElement groupDisplayMode title={"Edit project"} iconConfig={{ enable: false, iconGenerator: element => <EditIcon/>}} forceRenderSubpageIcon/>,
+                            <SettingsElement groupDisplayMode title={"Move project"} iconConfig={{ enable: false, iconGenerator: element => <MoveIcon/>}}/>,
                             <SettingsElement groupDisplayMode title={"Delete project"} iconConfig={{ enable: true, color: theme.colors.errorColor, iconGenerator: element => <DeleteIcon/>}} forceRenderSubpageIcon/>,
                         ]}/>,
                         <SettingsGroup elements={[
