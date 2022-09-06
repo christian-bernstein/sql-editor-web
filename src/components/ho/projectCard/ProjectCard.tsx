@@ -132,7 +132,7 @@ export class ProjectCard extends BernieComponent<ProjectCardProps, any, ProjectC
                     <Flex fw elements={[
                         <DrawerHeader header={"Options"} description={"Options for the selected project are listed here "} enableBadge badgeVM={VM.UI_NO_HIGHLIGHT} badgeText={this.props.data.title}/>,
                         <SettingsGroup elements={[
-                            <SettingsElement groupDisplayMode title={"Start editor"} iconConfig={{ enable: true, color: theme.colors.primaryColor, iconGenerator: element => <RunIcon/>}} onClick={element => {
+                            <SettingsElement groupDisplayMode title={"Start editor"} iconConfig={{ enable: true, color: theme.colors.primaryHighlightColor, iconGenerator: element => <RunIcon/>}} onClick={element => {
 
                                 element.dialog(
                                     <StaticDrawerMenu body={p => (
@@ -141,7 +141,7 @@ export class ProjectCard extends BernieComponent<ProjectCardProps, any, ProjectC
                                                 setTimeout(() => {
                                                     element.closeLocalDialog();
                                                     setTimeout(() => this.props.onSelect?.(this.props.data), 250);
-                                                }, 500);
+                                                }, 400);
                                             },
                                             onAttemptsExceeded: component => {
                                                 this.closeLocalDialog();
@@ -151,7 +151,7 @@ export class ProjectCard extends BernieComponent<ProjectCardProps, any, ProjectC
                                                         level: AnomalyLevel.ERROR,
                                                         description: "Cannot start editor. An incorrect PIN was inputted 4 times."
                                                     }}/>
-                                                ), 500);
+                                                ), 400);
                                             }
                                         }}/>
                                     )}/>
@@ -160,7 +160,7 @@ export class ProjectCard extends BernieComponent<ProjectCardProps, any, ProjectC
                             }}/>
                         ]}/>,
                         <SettingsGroup elements={[
-                            <SettingsElement groupDisplayMode title={"Open preview"} iconConfig={{ enable: true, iconGenerator: element => <></>}}/>,
+                            <SettingsElement groupDisplayMode title={"Open preview"} iconConfig={{ enable: false, iconGenerator: element => <></>}}/>,
                             <SettingsElement groupDisplayMode title={"Edit project"} iconConfig={{ enable: true, iconGenerator: element => <EditIcon/>}} forceRenderSubpageIcon/>,
                             <SettingsElement groupDisplayMode title={"Move project"} iconConfig={{ enable: true, iconGenerator: element => <MoveIcon/>}}/>,
                             <SettingsElement groupDisplayMode title={"Delete project"} iconConfig={{ enable: true, color: theme.colors.errorColor, iconGenerator: element => <DeleteIcon/>}} forceRenderSubpageIcon/>,
