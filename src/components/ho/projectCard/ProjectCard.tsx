@@ -132,7 +132,7 @@ export class ProjectCard extends BernieComponent<ProjectCardProps, any, ProjectC
                     <Flex fw elements={[
                         <DrawerHeader header={"Options"} description={"Options for the selected project are listed here "} enableBadge badgeVM={VM.UI_NO_HIGHLIGHT} badgeText={this.props.data.title}/>,
                         <SettingsGroup elements={[
-                            <SettingsElement groupDisplayMode title={"Start editor"} iconConfig={{ enable: true, color: theme.colors.primaryHighlightColor, iconGenerator: element => <RunIcon/>}} onClick={element => {
+                            <SettingsElement groupDisplayMode title={"Start editor"} iconConfig={{ enable: true, iconGenerator: element => <RunIcon/>}} onClick={element => {
 
                                 element.dialog(
                                     <StaticDrawerMenu body={p => (
