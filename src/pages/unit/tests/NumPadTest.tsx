@@ -39,18 +39,10 @@ export class NumPadTest extends BernieComponent<any, any, any> {
         this.dialog(
             <StaticDrawerMenu width={percent(30)} body={props => (
                 <AF elements={[
-                    <DrawerHeader
-                        header={"Enter PIN"}
-                        badgeText={"Security"}
-                        badgeVM={VM.UI_NO_HIGHLIGHT}
-                        enableBadge
-                        description={"Unlock the project by typing in your **6-digit** PIN. You are required to enter a PIN because of additional security precautions."}
-                    />,
-
                     <Numpad
-                        length={1}
+                        length={6}
                         maxAttempts={3}
-                        validator={value => Number(value.join("")) === 1}
+                        validator={value => Number(value.join("")) === 230121}
                         enableSounds={false}
                         actions={{
                             onSuccess: component => {
@@ -94,7 +86,9 @@ export type NumpadProps = SoundEffectProps & {
     length: number,
     validator: (value: Array<number>) => boolean,
     maxAttempts?: number,
-    actions: PinPadActions
+    actions: PinPadActions,
+    header?: string,
+    description?: string
 }
 
 export type NumpadLocalState = {
@@ -197,6 +191,14 @@ export class Numpad extends BernieComponent<NumpadProps, any, NumpadLocalState> 
     componentRender(p: NumpadProps, s: any, l: NumpadLocalState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
             <Flex fw align={Align.CENTER} elements={[
+                <DrawerHeader
+                    header={p.header === undefined ? "Enter PIN" : p.header}
+                    description={p.description === undefined ? `Enter your **${p.length}-digit** PIN. You are required to enter a PIN because of additional security precautions.` : p.description}
+                    badgeText={"Security"}
+                    badgeVM={VM.UI_NO_HIGHLIGHT}
+                    enableBadge
+                />,
+
                 this.component(local => {
 
                     switch (local.state.validState) {
