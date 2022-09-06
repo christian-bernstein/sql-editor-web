@@ -39,7 +39,9 @@ import {StaticDrawerMenu} from "../../lo/StaticDrawerMenu";
 import {DrawerHeader} from "../../lo/DrawerHeader";
 import {SettingsGroup} from "../../lo/SettingsGroup";
 import {SettingsElement} from "../settingsElement/SettingsElement";
-import {Color} from "../../../logic/style/Color";
+import {PinPad} from "../pinPad/PinPad";
+import {AnomalyInfo} from "../anomalyInfo/AnomalyInfo";
+import {AnomalyLevel} from "../../../logic/data/AnomalyLevel";
 
 export type ProjectCardProps = {
     data: ProjectInfoData,
@@ -130,7 +132,29 @@ export class ProjectCard extends BernieComponent<ProjectCardProps, any, ProjectC
                     <Flex fw elements={[
                         <DrawerHeader header={"Options"} description={"ijasghd jkagsd ajkghs djahgsd jkag shdjkashdg kjahsd kjahsd kjahsd "} enableBadge badgeVM={VM.UI_NO_HIGHLIGHT} badgeText={this.props.data.title}/>,
                         <SettingsGroup elements={[
-                            <SettingsElement groupDisplayMode title={"Start editor"} iconConfig={{ enable: true, iconGenerator: element => <RunIcon/>}}/>
+                            <SettingsElement groupDisplayMode title={"Start editor"} iconConfig={{ enable: true, iconGenerator: element => <RunIcon/>}} onClick={element => {
+
+                                this.dialog(
+                                    <StaticDrawerMenu body={p => (
+                                        <PinPad length={6} maxAttempts={4} validator={i => Number(i.join("")) === 230121} actions={{
+                                            onSuccess: component => {
+                                                this.props.onSelect?.(this.props.data);
+                                            },
+                                            onAttemptsExceeded: component => {
+                                                this.closeLocalDialog();
+
+                                                setTimeout(() => component.dialog(
+                                                    <AnomalyInfo anomaly={{
+                                                        level: AnomalyLevel.ERROR,
+                                                        description: "Cannot start editor. An incorrect PIN was inputted 4 times."
+                                                    }}/>
+                                                ), 500);
+                                            }
+                                        }}/>
+                                    )}/>
+                                );
+
+                            }}/>
                         ]}/>,
                         <SettingsGroup elements={[
                             <SettingsElement groupDisplayMode title={"Open preview"} iconConfig={{ enable: true, iconGenerator: element => <></>}}/>,
