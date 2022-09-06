@@ -57,6 +57,7 @@ export enum PinPadState {
     NEUTRAL
 }
 
+// TODO: Increase PinPad performance (Click-responsiveness) -> Less unnecessary re-renders
 export class PinPad extends BernieComponent<PinPadProps, any, PinPadLocalState> {
 
     constructor(props: PinPadProps) {
