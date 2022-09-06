@@ -37,7 +37,7 @@ export class NumPadTest extends BernieComponent<any, any, any> {
 
     private openNumpadDialog() {
         this.dialog(
-            <StaticDrawerMenu width={percent(30)} body={props => (
+            <StaticDrawerMenu body={props => (
                 <AF elements={[
                     <Numpad
                         length={6}
