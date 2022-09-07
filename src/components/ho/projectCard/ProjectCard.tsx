@@ -13,7 +13,7 @@ import {Text, TextType} from "../../lo/Text";
 import {VM} from "../../../logic/style/ObjectVisualMeaning";
 import {Cursor} from "../../../logic/style/Cursor";
 import {Badge} from "../../lo/Badge";
-import {ReactComponent as ContextIcon} from "../../../assets/icons/ic-16/ic16-more-ver.svg";
+import {ReactComponent as ContextIcon} from "../../../assets/icons/ic-20/ic20-more-ver.svg";
 import {ReactComponent as EngineIcon} from "../../../assets/icons/ic-20/ic20-functions.svg";
 import {ReactComponent as CommitIcon} from "../../../assets/icons/ic-20/ic20-publish.svg";
 import {ReactComponent as FilesizeIcon} from "../../../assets/icons/ic-20/ic20-file.svg";
@@ -182,7 +182,7 @@ export class ProjectCard extends BernieComponent<ProjectCardProps, any, ProjectC
                         <FlexRow fw justifyContent={Justify.SPACE_BETWEEN} elements={[
                             <FlexRow gap={t.gaps.smallGab} elements={[
                                 // <Icon icon={<CardGenericIcon/>} size={px(16)} color={t.colors.fontSecondaryColor}/>,
-                                <Icon icon={<CardDBIcon/>} size={px(16)} color={t.colors.fontSecondaryColor}
+                                <Icon icon={<CardDBIcon/>} size={px(20)} color={t.colors.fontSecondaryColor}
                                       // TODO remove this debug code
                                       onClick={() => this.rerender("file-size")}
                                 />,
@@ -201,12 +201,12 @@ export class ProjectCard extends BernieComponent<ProjectCardProps, any, ProjectC
                             <FlexRow gap={t.gaps.smallGab} elements={[
                                 <Tooltip title={"Information"} arrow noBorder children={
                                     <FlexRow elements={[
-                                        <Icon icon={<InformationIcon/>} size={px(16)} color={t.colors.fontSecondaryColor}/>,
+                                        <Icon icon={<InformationIcon/>} size={px(20)} color={t.colors.fontSecondaryColor}/>,
                                     ]}/>
                                 }/>,
                                 <Tooltip title={"More options"} arrow noBorder children={
                                     <FlexRow elements={[
-                                        <Icon onClick={() => this.openContextMenu()} icon={<ContextIcon/>} size={px(16)} color={t.colors.fontSecondaryColor}/>,
+                                        <Icon onClick={() => this.openContextMenu()} icon={<ContextIcon/>} size={px(20)} color={t.colors.fontSecondaryColor}/>,
                                     ]}/>
                                 }/>
                             ]}/>,
