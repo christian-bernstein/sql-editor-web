@@ -75,6 +75,7 @@ export class PinPad extends BernieComponent<PinPadProps, any, PinPadLocalState> 
             && this.local.state.numpadState !== PinPadState.INVALID;
     }
 
+    // TODO: Split validation, update & re-render into different functions
     private triggerValidation() {
         const currentNumpadState = this.local.state.numpadState;
         const lockedState = this.isNumpadLocked();
