@@ -233,13 +233,27 @@ export namespace DefaultQuickActions {
             );
         },
         onClick: (event, config, panel) => {
-            FirstJoinIntroductionLauncher.resetFirstJoinAcknowledgeState();
+            try {
+                FirstJoinIntroductionLauncher.resetFirstJoinAcknowledgeState();
 
-            panel.dialog(
-                <StaticDrawerMenu body={() => (
-                    <DrawerHeader header={"Reset completed"} description={"**First-Join-Acknowledge**-state reset successfully completed."}/>
-                )}/>
-            );
+                panel.dialog(
+                    <StaticDrawerMenu body={() => (
+                        <DrawerHeader
+                            header={"Reset completed"}
+                            description={"**First-Join-Acknowledge**-state reset successfully completed."
+                        }/>
+                    )}/>
+                );
+            } catch (e) {
+                panel.dialog(
+                    <StaticDrawerMenu body={() => (
+                        <AnomalyInfo anomaly={{
+                            description: "Error thrown while reset of **First-Join-Acknowledge**-state.",
+                            data: e
+                        }}/>
+                    )}/>
+                );
+            }
         }
     }
 
