@@ -42,6 +42,7 @@ import {SettingsElement} from "../settingsElement/SettingsElement";
 import {PinPad} from "../pinPad/PinPad";
 import {AnomalyInfo} from "../anomalyInfo/AnomalyInfo";
 import {AnomalyLevel} from "../../../logic/data/AnomalyLevel";
+import moment from "moment";
 
 export type ProjectCardProps = {
     data: ProjectInfoData,
@@ -112,6 +113,7 @@ export class ProjectCard extends BernieComponent<ProjectCardProps, any, ProjectC
                         error(q: Queryable<number>, error?: QueryError): JSX.Element {
                             return <Text
                                 text={"N/A"}
+                                whitespace={"nowrap"}
                                 visualMeaning={VM.WARNING}
                                 coloredText
                                 type={TextType.secondaryDescription}
@@ -247,8 +249,9 @@ export class ProjectCard extends BernieComponent<ProjectCardProps, any, ProjectC
                         ]}/>,
 
                         <FlexRow gap={t.gaps.smallGab.times(.5)} elements={[
+                            <Text text={`Updated ${moment(new Date()).fromNow()}`} type={TextType.secondaryDescription} fontSize={px(12)}/>
                             // <Text text={`Updated ${moment(p.data.lastEdited).fromNow()}`} type={TextType.secondaryDescription} fontSize={px(12)}/>
-                            <Text text={`Updated ${p.data.lastEdited}`} type={TextType.secondaryDescription} fontSize={px(12)}/>
+                            // <Text text={`Updated ${p.data.lastEdited}`} type={TextType.secondaryDescription} fontSize={px(12)}/>
                         ]}/>
                     ]}/>
                 ]}/>
