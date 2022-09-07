@@ -18,13 +18,10 @@ import {ReactComponent as EngineIcon} from "../../../assets/icons/ic-20/ic20-fun
 import {ReactComponent as CommitIcon} from "../../../assets/icons/ic-20/ic20-publish.svg";
 import {ReactComponent as FilesizeIcon} from "../../../assets/icons/ic-20/ic20-file.svg";
 import {ReactComponent as InformationIcon} from "../../../assets/icons/ic-20/ic20-info.svg";
-
 import {ReactComponent as RunIcon} from "../../../assets/icons/ic-16/ic16-play.svg";
 import {ReactComponent as EditIcon} from "../../../assets/icons/ic-20/ic20-edit.svg";
 import {ReactComponent as MoveIcon} from "../../../assets/icons/ic-20/ic20-direction.svg";
 import {ReactComponent as DeleteIcon} from "../../../assets/icons/ic-20/ic20-delete.svg";
-
-
 import {App, utilizeGlobalTheme} from "../../../logic/app/App";
 import {ProjectFileSizeRequestPacketData} from "../../../packets/out/ProjectFileSizeRequestPacketData";
 import {ProjectFileSizeResponsePacketData} from "../../../packets/in/ProjectFileSizeResponsePacketData";
@@ -54,6 +51,11 @@ export type ProjectCardLocalState = {
     projectFileSize: Q<number>
 }
 
+/**
+ * TODO: Add a visible property (locked) -> Handle selection of the project accordingly
+ * TODO: Make layout good for small devices -> Width min ~ 350 px
+ * TODO: Show a submenu for the project file size -> Drawer
+ */
 export class ProjectCard extends BernieComponent<ProjectCardProps, any, ProjectCardLocalState> {
 
     constructor(props: ProjectCardProps) {
@@ -136,6 +138,7 @@ export class ProjectCard extends BernieComponent<ProjectCardProps, any, ProjectC
                         <SettingsGroup elements={[
                             <SettingsElement groupDisplayMode title={"Start editor"} iconConfig={{ enable: true, iconGenerator: element => <RunIcon/>}} onClick={element => {
 
+                                // TODO: Put that logic into a separate function
                                 element.dialog(
                                     <StaticDrawerMenu body={p => (
                                         <PinPad length={6} maxAttempts={4} validator={i => Number(i.join("")) === 230121} actions={{

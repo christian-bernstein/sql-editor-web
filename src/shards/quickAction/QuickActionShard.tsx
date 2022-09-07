@@ -93,6 +93,7 @@ export class QuickActionShard extends Shard {
             qac.registerQuickAction(
                 DefaultQuickActions.logQA,
                 DefaultQuickActions.clearLogQA,
+                DefaultQuickActions.resetFirstJoinAcknowledgeNotificationStateQA,
                 DefaultQuickActions.appModeSwitcherQA,
                 DefaultQuickActions.rerenderQA,
                 DefaultQuickActions.settingsPlayGroundQA,

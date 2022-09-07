@@ -28,6 +28,11 @@ import {AppModeSwitcher} from "../../../components/ho/appModeSwitcher/AppModeSwi
 import {AnomalyInfo} from "../../../components/ho/anomalyInfo/AnomalyInfo";
 import {AnomalyLevel} from "../AnomalyLevel";
 import {SettingsPlayground} from "../../../components/ho/settingsPlayground/SettingsPlayground";
+import {
+    FirstJoinIntroductionLauncher
+} from "../../../components/ho/firstJoinIntroduction/FirstJoinIntroductionLauncher";
+import {DrawerHeader} from "../../../components/lo/DrawerHeader";
+import {StaticDrawerMenu} from "../../../components/lo/StaticDrawerMenu";
 
 export namespace DefaultQuickActions {
 
@@ -216,12 +221,27 @@ export namespace DefaultQuickActions {
         }
     }
 
+    // TODO: Convert into a page, with multiple reset functions
+    export const resetFirstJoinAcknowledgeNotificationStateQA: QuickActionConfig = {
+        displayName: "Reset First-Join-Acknowledge-state",
+        canonicalDisplayName: "Reset First-Join-Acknowledge-state",
+        tags: ["Settings", "Playground", "Debug", "Development", "Reset"],
+        beta: true,
+        render(theme: Themeable.Theme, panel: QuickActionPanel, config: QuickActionConfig): JSX.Element {
+            return (
+                <Icon icon={<ReloadIcon/>}/>
+            );
+        },
+        onClick: (event, config, panel) => {
+            FirstJoinIntroductionLauncher.resetFirstJoinAcknowledgeState();
 
-
-
-
-
-
+            panel.dialog(
+                <StaticDrawerMenu body={() => (
+                    <DrawerHeader header={"Reset completed"} description={"**First-Join-Acknowledge**-state reset successfully completed."}/>
+                )}/>
+            );
+        }
+    }
 
 
 

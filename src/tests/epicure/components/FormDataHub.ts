@@ -55,4 +55,16 @@ export class FormDataHub {
             return filtered[0].value;
         }
     }
+
+    // TODO: merge with .get()
+    public getOrSave(key: string, def?: any): any {
+        const filtered = this.data.filter(kv => kv.key === key);
+        if (filtered.length === 0) {
+            // No data found, save data
+            this.set(key, def, true);
+            return def;
+        } else {
+            return filtered[0].value;
+        }
+    }
 }
