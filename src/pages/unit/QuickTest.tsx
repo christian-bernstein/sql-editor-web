@@ -2,10 +2,13 @@ import {BernieComponent} from "../../logic/BernieComponent";
 import {Themeable} from "../../logic/style/Themeable";
 import {Assembly} from "../../logic/assembly/Assembly";
 import {UnitTestUtils} from "./UnitTestUtils";
-import {Text} from "../../components/lo/Text";
 import React from "react";
-import {UnitTest} from "./UnitTest";
-import {SelectElement} from "../../components/lo/Select";
+import {Box} from "../../components/lo/Box";
+import {Flex} from "../../components/lo/FlexBox";
+import {Align} from "../../logic/style/Align";
+import {Justify} from "../../logic/style/Justify";
+import {percent} from "../../logic/style/DimensionalMeasured";
+import {BoardingActionsDrawer} from "../../components/ho/boardingActionsDrawer/BoardingActionsDrawer";
 
 export class QuickTest extends BernieComponent<any, any, any> {
 
@@ -27,7 +30,9 @@ export class QuickTest extends BernieComponent<any, any, any> {
             // Display your test component here
 
             return (
-                <></>
+                <Flex fh fw justifyContent={Justify.FLEX_END} align={Align.CENTER} elements={[
+                    <BoardingActionsDrawer/>
+                ]}/>
             );
         });
     }

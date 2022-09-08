@@ -11,7 +11,8 @@ import {getOr} from "../../../logic/Utils";
 export type NavHeaderProps = {
     elements: Map<string, (navInstance: NavHeader) => JSX.Element>,
     element?: string,
-    onChange: (from: string, to: string) => void
+    onChange: (from: string, to: string) => void,
+    bypassOnChangeFilter?: boolean
 }
 
 export class NavHeader extends BernieComponent<NavHeaderProps, any, any> {
@@ -29,7 +30,7 @@ export class NavHeader extends BernieComponent<NavHeaderProps, any, any> {
                         return (
                             <FlexBox flexDir={FlexDirection.COLUMN} gap={t.gaps.smallGab}>
                                 <Button border={false} bgColorOnDefault={false} opaque opaqueValue={.6} onClick={() => {
-                                    if (element !== id) {
+                                    if (element !== id || p.bypassOnChangeFilter) {
                                         p.onChange(element, id);
                                     }
                                 }} children={

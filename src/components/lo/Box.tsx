@@ -48,7 +48,8 @@ export type BoxProps = {
     elements?: Array<JSX.Element>,
     fw?: boolean,
     fh?: boolean,
-    highlightShadow?: boolean
+    highlightShadow?: boolean,
+    id?: string
 }
 
 export type BoxArrowConfig = {
@@ -163,7 +164,7 @@ export class Box extends React.Component<BoxProps, any> {
         const classNames: string[] = this.props.classNames === undefined ? [] : this.props.classNames;
         const highlight: boolean = this.props.highlight === undefined ? false : this.props.highlight;
         return (
-            <Box style={getOr(this.props.style, {})} onClick={event => getOr(this.props.onClick, () => {})(event)} className={[...classNames, "box", highlight ? "highlight" : ""].join(" ").trim()}>
+            <Box id={this.props.id} style={getOr(this.props.style, {})} onClick={event => getOr(this.props.onClick, () => {})(event)} className={[...classNames, "box", highlight ? "highlight" : ""].join(" ").trim()}>
                 {this.props.elements}
                 {this.props.children}
             </Box>
