@@ -53,7 +53,7 @@ export class BoardingActionsDrawer extends BC<any, any, BoardingActionsDrawerLoc
                     this.local.setStateWithChannels({
                         currentAction: getOr(to, "none")
                     }, ["action", "action-display"])
-                }, 300);
+                }, 250);
             });
         }
     }
