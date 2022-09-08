@@ -47,7 +47,11 @@ export class MobileNavigation extends BernieComponent<any, any, any> {
     private actionsAssembly() {
         this.assembly.assembly("actions", theme => {
             return (
-                <BoardingActionsDrawer/>
+                <Switch children={
+                    <Route path={"/boarding/"} render={props => (
+                        <BoardingActionsDrawer/>
+                    )}/>
+                }/>
             );
         })
     }
