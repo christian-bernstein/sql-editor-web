@@ -35,7 +35,6 @@ export class BoardingActionsDrawer extends BC<any, any, BoardingActionsDrawerLoc
     }
 
     private switchActionDialog(to?: string) {
-
         if (this.local.state.currentAction === "none") {
 
             // Open the dialog
@@ -53,7 +52,7 @@ export class BoardingActionsDrawer extends BC<any, any, BoardingActionsDrawerLoc
                     this.local.setStateWithChannels({
                         currentAction: getOr(to, "none")
                     }, ["action", "action-display"])
-                }, 250);
+                }, 200);
             });
         }
     }
@@ -71,7 +70,7 @@ export class BoardingActionsDrawer extends BC<any, any, BoardingActionsDrawerLoc
                     `;
 
                     return (
-                        <SwipeableDrawer id={"asdasdasd"} key={"asdasdasd"} anchor={"bottom"} variant={"persistent"} keepMounted closeAfterTransition hideBackdrop={true} onOpen={() => {}} onClose={() => {
+                        <SwipeableDrawer id={"asdasdasd"} key={"asdasdasd"} anchor={"bottom"} variant={"persistent"} keepMounted closeAfterTransition hideBackdrop onOpen={() => {}} onClose={() => {
                             this.local.setStateWithChannels({
                                 currentAction: "none"
                             }, ["action", "action-display"]);
@@ -81,7 +80,7 @@ export class BoardingActionsDrawer extends BC<any, any, BoardingActionsDrawerLoc
                                 zIndex: 10,
                                 boxSizing: 'border-box',
                                 background: "transparent",
-                                boxShadow: "none"
+                                boxShadow: "none",
                             }
                         }} open={local.state.currentAction !== "none"} children={
                             <Flex height={percent(100)} fw justifyContent={Justify.FLEX_END} align={Align.CENTER} elements={[
@@ -155,7 +154,9 @@ export class BoardingActionsDrawer extends BC<any, any, BoardingActionsDrawerLoc
                     ]}/>
                 }/>,
 
-                <Separator orientation={Orientation.HORIZONTAL}/>
+                <Separator orientation={Orientation.HORIZONTAL} style={{
+                    zIndex: 1500
+                }}/>
             ]}/>
         );
     }

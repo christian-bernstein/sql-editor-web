@@ -60,7 +60,8 @@ export class MobileNavigation extends BernieComponent<any, any, any> {
                 <BottomNavigation showLabels value={"app"} sx={{
                     width: "100%",
                     backgroundColor: t.colors.backgroundHighlightColor.css(),
-                    marginY: px(3).css(),
+                    // marginY: px(3).css(),
+                    paddingY: px(3).css(),
                     zIndex: 1500
                 }}>
                     <BottomNavigationAction value={"app"} label={
