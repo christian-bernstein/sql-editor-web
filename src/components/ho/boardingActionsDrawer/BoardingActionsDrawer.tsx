@@ -103,31 +103,16 @@ export class BoardingActionsDrawer extends BC<any, any, BoardingActionsDrawerLoc
                                                     description={"Login to the SQL-Editor, using your credentials."}
                                                 />,
 
-                                                <Flex fw gap={t.gaps.smallGab} margin={createMargin(40, 0, 15, 0)} elements={[
-                                                    <Text
-                                                        type={TextType.secondaryDescription}
-                                                        fontSize={px(12)}
-                                                        text={"Username"}
-                                                    />,
-                                                    <Input width={percent(100)}/>,
+                                                <Flex fw gap={t.gaps.smallGab} margin={createMargin(40, 0, 10, 0)} elements={[
+                                                    <Input width={percent(100)} placeholder={"Username"}/>,
+                                                    <Input width={percent(100)} placeholder={"Password"}/>,
 
-                                                    <Text
-                                                        type={TextType.secondaryDescription}
-                                                        fontSize={px(12)}
-                                                        text={"Password"}
-                                                    />,
-                                                    <Input width={percent(100)}/>,
-
-
-                                                    <Flex fw align={Align.CENTER} padding paddingY={px()} paddingX={px(20)} elements={[
+                                                    <Flex fw align={Align.CENTER} padding={false} paddingY={px()} paddingX={px(20)} elements={[
                                                         <Button text={"Login"} width={percent(100)} opaque visualMeaning={VM.SUCCESS}/>,
                                                     ]}/>
                                                 ]}/>,
 
-                                            ]}/>,
-
-
-                                            <Separator orientation={Orientation.HORIZONTAL}/>
+                                            ]}/>
                                         ]}/>
                                     }/>
                                 }/>,
