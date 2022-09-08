@@ -48,12 +48,10 @@ export class BoardingActionsDrawer extends BC<any, any, BoardingActionsDrawerLoc
                         <Flex fw gap={theme.gaps.smallGab} margin={createMargin(40, 0, 10, 0)} elements={[
                             <Input width={percent(100)} placeholder={"Username"}/>,
                             <Input width={percent(100)} placeholder={"Password"}/>,
-
                             <Flex fw align={Align.CENTER} padding={false} paddingY={px()} paddingX={px(20)} elements={[
                                 <Button text={"Login"} width={percent(100)} opaque visualMeaning={VM.SUCCESS}/>,
                             ]}/>
-                        ]}/>,
-
+                        ]}/>
                     ]}/>
                 );
             }
@@ -101,7 +99,7 @@ export class BoardingActionsDrawer extends BC<any, any, BoardingActionsDrawerLoc
                     `;
 
                     return (
-                        <SwipeableDrawer id={"BoardingActionsDrawer"} key={"BoardingActionsDrawer"} anchor={"bottom"} variant={"persistent"} keepMounted closeAfterTransition hideBackdrop onOpen={() => {}} onClose={() => {
+                        <SwipeableDrawer open={local.state.currentAction !== "none"} id={"BoardingActionsDrawer"} key={"BoardingActionsDrawer"} anchor={"bottom"} variant={"persistent"} keepMounted closeAfterTransition hideBackdrop onOpen={() => {}} onClose={() => {
                             this.local.setStateWithChannels({
                                 currentAction: "none"
                             }, ["action", "action-display"]);
@@ -113,7 +111,7 @@ export class BoardingActionsDrawer extends BC<any, any, BoardingActionsDrawerLoc
                                 background: "transparent",
                                 boxShadow: "none",
                             }
-                        }} open={local.state.currentAction !== "none"} children={
+                        }} children={
                             <Flex height={percent(100)} fw justifyContent={Justify.FLEX_END} align={Align.CENTER} elements={[
                                 <Box borderless width={percent(100)} maxHeight={percent(100)} overflowYBehaviour={OverflowBehaviour.SCROLL} borderRadiiConfig={{
                                     enableCustomBorderRadii: true,
