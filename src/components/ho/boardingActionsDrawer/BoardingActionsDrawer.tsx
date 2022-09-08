@@ -22,11 +22,43 @@ import {Button} from "../../lo/Button";
 import {DrawerHeader} from "../../lo/DrawerHeader";
 import {Input} from "../../lo/Input";
 
+export interface BoardingActionDrawerRenderer {
+    render(component: BoardingActionsDrawer, theme: Themeable.Theme): JSX.Element
+}
+
 export type BoardingActionsDrawerLocalState = {
     currentAction: string | "none"
 }
 
 export class BoardingActionsDrawer extends BC<any, any, BoardingActionsDrawerLocalState> {
+
+    private static readonly actionDrawerRenderers = new Map<string, BoardingActionDrawerRenderer>([
+        ["login", {
+            render(component: BoardingActionsDrawer, theme: Themeable.Theme): JSX.Element {
+                return (
+                    <Flex fw align={Align.CENTER} elements={[
+                        <DrawerHeader
+                            header={"Login to SQL-Editor"}
+                            enableBadge
+                            badgeVM={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
+                            badgeText={"Login"}
+                            description={"Login to the SQL-Editor, using your credentials."}
+                        />,
+
+                        <Flex fw gap={theme.gaps.smallGab} margin={createMargin(40, 0, 10, 0)} elements={[
+                            <Input width={percent(100)} placeholder={"Username"}/>,
+                            <Input width={percent(100)} placeholder={"Password"}/>,
+
+                            <Flex fw align={Align.CENTER} padding={false} paddingY={px()} paddingX={px(20)} elements={[
+                                <Button text={"Login"} width={percent(100)} opaque visualMeaning={VM.SUCCESS}/>,
+                            ]}/>
+                        ]}/>,
+
+                    ]}/>
+                );
+            }
+        }]
+    ]);
 
     constructor() {
         super(undefined, undefined, {
@@ -60,7 +92,6 @@ export class BoardingActionsDrawer extends BC<any, any, BoardingActionsDrawerLoc
     componentRender(p: any, s: any, l: BoardingActionsDrawerLocalState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
             <Flex fw gap={px(0)} align={Align.CENTER} elements={[
-
                 this.component(local => {
                     const Puller = styled.div`
                       width: 25%;
@@ -70,7 +101,7 @@ export class BoardingActionsDrawer extends BC<any, any, BoardingActionsDrawerLoc
                     `;
 
                     return (
-                        <SwipeableDrawer id={"asdasdasd"} key={"asdasdasd"} anchor={"bottom"} variant={"persistent"} keepMounted closeAfterTransition hideBackdrop onOpen={() => {}} onClose={() => {
+                        <SwipeableDrawer id={"BoardingActionsDrawer"} key={"BoardingActionsDrawer"} anchor={"bottom"} variant={"persistent"} keepMounted closeAfterTransition hideBackdrop onOpen={() => {}} onClose={() => {
                             this.local.setStateWithChannels({
                                 currentAction: "none"
                             }, ["action", "action-display"]);
@@ -93,25 +124,9 @@ export class BoardingActionsDrawer extends BC<any, any, BoardingActionsDrawerLoc
                                         <AF elements={[
                                             <Puller/>,
 
-                                            <Flex fw align={Align.CENTER} elements={[
-                                                <DrawerHeader
-                                                    header={"Login to SQL-Editor"}
-                                                    enableBadge
-                                                    badgeVM={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
-                                                    badgeText={"Login"}
-                                                    description={"Login to the SQL-Editor, using your credentials."}
-                                                />,
-
-                                                <Flex fw gap={t.gaps.smallGab} margin={createMargin(40, 0, 10, 0)} elements={[
-                                                    <Input width={percent(100)} placeholder={"Username"}/>,
-                                                    <Input width={percent(100)} placeholder={"Password"}/>,
-
-                                                    <Flex fw align={Align.CENTER} padding={false} paddingY={px()} paddingX={px(20)} elements={[
-                                                        <Button text={"Login"} width={percent(100)} opaque visualMeaning={VM.SUCCESS}/>,
-                                                    ]}/>
-                                                ]}/>,
-
-                                            ]}/>
+                                            BoardingActionsDrawer.actionDrawerRenderers
+                                                .get(local.state.currentAction)
+                                                ?.render(this, t)
                                         ]}/>
                                     }/>
                                 }/>,
