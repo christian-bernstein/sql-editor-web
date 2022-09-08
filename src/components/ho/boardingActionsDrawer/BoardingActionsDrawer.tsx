@@ -76,7 +76,7 @@ export class BoardingActionsDrawer extends BC<any, any, BoardingActionsDrawerLoc
                             }, ["action", "action-display"]);
                         }} sx={{
                             '& .MuiDrawer-paper': {
-                                bottom: "110px",
+                                bottom: "108px",
                                 zIndex: 10,
                                 boxSizing: 'border-box',
                                 background: "transparent",
@@ -85,14 +85,13 @@ export class BoardingActionsDrawer extends BC<any, any, BoardingActionsDrawerLoc
                         }} open={local.state.currentAction !== "none"} children={
                             <Flex height={percent(100)} fw justifyContent={Justify.FLEX_END} align={Align.CENTER} elements={[
                                 <Box borderless width={percent(100)} maxHeight={percent(100)} overflowYBehaviour={OverflowBehaviour.SCROLL} borderRadiiConfig={{
-                                    enableCustomBorderRadii: false,
+                                    enableCustomBorderRadii: true,
                                     bottomRight: px(),
                                     bottomLeft: px()
                                 }} children={
                                     <Flex width={percent(100)} align={Align.CENTER} children={
                                         <AF elements={[
                                             <Puller/>,
-
 
                                             <Flex fw align={Align.CENTER} elements={[
                                                 <DrawerHeader
