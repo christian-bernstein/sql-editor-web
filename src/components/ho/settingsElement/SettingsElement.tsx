@@ -25,9 +25,8 @@ import {StaticDrawerMenu} from "../../lo/StaticDrawerMenu";
 import {DrawerHeader} from "../../lo/DrawerHeader";
 import {Group} from "../../lo/Group";
 import {Orientation} from "../../../logic/style/Orientation";
-import {Collapsible} from "../../lo/Collapsible";
 import {Accordion, AccordionDetails, AccordionSummary} from "@mui/material";
-import {ReactComponent as ExpandIcon} from "../../../assets/icons/ic-20/ic20-chevron-down.svg";
+import {OverflowBehaviour} from "../../../logic/style/OverflowBehaviour";
 
 
 export type SettingsElementIconConfig = {
@@ -160,13 +159,22 @@ export class SettingsElement extends BernieComponent<SettingsElementProps, any, 
 
                             <FlexBox align={Align.CENTER} flexDir={FlexDirection.ROW} gap={t.gaps.smallGab} height={percent(100)}>
                                 <If condition={p.iconConfig?.enable} ifTrue={
-                                    <Box borderless style={{
-                                        position: "absolute",
-                                        marginLeft: t.gaps.smallGab.measurand,
-                                    }} noPadding bgColor={p.iconConfig?.color} width={px(26)} height={px(26)} children={
-                                        <Flex height={percent(100)} width={percent(100)} justifyContent={Justify.CENTER} align={Align.CENTER} children={
-                                            <Icon icon={getOr(p.iconConfig?.iconGenerator?.(this), <>?</>)} size={px(20)}/>
-                                        }/>
+                                    <Box
+                                        borderless
+                                        noPadding
+                                        bgColor={p.iconConfig?.color}
+                                        overflowXBehaviour={OverflowBehaviour.HIDDEN}
+                                        overflowYBehaviour={OverflowBehaviour.HIDDEN}
+                                        width={px(26)}
+                                        height={px(26)}
+                                        style={{
+                                            position: "absolute",
+                                            marginLeft: t.gaps.smallGab.measurand,
+                                        }}
+                                        children={
+                                            <Flex height={percent(100)} width={percent(100)} justifyContent={Justify.CENTER} align={Align.CENTER} children={
+                                                <Icon icon={getOr(p.iconConfig?.iconGenerator?.(this), <>?</>)} size={px(20)}/>
+                                            }/>
                                     }/>
                                 }/>
                                 <Text cursor={Cursor.pointer} text={p.title} margin={createMargin(0, 0, 0, t.gaps.smallGab.times(2).withPlus(26).measurand)}/>

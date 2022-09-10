@@ -71,7 +71,7 @@ export class ContinueAsV2 extends BernieComponent<ContinueAsV2Props, any, Contin
                     iconGenerator: element => (
                         <ClientDisplay
                             pureImage
-                            imageSize={px(20)}
+                            imageSize={px(26)}
                             onlyImage
                             clientID={p.sessionHistoryEntry.profileData.id}
                         />
