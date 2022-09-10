@@ -33,7 +33,9 @@ export type ClientDisplayProps = {
     overwriteMenuRenderer?: (instance: ClientDisplay, profile: UserPublicProfileData) => JSX.Element,
     enableClientBadge?: boolean,
     imageSize?: DimensionalMeasured,
-    onlyImage?: boolean
+    onlyImage?: boolean,
+
+    pureImage?: boolean
 }
 
 export type ClientDisplayLocalState = {
@@ -151,7 +153,13 @@ export class ClientDisplay extends BernieComponent<ClientDisplayProps, any, Clie
                     return (
                         <ContextCompound wrapMenu={false} menu={this.renderMenu(profile)}>
                             <FlexBox flexDir={FlexDirection.ROW} align={Align.CENTER} gap={t.gaps.smallGab}>
-                                <Image src={ClientDisplay.loadImageData(profile.profilePicture)} borderRadius={px(9999)} width={imageSize} height={imageSize}/>
+                                <Image
+                                    src={ClientDisplay.loadImageData(profile.profilePicture)}
+                                    borderRadius={px(9999)}
+                                    width={imageSize}
+                                    height={imageSize}
+                                    pure={getOr(p.pureImage, false)}
+                                />
 
                                 {onlyImage ? undefined : <Text text={profile.username} cursor={Cursor.pointer} type={TextType.secondaryDescription}/>}
 

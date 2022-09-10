@@ -21,6 +21,14 @@ import {ObjectVisualMeaning, VM} from "../../../logic/style/ObjectVisualMeaning"
 import {Button} from "../../lo/Button";
 import {DrawerHeader} from "../../lo/DrawerHeader";
 import {Input} from "../../lo/Input";
+import {App} from "../../../logic/app/App";
+import {Default, Mobile} from "../../logic/Media";
+import {LiteGrid} from "../../lo/LiteGrid";
+import {SessionHistoryEntry} from "../../../logic/misc/SessionHistoryEntry";
+import {ContinueAs} from "../continueAs/ContinueAs";
+import {If} from "../../logic/If";
+import {ContinueAsV2} from "../continueAs/ContinueAsV2";
+import {SettingsGroup} from "../../lo/SettingsGroup";
 
 export interface BoardingActionDrawerRenderer {
     render(component: BoardingActionsDrawer, theme: Themeable.Theme): JSX.Element
@@ -52,6 +60,40 @@ export class BoardingActionsDrawer extends BC<any, any, BoardingActionsDrawerLoc
                                 <Button text={"Login"} width={percent(100)} opaque visualMeaning={VM.SUCCESS}/>,
                             ]}/>
                         ]}/>
+                    ]}/>
+                );
+            }
+        }],
+
+        ["resume", {
+            render(component: BoardingActionsDrawer, theme: Themeable.Theme): JSX.Element {
+
+                return (
+                    <Flex fw align={Align.CENTER} elements={[
+                        <DrawerHeader
+                            header={"Resume session"}
+                            enableBadge
+                            badgeVM={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
+                            badgeText={"Session"}
+                            description={"Resume a previous session. If you close the website, your session will be saved, as long as you haven't logged out. "}
+                        />,
+
+                        <Flex fw gap={theme.gaps.smallGab} margin={createMargin(40, 0, 10, 0)} elements={[
+                            App.app().getSessionHistoryEntries().length > 0 ? (
+                                <>
+                                    <SettingsGroup elements={
+                                        App.app().getSessionHistoryEntries().map((entry: SessionHistoryEntry) => (
+                                            <ContinueAsV2 key={entry.sessionID} sessionHistoryEntry={{
+                                                sessionID: entry.sessionID,
+                                                profileData: entry.profileData
+                                            }}/>
+                                        ))
+                                    }/>
+                                </>
+                            ) : (
+                                <></>
+                            )
+                        ]}/>,
                     ]}/>
                 );
             }
