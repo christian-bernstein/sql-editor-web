@@ -8,7 +8,6 @@ import {Themeable} from "../../../logic/style/Themeable";
 import {ClientDisplay} from "../clientDisplay/ClientDisplay";
 import {px} from "../../../logic/style/DimensionalMeasured";
 import {Text, TextType} from "../../lo/Text";
-import moment from "moment";
 
 export type ContinueAsV2Props = {
     sessionHistoryEntry: SessionHistoryEntry,

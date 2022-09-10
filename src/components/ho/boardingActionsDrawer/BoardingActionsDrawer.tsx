@@ -11,7 +11,7 @@ import {Text, TextType} from "../../lo/Text";
 import {createMargin} from "../../../logic/style/Margin";
 import styled from "styled-components";
 import {getOr} from "../../../logic/Utils";
-import {Drawer, SwipeableDrawer} from "@mui/material";
+import {SwipeableDrawer} from "@mui/material";
 import {Justify} from "../../../logic/style/Justify";
 import {OverflowBehaviour} from "../../../logic/style/OverflowBehaviour";
 import {AF} from "../../logic/ArrayFragment";
@@ -22,11 +22,7 @@ import {Button} from "../../lo/Button";
 import {DrawerHeader} from "../../lo/DrawerHeader";
 import {Input} from "../../lo/Input";
 import {App} from "../../../logic/app/App";
-import {Default, Mobile} from "../../logic/Media";
-import {LiteGrid} from "../../lo/LiteGrid";
 import {SessionHistoryEntry} from "../../../logic/misc/SessionHistoryEntry";
-import {ContinueAs} from "../continueAs/ContinueAs";
-import {If} from "../../logic/If";
 import {ContinueAsV2} from "../continueAs/ContinueAsV2";
 import {SettingsGroup} from "../../lo/SettingsGroup";
 
@@ -179,9 +175,9 @@ export class BoardingActionsDrawer extends BC<any, any, BoardingActionsDrawerLoc
                     <Flex margin={createMargin(7, 0, 0, 0)} fw align={Align.CENTER} elements={[
                         this.component(local => (
                             <NavHeader bypassOnChangeFilter element={local.state.currentAction} elements={new Map<string, (nav: NavHeader) => JSX.Element>([
-                                ["resume", nav => <Text text={"Resume"}/>],
-                                ["login", nav => <Text text={"Login"}/>],
-                                ["sign-up", nav => <Text text={"Sign up"}/>],
+                                ["resume", nav => <Text fontSize={px(14)} bold text={"Resume"}/>],
+                                ["login", nav => <Text fontSize={px(14)} bold text={"Login"}/>],
+                                ["sign-up", nav => <Text fontSize={px(14)} bold text={"Sign up"}/>],
                             ])} onChange={(from, to) => {
                                 if (from === to) {
                                     this.switchActionDialog();
