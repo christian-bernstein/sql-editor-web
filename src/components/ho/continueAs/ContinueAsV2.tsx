@@ -5,9 +5,10 @@ import {App} from "../../../logic/app/App";
 import {SettingsElement} from "../settingsElement/SettingsElement";
 import {Assembly} from "../../../logic/assembly/Assembly";
 import {Themeable} from "../../../logic/style/Themeable";
-import {ProfilePicture} from "../../lo/ProfilePicture";
 import {ClientDisplay} from "../clientDisplay/ClientDisplay";
 import {px} from "../../../logic/style/DimensionalMeasured";
+import {Text, TextType} from "../../lo/Text";
+import moment from "moment";
 
 export type ContinueAsV2Props = {
     sessionHistoryEntry: SessionHistoryEntry,
@@ -66,6 +67,9 @@ export class ContinueAsV2 extends BernieComponent<ContinueAsV2Props, any, Contin
                 groupDisplayMode
                 title={p.sessionHistoryEntry.profileData.username}
                 promiseBasedOnClick={element => this.onContinueClicked()}
+                appendixGenerator={element => (
+                    <Text text={String(p.sessionHistoryEntry.profileData.lastActive)} type={TextType.secondaryDescription} fontSize={px(11)}/>
+                )}
                 iconConfig={{
                     enable: true,
                     iconGenerator: element => (
