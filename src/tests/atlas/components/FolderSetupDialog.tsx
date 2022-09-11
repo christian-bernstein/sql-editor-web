@@ -23,6 +23,8 @@ import {StaticDrawerMenu} from "../../../components/lo/StaticDrawerMenu";
 import {SettingsGroup} from "../../../components/lo/SettingsGroup";
 import {SettingsElement} from "../../../components/ho/settingsElement/SettingsElement";
 import {Text, TextType} from "../../../components/lo/Text";
+import {AtlasMain} from "../AtlasMain";
+import {v4} from "uuid";
 
 interface FolderSetupDialogActions {
     onSubmit(folder: Folder): void;
@@ -44,6 +46,19 @@ export class FolderSetupDialog extends BC<FolderSetupDialogProps, any, FolderSet
         });
     }
 
+    private createFolder() {
+        AtlasMain.atlas().api().createFolder({
+            id: v4(),
+            creationDate: new Date(),
+            note: this.local.state.fdh.get("note"),
+            tags: this.local.state.fdh.get("tags"),
+            title: this.local.state.fdh.get("title"),
+            creator: this.local.state.fdh.get("creator"),
+            description: this.local.state.fdh.get("description"),
+            categories: []
+        });
+    }
+
     componentRender(p: FolderSetupDialogProps, s: any, l: FolderSetupDialogLocalState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
             <Screen children={
@@ -58,7 +73,7 @@ export class FolderSetupDialog extends BC<FolderSetupDialogProps, any, FolderSet
 
                     <Flex fw padding paddingX={px(25)} elements={[
                         <Button width={percent(100)} text={"Create folder"} opaque visualMeaning={VM.INFO} onClick={() => {
-                            // TODO: implement
+                            this.createFolder();
                         }}/>
                     ]}/>,
 
@@ -109,26 +124,32 @@ export class FolderSetupDialog extends BC<FolderSetupDialogProps, any, FolderSet
                                                     description={"Choose from an existing creator.\n*A creator is automatically registered, if a new folder, category or document is added, with a creator, that isn't yet registered.*"}
                                                 />,
 
+                                                <Flex fw padding paddingX={px(25)} elements={[
+                                                    <Button width={percent(100)} text={"Cancel"} opaque onClick={() => {
+                                                        this.closeLocalDialog();
+                                                    }}/>
+                                                ]}/>,
+
                                                 <SettingsGroup elements={[
-                                                    <SettingsElement title={"Andrea"} onClick={() => {
+                                                    <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Andrea"} onClick={() => {
                                                         onChange("Andrea");
                                                         this.closeLocalDialog();
                                                     }} appendixGenerator={element => (
                                                         <FlexRow elements={[
                                                             <Text
-                                                                text={"1.203"}
+                                                                text={"1.203 documents"}
                                                                 type={TextType.secondaryDescription}
                                                                 fontSize={px(11)}
                                                             />
                                                         ]}/>
                                                     )}/>,
-                                                    <SettingsElement title={"Christian"} onClick={() => {
+                                                    <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Christian"} onClick={() => {
                                                         onChange("Christian");
                                                         this.closeLocalDialog();
                                                     }} appendixGenerator={element => (
                                                         <FlexRow elements={[
                                                             <Text
-                                                                text={"276"}
+                                                                text={"276 documents"}
                                                                 type={TextType.secondaryDescription}
                                                                 fontSize={px(11)}
                                                             />
