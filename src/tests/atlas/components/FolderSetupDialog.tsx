@@ -1,19 +1,28 @@
 import {BC} from "../../../logic/BernieComponent";
 import {Folder} from "../data/Folder";
-import {Flex} from "../../../components/lo/FlexBox";
+import {Flex, FlexRow} from "../../../components/lo/FlexBox";
 import {Assembly} from "../../../logic/assembly/Assembly";
 import {Themeable} from "../../../logic/style/Themeable";
 import {Screen} from "../../../components/lo/Page";
 import {DrawerHeader} from "../../../components/lo/DrawerHeader";
-import {getOr} from "../../../logic/Utils";
 import {VM} from "../../../logic/style/ObjectVisualMeaning";
-import {createMargin} from "../../../logic/style/Margin";
 import {FormDataHub} from "../../epicure/components/FormDataHub";
 import {Input} from "../../../components/lo/Input";
-import {Select} from "../../../components/lo/Select";
-import {Month} from "../../epicure/Month";
 import {FormElement} from "../../epicure/components/FormElement";
 import React from "react";
+import {percent, px} from "../../../logic/style/DimensionalMeasured";
+import {Button} from "../../../components/lo/Button";
+import {Icon} from "../../../components/lo/Icon";
+import {ReactComponent as EditIcon} from "../../../assets/icons/ic-20/ic20-edit.svg";
+import {Align} from "../../../logic/style/Align";
+import {Group} from "../../../components/lo/Group";
+import {Orientation} from "../../../logic/style/Orientation";
+import {Tooltip} from "../../../components/ho/tooltip/Tooltip";
+import {Justify} from "../../../logic/style/Justify";
+import {StaticDrawerMenu} from "../../../components/lo/StaticDrawerMenu";
+import {SettingsGroup} from "../../../components/lo/SettingsGroup";
+import {SettingsElement} from "../../../components/ho/settingsElement/SettingsElement";
+import {Text, TextType} from "../../../components/lo/Text";
 
 interface FolderSetupDialogActions {
     onSubmit(folder: Folder): void;
@@ -45,9 +54,13 @@ export class FolderSetupDialog extends BC<FolderSetupDialogProps, any, FolderSet
                         badgeVM={VM.UI_NO_HIGHLIGHT}
                         badgeText={"Virtual folder system"}
                         description={"Create a new folder"}
-                        margin={createMargin(0, 0, 40, 0)}
                     />,
 
+                    <Flex fw padding paddingX={px(25)} elements={[
+                        <Button width={percent(100)} text={"Create folder"} opaque visualMeaning={VM.INFO} onClick={() => {
+                            // TODO: implement
+                        }}/>
+                    ]}/>,
 
                     <FormElement
                         id={"title"}
@@ -75,7 +88,59 @@ export class FolderSetupDialog extends BC<FolderSetupDialogProps, any, FolderSet
                         description={"Who created this folder"}
                         fdh={this.local.state.fdh}
                         inputGenerator={(onChange, value, valid) => (
-                            <Input placeholder={"Creator"} defaultValue={value} onChange={ev => onChange(ev.target.value)}/>
+                            <Group removeChildBorders width={percent(100)} orientation={Orientation.HORIZONTAL} elements={[
+                                <Input placeholder={"Creator"} defaultValue={value} onChange={ev => onChange(ev.target.value)}/>,
+
+                                <Button height={percent(100)} width={px(50)} border={false} highlight={false} children={
+                                    <Flex fh fw align={Align.CENTER} justifyContent={Justify.CENTER} elements={[
+                                        <Tooltip sx={{ height: "100%", width: "100%"}} title={"Open editor"} arrow children={
+                                            <Icon icon={<EditIcon/>}/>
+                                        }/>
+                                    ]}/>
+                                } onClick={() => {
+                                    this.dialog(
+                                        <StaticDrawerMenu body={props => (
+                                            <Flex fw elements={[
+                                                <DrawerHeader
+                                                    header={"Choose a creator"}
+                                                    enableBadge
+                                                    badgeVM={VM.UI_NO_HIGHLIGHT}
+                                                    badgeText={"Folder setup"}
+                                                    description={"Choose from an existing creator.\n*A creator is automatically registered, if a new folder, category or document is added, with a creator, that isn't yet registered.*"}
+                                                />,
+
+                                                <SettingsGroup elements={[
+                                                    <SettingsElement title={"Andrea"} onClick={() => {
+                                                        onChange("Andrea");
+                                                        this.closeLocalDialog();
+                                                    }} appendixGenerator={element => (
+                                                        <FlexRow elements={[
+                                                            <Text
+                                                                text={"1.203"}
+                                                                type={TextType.secondaryDescription}
+                                                                fontSize={px(11)}
+                                                            />
+                                                        ]}/>
+                                                    )}/>,
+                                                    <SettingsElement title={"Christian"} onClick={() => {
+                                                        onChange("Christian");
+                                                        this.closeLocalDialog();
+                                                    }} appendixGenerator={element => (
+                                                        <FlexRow elements={[
+                                                            <Text
+                                                                text={"276"}
+                                                                type={TextType.secondaryDescription}
+                                                                fontSize={px(11)}
+                                                            />
+                                                        ]}/>
+                                                    )}/>,
+                                                ]}/>
+
+                                            ]}/>
+                                        )}/>
+                                    );
+                                }}/>
+                            ]}/>
                         )}
                     />,
 
@@ -84,7 +149,19 @@ export class FolderSetupDialog extends BC<FolderSetupDialogProps, any, FolderSet
                         title={"Tags"}
                         fdh={this.local.state.fdh}
                         inputGenerator={(onChange, value, valid) => (
-                            <Input placeholder={"Tag 1, Tag 2, ..., Tag n"} defaultValue={value} onChange={ev => onChange(ev.target.value)}/>
+                            <Group removeChildBorders width={percent(100)} orientation={Orientation.HORIZONTAL} elements={[
+                                <Input placeholder={"Tag 1, Tag 2, ..., Tag n"} defaultValue={value} onChange={ev => onChange(ev.target.value)}/>,
+
+                                <Button height={percent(100)} width={px(50)} border={false} highlight={false} children={
+                                    <Flex fh fw align={Align.CENTER} justifyContent={Justify.CENTER} elements={[
+                                        <Tooltip sx={{ height: "100%", width: "100%"}} title={"Open editor"} arrow children={
+                                            <Icon icon={<EditIcon/>}/>
+                                        }/>
+                                    ]}/>
+                                } onClick={() => {
+
+                                }}/>
+                            ]}/>
                         )}
                     />,
                 ]}/>
