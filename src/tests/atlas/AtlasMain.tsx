@@ -21,15 +21,15 @@ export type AtlasMainProps = {
 
 export class AtlasMain extends BC<AtlasMainProps, any, any> {
 
-    init() {
-        super.init();
-        this.folderAssembly();
-    }
-
     private static atlasInstance: AtlasMain | undefined = undefined;
 
     public static atlas(): AtlasMain {
         return this.atlasInstance as AtlasMain;
+    }
+
+    init() {
+        super.init();
+        this.folderAssembly();
     }
 
     public api(): IAtlasAPI {
@@ -51,7 +51,7 @@ export class AtlasMain extends BC<AtlasMainProps, any, any> {
             return (
                 <Flex fw elements={[
                     <DrawerHeader
-                        header={"Folders"}
+                        header={"Folder view"}
                         enableBadge
                         badgeVM={VM.UI_NO_HIGHLIGHT}
                         badgeText={"Virtual Folder System"}
@@ -70,7 +70,7 @@ export class AtlasMain extends BC<AtlasMainProps, any, any> {
                         }}/>
                     ]}/>,
 
-                    <SettingsGroup elements={
+                    <SettingsGroup title={"All folders / global folders"} elements={
                         this.api().getAllFolders().map(data => (
                             <FolderComponent data={data} onSelect={(component, _) => new Promise<void>((resolve, reject) => {
                                 try {
