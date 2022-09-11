@@ -6,7 +6,6 @@ import {Default, Desktop, Mobile, Tablet} from "../logic/Media";
 import {Box} from "./Box";
 import {OverflowBehaviour} from "../../logic/style/OverflowBehaviour";
 import {Flex} from "./FlexBox";
-import {utilizeGlobalTheme} from "../../logic/app/App";
 import {getOr} from "../../logic/Utils";
 import {shouldVibrate, VibrationSettingsProps} from "../props/VibrationSettingsProps";
 import {If} from "../logic/If";
