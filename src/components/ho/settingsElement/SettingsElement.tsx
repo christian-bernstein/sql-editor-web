@@ -28,7 +28,6 @@ import {Orientation} from "../../../logic/style/Orientation";
 import {Accordion, AccordionDetails, AccordionSummary} from "@mui/material";
 import {OverflowBehaviour} from "../../../logic/style/OverflowBehaviour";
 
-
 export type SettingsElementIconConfig = {
     enable: boolean,
     color?: Color,
@@ -47,7 +46,6 @@ export type SettingsElementProps = WithVisualMeaning & {
     onClick?: (element: SettingsElement) => void,
     promiseBasedOnClick?: (element: SettingsElement) => Promise<any>,
     forceRenderSubpageIcon?: boolean,
-
 
     quickChildElements?: (element: SettingsElement) => Array<JSX.Element>
 }

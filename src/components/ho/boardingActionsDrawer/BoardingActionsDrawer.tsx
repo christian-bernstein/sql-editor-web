@@ -7,7 +7,7 @@ import {percent, px} from "../../../logic/style/DimensionalMeasured";
 import {Flex} from "../../lo/FlexBox";
 import React from "react";
 import {NavHeader} from "../navHeader/NavHeader";
-import {Text, TextType} from "../../lo/Text";
+import {Text} from "../../lo/Text";
 import {createMargin} from "../../../logic/style/Margin";
 import styled from "styled-components";
 import {getOr} from "../../../logic/Utils";
@@ -173,11 +173,12 @@ export class BoardingActionsDrawer extends BC<any, any, BoardingActionsDrawerLoc
 
                 <Box style={{ zIndex: 1500 }} width={percent(100)} noPadding borderless borderRadiiConfig={{ enableCustomBorderRadii: true, fallbackCustomBorderRadii: px() }} children={
                     <Flex margin={createMargin(7, 0, 0, 0)} fw align={Align.CENTER} elements={[
+                        // <Separator orientation={Orientation.HORIZONTAL}/>,
                         this.component(local => (
                             <NavHeader bypassOnChangeFilter element={local.state.currentAction} elements={new Map<string, (nav: NavHeader) => JSX.Element>([
-                                ["resume", nav => <Text fontSize={px(14)} bold text={"Resume"}/>],
-                                ["login", nav => <Text fontSize={px(14)} bold text={"Login"}/>],
-                                ["sign-up", nav => <Text fontSize={px(14)} bold text={"Sign up"}/>],
+                                ["resume", nav => <Text fontSize={px(12)} bold text={"Resume"}/>],
+                                ["login", nav => <Text fontSize={px(12)} bold text={"Login"}/>],
+                                ["sign-up", nav => <Text fontSize={px(12)} bold text={"Sign up"}/>],
                             ])} onChange={(from, to) => {
                                 if (from === to) {
                                     this.switchActionDialog();
