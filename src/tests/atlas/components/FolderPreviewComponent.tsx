@@ -15,9 +15,13 @@ import {ReactComponent as CategoryIcon} from "../../../assets/icons/ic-20/ic20-l
 import {ReactComponent as FileIcon} from "../../../assets/icons/ic-16/ic16-file.svg";
 import {Category} from "../data/Category";
 import {Icon} from "../../../components/lo/Icon";
-import {px} from "../../../logic/style/DimensionalMeasured";
+import {percent, px} from "../../../logic/style/DimensionalMeasured";
 import {Screen} from "../../../components/lo/Page";
 import {CategoryComponent} from "./CategoryComponent";
+import {AtlasMain} from "../AtlasMain";
+import {CategorySetupDialog} from "./CategorySetupDialog";
+import {Button} from "../../../components/lo/Button";
+import React from "react";
 
 export type FolderPreviewComponentProps = {
     data: Folder
@@ -48,51 +52,88 @@ export class FolderPreviewComponent extends BC<FolderPreviewComponentProps, any,
                         badgeVM={VM.UI_NO_HIGHLIGHT}
                         badgeText={"Preview"}
                         description={p.data.description}
-                        margin={createMargin(0, 0, 40, 0)}
                     />,
 
-                    <SettingsGroup
-                        title={"Select a category"}
-                        elements={
-                            p.data.categories.map(category => (
-                                <SettingsElement
-                                    title={getOr(category.title, "N/A")}
-                                    groupDisplayMode
-                                    forceRenderSubpageIcon
-                                    promiseBasedOnClick={element => this.onCategorySelect(element, category)}
-                                    iconConfig={{
-                                        enable: true,
-                                        iconGenerator: element => (
-                                            <CategoryIcon/>
-                                        )
-                                    }}
-                                    appendixGenerator={element => {
-                                        const documentCount = category.documents.length;
-                                        const empty = documentCount === 0;
+                    <Flex fw padding paddingX={px(25)} elements={[
+                        <Button width={percent(100)} text={"Create category"} onClick={() => {
+                            this.dialog(
+                                <CategorySetupDialog folder={p.data} actions={{
+                                    onSubmit: category => {
+                                        const success = AtlasMain.atlas().api().createCategory(category);
+
+                                        if (success) {
+                                            AtlasMain.atlas().api().linkCategoryToFolder(category.id, p.data.id);
+                                        }
+
+                                        setTimeout(() => {
+                                            this.closeLocalDialog();
+                                            this.rerender("categories");
+                                        }, 1);
+                                        return success;
+                                    }
+                                }}/>
+                            );
+                        }}/>
+                    ]}/>,
+
+                    this.component(local => {
+                        const id = p.data.id;
+                        const freshFolderData = AtlasMain.atlas().api().getFolder(id);
+                        console.log("fresh folder data", freshFolderData)
+
+                        // TODO: Render 0-entries differently
+
+                        return (
+                            <SettingsGroup
+                                title={"Select a category"}
+                                elements={
+                                    freshFolderData.categories.map(categoryID => {
+                                        console.log("get category", categoryID)
+
+                                        const category = AtlasMain.atlas().api().getCategory(categoryID);
 
                                         return (
-                                            <Text
-                                                text={String(category.documents.length)}
-                                                fontSize={px(11)}
-                                                coloredText={empty}
-                                                bold={empty}
-                                                visualMeaning={empty ? VM.WARNING : VM.UI_NO_HIGHLIGHT}
-                                                type={TextType.secondaryDescription}
-                                                enableLeftAppendix
-                                                leftAppendix={
-                                                    <Icon
-                                                        icon={<FileIcon/>}
-                                                        colored
-                                                        color={t.colors.fontSecondaryColor}
-                                                    />
-                                                }
+                                            <SettingsElement
+                                                title={getOr(category.title, "N/A")}
+                                                groupDisplayMode
+                                                forceRenderSubpageIcon
+                                                promiseBasedOnClick={element => this.onCategorySelect(element, category)}
+                                                iconConfig={{
+                                                    enable: true,
+                                                    iconGenerator: element => (
+                                                        <CategoryIcon/>
+                                                    )
+                                                }}
+                                                appendixGenerator={element => {
+                                                    const documentCount = category.documents.length;
+                                                    const empty = documentCount === 0;
+
+                                                    return (
+                                                        <Text
+                                                            text={String(category.documents.length)}
+                                                            fontSize={px(11)}
+                                                            coloredText={empty}
+                                                            bold={empty}
+                                                            visualMeaning={empty ? VM.WARNING : VM.UI_NO_HIGHLIGHT}
+                                                            type={TextType.secondaryDescription}
+                                                            enableLeftAppendix
+                                                            leftAppendix={
+                                                                <Icon
+                                                                    icon={<FileIcon/>}
+                                                                    colored
+                                                                    color={t.colors.fontSecondaryColor}
+                                                                />
+                                                            }
+                                                        />
+                                                    );
+                                                }}
                                             />
                                         );
-                                    }}
-                                />
-                            ))
-                        }
-                    />
+                                    })
+                                }
+                            />
+                        );
+                    }, "categories")
                 ]}/>
             )}/>
         );

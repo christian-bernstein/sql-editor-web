@@ -44,7 +44,7 @@ export class FolderComponent extends BC<FolderProps, any, any> {
                         />,
                         <Text
                             type={TextType.secondaryDescription}
-                            text={getOr(p.data.creationDate?.toLocaleDateString(), "N/A")}
+                            text={p.data.creationDate === undefined ? "N/A" : new Date(p.data.creationDate).toLocaleDateString()}
                         />
                     ]}/>
                 )}

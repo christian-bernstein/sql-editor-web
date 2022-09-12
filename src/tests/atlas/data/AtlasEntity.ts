@@ -1,5 +1,5 @@
 export type AtlasEntity = {
-    creationDate?: Date,
+    creationDate?: string,
     title?: string,
     description?: string,
     creator?: string,

@@ -23,7 +23,8 @@ export class AtlasMain extends BC<AtlasMainProps, any, any> {
 
     private static atlasInstance: AtlasMain | undefined = undefined;
 
-    public static atlas(): AtlasMain {
+    public static atlas(consumer?: (atlas: AtlasMain) => void): AtlasMain {
+        consumer?.(this.atlasInstance as AtlasMain);
         return this.atlasInstance as AtlasMain;
     }
 
@@ -62,28 +63,37 @@ export class AtlasMain extends BC<AtlasMainProps, any, any> {
                         <Button width={percent(100)} text={"Create folder"} onClick={() => {
                             this.dialog(
                                 <FolderSetupDialog actions={{
-                                    onSubmit(folder: Folder) {
-                                        // TODO: implement
+                                    onSubmit(folder: Folder): boolean {
+                                        const success = AtlasMain.atlas().api().createFolder(folder);
+                                        setTimeout(() => {
+                                            AtlasMain.atlas(atlas => {
+                                                atlas.closeLocalDialog();
+                                                atlas.rerender("folders");
+                                            });
+                                        }, 1);
+                                        return success;
                                     }
                                 }}/>
                             );
                         }}/>
                     ]}/>,
 
-                    <SettingsGroup title={"All folders / global folders"} elements={
-                        this.api().getAllFolders().map(data => (
-                            <FolderComponent data={data} onSelect={(component, _) => new Promise<void>((resolve, reject) => {
-                                try {
-                                    this.dialog(
-                                        <FolderPreviewComponent data={data}/>
-                                    );
-                                    resolve();
-                                } catch (e) {
-                                    reject(e);
-                                }
-                            })}/>
-                        ))
-                    }/>
+                    this.component(() => (
+                        <SettingsGroup title={"All folders / global folders"} elements={
+                            this.api().getAllFolders().map(data => (
+                                <FolderComponent data={data} onSelect={(component, _) => new Promise<void>((resolve, reject) => {
+                                    try {
+                                        this.dialog(
+                                            <FolderPreviewComponent data={data}/>
+                                        );
+                                        resolve();
+                                    } catch (e) {
+                                        reject(e);
+                                    }
+                                })}/>
+                            ))
+                        }/>
+                    ), "folders")
                 ]}/>
             );
         })

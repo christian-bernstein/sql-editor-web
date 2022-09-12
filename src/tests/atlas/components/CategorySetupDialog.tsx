@@ -1,88 +1,89 @@
 import {BC} from "../../../logic/BernieComponent";
 import {Folder} from "../data/Folder";
-import {Flex, FlexRow} from "../../../components/lo/FlexBox";
+import {FormDataHub} from "../../epicure/components/FormDataHub";
 import {Assembly} from "../../../logic/assembly/Assembly";
 import {Themeable} from "../../../logic/style/Themeable";
-import {Screen} from "../../../components/lo/Page";
+import {Category} from "../data/Category";
+import {Flex, FlexRow} from "../../../components/lo/FlexBox";
 import {DrawerHeader} from "../../../components/lo/DrawerHeader";
 import {VM} from "../../../logic/style/ObjectVisualMeaning";
-import {FormDataHub} from "../../epicure/components/FormDataHub";
-import {Input} from "../../../components/lo/Input";
-import {FormElement} from "../../epicure/components/FormElement";
-import React from "react";
 import {percent, px} from "../../../logic/style/DimensionalMeasured";
 import {Button} from "../../../components/lo/Button";
-import {Icon} from "../../../components/lo/Icon";
-import {ReactComponent as EditIcon} from "../../../assets/icons/ic-20/ic20-edit.svg";
-import {Align} from "../../../logic/style/Align";
+import {FormElement} from "../../epicure/components/FormElement";
+import {Input} from "../../../components/lo/Input";
 import {Group} from "../../../components/lo/Group";
 import {Orientation} from "../../../logic/style/Orientation";
-import {Tooltip} from "../../../components/ho/tooltip/Tooltip";
+import {Align} from "../../../logic/style/Align";
 import {Justify} from "../../../logic/style/Justify";
+import {Tooltip} from "../../../components/ho/tooltip/Tooltip";
+import {Icon} from "../../../components/lo/Icon";
+import {ReactComponent as EditIcon} from "../../../assets/icons/ic-20/ic20-edit.svg";
 import {StaticDrawerMenu} from "../../../components/lo/StaticDrawerMenu";
 import {SettingsGroup} from "../../../components/lo/SettingsGroup";
 import {SettingsElement} from "../../../components/ho/settingsElement/SettingsElement";
 import {Text, TextType} from "../../../components/lo/Text";
+import {Screen} from "../../../components/lo/Page";
+import React from "react";
 import {v4} from "uuid";
 
-interface FolderSetupDialogActions {
-    onSubmit(folder: Folder): boolean;
+interface CategorySetupDialogActions {
+    onSubmit(category: Category): boolean;
 }
 
-export type FolderSetupDialogProps = {
-    actions: FolderSetupDialogActions
+export type CategorySetupDialogProps = {
+    folder: Folder,
+    actions: CategorySetupDialogActions
 }
 
-export type FolderSetupDialogLocalState = {
+export type CategorySetupDialogLocalState = {
     fdh: FormDataHub
 }
 
-export class FolderSetupDialog extends BC<FolderSetupDialogProps, any, FolderSetupDialogLocalState> {
+export class CategorySetupDialog extends BC<CategorySetupDialogProps, any, CategorySetupDialogLocalState> {
 
-    constructor(props: FolderSetupDialogProps) {
+    constructor(props: CategorySetupDialogProps) {
         super(props, undefined, {
-            fdh: new FormDataHub("FolderSetupDialog").loadFromLocalStore()
+            fdh: new FormDataHub("CategorySetupDialog").loadFromLocalStore()
         });
     }
 
-    private createFolder() {
-
+    private createCategory() {
         // TODO: Only call action, if valid entries (unique title)
 
         this.props.actions.onSubmit({
+            documents: [],
             id: v4(),
             creationDate: new Date().toString(),
             note: this.local.state.fdh.get("note"),
             tags: this.local.state.fdh.get("tags"),
             title: this.local.state.fdh.get("title"),
             creator: this.local.state.fdh.get("creator"),
-            description: this.local.state.fdh.get("description"),
-            categories: []
+            description: this.local.state.fdh.get("description")
         });
     }
 
-    componentRender(p: FolderSetupDialogProps, s: any, l: FolderSetupDialogLocalState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
+    componentRender(p: CategorySetupDialogProps, s: any, l: CategorySetupDialogLocalState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
             <Screen children={
                 <Flex fw elements={[
                     <DrawerHeader
-                        header={"Create folder"}
+                        header={`Create category in *${p.folder.title}*`}
                         enableBadge
                         badgeVM={VM.UI_NO_HIGHLIGHT}
                         badgeText={"Virtual folder system"}
-                        description={"Create a new folder"}
+                        description={`Create a new category in folder **${p.folder.title}**.`}
                     />,
 
                     <Flex fw padding paddingX={px(25)} elements={[
-                        <Button width={percent(100)} text={"Create folder"} opaque visualMeaning={VM.INFO} onClick={() => {
-                            this.createFolder();
+                        <Button width={percent(100)} text={"Create category"} opaque visualMeaning={VM.INFO} onClick={() => {
+                            this.createCategory();
                         }}/>
                     ]}/>,
 
                     <FormElement
                         id={"title"}
                         title={"Title"}
-                        description={"The title / name of the folder"}
+                        description={"The title / name of the category"}
                         fdh={this.local.state.fdh}
                         inputGenerator={(onChange, value, valid) => (
                             <Input placeholder={"Title"} defaultValue={value} onChange={ev => onChange(ev.target.value)}/>
@@ -92,7 +93,7 @@ export class FolderSetupDialog extends BC<FolderSetupDialogProps, any, FolderSet
                     <FormElement
                         id={"description"}
                         title={"Description"}
-                        description={"A short description of the folder's meaning"}
+                        description={"A short description of the category's meaning"}
                         fdh={this.local.state.fdh}
                         inputGenerator={(onChange, value, valid) => (
                             <Input placeholder={"Description"} defaultValue={value} onChange={ev => onChange(ev.target.value)}/>
@@ -102,7 +103,7 @@ export class FolderSetupDialog extends BC<FolderSetupDialogProps, any, FolderSet
                     <FormElement
                         id={"creator"}
                         title={"Creator"}
-                        description={"Who created this folder"}
+                        description={"Who created this category"}
                         fdh={this.local.state.fdh}
                         inputGenerator={(onChange, value, valid) => (
                             <Group removeChildBorders width={percent(100)} orientation={Orientation.HORIZONTAL} elements={[
