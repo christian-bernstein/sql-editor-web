@@ -12,6 +12,12 @@ import {AtlasMain} from "../AtlasMain";
 import {DocumentComponent} from "./DocumentComponent";
 import {UnresolvedDocumentComponent} from "./UnresolvedDocumentComponent";
 import {SettingsGroup} from "../../../components/lo/SettingsGroup";
+import {DocumentSetupDialog} from "./DocumentSetupDialog";
+import {percent, px} from "../../../logic/style/DimensionalMeasured";
+import {Button} from "../../../components/lo/Button";
+import {CategorySetupDialog} from "./CategorySetupDialog";
+import React from "react";
+import {AtlasDocument} from "../data/AtlasDocument";
 
 export type CategoryComponentProps = {
     data: Category
@@ -31,6 +37,21 @@ export class CategoryComponent extends BC<CategoryComponentProps, any, any> {
                         description={p.data.description}
                         margin={createMargin(0, 0, 40, 0)}
                     />,
+
+                    <Flex fw padding paddingX={px(25)} elements={[
+                        <Button width={percent(100)} text={"Create document"} onClick={() => {
+                            this.dialog(
+                                <DocumentSetupDialog category={p.data} actions={{
+                                    onSubmit(document: AtlasDocument): boolean {
+
+                                        // TODO: implement
+
+                                        return true;
+                                    }
+                                }}/>
+                            );
+                        }}/>
+                    ]}/>,
 
                     <SettingsGroup children={"Select document"} elements={
                         p.data.documents.map(id => {
