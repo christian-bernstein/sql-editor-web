@@ -47,7 +47,9 @@ export type SettingsElementProps = WithVisualMeaning & {
     promiseBasedOnClick?: (element: SettingsElement) => Promise<any>,
     forceRenderSubpageIcon?: boolean,
 
-    quickChildElements?: (element: SettingsElement) => Array<JSX.Element>
+    quickChildElements?: (element: SettingsElement) => Array<JSX.Element>,
+
+    deactivateOnClick?: boolean
 }
 
 export type SettingsElementLocalState = {
@@ -63,6 +65,10 @@ export class SettingsElement extends BernieComponent<SettingsElementProps, any, 
     }
 
     private onSelect() {
+        if (this.props.deactivateOnClick) {
+            return;
+        }
+
         if (!this.local.state.processing) {
 
             this.local.setStateWithChannels({

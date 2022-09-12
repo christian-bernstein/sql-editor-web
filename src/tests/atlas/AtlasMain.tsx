@@ -14,6 +14,8 @@ import {Button} from "../../components/lo/Button";
 import {percent, px} from "../../logic/style/DimensionalMeasured";
 import {FolderSetupDialog} from "./components/FolderSetupDialog";
 import {Folder} from "./data/Folder";
+import {StaticDrawerMenu} from "../../components/lo/StaticDrawerMenu";
+import {SearchDialog} from "./components/SearchDialog";
 
 export type AtlasMainProps = {
     api: IAtlasAPI
@@ -59,7 +61,7 @@ export class AtlasMain extends BC<AtlasMainProps, any, any> {
                         description={"All your folders at-a-glance"}
                     />,
 
-                    <Flex fw padding paddingX={px(25)} elements={[
+                    <Flex fw padding paddingX={px(25)} gap={theme.gaps.smallGab} elements={[
                         <Button width={percent(100)} text={"Create folder"} onClick={() => {
                             this.dialog(
                                 <FolderSetupDialog actions={{
@@ -74,6 +76,18 @@ export class AtlasMain extends BC<AtlasMainProps, any, any> {
                                         return success;
                                     }
                                 }}/>
+                            );
+                        }}/>,
+
+                        <Button width={percent(100)} text={"Search"} onClick={() => {
+                            this.dialog(
+                                <Screen children={
+                                    <SearchDialog actions={{
+                                        onCancel(dialog: SearchDialog) {
+                                            AtlasMain.atlas(atlas => atlas.closeLocalDialog());
+                                        }
+                                    }}/>
+                                }/>
                             );
                         }}/>
                     ]}/>,
