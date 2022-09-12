@@ -14,6 +14,7 @@ import {percent, px} from "../../../logic/style/DimensionalMeasured";
 import {Button} from "../../../components/lo/Button";
 import {Icon} from "../../../components/lo/Icon";
 import {ReactComponent as EditIcon} from "../../../assets/icons/ic-20/ic20-edit.svg";
+import {ReactComponent as ResetIcon} from "../../../assets/icons/ic-20/ic20-refresh.svg";
 import {Align} from "../../../logic/style/Align";
 import {Group} from "../../../components/lo/Group";
 import {Orientation} from "../../../logic/style/Orientation";
@@ -100,30 +101,6 @@ export class FolderSetupDialog extends BC<FolderSetupDialogProps, any, FolderSet
                         fdh={this.local.state.fdh}
                         inputGenerator={(onChange, value, valid) => (
                             <Input placeholder={"Description"} defaultValue={value} onChange={ev => onChange(ev.target.value)}/>
-                        )}
-                    />,
-
-                    <FormElement
-                        id={"icon-color"}
-                        title={"Color"}
-                        initialValue={"#000000"}
-                        fdh={this.local.state.fdh}
-                        inputGenerator={(onChange, value, valid) => (
-                            <Group removeChildBorders width={percent(100)} orientation={Orientation.HORIZONTAL} elements={[
-                                <Box width={percent(100)} height={percent(100)} bgColor={Color.ofHex(value)}/>,
-
-                                <Button height={percent(100)} width={px(50)} border={false} highlight={false} children={
-                                    <Flex fh fw align={Align.CENTER} justifyContent={Justify.CENTER} elements={[
-                                        <Tooltip sx={{ height: "100%", width: "100%"}} title={"Open editor"} arrow children={
-                                            <Icon icon={<EditIcon/>}/>
-                                        }/>
-                                    ]}/>
-                                } onClick={() => {
-                                    this.dialog(
-                                        <ColorSelectorDialog hex={value} onSubmit={hex => onChange(hex)}/>
-                                    );
-                                }}/>
-                            ]}/>
                         )}
                     />,
 
@@ -228,6 +205,54 @@ export class FolderSetupDialog extends BC<FolderSetupDialogProps, any, FolderSet
                             <Input placeholder={"Note"} defaultValue={value} onChange={ev => onChange(ev.target.value)}/>
                         )}
                     />,
+
+                    this.component(local => (
+                        <FormElement
+                            id={"icon-color"}
+                            title={"Color"}
+                            description={"Select the icons color"}
+                            initialValue={undefined}
+                            fdh={this.local.state.fdh}
+                            inputGenerator={(onChange, value, valid) => (
+                                <Group removeChildBorders width={percent(100)} orientation={Orientation.HORIZONTAL} elements={[
+                                    <Box width={percent(100)} style={{ position: "relative" }} height={percent(100)} bgColor={value === undefined ? undefined : Color.ofHex(value)} children={
+                                        <Flex style={{ position: "absolute", top: 0, left: 0}} fh fw align={Align.CENTER} justifyContent={Justify.CENTER} elements={[
+                                            value === undefined ? <Text text={"none"} uppercase/> : <></>
+                                        ]}/>
+                                    }/>,
+
+                                    <Button height={percent(100)} width={px(50)} border={false} highlight={false} children={
+                                        <Flex fh fw align={Align.CENTER} justifyContent={Justify.CENTER} elements={[
+                                            <Tooltip sx={{ height: "100%", width: "100%"}} title={"Open editor"} arrow children={
+                                                <Icon icon={<EditIcon/>}/>
+                                            }/>
+                                        ]}/>
+                                    } onClick={() => {
+                                        this.dialog(
+                                            <StaticDrawerMenu body={() => (
+                                                <ColorSelectorDialog hex={value} onSubmit={hex => {
+                                                    onChange(hex);
+                                                    this.closeLocalDialog();
+                                                    this.rerender("icon-color");
+                                                }}/>
+                                            )}/>
+                                        );
+                                    }}/>,
+
+                                    <Button height={percent(100)} width={px(50)} border={false} highlight={false} children={
+                                        <Flex fh fw align={Align.CENTER} justifyContent={Justify.CENTER} elements={[
+                                            <Tooltip sx={{ height: "100%", width: "100%"}} title={"Reset icon color"} arrow children={
+                                                <Icon icon={<ResetIcon/>}/>
+                                            }/>
+                                        ]}/>
+                                    } onClick={() => {
+                                        onChange(undefined);
+                                        this.rerender("icon-color");
+                                    }}/>
+                                ]}/>
+                            )}
+                        />
+                    ), "icon-color"),
                 ]}/>
             }/>
         );

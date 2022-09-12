@@ -9,6 +9,7 @@ import {ReactComponent as FolderIcon} from "../../../assets/icons/ic-20/ic20-fol
 import {FlexRow} from "../../../components/lo/FlexBox";
 import {Badge} from "../../../components/lo/Badge";
 import {ObjectVisualMeaning, VM} from "../../../logic/style/ObjectVisualMeaning";
+import {Color} from "../../../logic/style/Color";
 
 export type FolderProps = {
     data: Folder,
@@ -25,6 +26,7 @@ export class FolderComponent extends BC<FolderProps, any, any> {
                 title={getOr(p.data.title, "N/A")}
                 iconConfig={{
                     enable: true,
+                    color: p.data.iconColorHEX === undefined ? undefined : Color.ofHex(p.data.iconColorHEX),
                     iconGenerator: element => (
                         <FolderIcon/>
                     )

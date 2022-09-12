@@ -42,33 +42,35 @@ export class ColorSelectorDialog extends BC<ColorSelectorDialogProps, any, Color
                     description={"Choose a color with the color-picker. If you are satisfied with the color, press '**Select color**' to confirm."}
                     margin={createMargin(0, 0, 40, 0)}
                 />,
-                <ColorSelector showThemePalette showHistoryPalette actions={{
+                <ColorSelector width={percent(100)} showThemePalette showHistoryPalette actions={{
                     onChange: (hex: string) => {
                         this.local.setStateWithChannels({
                             hex: hex
                         }, ["master-color"])
                     }
                 }}/>,
-                <Flex fw padding={false} paddingX={px(25)} gap={t.gaps.smallGab} elements={[
-                    <Button
-                        width={percent(100)}
-                        onClick={() => this.props.onSubmit(this.local.state.hex as string)}
-                        children={
-                            <Flex gap={px(0)} align={Align.CENTER} fw elements={[
-                                <Text
-                                    bold
-                                    text={"Select color"}
-                                />,
-                                <Text
-                                    text={`${this.local.state.hex}`}
-                                    type={TextType.secondaryDescription}
-                                    fontSize={px(11)}
-                                    align={Align.CENTER}
-                                />
-                            ]}/>
-                        }
-                    />
-                ]}/>
+                this.component((local) => (
+                    <Flex fw padding={false} paddingX={px(25)} gap={t.gaps.smallGab} elements={[
+                        <Button
+                            width={percent(100)}
+                            onClick={() => this.props.onSubmit(this.local.state.hex as string)}
+                            children={
+                                <Flex gap={px(0)} align={Align.CENTER} fw elements={[
+                                    <Text
+                                        bold
+                                        text={"Select color"}
+                                    />,
+                                    <Text
+                                        text={`${local.state.hex}`}
+                                        type={TextType.secondaryDescription}
+                                        fontSize={px(11)}
+                                        align={Align.CENTER}
+                                    />
+                                ]}/>
+                            }
+                        />
+                    ]}/>
+                ), "master-color")
             ]}/>
         );
     }

@@ -34,7 +34,8 @@ export type ColorSelectorProps = {
     // TODO: Use
     showReadabilityTest?: boolean,
 
-    actions: ColorSelectorActions
+    actions: ColorSelectorActions,
+    width?: DimensionalMeasured
 }
 
 export type ColorSelectorLocalState = {
@@ -124,7 +125,7 @@ export class ColorSelector extends BC<ColorSelectorProps, any, ColorSelectorLoca
                         return (
                             <Flex fw gap={theme.gaps.smallGab} elements={[
                                 <Text text={pair.key} uppercase type={TextType.secondaryDescription} fontSize={px(11)}/>,
-                                <LiteGrid columns={10} gap={theme.gaps.smallGab} children={
+                                <LiteGrid responsive minResponsiveWidth={px(24)} gap={theme.gaps.smallGab} children={
                                     <AF elements={
                                         pair.value.map(color => (
                                             <Box
@@ -190,7 +191,7 @@ export class ColorSelector extends BC<ColorSelectorProps, any, ColorSelectorLoca
                 <Box width={percent(100)} children={
                     <Flex gap={theme.gaps.smallGab} fw elements={[
                         <Text text={"HEX"}/>,
-                        <Input pattern={"#*[a-fA-F\\d]+"} autoFocus placeholder={"#FF32A5"} fontWeight={"lighter"} onChange={ev => {
+                        <Input pattern={"#*[a-fA-F\\d]+"} placeholder={"#FF32A5"} fontWeight={"lighter"} onChange={ev => {
                             let value = ev.target.value.replaceAll("#", "").trim();
                             const chars = Array.from(value);
                             const len = chars.length;
@@ -254,7 +255,7 @@ export class ColorSelector extends BC<ColorSelectorProps, any, ColorSelectorLoca
 
     componentRender(p: ColorSelectorProps, s: any, l: ColorSelectorLocalState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
-            <Group orientation={Orientation.VERTICAL} elements={[
+            <Group width={p.width} orientation={Orientation.VERTICAL} elements={[
                 this.component(() => this.a("preview"), "master-color"),
                 this.component(() => this.a("palettes"), "history"),
                 this.a("hex"),
