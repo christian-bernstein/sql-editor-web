@@ -61,11 +61,10 @@ export class DocumentSetupDialog extends BC<DocumentSetupDialogProps, any, Docum
             title: this.local.state.fdh.get("title"),
             creator: this.local.state.fdh.get("creator"),
             description: this.local.state.fdh.get("description"),
+            documentType: this.local.state.fdh.get("type", DocumentType.UNSPECIFIED),
 
             // TODO: Make changeable
-            documentType: DocumentType.NOTE,
             issuer: ""
-
         });
     }
 
@@ -114,9 +113,10 @@ export class DocumentSetupDialog extends BC<DocumentSetupDialogProps, any, Docum
                             description={"The type of the document"}
                             fdh={local.state.fdh}
                             inputGenerator={(onChange, value, valid) => (
-                                <Flex fw padding paddingX={px(25)} elements={[
+                                <Flex fw elements={[
+                                    // TODO: make better design -> Group
                                     <Text text={`${value}`}/>,
-                                    <Button width={percent(100)} text={"Choose type"} opaque visualMeaning={VM.INFO} onClick={() => {
+                                    <Button width={percent(100)} text={"Choose type"} onClick={() => {
                                         // TODO: Create less 'dev-y' document type selector
                                         this.dialog(
                                             <EnumSelector from={DocumentType} onSubmit={element => {

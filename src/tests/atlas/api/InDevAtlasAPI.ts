@@ -98,8 +98,8 @@ export class InDevAtlasAPI implements IAtlasAPI {
     }
 
     getDocument(id: string): AtlasDocument {
-        return this.getAllFolders({
-            test(obj: Folder): boolean {
+        return this.getAllDocuments({
+            test(obj: AtlasDocument): boolean {
                 return obj.id === id;
             }
         })[0];
@@ -111,6 +111,15 @@ export class InDevAtlasAPI implements IAtlasAPI {
             categories.push(categoryID);
             folder.categories = categories;
             return folder;
+        });
+    }
+
+    linkDocumentToCategory(documentID: string, categoryID: string) {
+        this.updateCategory(categoryID, category => {
+            const documents = category.documents;
+            documents.push(documentID);
+            category.documents = documents;
+            return category;
         });
     }
 

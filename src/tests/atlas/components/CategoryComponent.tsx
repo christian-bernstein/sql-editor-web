@@ -35,37 +35,51 @@ export class CategoryComponent extends BC<CategoryComponentProps, any, any> {
                         badgeVM={VM.UI_NO_HIGHLIGHT}
                         badgeText={"Category view"}
                         description={p.data.description}
-                        margin={createMargin(0, 0, 40, 0)}
                     />,
 
                     <Flex fw padding paddingX={px(25)} elements={[
                         <Button width={percent(100)} text={"Create document"} onClick={() => {
                             this.dialog(
                                 <DocumentSetupDialog category={p.data} actions={{
-                                    onSubmit(document: AtlasDocument): boolean {
+                                    onSubmit: document => {
+                                        const success = AtlasMain.atlas().api().createDocument(document);
+                                        if (success) {
+                                            AtlasMain.atlas().api().linkDocumentToCategory(document.id, p.data.id);
+                                        }
 
-                                        // TODO: implement
-
-                                        return true;
+                                        setTimeout(() => {
+                                            this.closeLocalDialog();
+                                            this.rerender("documents");
+                                        }, 1);
+                                        return success;
                                     }
                                 }}/>
                             );
                         }}/>
                     ]}/>,
 
-                    <SettingsGroup children={"Select document"} elements={
-                        p.data.documents.map(id => {
-                            try {
-                                return (
-                                    <DocumentComponent data={AtlasMain.atlas().api().getDocument(id)}/>
-                                );
-                            } catch (e) {
-                                return (
-                                    <UnresolvedDocumentComponent id={id} error={e}/>
-                                );
-                            }
-                        })
-                    }/>
+                    this.component(() => {
+                        const categoryID = p.data.id;
+                        const freshCategoryDate = AtlasMain.atlas().api().getCategory(categoryID);
+
+                        return (
+                            <SettingsGroup children={"Select document"} elements={
+                                freshCategoryDate.documents.map(id => {
+                                    try {
+                                        return (
+                                            <DocumentComponent data={AtlasMain.atlas().api().getDocument(id)}/>
+                                        );
+                                    } catch (e) {
+                                        return (
+                                            <UnresolvedDocumentComponent id={id} error={e}/>
+                                        );
+                                    }
+                                })
+                            }/>
+                        );
+                    }, "documents"),
+
+
                 ]}/>
             }/>
         );
