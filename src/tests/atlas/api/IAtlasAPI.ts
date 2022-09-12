@@ -2,6 +2,7 @@ import {Folder} from "../data/Folder";
 import {AtlasDocument} from "../data/AtlasDocument";
 import {Category} from "../data/Category";
 import {IPredicate} from "./IPredicate";
+import {FormDataHub} from "../../epicure/components/FormDataHub";
 
 export interface IAtlasAPI {
     getFolder(id: string): Folder;
@@ -22,4 +23,6 @@ export interface IAtlasAPI {
 
     linkCategoryToFolder(categoryID: string, folderID: string): void;
     linkDocumentToCategory(documentID: string, categoryID: string): void;
+
+    db(): FormDataHub;
 }

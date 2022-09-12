@@ -27,7 +27,7 @@ export type InputProps = {
     visualMeaning?: ObjectVisualMeaning,
     opaque?: boolean,
     opaqueValue?: number,
-    onChange?: (ev: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
+    onChange?: (ev: React.ChangeEvent<HTMLInputElement>) => void,
     value?: string
     autoFocus?: boolean,
     type?: string,
@@ -68,7 +68,7 @@ export class Input extends React.Component<InputProps, InputState> {
         };
     }
 
-    private onInputChange(ev: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+    private onInputChange(ev: React.ChangeEvent<HTMLInputElement>) {
         this.props.onChange?.(ev);
     }
 
@@ -169,7 +169,9 @@ export class Input extends React.Component<InputProps, InputState> {
                        ref={() => this.ref}
                        pattern={getOr(this.props.pattern, "*")}
                        inputMode={this.props.inputMode}
-                       onChange={event => this.onInputChange(event)}
+                       onChange={event => {
+                           if (event !== undefined) this.onInputChange(event)
+                       }}
                        placeholder={getOr(this.props.placeholder, " ")}
                        value={this.props.value}
                        defaultValue={this.props.defaultValue}

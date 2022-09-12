@@ -16,6 +16,10 @@ import {FolderSetupDialog} from "./components/FolderSetupDialog";
 import {Folder} from "./data/Folder";
 import {StaticDrawerMenu} from "../../components/lo/StaticDrawerMenu";
 import {SearchDialog} from "./components/SearchDialog";
+import {Input} from "../../components/lo/Input";
+import React from "react";
+import {Text, TextType} from "../../components/lo/Text";
+import {ISOHubComponent} from "./components/ISOHubComponent";
 
 export type AtlasMainProps = {
     api: IAtlasAPI
@@ -89,7 +93,14 @@ export class AtlasMain extends BC<AtlasMainProps, any, any> {
                                     }}/>
                                 }/>
                             );
-                        }}/>
+                        }}/>,
+
+                        <Button width={percent(100)} text={"ISO-image manager"} onClick={() => {
+                            this.dialog(
+                                <ISOHubComponent/>
+                            );
+                        }}/>,
+
                     ]}/>,
 
                     this.component(() => (

@@ -8,7 +8,7 @@ export class FormDataHub {
         this.id = id;
     }
 
-    private key(): string {
+    public key(): string {
         return `fdh-${this.id}`;
     }
 

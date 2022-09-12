@@ -79,43 +79,7 @@ export class SearchDialog extends BC<SearchDialogProps, any, SearchDialogLocalSt
                                 }}/>
                             ]}/>
                         )}
-                    />,
-
-                    <Flex fw align={Align.START} elements={[
-                        <TreeView
-                            style={{ width: "100%", gap: "5px" }}
-                            defaultCollapseIcon={<ExpandMoreIcon />}
-                            defaultExpandIcon={<ChevronRightIcon />}
-                        >
-                            <TreeItem nodeId={"1-1"} label={
-                                <SettingsElement deactivateOnClick groupDisplayMode title={"Folder 1"}/>
-                            } children={
-                                <AF elements={[
-                                    <TreeItem nodeId={"2-1"} label={
-                                        <SettingsElement deactivateOnClick groupDisplayMode title={"Category 1"}/>
-                                    }/>
-                                ]}/>
-                            }/>
-                            <TreeItem nodeId={"1-2"} label={
-                                <SettingsElement deactivateOnClick groupDisplayMode title={"Folder 2"}/>
-                            } children={
-                                <AF elements={[
-                                    <TreeItem nodeId={"2-2"} label={
-                                        <SettingsElement deactivateOnClick groupDisplayMode title={"Category 2"}/>
-                                    }/>
-                                ]}/>
-                            }/>
-                            <TreeItem nodeId={"1-3"} label={
-                                <SettingsElement deactivateOnClick groupDisplayMode title={"Folder 3"}/>
-                            } children={
-                                <AF elements={[
-                                    <TreeItem nodeId={"2-3"} label={
-                                        <SettingsElement deactivateOnClick groupDisplayMode title={"Category 3"}/>
-                                    }/>
-                                ]}/>
-                            }/>
-                        </TreeView>
-                    ]}/>
+                    />
                 ]}/>
             );
         })
@@ -151,6 +115,11 @@ export class SearchDialog extends BC<SearchDialogProps, any, SearchDialogLocalSt
                         <Separator orientation={Orientation.HORIZONTAL}/>
                     </FlexBox>
                 ), "search-provider"),
+
+                this.component(local => {
+                    // const provider = local.state.fdh.getOrSave("search-provider", "1");
+                    return this.a("easy-finder");
+                }, "search-provider")
 
             ]}/>
         );

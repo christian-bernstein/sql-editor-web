@@ -143,4 +143,8 @@ export class InDevAtlasAPI implements IAtlasAPI {
         this.database.set(DBAddresses.FOLDERS, folders, true);
         return this;
     }
+
+    db(): FormDataHub {
+        return this.database;
+    }
 }
