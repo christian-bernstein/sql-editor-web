@@ -20,7 +20,6 @@ export class InDevAtlasAPI implements IAtlasAPI {
             const documents: Array<AtlasDocument> = this.database.get(DBAddresses.DOCUMENTS, []);
             documents.push(data);
             this.database.set(DBAddresses.DOCUMENTS, documents, true);
-
             return true;
         } catch (e) {
             console.error(e);
@@ -33,7 +32,6 @@ export class InDevAtlasAPI implements IAtlasAPI {
             const folders: Array<Folder> = this.database.get(DBAddresses.FOLDERS, []);
             folders.push(data);
             this.database.set(DBAddresses.FOLDERS, folders, true);
-
             return true;
         } catch (e) {
             console.error(e);
@@ -46,16 +44,12 @@ export class InDevAtlasAPI implements IAtlasAPI {
             const categories: Array<Category> = this.database.get(DBAddresses.CATEGORIES, []);
             categories.push(data);
             this.database.set(DBAddresses.CATEGORIES, categories, true);
-
             return true;
         } catch (e) {
             console.error(e);
             return false;
         }
     }
-
-
-
 
     getAllCategories(...predicates: Array<IPredicate<Category>>): Array<Category> {
         let categories: Array<Category> = this.database.get(DBAddresses.CATEGORIES, []);
