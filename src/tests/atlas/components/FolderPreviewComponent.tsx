@@ -22,6 +22,7 @@ import {AtlasMain} from "../AtlasMain";
 import {CategorySetupDialog} from "./CategorySetupDialog";
 import {Button} from "../../../components/lo/Button";
 import React from "react";
+import {FolderActionsComponent} from "./FolderActionsComponent";
 
 export type FolderPreviewComponentProps = {
     data: Folder
@@ -54,7 +55,7 @@ export class FolderPreviewComponent extends BC<FolderPreviewComponentProps, any,
                         description={p.data.description}
                     />,
 
-                    <Flex fw padding paddingX={px(25)} elements={[
+                    <Flex fw padding paddingX={px(25)} gap={t.gaps.smallGab} elements={[
                         <Button width={percent(100)} text={"Create category"} onClick={() => {
                             this.dialog(
                                 <CategorySetupDialog folder={p.data} actions={{
@@ -72,6 +73,12 @@ export class FolderPreviewComponent extends BC<FolderPreviewComponentProps, any,
                                         return success;
                                     }
                                 }}/>
+                            );
+                        }}/>,
+
+                        <Button width={percent(100)} text={"Actions"} onClick={() => {
+                            this.dialog(
+                                <FolderActionsComponent data={this.props.data} caller={this}/>
                             );
                         }}/>
                     ]}/>,

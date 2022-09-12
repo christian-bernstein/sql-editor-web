@@ -8,11 +8,10 @@ import {percent, px} from "../../../logic/style/DimensionalMeasured";
 import {Button} from "../../../components/lo/Button";
 import {Align} from "../../../logic/style/Align";
 import {Text, TextType} from "../../../components/lo/Text";
-import {Input} from "../../../components/lo/Input";
 import {StaticDrawerMenu} from "../../../components/lo/StaticDrawerMenu";
 import React from "react";
-import {AtlasMain} from "../AtlasMain";
 import {ISODownloadComponent} from "./ISODownloadComponent";
+import {ISOUploadComponent} from "./ISOUploadComponent";
 
 export class ISOHubComponent extends BC<any, any, any> {
 
@@ -24,24 +23,7 @@ export class ISOHubComponent extends BC<any, any, any> {
 
     private importISODialog() {
         this.dialog(
-            <StaticDrawerMenu body={() => {
-
-                return (
-                    <Input type={"file"} onChange={ev => {
-                        console.log("file value", ev.target.value);
-
-                        const reader: FileReader = new FileReader();
-                        reader.onload = async (event: ProgressEvent<FileReader>) => {
-                            console.log("file content", event.target?.result)
-                        }
-
-                        if (ev.target.files !== null) {
-                            const file: File = ev.target.files[0];
-                            reader.readAsText(file)
-                        }
-                    }}/>
-                );
-            }}/>
+            <ISOUploadComponent/>
         );
     }
 

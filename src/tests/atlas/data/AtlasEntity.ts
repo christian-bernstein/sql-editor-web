@@ -4,5 +4,7 @@ export type AtlasEntity = {
     description?: string,
     creator?: string,
     tags?: Array<string>,
-    note?: string
+    note?: string,
+
+    iconColorHEX?: string
 }

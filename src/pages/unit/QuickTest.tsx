@@ -9,6 +9,8 @@ import {Align} from "../../logic/style/Align";
 import {Justify} from "../../logic/style/Justify";
 import {percent} from "../../logic/style/DimensionalMeasured";
 import {BoardingActionsDrawer} from "../../components/ho/boardingActionsDrawer/BoardingActionsDrawer";
+import {ColorSelector} from "../../components/ho/colorSelector/ColorSelector";
+import {Color} from "../../logic/style/Color";
 
 export class QuickTest extends BernieComponent<any, any, any> {
 
@@ -30,9 +32,13 @@ export class QuickTest extends BernieComponent<any, any, any> {
             // Display your test component here
 
             return (
-                <Flex fh fw justifyContent={Justify.FLEX_END} align={Align.CENTER} elements={[
-                    <BoardingActionsDrawer/>
-                ]}/>
+                <ColorSelector actions={{}} showThemePalette showHistoryPalette palettes={new Map<string, Array<Color>>([
+                    ["main", [
+                        Color.ofHex("#FFee3F"),
+                        Color.ofHex("#AFFF3F"),
+                        Color.ofHex("#0F753F"),
+                    ]]
+                ])}/>
             );
         });
     }

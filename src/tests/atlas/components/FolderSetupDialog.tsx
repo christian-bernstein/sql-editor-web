@@ -24,6 +24,9 @@ import {SettingsGroup} from "../../../components/lo/SettingsGroup";
 import {SettingsElement} from "../../../components/ho/settingsElement/SettingsElement";
 import {Text, TextType} from "../../../components/lo/Text";
 import {v4} from "uuid";
+import {Box} from "../../../components/lo/Box";
+import {Color} from "../../../logic/style/Color";
+import {ColorSelectorDialog} from "./ColorSelectorDialog";
 
 interface FolderSetupDialogActions {
     onSubmit(folder: Folder): boolean;
@@ -57,6 +60,7 @@ export class FolderSetupDialog extends BC<FolderSetupDialogProps, any, FolderSet
             title: this.local.state.fdh.get("title"),
             creator: this.local.state.fdh.get("creator"),
             description: this.local.state.fdh.get("description"),
+            iconColorHEX: this.local.state.fdh.get("icon-color"),
             categories: []
         });
     }
@@ -96,6 +100,30 @@ export class FolderSetupDialog extends BC<FolderSetupDialogProps, any, FolderSet
                         fdh={this.local.state.fdh}
                         inputGenerator={(onChange, value, valid) => (
                             <Input placeholder={"Description"} defaultValue={value} onChange={ev => onChange(ev.target.value)}/>
+                        )}
+                    />,
+
+                    <FormElement
+                        id={"icon-color"}
+                        title={"Color"}
+                        initialValue={"#000000"}
+                        fdh={this.local.state.fdh}
+                        inputGenerator={(onChange, value, valid) => (
+                            <Group removeChildBorders width={percent(100)} orientation={Orientation.HORIZONTAL} elements={[
+                                <Box width={percent(100)} height={percent(100)} bgColor={Color.ofHex(value)}/>,
+
+                                <Button height={percent(100)} width={px(50)} border={false} highlight={false} children={
+                                    <Flex fh fw align={Align.CENTER} justifyContent={Justify.CENTER} elements={[
+                                        <Tooltip sx={{ height: "100%", width: "100%"}} title={"Open editor"} arrow children={
+                                            <Icon icon={<EditIcon/>}/>
+                                        }/>
+                                    ]}/>
+                                } onClick={() => {
+                                    this.dialog(
+                                        <ColorSelectorDialog hex={value} onSubmit={hex => onChange(hex)}/>
+                                    );
+                                }}/>
+                            ]}/>
                         )}
                     />,
 

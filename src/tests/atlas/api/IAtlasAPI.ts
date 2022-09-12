@@ -9,6 +9,10 @@ export interface IAtlasAPI {
     getDocument(id: string): AtlasDocument;
     getCategory(id: string): Category;
 
+    deleteFolder(id: string): boolean;
+    deleteCategory(id: string): boolean;
+    deleteDocument(id: string): boolean;
+
     getAllDocuments(...predicates: Array<IPredicate<AtlasDocument>>): Array<AtlasDocument>;
     getAllFolders(...predicates: Array<IPredicate<Folder>>): Array<Folder>;
     getAllCategories(...predicates: Array<IPredicate<Category>>): Array<Category>;
@@ -25,4 +29,5 @@ export interface IAtlasAPI {
     linkDocumentToCategory(documentID: string, categoryID: string): void;
 
     db(): FormDataHub;
+    clear(): IAtlasAPI;
 }

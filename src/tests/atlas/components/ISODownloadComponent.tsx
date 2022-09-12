@@ -41,7 +41,7 @@ export class ISODownloadComponent extends BC<any, any, ISODownloadComponentLocal
                             enableBadge
                             badgeVM={VM.UI_NO_HIGHLIGHT}
                             badgeText={"VFS-ISO"}
-                            description={"Download a freshly generate ISO-image of the current Atlas™-state.\n\n *Tip: Atlas-ISO-Images are in JSON-format, which makes them human-readable & easily processable. You can for example inspect the ISO by opening it in a browser window.*"}
+                            description={"Download a freshly generate ISO-image of the current Atlas™-state.\n\n*Tip: Atlas-ISO-Images are in JSON-format, which makes them human-readable & easily processable. You can for example inspect the ISO by opening it in a browser window.*"}
                         />,
 
                         <Flex fw padding paddingX={px(25)} gap={t.gaps.smallGab} elements={[

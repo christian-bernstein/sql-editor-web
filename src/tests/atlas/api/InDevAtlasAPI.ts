@@ -117,6 +117,33 @@ export class InDevAtlasAPI implements IAtlasAPI {
         });
     }
 
+    deleteFolder(id: string): boolean {
+        let folders = this.getAllFolders();
+        const lenBefore = folders.length;
+        folders = folders.filter(folder => folder.id !== id);
+        const lenAfter = folders.length;
+        this.database.set(DBAddresses.FOLDERS, folders, true);
+        return lenBefore > lenAfter;
+    }
+
+    deleteCategory(id: string): boolean {
+        let categories = this.getAllCategories();
+        const lenBefore = categories.length;
+        categories = categories.filter(category => category.id !== id);
+        const lenAfter = categories.length;
+        this.database.set(DBAddresses.CATEGORIES, categories, true);
+        return lenBefore > lenAfter;
+    }
+
+    deleteDocument(id: string): boolean {
+        let documents = this.getAllDocuments();
+        const lenBefore = documents.length;
+        documents = documents.filter(document => document.id !== id);
+        const lenAfter = documents.length;
+        this.database.set(DBAddresses.DOCUMENTS, documents, true);
+        return lenBefore > lenAfter;
+    }
+
     updateCategory(id: string, updater: (category: Category) => Category): IAtlasAPI {
         const updated = updater(this.getCategory(id));
         let categories = this.getAllCategories();
@@ -146,5 +173,11 @@ export class InDevAtlasAPI implements IAtlasAPI {
 
     db(): FormDataHub {
         return this.database;
+    }
+
+    clear(): IAtlasAPI {
+        window.localStorage.removeItem(this.db().key());
+        this.database = new FormDataHub("InDevAtlasAPI").loadFromLocalStore();
+        return this;
     }
 }
