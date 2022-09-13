@@ -91,7 +91,7 @@ export class FolderSetupDialog extends BC<FolderSetupDialogProps, any, FolderSet
                                     <Button width={percent(100)} text={"Create folder"} opaque visualMeaning={VM.INFO} onClick={() => {
                                         this.createFolder();
                                     }}/>
-                                ]}/>,
+                                ]}/>
                             ]}/>
                         }/>,
 
