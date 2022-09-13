@@ -20,9 +20,14 @@ import {Cursor} from "../../../logic/style/Cursor";
 import {FormDataHub} from "../../../tests/epicure/components/FormDataHub";
 import {utilizeGlobalTheme} from "../../../logic/app/App";
 import {If} from "../../logic/If";
+import {Button} from "../../lo/Button";
+import React from "react";
+import {ColorSelectorWidgetsConfig} from "./ColorSelectorWidgetsConfig";
+import {ColorSelectorWidgetID} from "./ColorSelectorWidgetID";
 
 export interface ColorSelectorActions {
-    onChange?(hex: string): void
+    onChange?(hex: string): void,
+    onSubmit?(hex: string): void
 }
 
 export type ColorSelectorProps = {
@@ -35,7 +40,10 @@ export type ColorSelectorProps = {
     showReadabilityTest?: boolean,
 
     actions: ColorSelectorActions,
-    width?: DimensionalMeasured
+    width?: DimensionalMeasured,
+
+    submittable?: boolean,
+    toplevelWidgetsConfig?: ColorSelectorWidgetsConfig
 }
 
 export type ColorSelectorLocalState = {
@@ -43,7 +51,7 @@ export type ColorSelectorLocalState = {
     r?: string,
     g?: string,
     b?: string,
-    debouncedColorChange: (hex: string) => void,
+    debouncedColorChange: (hex: string,submit: boolean) => void,
     fdh: FormDataHub,
 }
 
@@ -53,18 +61,12 @@ export type ColorSelectorLocalState = {
  */
 export class ColorSelector extends BC<ColorSelectorProps, any, ColorSelectorLocalState> {
 
+    public static maxHistoryLength: number = 10;
+
     constructor(props: ColorSelectorProps) {
         super(props, undefined, {
             fdh: new FormDataHub("ColorSelector").loadFromLocalStore(),
-            debouncedColorChange: _.debounce((hex: string) => {
-                this.local.setStateWithChannels({
-                    hex: hex
-                }, ["master-color"], () => {
-                    // TODO: Better system
-                    this.appendColorToHistory(hex);
-                    this.props.actions.onChange?.(hex);
-                });
-            }, 500)
+            debouncedColorChange: _.debounce((hex: string, submit: boolean) => this.setCurrentColorImmediately(hex, submit), 500)
         });
     }
 
@@ -74,6 +76,20 @@ export class ColorSelector extends BC<ColorSelectorProps, any, ColorSelectorLoca
         this.palettesAssembly();
         this.hexAssembly();
         this.rgbAssembly();
+        this.submitAssembly();
+    }
+
+    private setCurrentColorImmediately(hex: string, submit: boolean) {
+        this.local.setStateWithChannels({
+            hex: hex
+        }, ["master-color"], () => {
+            this.appendColorToHistory(hex);
+            this.props.actions.onChange?.(hex);
+
+            if (submit) {
+                this.props.actions.onSubmit?.(hex);
+            }
+        });
     }
 
     private appendColorToHistory(hex: string) {
@@ -82,6 +98,11 @@ export class ColorSelector extends BC<ColorSelectorProps, any, ColorSelectorLoca
             return;
         }
         history.push(hex);
+
+        if (history.length > ColorSelector.maxHistoryLength) {
+            history.shift();
+        }
+
         this.local.state.fdh.set("history", history, true);
         this.rerender("history");
     }
@@ -110,9 +131,9 @@ export class ColorSelector extends BC<ColorSelectorProps, any, ColorSelectorLoca
         return Color.ofHex(getOr(this.local.state.hex, getOr(this.props.initialColor?.toHex(""), "#FFFFFF")));
     }
 
-    private setCurrentColor(hex: string) {
+    private setCurrentColor(hex: string, submit: boolean = false) {
         // TODO: check validity
-        this.local.state.debouncedColorChange(hex);
+        this.local.state.debouncedColorChange(hex, submit);
     }
 
     private palettesAssembly() {
@@ -128,14 +149,16 @@ export class ColorSelector extends BC<ColorSelectorProps, any, ColorSelectorLoca
                                 <LiteGrid responsive minResponsiveWidth={px(24)} gap={theme.gaps.smallGab} children={
                                     <AF elements={
                                         pair.value.map(color => (
-                                            <Box
-                                                cursor={Cursor.pointer}
-                                                noPadding
-                                                width={px(24)}
-                                                height={px(24)}
-                                                bgColor={color}
-                                                onClick={() => this.setCurrentColor(color.toHex(""))}
-                                            />
+                                            <Flex fw fh align={Align.CENTER} justifyContent={Justify.CENTER} elements={[
+                                                <Box
+                                                    cursor={Cursor.pointer}
+                                                    noPadding
+                                                    width={px(24)}
+                                                    height={px(24)}
+                                                    bgColor={color}
+                                                    onClick={() => this.setCurrentColorImmediately(color.toHex(""), false)}
+                                                />
+                                            ]}/>
                                         ))
                                     }/>
                                 }/>
@@ -143,6 +166,31 @@ export class ColorSelector extends BC<ColorSelectorProps, any, ColorSelectorLoca
                         );
                     })
 
+                ]}/>
+            );
+        })
+    }
+
+    private submitAssembly() {
+        this.assembly.assembly("submit", theme => {
+            return (
+                <Flex fw padding gap={theme.gaps.smallGab} elements={[
+                    <Button width={percent(100)} onClick={event => {
+                        this.props.actions.onSubmit?.(this.getCurrentColor().toHex());
+                    }} children={
+                        <Flex gap={px(0)} align={Align.CENTER} fw elements={[
+                            <Text
+                                bold
+                                text={"Select color"}
+                            />,
+                            <Text
+                                text={`${this.getCurrentColor().toHex()}`}
+                                type={TextType.secondaryDescription}
+                                fontSize={px(11)}
+                                align={Align.CENTER}
+                            />
+                        ]}/>
+                    }/>
                 ]}/>
             );
         })
@@ -253,13 +301,44 @@ export class ColorSelector extends BC<ColorSelectorProps, any, ColorSelectorLoca
         })
     }
 
+    private renderWidget(id: ColorSelectorWidgetID, renderer: () => JSX.Element, additionalPredicate?: () => boolean): JSX.Element {
+        if (additionalPredicate !== undefined && !additionalPredicate()) {
+            return (
+                <></>
+            );
+        }
+        if (this.props.toplevelWidgetsConfig === undefined) {
+            return renderer();
+        }
+        if (this.props.toplevelWidgetsConfig[id] === undefined || this.props.toplevelWidgetsConfig[id]?.enable) {
+            return renderer();
+        }
+        return (
+            <></>
+        );
+    }
+
     componentRender(p: ColorSelectorProps, s: any, l: ColorSelectorLocalState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
             <Group width={p.width} orientation={Orientation.VERTICAL} elements={[
                 this.component(() => this.a("preview"), "master-color"),
-                this.component(() => this.a("palettes"), "history"),
-                this.a("hex"),
-                this.component(() => this.a("rgb"), "master-color"),
+
+                this.renderWidget(
+                    ColorSelectorWidgetID.PALETTES,
+                    () => this.component(() => this.a("palettes"), "history"),
+                ),
+
+                this.renderWidget(
+                    ColorSelectorWidgetID.HEX,
+                    () => this.a("hex")
+                ),
+
+                this.renderWidget(
+                    ColorSelectorWidgetID.RGB,
+                    () => this.component(() => this.a("rgb"), "master-color")
+                ),
+
+                p.submittable ? this.component(() => this.a("submit"), "master-color") : <></>
             ]}/>
         );
     }

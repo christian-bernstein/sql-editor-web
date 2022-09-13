@@ -13,6 +13,8 @@ import {Button} from "../../../components/lo/Button";
 import {Align} from "../../../logic/style/Align";
 import {Badge} from "../../../components/lo/Badge";
 import {Text, TextType} from "../../../components/lo/Text";
+import {ColorSelectorWidgetID} from "../../../components/ho/colorSelector/ColorSelectorWidgetID";
+import {appleSystem} from "../../../components/ho/colorSelector/ColorSelectorDefaultPalettes";
 
 export type ColorSelectorDialogProps = {
     onSubmit: (hex: string) => void,
@@ -31,7 +33,7 @@ export class ColorSelectorDialog extends BC<ColorSelectorDialogProps, any, Color
         });
     }
 
-    componentRender(p: any, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
+    componentRender(p: ColorSelectorDialogProps, s: any, l: ColorSelectorDialogLocalState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
             <Flex fw elements={[
                 <DrawerHeader
@@ -42,35 +44,21 @@ export class ColorSelectorDialog extends BC<ColorSelectorDialogProps, any, Color
                     description={"Choose a color with the color-picker. If you are satisfied with the color, press '**Select color**' to confirm."}
                     margin={createMargin(0, 0, 40, 0)}
                 />,
-                <ColorSelector width={percent(100)} showThemePalette showHistoryPalette actions={{
-                    onChange: (hex: string) => {
-                        this.local.setStateWithChannels({
-                            hex: hex
-                        }, ["master-color"])
+
+                <ColorSelector initialColor={Color.ofHex(p.hex)} submittable width={percent(100)} actions={{
+                    onSubmit: (hex: string) => {
+                        this.props.onSubmit(hex);
                     }
-                }}/>,
-                this.component((local) => (
-                    <Flex fw padding={false} paddingX={px(25)} gap={t.gaps.smallGab} elements={[
-                        <Button
-                            width={percent(100)}
-                            onClick={() => this.props.onSubmit(this.local.state.hex as string)}
-                            children={
-                                <Flex gap={px(0)} align={Align.CENTER} fw elements={[
-                                    <Text
-                                        bold
-                                        text={"Select color"}
-                                    />,
-                                    <Text
-                                        text={`${local.state.hex}`}
-                                        type={TextType.secondaryDescription}
-                                        fontSize={px(11)}
-                                        align={Align.CENTER}
-                                    />
-                                ]}/>
-                            }
-                        />
-                    ]}/>
-                ), "master-color")
+                }} toplevelWidgetsConfig={{
+                    hex: {
+                        enable: false
+                    },
+                    rgb: {
+                        enable: false
+                    }
+                }} palettes={new Map<string, Array<Color>>([
+                    ["main", appleSystem]
+                ])}/>
             ]}/>
         );
     }

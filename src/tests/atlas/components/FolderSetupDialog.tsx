@@ -28,6 +28,7 @@ import {v4} from "uuid";
 import {Box} from "../../../components/lo/Box";
 import {Color} from "../../../logic/style/Color";
 import {ColorSelectorDialog} from "./ColorSelectorDialog";
+import {ColorInput} from "./ColorInput";
 
 interface FolderSetupDialogActions {
     onSubmit(folder: Folder): boolean;
@@ -206,53 +207,14 @@ export class FolderSetupDialog extends BC<FolderSetupDialogProps, any, FolderSet
                         )}
                     />,
 
-                    this.component(local => (
-                        <FormElement
-                            id={"icon-color"}
-                            title={"Color"}
-                            description={"Select the icons color"}
-                            initialValue={undefined}
-                            fdh={this.local.state.fdh}
-                            inputGenerator={(onChange, value, valid) => (
-                                <Group removeChildBorders width={percent(100)} orientation={Orientation.HORIZONTAL} elements={[
-                                    <Box width={percent(100)} style={{ position: "relative" }} height={percent(100)} bgColor={value === undefined ? undefined : Color.ofHex(value)} children={
-                                        <Flex style={{ position: "absolute", top: 0, left: 0}} fh fw align={Align.CENTER} justifyContent={Justify.CENTER} elements={[
-                                            value === undefined ? <Text text={"none"} uppercase/> : <></>
-                                        ]}/>
-                                    }/>,
-
-                                    <Button height={percent(100)} width={px(50)} border={false} highlight={false} children={
-                                        <Flex fh fw align={Align.CENTER} justifyContent={Justify.CENTER} elements={[
-                                            <Tooltip sx={{ height: "100%", width: "100%"}} title={"Open editor"} arrow children={
-                                                <Icon icon={<EditIcon/>}/>
-                                            }/>
-                                        ]}/>
-                                    } onClick={() => {
-                                        this.dialog(
-                                            <StaticDrawerMenu body={() => (
-                                                <ColorSelectorDialog hex={value} onSubmit={hex => {
-                                                    onChange(hex);
-                                                    this.closeLocalDialog();
-                                                    this.rerender("icon-color");
-                                                }}/>
-                                            )}/>
-                                        );
-                                    }}/>,
-
-                                    <Button height={percent(100)} width={px(50)} border={false} highlight={false} children={
-                                        <Flex fh fw align={Align.CENTER} justifyContent={Justify.CENTER} elements={[
-                                            <Tooltip sx={{ height: "100%", width: "100%"}} title={"Reset icon color"} arrow children={
-                                                <Icon icon={<ResetIcon/>}/>
-                                            }/>
-                                        ]}/>
-                                    } onClick={() => {
-                                        onChange(undefined);
-                                        this.rerender("icon-color");
-                                    }}/>
-                                ]}/>
-                            )}
-                        />
-                    ), "icon-color"),
+                    <ColorInput
+                        id={"icon-color"}
+                        title={"Color"}
+                        description={"Select the icons color"}
+                        initialValue={undefined}
+                        fdh={this.local.state.fdh}
+                        controller={this}
+                    />,
                 ]}/>
             }/>
         );
