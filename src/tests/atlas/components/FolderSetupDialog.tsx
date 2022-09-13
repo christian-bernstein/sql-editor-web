@@ -1,6 +1,6 @@
 import {BC} from "../../../logic/BernieComponent";
 import {Folder} from "../data/Folder";
-import {Flex, FlexRow} from "../../../components/lo/FlexBox";
+import {Flex, FlexBox, FlexRow} from "../../../components/lo/FlexBox";
 import {Assembly} from "../../../logic/assembly/Assembly";
 import {Themeable} from "../../../logic/style/Themeable";
 import {Screen} from "../../../components/lo/Page";
@@ -10,7 +10,7 @@ import {FormDataHub} from "../../epicure/components/FormDataHub";
 import {Input} from "../../../components/lo/Input";
 import {FormElement} from "../../epicure/components/FormElement";
 import React from "react";
-import {percent, px} from "../../../logic/style/DimensionalMeasured";
+import {DimensionalMeasured, percent, px} from "../../../logic/style/DimensionalMeasured";
 import {Button} from "../../../components/lo/Button";
 import {Icon} from "../../../components/lo/Icon";
 import {ReactComponent as EditIcon} from "../../../assets/icons/ic-20/ic20-edit.svg";
@@ -29,6 +29,13 @@ import {Box} from "../../../components/lo/Box";
 import {Color} from "../../../logic/style/Color";
 import {ColorSelectorDialog} from "./ColorSelectorDialog";
 import {ColorInput} from "./ColorInput";
+import {Dimension} from "../../../logic/style/Dimension";
+import {AF} from "../../../components/logic/ArrayFragment";
+import {OverflowBehaviour} from "../../../logic/style/OverflowBehaviour";
+import {Switch} from "react-router-dom";
+import {App} from "../../../logic/app/App";
+import {Mobile} from "../../../components/logic/Media";
+import {MobileNavigation} from "../../../components/ho/bottomNavigation/MobileNavigation";
 
 interface FolderSetupDialogActions {
     onSubmit(folder: Folder): boolean;
@@ -51,9 +58,7 @@ export class FolderSetupDialog extends BC<FolderSetupDialogProps, any, FolderSet
     }
 
     private createFolder() {
-
         // TODO: Only call action, if valid entries (unique title)
-
         this.props.actions.onSubmit({
             id: v4(),
             creationDate: new Date().toString(),
@@ -69,153 +74,161 @@ export class FolderSetupDialog extends BC<FolderSetupDialogProps, any, FolderSet
 
     componentRender(p: FolderSetupDialogProps, s: any, l: FolderSetupDialogLocalState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
-            <Screen children={
-                <Flex fw elements={[
-                    <DrawerHeader
-                        header={"Create folder"}
-                        enableBadge
-                        badgeVM={VM.UI_NO_HIGHLIGHT}
-                        badgeText={"Virtual folder system"}
-                        description={"Create a new folder"}
-                    />,
+            <Screen deactivatePadding children={
+                <FlexBox padding id={"folder-setup-dialog"} gap={t.gaps.defaultGab} height={DimensionalMeasured.of(100, Dimension.vh)} fw children={
+                    <AF elements={[
+                        <FlexBox id={"folder-setup-dialog-header"} padding={false} fw style={{flex: "0 1 auto"}} children={
+                            <Flex fw elements={[
+                                <DrawerHeader
+                                    header={"Create folder"}
+                                    enableBadge
+                                    badgeVM={VM.UI_NO_HIGHLIGHT}
+                                    badgeText={"Virtual folder system"}
+                                    description={"Create a new folder"}
+                                />,
 
-                    <Flex fw padding paddingX={px(25)} elements={[
-                        <Button width={percent(100)} text={"Create folder"} opaque visualMeaning={VM.INFO} onClick={() => {
-                            this.createFolder();
-                        }}/>
-                    ]}/>,
+                                <Flex fw padding paddingX={px(25)} elements={[
+                                    <Button width={percent(100)} text={"Create folder"} opaque visualMeaning={VM.INFO} onClick={() => {
+                                        this.createFolder();
+                                    }}/>
+                                ]}/>,
+                            ]}/>
+                        }/>,
 
-                    <FormElement
-                        id={"title"}
-                        title={"Title"}
-                        description={"The title / name of the folder"}
-                        fdh={this.local.state.fdh}
-                        inputGenerator={(onChange, value, valid) => (
-                            <Input placeholder={"Title"} defaultValue={value} onChange={ev => onChange(ev.target.value)}/>
-                        )}
-                    />,
+                        <FlexBox id={"folder-setup-dialog-body"} fw style={{flex: "1 1 auto"}} overflowYBehaviour={OverflowBehaviour.SCROLL} elements={[
+                            <FormElement
+                                id={"title"}
+                                title={"Title"}
+                                description={"The title / name of the folder"}
+                                fdh={this.local.state.fdh}
+                                inputGenerator={(onChange, value, valid) => (
+                                    <Input placeholder={"Title"} defaultValue={value} onChange={ev => onChange(ev.target.value)}/>
+                                )}
+                            />,
 
-                    <FormElement
-                        id={"description"}
-                        title={"Description"}
-                        description={"A short description of the folder's meaning"}
-                        fdh={this.local.state.fdh}
-                        inputGenerator={(onChange, value, valid) => (
-                            <Input placeholder={"Description"} defaultValue={value} onChange={ev => onChange(ev.target.value)}/>
-                        )}
-                    />,
+                            <FormElement
+                                id={"description"}
+                                title={"Description"}
+                                description={"A short description of the folder's meaning"}
+                                fdh={this.local.state.fdh}
+                                inputGenerator={(onChange, value, valid) => (
+                                    <Input placeholder={"Description"} defaultValue={value} onChange={ev => onChange(ev.target.value)}/>
+                                )}
+                            />,
 
-                    <FormElement
-                        id={"creator"}
-                        title={"Creator"}
-                        description={"Who created this folder"}
-                        fdh={this.local.state.fdh}
-                        inputGenerator={(onChange, value, valid) => (
-                            <Group removeChildBorders width={percent(100)} orientation={Orientation.HORIZONTAL} elements={[
-                                <Input placeholder={"Creator"} defaultValue={value} onChange={ev => onChange(ev.target.value)}/>,
+                            <FormElement
+                                id={"creator"}
+                                title={"Creator"}
+                                description={"Who created this folder"}
+                                fdh={this.local.state.fdh}
+                                inputGenerator={(onChange, value, valid) => (
+                                    <Group removeChildBorders width={percent(100)} orientation={Orientation.HORIZONTAL} elements={[
+                                        <Input placeholder={"Creator"} defaultValue={value} onChange={ev => onChange(ev.target.value)}/>,
 
-                                <Button height={percent(100)} width={px(50)} border={false} highlight={false} children={
-                                    <Flex fh fw align={Align.CENTER} justifyContent={Justify.CENTER} elements={[
-                                        <Tooltip sx={{ height: "100%", width: "100%"}} title={"Open editor"} arrow children={
-                                            <Icon icon={<EditIcon/>}/>
-                                        }/>
-                                    ]}/>
-                                } onClick={() => {
-                                    this.dialog(
-                                        <StaticDrawerMenu body={props => (
-                                            <Flex fw elements={[
-                                                <DrawerHeader
-                                                    header={"Choose a creator"}
-                                                    enableBadge
-                                                    badgeVM={VM.UI_NO_HIGHLIGHT}
-                                                    badgeText={"Folder setup"}
-                                                    description={"Choose from an existing creator.\n*A creator is automatically registered, if a new folder, category or document is added, with a creator, that isn't yet registered.*"}
-                                                />,
-
-                                                <Flex fw padding paddingX={px(25)} elements={[
-                                                    <Button width={percent(100)} text={"Cancel"} opaque onClick={() => {
-                                                        this.closeLocalDialog();
-                                                    }}/>
-                                                ]}/>,
-
-                                                <SettingsGroup elements={[
-                                                    <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Andrea"} onClick={() => {
-                                                        onChange("Andrea");
-                                                        this.closeLocalDialog();
-                                                    }} appendixGenerator={element => (
-                                                        <FlexRow elements={[
-                                                            <Text
-                                                                text={"1.203 documents"}
-                                                                type={TextType.secondaryDescription}
-                                                                fontSize={px(11)}
-                                                            />
-                                                        ]}/>
-                                                    )}/>,
-                                                    <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Christian"} onClick={() => {
-                                                        onChange("Christian");
-                                                        this.closeLocalDialog();
-                                                    }} appendixGenerator={element => (
-                                                        <FlexRow elements={[
-                                                            <Text
-                                                                text={"276 documents"}
-                                                                type={TextType.secondaryDescription}
-                                                                fontSize={px(11)}
-                                                            />
-                                                        ]}/>
-                                                    )}/>,
-                                                ]}/>
-
+                                        <Button height={percent(100)} width={px(50)} border={false} highlight={false} children={
+                                            <Flex fh fw align={Align.CENTER} justifyContent={Justify.CENTER} elements={[
+                                                <Tooltip sx={{ height: "100%", width: "100%"}} title={"Open editor"} arrow children={
+                                                    <Icon icon={<EditIcon/>}/>
+                                                }/>
                                             ]}/>
-                                        )}/>
-                                    );
-                                }}/>
-                            ]}/>
-                        )}
-                    />,
+                                        } onClick={() => {
+                                            this.dialog(
+                                                <StaticDrawerMenu body={props => (
+                                                    <Flex fw elements={[
+                                                        <DrawerHeader
+                                                            header={"Choose a creator"}
+                                                            enableBadge
+                                                            badgeVM={VM.UI_NO_HIGHLIGHT}
+                                                            badgeText={"Folder setup"}
+                                                            description={"Choose from an existing creator.\n*A creator is automatically registered, if a new folder, category or document is added, with a creator, that isn't yet registered.*"}
+                                                        />,
 
-                    <FormElement
-                        id={"tags"}
-                        title={"Tags"}
-                        initialValue={[]}
-                        fdh={this.local.state.fdh}
-                        inputGenerator={(onChange, value, valid) => (
-                            <Group removeChildBorders width={percent(100)} orientation={Orientation.HORIZONTAL} elements={[
-                                <Input placeholder={"Tag 1, Tag 2, ..., Tag n"} defaultValue={value} onChange={ev => onChange(
-                                    ev.target.value.split(",").map(tag => tag.trim())
-                                )}/>,
+                                                        <Flex fw padding paddingX={px(25)} elements={[
+                                                            <Button width={percent(100)} text={"Cancel"} opaque onClick={() => {
+                                                                this.closeLocalDialog();
+                                                            }}/>
+                                                        ]}/>,
 
-                                <Button height={percent(100)} width={px(50)} border={false} highlight={false} children={
-                                    <Flex fh fw align={Align.CENTER} justifyContent={Justify.CENTER} elements={[
-                                        <Tooltip sx={{ height: "100%", width: "100%"}} title={"Open editor"} arrow children={
-                                            <Icon icon={<EditIcon/>}/>
-                                        }/>
+                                                        <SettingsGroup elements={[
+                                                            <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Andrea"} onClick={() => {
+                                                                onChange("Andrea");
+                                                                this.closeLocalDialog();
+                                                            }} appendixGenerator={element => (
+                                                                <FlexRow elements={[
+                                                                    <Text
+                                                                        text={"1.203 documents"}
+                                                                        type={TextType.secondaryDescription}
+                                                                        fontSize={px(11)}
+                                                                    />
+                                                                ]}/>
+                                                            )}/>,
+                                                            <SettingsElement forceRenderSubpageIcon groupDisplayMode title={"Christian"} onClick={() => {
+                                                                onChange("Christian");
+                                                                this.closeLocalDialog();
+                                                            }} appendixGenerator={element => (
+                                                                <FlexRow elements={[
+                                                                    <Text
+                                                                        text={"276 documents"}
+                                                                        type={TextType.secondaryDescription}
+                                                                        fontSize={px(11)}
+                                                                    />
+                                                                ]}/>
+                                                            )}/>,
+                                                        ]}/>
+
+                                                    ]}/>
+                                                )}/>
+                                            );
+                                        }}/>
                                     ]}/>
-                                } onClick={() => {
+                                )}
+                            />,
 
-                                }}/>
-                            ]}/>
-                        )}
-                    />,
+                            <FormElement
+                                id={"tags"}
+                                title={"Tags"}
+                                initialValue={[]}
+                                fdh={this.local.state.fdh}
+                                inputGenerator={(onChange, value, valid) => (
+                                    <Group removeChildBorders width={percent(100)} orientation={Orientation.HORIZONTAL} elements={[
+                                        <Input placeholder={"Tag 1, Tag 2, ..., Tag n"} defaultValue={value} onChange={ev => onChange(
+                                            ev.target.value.split(",").map(tag => tag.trim())
+                                        )}/>,
 
-                    <FormElement
-                        id={"note"}
-                        title={"Note"}
-                        description={"Put a note here"}
-                        fdh={this.local.state.fdh}
-                        inputGenerator={(onChange, value, valid) => (
-                            <Input placeholder={"Note"} defaultValue={value} onChange={ev => onChange(ev.target.value)}/>
-                        )}
-                    />,
+                                        <Button height={percent(100)} width={px(50)} border={false} highlight={false} children={
+                                            <Flex fh fw align={Align.CENTER} justifyContent={Justify.CENTER} elements={[
+                                                <Tooltip sx={{ height: "100%", width: "100%"}} title={"Open editor"} arrow children={
+                                                    <Icon icon={<EditIcon/>}/>
+                                                }/>
+                                            ]}/>
+                                        } onClick={() => {
 
-                    <ColorInput
-                        id={"icon-color"}
-                        title={"Color"}
-                        description={"Select the icons color"}
-                        initialValue={undefined}
-                        fdh={this.local.state.fdh}
-                        controller={this}
-                    />,
-                ]}/>
+                                        }}/>
+                                    ]}/>
+                                )}
+                            />,
+
+                            <FormElement
+                                id={"note"}
+                                title={"Note"}
+                                description={"Put a note here"}
+                                fdh={this.local.state.fdh}
+                                inputGenerator={(onChange, value, valid) => (
+                                    <Input placeholder={"Note"} defaultValue={value} onChange={ev => onChange(ev.target.value)}/>
+                                )}
+                            />,
+
+                            <ColorInput
+                                id={"icon-color"}
+                                title={"Color"}
+                                description={"Select the icons color"}
+                                initialValue={undefined}
+                                fdh={this.local.state.fdh}
+                                controller={this}
+                            />,
+                        ]}/>
+                    ]}/>
+                }/>
             }/>
         );
     }
