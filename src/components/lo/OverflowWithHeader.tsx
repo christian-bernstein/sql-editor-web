@@ -19,9 +19,11 @@ export type OverflowWithHeaderProps = {
     height?: DimensionalMeasured,
     gap?: DimensionalMeasured,
     overflowContainer: {
+        gap?: DimensionalMeasured,
         elements: Array<JSX.Element>
     },
     staticContainer: {
+        gap?: DimensionalMeasured,
         elements: Array<JSX.Element>
     }
 }
@@ -37,6 +39,7 @@ export class OverflowWithHeader extends BC<OverflowWithHeaderProps, any, any> {
                 width={percent(100)}
                 elements={[
                     <FlexBox
+                        gap={p.overflowContainer.gap}
                         fw
                         style={{ flex: "1 1 auto" }}
                         overflowYBehaviour={OverflowBehaviour.SCROLL}
@@ -44,6 +47,7 @@ export class OverflowWithHeader extends BC<OverflowWithHeaderProps, any, any> {
                     />,
 
                     <FlexBox
+                        gap={p.staticContainer.gap}
                         fw
                         padding={false}
                         style={{ flex: "0 1 auto" }}
