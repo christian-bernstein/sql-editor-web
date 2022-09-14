@@ -29,6 +29,7 @@ import {If} from "../../../components/logic/If";
 import {Justify} from "../../../logic/style/Justify";
 import {Box} from "../../../components/lo/Box";
 import {Cursor} from "../../../logic/style/Cursor";
+import {FlexWrap} from "../../../logic/style/FlexWrap";
 
 export type FolderPreviewComponentProps = {
     data: Folder
@@ -69,10 +70,10 @@ export class FolderPreviewComponent extends BC<FolderPreviewComponentProps, any,
                             />,
 
 
-                            <Flex flexDir={FlexDirection.ROW} fw gap={t.gaps.smallGab} align={Align.CENTER} justifyContent={Justify.CENTER} elements={
+                            <Flex wrap={FlexWrap.WRAP} flexDir={FlexDirection.ROW} fw gap={t.gaps.smallGab} align={Align.CENTER} justifyContent={Justify.CENTER} elements={
                                 (p.data.tags as Array<string>).map(s => (
                                     <Box highlightShadow={false} cursor={Cursor.pointer} highlight opaque paddingY={px(4)} paddingX={px(7)} visualMeaning={VM.SUCCESS} borderRadiiConfig={{ enableCustomBorderRadii: true, fallbackCustomBorderRadii: px(500)}} borderless children={
-                                        <Text text={s} cursor={Cursor.pointer} visualMeaning={VM.SUCCESS} fontSize={px(12)} coloredText type={TextType.secondaryDescription}/>
+                                        <Text text={s} whitespace={"nowrap"} cursor={Cursor.pointer} visualMeaning={VM.SUCCESS} fontSize={px(12)} coloredText type={TextType.secondaryDescription}/>
                                     }/>
                                 ))
                             }/>,

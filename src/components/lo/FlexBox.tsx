@@ -11,6 +11,7 @@ import {OverflowBehaviour} from "../../logic/style/OverflowBehaviour";
 import {createMargin, Margin} from "../../logic/style/Margin";
 import {BernieComponent} from "../../logic/BernieComponent";
 import {Assembly} from "../../logic/assembly/Assembly";
+import {FlexWrap} from "../../logic/style/FlexWrap";
 
 export type FlexBoxProps = {
     flexDir?: FlexDirection,
@@ -34,6 +35,7 @@ export type FlexBoxProps = {
     elements?: Array<JSX.Element>,
     fw?: boolean,
     fh?: boolean,
+    wrap?: FlexWrap
 }
 
 export const FlexBox: React.FC<FlexBoxProps> = props => {
@@ -52,6 +54,7 @@ export const FlexBox: React.FC<FlexBoxProps> = props => {
       height: ${props.fh ? "100%" : getOr(props.height?.css(), "auto")};
       overflow-x: ${getOr<OverflowBehaviour>(props.overflowXBehaviour, OverflowBehaviour.VISIBLE)};
       overflow-y: ${getOr<OverflowBehaviour>(props.overflowYBehaviour, OverflowBehaviour.VISIBLE)};
+      flex-wrap: ${getOr(props.wrap, FlexWrap.NOWRAP)};
       
       ${
         props.deactivateMarginSetting ? '' : `
