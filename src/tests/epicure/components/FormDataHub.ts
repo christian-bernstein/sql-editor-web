@@ -1,11 +1,16 @@
+import {FDHConfig} from "../../../logic/fdh/FDHConfig";
+
 export class FormDataHub {
 
     private data: Array<{key: string, value: any}> = new Array<{key: string; value: any}>();
 
     private readonly id: string;
 
-    constructor(id: string) {
+    constructor(id: string, config: FDHConfig | undefined = undefined) {
         this.id = id;
+        if (config?.initialData) {
+            this.data = config.initialData;
+        }
     }
 
     public key(): string {

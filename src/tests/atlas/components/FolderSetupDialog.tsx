@@ -68,7 +68,7 @@ export class FolderSetupDialog extends BC<FolderSetupDialogProps, any, FolderSet
             title: this.local.state.fdh.get("title"),
             creator: this.local.state.fdh.get("creator"),
             description: this.local.state.fdh.get("description"),
-            iconColorHEX: this.local.state.fdh.get("icon-color"),
+            iconColorHEX: this.local.state.fdh.get("iconColorHEX"),
             categories: []
         });
     }

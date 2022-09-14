@@ -156,7 +156,7 @@ export class BaseEntitySetupComponent extends BC<BaseEntitySetupComponentProps, 
                 />,
 
                 <ColorInput
-                    id={"icon-color"}
+                    id={"iconColorHEX"}
                     title={"Color"}
                     description={"Select the icons color"}
                     initialValue={undefined}

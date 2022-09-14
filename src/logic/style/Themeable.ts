@@ -705,6 +705,9 @@ export namespace Themeable {
 
     export const malaTheme = theme({
         colors: malaPallet,
+        alpha: {
+            opaqueUI: .7
+        },
         texts: {
             fontFamily: "Whitney",
             displayFontFamily: "Whitney",

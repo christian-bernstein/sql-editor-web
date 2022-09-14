@@ -38,6 +38,11 @@ export class ColorInput extends BC<ColorInputProps, any, any> {
 
     private localID: string = v4();
 
+    constructor(props: ColorInputProps) {
+        super(props, undefined, undefined);
+        console.log("color", props.fdh.get(props.id))
+    }
+
     private onChangeRerender() {
         if (getOr(this.props.rerenderOnChange, true)) {
             this.props.controller.rerender(this.localID, ...getOr(this.props.channels, []));

@@ -13,6 +13,8 @@ import {SettingsElement} from "../../../components/ho/settingsElement/SettingsEl
 import {FolderAction} from "../data/FolderAction";
 import {IAtlasAPI} from "../api/IAtlasAPI";
 import {AtlasMain} from "../AtlasMain";
+import {CategorySetupDialog} from "./CategorySetupDialog";
+import {FolderEditDialog} from "./FolderEditDialog";
 
 export type FolderActionsComponentProps = {
     data: Folder,
@@ -36,6 +38,62 @@ export class FolderActionsComponent extends BC<FolderActionsComponentProps, any,
                     }
                 });
             }
+        }],
+        ["create-category", {
+            execute(api: IAtlasAPI, atlas: AtlasMain, folder: Folder, controller: FolderActionsComponent): Promise<void> {
+                return new Promise<void>((resolve, reject) => {
+                    controller.dialog(
+                        <CategorySetupDialog folder={folder} actions={{
+                            onSubmit: category => {
+                                const success = AtlasMain.atlas().api().createCategory(category);
+                                if (success) {
+                                    AtlasMain.atlas().api().linkCategoryToFolder(category.id, folder.id);
+                                    resolve();
+                                } else {
+                                    reject();
+                                }
+                                setTimeout(() => {
+                                    controller.closeLocalDialog();
+                                    controller.props.caller.rerender("categories");
+                                }, 1);
+                                return success;
+                            }
+                        }}/>
+                    );
+                })
+            }
+        }],
+        ["edit", {
+            execute(api: IAtlasAPI, atlas: AtlasMain, folder: Folder, controller: FolderActionsComponent): Promise<void> {
+                return new Promise<void>((resolve, reject) => {
+                    try {
+                        controller.dialog(
+                            <FolderEditDialog
+                                folder={folder}
+                                actions={{
+                                    onSubmit(edited: Folder) {
+                                        api.updateFolder(folder.id, original => {
+                                            return ({
+                                                ...original,
+                                                ...edited
+                                            })
+                                        });
+                                        controller.closeLocalDialog();
+                                        controller.props.caller.rerender("body");
+                                        resolve();
+                                    },
+                                    onCancel() {
+                                        controller.closeLocalDialog();
+                                        resolve();
+                                    }
+                                }}
+                            />
+                        );
+                    } catch (e) {
+                        reject(e);
+                    }
+                })
+            }
         }]
     ]);
 
@@ -53,16 +111,17 @@ export class FolderActionsComponent extends BC<FolderActionsComponentProps, any,
             <StaticDrawerMenu body={props => (
                 <Flex fw elements={[
                     <DrawerHeader
-                        header={`Actions`}
+                        header={`Actions for *${p.data.title}*`}
                         enableBadge
                         badgeVM={VM.UI_NO_HIGHLIGHT}
                         badgeText={"Actions"}
-                        description={"Actions.."}
-                        margin={createMargin(0, 0, 40, 0)}
+                        description={`Available action for folder *${p.data.title}*.`}
                     />,
 
                     <SettingsGroup title={"Available actions"} elements={[
-                        <SettingsElement title={"Delete folder"} promiseBasedOnClick={element => this.executeAction("delete")}/>
+                        <SettingsElement groupDisplayMode title={"Edit folder"} promiseBasedOnClick={element => this.executeAction("edit")}/>,
+                        <SettingsElement groupDisplayMode title={"Delete folder"} promiseBasedOnClick={element => this.executeAction("delete")}/>,
+                        <SettingsElement groupDisplayMode title={"Create category"} promiseBasedOnClick={element => this.executeAction("create-category")}/>
                     ]}/>
                 ]}/>
             )}/>

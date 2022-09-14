@@ -51,13 +51,14 @@ export class FolderPreviewComponent extends BC<FolderPreviewComponentProps, any,
     }
 
     componentRender(p: FolderPreviewComponentProps, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
-        return (
-            <StaticDrawerMenu maxHeight={DimensionalMeasured.of(70, Dimension.vh)} body={props => (
+        return this.component(local => (
+            <StaticDrawerMenu maxHeight={DimensionalMeasured.of(85, Dimension.vh)} body={props => (
 
                 <OverflowWithHeader
                     gap={t.gaps.defaultGab}
                     dir={FlexDirection.COLUMN_REVERSE}
                     height={percent(100)}
+                    // height={DimensionalMeasured.of(70, Dimension.vh)}
                     staticContainer={{
                         gap: t.gaps.smallGab,
                         elements: [
@@ -69,7 +70,6 @@ export class FolderPreviewComponent extends BC<FolderPreviewComponentProps, any,
                                 description={p.data.description}
                             />,
 
-
                             <Flex wrap={FlexWrap.WRAP} flexDir={FlexDirection.ROW} fw gap={t.gaps.smallGab} align={Align.CENTER} justifyContent={Justify.CENTER} elements={
                                 (p.data.tags as Array<string>).map(s => (
                                     <Box highlightShadow={false} cursor={Cursor.pointer} highlight opaque paddingY={px(4)} paddingX={px(7)} visualMeaning={VM.SUCCESS} borderRadiiConfig={{ enableCustomBorderRadii: true, fallbackCustomBorderRadii: px(500)}} borderless children={
@@ -79,25 +79,23 @@ export class FolderPreviewComponent extends BC<FolderPreviewComponentProps, any,
                             }/>,
 
                             <Flex fw padding paddingX={px(25)} gap={t.gaps.smallGab} elements={[
-                                <Button width={percent(100)} text={"Create category"} onClick={() => {
-                                    this.dialog(
-                                        <CategorySetupDialog folder={p.data} actions={{
-                                            onSubmit: category => {
-                                                const success = AtlasMain.atlas().api().createCategory(category);
-
-                                                if (success) {
-                                                    AtlasMain.atlas().api().linkCategoryToFolder(category.id, p.data.id);
-                                                }
-
-                                                setTimeout(() => {
-                                                    this.closeLocalDialog();
-                                                    this.rerender("categories");
-                                                }, 1);
-                                                return success;
-                                            }
-                                        }}/>
-                                    );
-                                }}/>,
+                                // <Button width={percent(100)} text={"Create category"} onClick={() => {
+                                //     this.dialog(
+                                //         <CategorySetupDialog folder={p.data} actions={{
+                                //             onSubmit: category => {
+                                //                 const success = AtlasMain.atlas().api().createCategory(category);
+                                //                 if (success) {
+                                //                     AtlasMain.atlas().api().linkCategoryToFolder(category.id, p.data.id);
+                                //                 }
+                                //                 setTimeout(() => {
+                                //                     this.closeLocalDialog();
+                                //                     this.rerender("categories");
+                                //                 }, 1);
+                                //                 return success;
+                                //             }
+                                //         }}/>
+                                //     );
+                                // }}/>,
 
                                 <Button width={percent(100)} text={"Actions"} onClick={() => {
                                     this.dialog(
@@ -195,7 +193,9 @@ export class FolderPreviewComponent extends BC<FolderPreviewComponentProps, any,
                     }}
                 />
             )}/>
-        );
+        ), "body");
+
+
     }
 
 }
