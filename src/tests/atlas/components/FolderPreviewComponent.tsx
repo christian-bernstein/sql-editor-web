@@ -9,20 +9,24 @@ import {Flex} from "../../../components/lo/FlexBox";
 import {DrawerHeader} from "../../../components/lo/DrawerHeader";
 import {VM} from "../../../logic/style/ObjectVisualMeaning";
 import {SettingsGroup} from "../../../components/lo/SettingsGroup";
-import {createMargin} from "../../../logic/style/Margin";
 import {SettingsElement} from "../../../components/ho/settingsElement/SettingsElement";
 import {ReactComponent as CategoryIcon} from "../../../assets/icons/ic-20/ic20-list-bullet.svg";
 import {ReactComponent as FileIcon} from "../../../assets/icons/ic-16/ic16-file.svg";
 import {Category} from "../data/Category";
 import {Icon} from "../../../components/lo/Icon";
-import {percent, px} from "../../../logic/style/DimensionalMeasured";
-import {Screen} from "../../../components/lo/Page";
+import {DimensionalMeasured, percent, px} from "../../../logic/style/DimensionalMeasured";
 import {CategoryComponent} from "./CategoryComponent";
 import {AtlasMain} from "../AtlasMain";
 import {CategorySetupDialog} from "./CategorySetupDialog";
 import {Button} from "../../../components/lo/Button";
 import React from "react";
 import {FolderActionsComponent} from "./FolderActionsComponent";
+import {Dimension} from "../../../logic/style/Dimension";
+import {OverflowWithHeader} from "../../../components/lo/OverflowWithHeader";
+import {FlexDirection} from "../../../logic/style/FlexDirection";
+import {Align} from "../../../logic/style/Align";
+import {If} from "../../../components/logic/If";
+import {Justify} from "../../../logic/style/Justify";
 
 export type FolderPreviewComponentProps = {
     data: Folder
@@ -45,103 +49,138 @@ export class FolderPreviewComponent extends BC<FolderPreviewComponentProps, any,
 
     componentRender(p: FolderPreviewComponentProps, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
-            <StaticDrawerMenu body={props => (
-                <Flex fw elements={[
-                    <DrawerHeader
-                        header={getOr(p.data.title, "N/A")}
-                        enableBadge
-                        badgeVM={VM.UI_NO_HIGHLIGHT}
-                        badgeText={"Preview"}
-                        description={p.data.description}
-                    />,
+            <StaticDrawerMenu maxHeight={DimensionalMeasured.of(70, Dimension.vh)} body={props => (
 
-                    <Flex fw padding paddingX={px(25)} gap={t.gaps.smallGab} elements={[
-                        <Button width={percent(100)} text={"Create category"} onClick={() => {
-                            this.dialog(
-                                <CategorySetupDialog folder={p.data} actions={{
-                                    onSubmit: category => {
-                                        const success = AtlasMain.atlas().api().createCategory(category);
+                <OverflowWithHeader
+                    gap={t.gaps.defaultGab}
+                    dir={FlexDirection.COLUMN_REVERSE}
+                    height={percent(100)}
+                    staticContainer={{
+                        elements: [
+                            <DrawerHeader
+                                header={getOr(p.data.title, "N/A")}
+                                enableBadge
+                                badgeVM={VM.UI_NO_HIGHLIGHT}
+                                badgeText={"Folder Preview"}
+                                description={p.data.description}
+                            />,
 
-                                        if (success) {
-                                            AtlasMain.atlas().api().linkCategoryToFolder(category.id, p.data.id);
-                                        }
+                            <Flex fw padding paddingX={px(25)} gap={t.gaps.smallGab} elements={[
+                                <Button width={percent(100)} text={"Create category"} onClick={() => {
+                                    this.dialog(
+                                        <CategorySetupDialog folder={p.data} actions={{
+                                            onSubmit: category => {
+                                                const success = AtlasMain.atlas().api().createCategory(category);
 
-                                        setTimeout(() => {
-                                            this.closeLocalDialog();
-                                            this.rerender("categories");
-                                        }, 1);
-                                        return success;
-                                    }
+                                                if (success) {
+                                                    AtlasMain.atlas().api().linkCategoryToFolder(category.id, p.data.id);
+                                                }
+
+                                                setTimeout(() => {
+                                                    this.closeLocalDialog();
+                                                    this.rerender("categories");
+                                                }, 1);
+                                                return success;
+                                            }
+                                        }}/>
+                                    );
+                                }}/>,
+
+                                <Button width={percent(100)} text={"Actions"} onClick={() => {
+                                    this.dialog(
+                                        <FolderActionsComponent data={this.props.data} caller={this}/>
+                                    );
                                 }}/>
-                            );
-                        }}/>,
+                            ]}/>
+                        ]
+                    }}
+                    overflowContainer={{
+                        elements: [
+                            this.component(local => {
+                                const id = p.data.id;
+                                const freshFolderData = AtlasMain.atlas().api().getFolder(id);
 
-                        <Button width={percent(100)} text={"Actions"} onClick={() => {
-                            this.dialog(
-                                <FolderActionsComponent data={this.props.data} caller={this}/>
-                            );
-                        }}/>
-                    ]}/>,
-
-                    this.component(local => {
-                        const id = p.data.id;
-                        const freshFolderData = AtlasMain.atlas().api().getFolder(id);
-                        console.log("fresh folder data", freshFolderData)
-
-                        // TODO: Render 0-entries differently
-
-                        return (
-                            <SettingsGroup
-                                title={"Select a category"}
-                                elements={
-                                    freshFolderData.categories.map(categoryID => {
-                                        console.log("get category", categoryID)
-
-                                        const category = AtlasMain.atlas().api().getCategory(categoryID);
-
-                                        return (
-                                            <SettingsElement
-                                                title={getOr(category.title, "N/A")}
-                                                groupDisplayMode
-                                                forceRenderSubpageIcon
-                                                promiseBasedOnClick={element => this.onCategorySelect(element, category)}
-                                                iconConfig={{
-                                                    enable: true,
-                                                    iconGenerator: element => (
-                                                        <CategoryIcon/>
-                                                    )
-                                                }}
-                                                appendixGenerator={element => {
-                                                    const documentCount = category.documents.length;
-                                                    const empty = documentCount === 0;
-
-                                                    return (
-                                                        <Text
-                                                            text={String(category.documents.length)}
-                                                            fontSize={px(11)}
-                                                            coloredText={empty}
-                                                            bold={empty}
-                                                            visualMeaning={empty ? VM.WARNING : VM.UI_NO_HIGHLIGHT}
-                                                            type={TextType.secondaryDescription}
-                                                            enableLeftAppendix
-                                                            leftAppendix={
-                                                                <Icon
-                                                                    icon={<FileIcon/>}
-                                                                    colored
-                                                                    color={t.colors.fontSecondaryColor}
-                                                                />
-                                                            }
-                                                        />
-                                                    );
-                                                }}
+                                if (freshFolderData.categories.length === 0) {
+                                    return (
+                                        <Flex fw height={px(100)} gap={px(5)} align={Align.CENTER} justifyContent={Justify.CENTER} elements={[
+                                            <Text
+                                                text={"*Empty folder*\nNo categories found"}
+                                                align={Align.CENTER}
+                                                uppercase
+                                                bold
+                                                type={TextType.secondaryDescription}
+                                                fontSize={px(12)}
+                                                coloredText
+                                                visualMeaning={VM.WARNING}
+                                            />,
+                                            <Text
+                                                text={"*Create a category by clicking the button\n'**Create category**'*"}
+                                                type={TextType.secondaryDescription}
+                                                align={Align.CENTER}
+                                                fontSize={px(11)}
                                             />
-                                        );
-                                    })
+                                        ]}/>
+                                    );
                                 }
-                            />
-                        );
-                    }, "categories")
-                ]}/>
+
+                                return (
+                                    <SettingsGroup
+                                        title={"Select a category"}
+                                        elements={
+                                            freshFolderData.categories.map(categoryID => {
+                                                const category = AtlasMain.atlas().api().getCategory(categoryID);
+                                                return (
+                                                    <SettingsElement
+                                                        title={getOr(category.title, "N/A")}
+                                                        groupDisplayMode
+                                                        forceRenderSubpageIcon
+                                                        promiseBasedOnClick={element => this.onCategorySelect(element, category)}
+                                                        iconConfig={{
+                                                            enable: true,
+                                                            iconGenerator: element => (
+                                                                <CategoryIcon/>
+                                                            )
+                                                        }}
+                                                        appendixGenerator={element => {
+                                                            const documentCount = category.documents.length;
+                                                            const empty = documentCount === 0;
+
+                                                            return (
+                                                                <Text
+                                                                    text={String(category.documents.length)}
+                                                                    fontSize={px(11)}
+                                                                    coloredText={empty}
+                                                                    bold={empty}
+                                                                    visualMeaning={empty ? VM.WARNING : VM.UI_NO_HIGHLIGHT}
+                                                                    type={TextType.secondaryDescription}
+                                                                    enableLeftAppendix
+                                                                    leftAppendix={
+                                                                        <Icon
+                                                                            icon={<FileIcon/>}
+                                                                            colored
+                                                                            color={t.colors.fontSecondaryColor}
+                                                                        />
+                                                                    }
+                                                                />
+                                                            );
+                                                        }}
+                                                    />
+                                                );
+                                            })
+                                        }
+                                    />
+                                );
+                            }, "categories"),
+
+                            <If condition={p.data.note !== undefined && p.data.note.trim().length > 0} ifTrue={
+                                <Flex gap={t.gaps.smallGab} fw>
+                                    <Text text={"Note"} uppercase bold type={TextType.secondaryDescription} fontSize={px(12)} align={Align.START}/>
+                                    <Text text={getOr(p.data.note, "")} type={TextType.secondaryDescription} fontSize={px(11)} align={Align.START}/>
+                                </Flex>
+                            }/>,
+                        ]
+                    }}
+                />
             )}/>
         );
     }

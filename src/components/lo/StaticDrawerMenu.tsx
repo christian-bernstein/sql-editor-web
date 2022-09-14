@@ -25,7 +25,8 @@ export type StaticDrawerMenuProps<T> = DrawerProps<T> & {
     width?: DimensionalMeasured,
     align?: Align,
     justifyContent?: Justify,
-    componentDidMount?: (drawer: StaticDrawerMenu<T>) => void
+    componentDidMount?: (drawer: StaticDrawerMenu<T>) => void,
+    maxHeight?: DimensionalMeasured
 }
 
 export class StaticDrawerMenu<T> extends BernieComponent<StaticDrawerMenuProps<T>, any, any> {
@@ -56,7 +57,7 @@ export class StaticDrawerMenu<T> extends BernieComponent<StaticDrawerMenuProps<T
             <AF elements={[
                 <Mobile children={
                     <Flex margin={createMargin(0, 0, 10, 0)} padding paddingY={px()} paddingX={px(10)} height={percent(100)} justifyContent={Justify.FLEX_END} align={Align.CENTER}>
-                        <Box borderless width={percent(100)} maxHeight={percent(100)} overflowYBehaviour={OverflowBehaviour.SCROLL} borderRadiiConfig={{
+                        <Box borderless width={percent(100)} maxHeight={p.maxHeight} overflowYBehaviour={OverflowBehaviour.SCROLL} borderRadiiConfig={{
                             enableCustomBorderRadii: false,
                             bottomRight: px(),
                             bottomLeft: px()

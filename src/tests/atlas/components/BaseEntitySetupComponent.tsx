@@ -32,7 +32,7 @@ export class BaseEntitySetupComponent extends BC<BaseEntitySetupComponentProps, 
 
     componentRender(p: BaseEntitySetupComponentProps, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
-            <FlexBox id={"folder-setup-dialog-body"} fw style={{flex: "1 1 auto"}} overflowYBehaviour={OverflowBehaviour.SCROLL} elements={[
+            <FlexBox fw style={{flex: "1 1 auto"}} overflowYBehaviour={OverflowBehaviour.SCROLL} elements={[
                 <FormElement
                     id={"title"}
                     title={"Title"}

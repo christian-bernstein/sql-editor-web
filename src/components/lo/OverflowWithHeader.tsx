@@ -17,6 +17,7 @@ import {getOr} from "../../logic/Utils";
 export type OverflowWithHeaderProps = {
     dir?: FlexDirection
     height?: DimensionalMeasured,
+    gap?: DimensionalMeasured,
     overflowContainer: {
         elements: Array<JSX.Element>
     },
@@ -30,7 +31,7 @@ export class OverflowWithHeader extends BC<OverflowWithHeaderProps, any, any> {
     componentRender(p: OverflowWithHeaderProps, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
             <FlexBox
-                gap={px()}
+                gap={getOr(p.gap, px())}
                 flexDir={p.dir}
                 height={getOr(p.height, DimensionalMeasured.of(100, Dimension.vh))}
                 width={percent(100)}
@@ -48,7 +49,8 @@ export class OverflowWithHeader extends BC<OverflowWithHeaderProps, any, any> {
                         style={{ flex: "0 1 auto" }}
                         elements={p.staticContainer.elements}
                     />
-            ]}/>
+                ]}
+            />
         );
     }
 }
