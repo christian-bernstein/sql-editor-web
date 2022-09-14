@@ -110,7 +110,7 @@ export class FolderPreviewComponent extends BC<FolderPreviewComponentProps, any,
                                                 bold
                                                 type={TextType.secondaryDescription}
                                                 fontSize={px(12)}
-                                                coloredText
+                                                // coloredText
                                                 visualMeaning={VM.WARNING}
                                             />,
                                             <Text
