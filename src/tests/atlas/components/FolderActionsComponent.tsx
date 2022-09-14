@@ -79,7 +79,9 @@ export class FolderActionsComponent extends BC<FolderActionsComponentProps, any,
                                             })
                                         });
                                         controller.closeLocalDialog();
+                                        controller.props.caller.closeLocalDialog();
                                         controller.props.caller.rerender("body");
+                                        atlas.rerender("folders");
                                         resolve();
                                     },
                                     onCancel() {

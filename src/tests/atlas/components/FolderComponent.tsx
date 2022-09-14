@@ -10,6 +10,7 @@ import {FlexRow} from "../../../components/lo/FlexBox";
 import {Badge} from "../../../components/lo/Badge";
 import {ObjectVisualMeaning, VM} from "../../../logic/style/ObjectVisualMeaning";
 import {Color} from "../../../logic/style/Color";
+import {px} from "../../../logic/style/DimensionalMeasured";
 
 export type FolderProps = {
     data: Folder,
@@ -36,6 +37,7 @@ export class FolderComponent extends BC<FolderProps, any, any> {
                         <Text
                             type={TextType.secondaryDescription}
                             text={getOr(p.data.creator, "N/A")}
+                            fontSize={px(11)}
                         />,
                         <Text
                             bold
@@ -43,10 +45,12 @@ export class FolderComponent extends BC<FolderProps, any, any> {
                             coloredText
                             visualMeaning={VM.UI_NO_HIGHLIGHT}
                             type={TextType.secondaryDescription}
+                            fontSize={px(11)}
                         />,
                         <Text
                             type={TextType.secondaryDescription}
                             text={p.data.creationDate === undefined ? "N/A" : new Date(p.data.creationDate).toLocaleDateString()}
+                            fontSize={px(11)}
                         />
                     ]}/>
                 )}
