@@ -1,8 +1,11 @@
 import {BC} from "../../../logic/BernieComponent";
-import {Themeable} from "../../../logic/style/Themeable";
 import {Assembly} from "../../../logic/assembly/Assembly";
+import {Themeable} from "../../../logic/style/Themeable";
 import {Color} from "../../../logic/style/Color";
 import {FormDataHub} from "../../epicure/components/FormDataHub";
+import {IconConfig} from "../data/IconConfig";
+import {getOr} from "../../../logic/Utils";
+import {v4} from "uuid";
 import {FormElement} from "../../epicure/components/FormElement";
 import {Group} from "../../../components/lo/Group";
 import {percent, px} from "../../../logic/style/DimensionalMeasured";
@@ -20,27 +23,22 @@ import {ReactComponent as EditIcon} from "../../../assets/icons/ic-20/ic20-edit.
 import {StaticDrawerMenu} from "../../../components/lo/StaticDrawerMenu";
 import {ColorSelectorDialog} from "./ColorSelectorDialog";
 import React from "react";
-import {getOr} from "../../../logic/Utils";
-import {v4} from "uuid";
+import {DrawerHeader} from "../../../components/lo/DrawerHeader";
 
-export type ColorInputProps = {
+export type IconInputProps = {
     id: string
     title: string
     description: string
-    initialValue?: Color
+    initialValue?: IconConfig
     fdh: FormDataHub,
     controller: BC<any, any, any>,
     channels?: Array<string>,
     rerenderOnChange?: boolean
 }
 
-export class ColorInput extends BC<ColorInputProps, any, any> {
+export class IconInput extends BC<IconInputProps, any, any> {
 
     private localID: string = v4();
-
-    constructor(props: ColorInputProps) {
-        super(props, undefined, undefined);
-    }
 
     private onChangeRerender() {
         if (getOr(this.props.rerenderOnChange, true)) {
@@ -48,7 +46,7 @@ export class ColorInput extends BC<ColorInputProps, any, any> {
         }
     }
 
-    componentRender(p: ColorInputProps, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
+    componentRender(p: IconInputProps, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return p.controller.component(local => (
             <FormElement
                 id={p.id}
@@ -58,22 +56,9 @@ export class ColorInput extends BC<ColorInputProps, any, any> {
                 fdh={p.fdh}
                 inputGenerator={(onChange, value, valid) => (
                     <Group removeChildBorders width={percent(100)} orientation={Orientation.HORIZONTAL} elements={[
-                        <Button height={percent(100)} width={px(50)} border={false} highlight={false} children={
-                            <Flex fh fw align={Align.CENTER} justifyContent={Justify.CENTER} elements={[
-                                <Tooltip sx={{ height: "100%", width: "100%"}} title={"Reset color"} arrow children={
-                                    <Icon icon={<ResetIcon/>}/>
-                                }/>
-                            ]}/>
-                        } onClick={() => {
-                            onChange(undefined);
-                            this.onChangeRerender();
-                        }}/>,
 
-                        <Box width={percent(100)} style={{ position: "relative" }} height={percent(100)} bgColor={value === undefined ? undefined : Color.ofHex(value)} children={
-                            <Flex style={{ position: "absolute", top: 0, left: 0}} fh fw align={Align.CENTER} justifyContent={Justify.CENTER} elements={[
-                                value === undefined ? <Text text={"none"} uppercase/> : <></>
-                            ]}/>
-                        }/>,
+
+
 
                         <Button height={percent(100)} width={px(50)} border={false} highlight={false} children={
                             <Flex fh fw align={Align.CENTER} justifyContent={Justify.CENTER} elements={[
@@ -83,12 +68,33 @@ export class ColorInput extends BC<ColorInputProps, any, any> {
                             ]}/>
                         } onClick={() => {
                             this.dialog(
-                                <StaticDrawerMenu body={() => (
-                                    <ColorSelectorDialog hex={value === undefined ? "000000" : value} onSubmit={hex => {
-                                        onChange(hex);
-                                        this.closeLocalDialog();
-                                        this.onChangeRerender();
-                                    }}/>
+                                <StaticDrawerMenu body={props => (
+
+
+                                    <Flex fw elements={[
+                                        <DrawerHeader
+                                            header={"Icon editor"}
+                                            description={"Configure the icon as you like. Change the icon & choose the background color"}
+                                        />,
+
+                                        <Button onClick={() => {
+
+                                            // todo implement
+                                            onChange( "" );
+
+
+                                            this.closeLocalDialog();
+                                            this.onChangeRerender();
+                                        }}/>
+                                    ]}/>
+
+
+
+                                    // <ColorSelectorDialog hex={value === undefined ? "000000" : value} onSubmit={hex => {
+                                    //     onChange(hex);
+                                    //     this.closeLocalDialog();
+                                    //     this.onChangeRerender();
+                                    // }}/>
                                 )}/>
                             );
                         }}/>,

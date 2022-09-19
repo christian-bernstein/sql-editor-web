@@ -692,7 +692,7 @@ export namespace Themeable {
 
     export const malaPallet = createColorPallet({
         backgroundColor: Color.ofHex("#000000"),
-        backgroundHighlightColor200: Color.ofHex("#222222"),
+        backgroundHighlightColor200: Color.ofHex("#D9D9D9"),
         // backgroundHighlightColor: Color.ofHex("#171717"),
         backgroundHighlightColor: Color.ofHex("#ffffff"),
         backgroundColorOuter: Color.ofHex("#171717"),

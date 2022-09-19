@@ -2,10 +2,10 @@ import {BC} from "../../logic/BernieComponent";
 import {Assembly} from "../../logic/assembly/Assembly";
 import {Themeable} from "../../logic/style/Themeable";
 import {Screen} from "../../components/lo/Page";
-import {Flex} from "../../components/lo/FlexBox";
+import {Flex, FlexRow} from "../../components/lo/FlexBox";
 import {Align} from "../../logic/style/Align";
 import {DrawerHeader} from "../../components/lo/DrawerHeader";
-import {VM} from "../../logic/style/ObjectVisualMeaning";
+import {ObjectVisualMeaning, VM} from "../../logic/style/ObjectVisualMeaning";
 import {SettingsGroup} from "../../components/lo/SettingsGroup";
 import {IAtlasAPI} from "./api/IAtlasAPI";
 import {FolderComponent} from "./components/FolderComponent";
@@ -16,10 +16,17 @@ import {FolderSetupDialog} from "./components/FolderSetupDialog";
 import {Folder} from "./data/Folder";
 import {StaticDrawerMenu} from "../../components/lo/StaticDrawerMenu";
 import {SearchDialog} from "./components/SearchDialog";
-import {Input} from "../../components/lo/Input";
 import React from "react";
 import {Text, TextType} from "../../components/lo/Text";
 import {ISOHubComponent} from "./components/ISOHubComponent";
+import {SettingsElement} from "../../components/ho/settingsElement/SettingsElement";
+import {ReactComponent as DeleteIcon} from "../../assets/icons/ic-20/ic20-delete.svg";
+import {ReactComponent as SettingsIcon} from "../../assets/icons/ic-20/ic20-settings.svg";
+import {HOCWrapper} from "../../components/HOCWrapper";
+import {StorageQuotaDialog} from "./components/StorageQuotaDialog";
+import {Centered} from "../../components/lo/PosInCenter";
+import {Dot} from "../../components/lo/Dot";
+import {createMargin} from "../../logic/style/Margin";
 
 export type AtlasMainProps = {
     api: IAtlasAPI
@@ -56,7 +63,7 @@ export class AtlasMain extends BC<AtlasMainProps, any, any> {
     private folderAssembly() {
         this.assembly.assembly("folder", theme => {
             return (
-                <Flex fw elements={[
+                <Flex fw fh elements={[
                     <DrawerHeader
                         header={"Folder view"}
                         enableBadge
@@ -66,23 +73,6 @@ export class AtlasMain extends BC<AtlasMainProps, any, any> {
                     />,
 
                     <Flex fw padding paddingX={px(25)} gap={theme.gaps.smallGab} elements={[
-                        <Button width={percent(100)} text={"Create folder"} onClick={() => {
-                            this.dialog(
-                                <FolderSetupDialog actions={{
-                                    onSubmit(folder: Folder): boolean {
-                                        const success = AtlasMain.atlas().api().createFolder(folder);
-                                        setTimeout(() => {
-                                            AtlasMain.atlas(atlas => {
-                                                atlas.closeLocalDialog();
-                                                atlas.rerender("folders");
-                                            });
-                                        }, 1);
-                                        return success;
-                                    }
-                                }}/>
-                            );
-                        }}/>,
-
                         <Button width={percent(100)} text={"Search"} onClick={() => {
                             this.dialog(
                                 <Screen children={
@@ -95,30 +85,157 @@ export class AtlasMain extends BC<AtlasMainProps, any, any> {
                             );
                         }}/>,
 
-                        <Button width={percent(100)} text={"ISO-image manager"} onClick={() => {
+                        <Button width={percent(100)} text={"Actions"} onClick={() => {
                             this.dialog(
-                                <ISOHubComponent/>
-                            );
-                        }}/>,
+                                <HOCWrapper body={wrapper => (
+                                    <StaticDrawerMenu body={props => (
+                                        <Flex fw elements={[
+                                            <DrawerHeader
+                                                header={`Actions`}
+                                                enableBadge
+                                                badgeVM={VM.UI_NO_HIGHLIGHT}
+                                                badgeText={"Actions"}
+                                                description={`Available action for atlas.`}
+                                            />,
 
+                                            <SettingsGroup title={"Available actions"} elements={[
+                                                <SettingsElement groupDisplayMode title={"Create folder"} onClick={() => {
+                                                    wrapper.dialog(
+                                                        <FolderSetupDialog actions={{
+                                                            onSubmit(folder: Folder): boolean {
+                                                                const success = AtlasMain.atlas().api().createFolder(folder);
+                                                                setTimeout(() => {
+                                                                    AtlasMain.atlas(atlas => {
+                                                                        atlas.closeLocalDialog();
+                                                                        atlas.rerender("folders");
+                                                                    });
+                                                                }, 1);
+                                                                return success;
+                                                            }
+                                                        }}/>
+                                                    );
+                                                }}/>,
+
+                                                <SettingsElement groupDisplayMode title={"Storage quota"} onClick={element => {
+                                                    wrapper.dialog(
+                                                        <StorageQuotaDialog/>
+                                                    )
+                                                }}/>,
+
+                                                <SettingsElement groupDisplayMode title={"ISO-image manager"} iconConfig={{
+                                                    enable: true,
+                                                    iconGenerator: element => <SettingsIcon/>
+                                                }} onClick={() => {
+                                                    wrapper.dialog(
+                                                        <ISOHubComponent/>
+                                                    );
+                                                }}/>,
+                                            ]}/>,
+
+                                            <SettingsGroup title={"Danger zone"} elements={[
+                                                <SettingsElement groupDisplayMode title={"Clear data"} iconConfig={{
+                                                    enable: true,
+                                                    color: theme.colors.errorColor,
+                                                    iconGenerator: element => <DeleteIcon/>
+                                                }} onClick={element => {
+                                                    AtlasMain.atlas(atlas => {
+                                                        atlas.api().clear();
+                                                        atlas.rerender("folders");
+                                                        atlas.closeLocalDialog();
+                                                    });
+                                                }}/>
+                                            ]}/>
+                                        ]}/>
+                                    )}/>
+                                )}/>
+                            )
+
+                        }}/>,
                     ]}/>,
 
-                    this.component(() => (
-                        <SettingsGroup title={"All folders / global folders"} elements={
-                            this.api().getAllFolders().map(data => (
-                                <FolderComponent data={data} onSelect={(component, _) => new Promise<void>((resolve, reject) => {
-                                    try {
-                                        this.dialog(
-                                            <FolderPreviewComponent data={data}/>
-                                        );
-                                        resolve();
-                                    } catch (e) {
-                                        reject(e);
-                                    }
-                                })}/>
-                            ))
-                        }/>
-                    ), "folders")
+
+                    this.component(() => {
+                        // Render empty state
+                        if (this.api().getAllFolders().length === 0) {
+                            return (
+                                <Centered fullHeight children={
+                                    <Flex width={percent(75)} align={Align.CENTER} gap={theme.gaps.smallGab} elements={[
+                                        <Text
+                                            text={"No folders found"}
+                                            uppercase
+                                            bold
+                                        />,
+                                        <Text
+                                            text={"No folders were found. To view folders import them via **ISO-image manager** or create a new folder from scratch"}
+                                            type={TextType.secondaryDescription}
+                                            fontSize={px(11)}
+                                            align={Align.CENTER}
+                                        />,
+
+                                        <FlexRow margin={createMargin(20, 0, 0, 0)} gap={theme.gaps.smallGab} elements={[
+                                            <Button
+                                                border={false}
+                                                bgColorOnDefault={false}
+                                                highlight={false}
+                                                visualMeaning={ObjectVisualMeaning.INFO}
+                                                opaque
+                                                children={
+                                                    <Text
+                                                        whitespace={"nowrap"}
+                                                        text={"Create first folder"}
+                                                        type={TextType.secondaryDescription}
+                                                        fontSize={px(11)}
+                                                        coloredText
+                                                        visualMeaning={VM.INFO}
+                                                    />
+                                                }
+                                            />,
+                                            <Dot/>,
+                                            <Button
+                                                border={false}
+                                                bgColorOnDefault={false}
+                                                highlight={false}
+                                                visualMeaning={ObjectVisualMeaning.INFO}
+                                                opaque
+                                                children={
+                                                    <Text
+                                                        whitespace={"nowrap"}
+                                                        text={"ISO-image manager"}
+                                                        type={TextType.secondaryDescription}
+                                                        fontSize={px(11)}
+                                                        coloredText
+                                                        visualMeaning={VM.INFO}
+                                                    />
+                                                }
+                                                onClick={() => {
+                                                    this.dialog(
+                                                        <ISOHubComponent/>
+                                                    );
+                                                }}
+                                            />
+                                        ]}/>
+                                    ]}/>
+                                }/>
+                            );
+                        }
+
+                        return (
+                            <SettingsGroup title={"All folders / global folders"} elements={
+                                this.api().getAllFolders().map(data => (
+                                    <FolderComponent data={data} onSelect={(component, _) => new Promise<void>((resolve, reject) => {
+                                        try {
+                                            this.dialog(
+                                                <FolderPreviewComponent data={data}/>
+                                            );
+                                            resolve();
+                                        } catch (e) {
+                                            reject(e);
+                                        }
+                                    })}/>
+                                ))
+                            }/>
+                        );
+                    }, "folders")
                 ]}/>
             );
         })

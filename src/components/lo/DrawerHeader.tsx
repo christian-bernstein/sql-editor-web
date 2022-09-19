@@ -34,17 +34,20 @@ export class DrawerHeader extends BernieComponent<DrawerHeaderProps, any, any> {
             <FlexBox width={percent(100)} align={Align.CENTER} margin={p.margin} children={
                 <AF elements={[
                     <If condition={p.enableBadge} ifTrue={
-                        <LiteGrid columns={3} children={
-                            <AF elements={[
-                                <Flex children={p.leftAppendix?.(this)}/>,
-                                <Centered fullHeight children={
-                                    Badge.badge(getOr(p.badgeText, ""), {
-                                        visualMeaning: p.badgeVM
-                                    })
-                                }/>,
-                                <Flex justifyContent={Justify.FLEX_END} children={p.rightAppendix?.(this)}/>,
-                            ]}/>
-                        }/>
+                        Badge.badge(getOr(p.badgeText, ""), {
+                            visualMeaning: p.badgeVM
+                        })
+                        // <LiteGrid columns={3}  children={
+                        //     <AF elements={[
+                        //         <Flex children={p.leftAppendix?.(this)}/>,
+                        //         <Centered fullHeight children={
+                        //             Badge.badge(getOr(p.badgeText, ""), {
+                        //                 visualMeaning: p.badgeVM
+                        //             })
+                        //         }/>,
+                        //         <Flex justifyContent={Justify.FLEX_END} children={p.rightAppendix?.(this)}/>,
+                        //     ]}/>
+                        // }/>
                     }/>,
                     <FlexBox width={percent(100)} gap={t.gaps.smallGab} align={Align.CENTER}>
                         <Text text={p.header} type={TextType.smallHeader}/>

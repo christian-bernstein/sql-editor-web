@@ -41,6 +41,7 @@
     "console-feed": "^3.4.0",
     "dateformat": "^5.0.2",
     "debounce-promise": "^3.1.2",
+    "dexie": "^3.2.2",
     "format-duration": "^1.4.0",
     "get-ssl-certificate": "^2.3.3",
     "immutability-helper": "^3.1.1",
