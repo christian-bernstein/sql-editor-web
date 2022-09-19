@@ -22,11 +22,13 @@ import {ISOHubComponent} from "./components/ISOHubComponent";
 import {SettingsElement} from "../../components/ho/settingsElement/SettingsElement";
 import {ReactComponent as DeleteIcon} from "../../assets/icons/ic-20/ic20-delete.svg";
 import {ReactComponent as SettingsIcon} from "../../assets/icons/ic-20/ic20-settings.svg";
+import {ReactComponent as ActionIcon} from "../../assets/icons/ic-20/ic20-more-ver.svg";
 import {HOCWrapper} from "../../components/HOCWrapper";
 import {StorageQuotaDialog} from "./components/StorageQuotaDialog";
 import {Centered} from "../../components/lo/PosInCenter";
 import {Dot} from "../../components/lo/Dot";
 import {createMargin} from "../../logic/style/Margin";
+import {Icon} from "../../components/lo/Icon";
 
 export type AtlasMainProps = {
     api: IAtlasAPI
@@ -69,11 +71,15 @@ export class AtlasMain extends BC<AtlasMainProps, any, any> {
                         enableBadge
                         badgeVM={VM.UI_NO_HIGHLIGHT}
                         badgeText={"Virtual Folder System"}
-                        description={"All your folders at-a-glance"}
+                        description={"All your folders at-a-glance\nPress on the context icon to see available actions, like creating folders or accessing ISO-image manager"}
                     />,
 
-                    <Flex fw padding paddingX={px(25)} gap={theme.gaps.smallGab} elements={[
-                        <Button width={percent(100)} text={"Search"} onClick={() => {
+                    <FlexRow fw padding paddingX={px(25)} gap={theme.gaps.smallGab} elements={[
+                        <Button height={percent(100)} children={
+                            <Icon icon={<SettingsIcon/>}/>
+                        }/>,
+
+                        <Button width={percent(100)} shrinkOnClick text={"Finder"} onClick={() => {
                             this.dialog(
                                 <Screen children={
                                     <SearchDialog actions={{
@@ -85,7 +91,9 @@ export class AtlasMain extends BC<AtlasMainProps, any, any> {
                             );
                         }}/>,
 
-                        <Button width={percent(100)} text={"Actions"} onClick={() => {
+                        <Button height={percent(100)} children={
+                            <Icon icon={<ActionIcon/>}/>
+                        } onClick={() => {
                             this.dialog(
                                 <HOCWrapper body={wrapper => (
                                     <StaticDrawerMenu body={props => (
