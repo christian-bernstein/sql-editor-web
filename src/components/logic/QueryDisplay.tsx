@@ -20,6 +20,7 @@ export type QueryDisplayProps<T> = {
 
 export class QueryDisplay<T> extends BernieComponent<QueryDisplayProps<T>, any, any> {
 
+    // TODO: Investigate bug -> successOrNeutral is never rendered
     componentRender(p: QueryDisplayProps<T>, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         console.error("QueryDisplay rendering", p.q.get());
 

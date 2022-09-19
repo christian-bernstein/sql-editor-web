@@ -8,6 +8,9 @@ import {getOr} from "../../logic/Utils";
 import {ObjectVisualMeaning} from "../../logic/style/ObjectVisualMeaning";
 import {Color} from "../../logic/style/Color";
 import {Cursor} from "../../logic/style/Cursor";
+import {BernieComponent} from "../../logic/BernieComponent";
+import {Assembly} from "../../logic/assembly/Assembly";
+import {MuxRenderer} from "../../logic/MuxRenderer";
 
 export type BoxProps = {
     highlight?: boolean
@@ -57,13 +60,23 @@ export type BoxArrowConfig = {
     bgColor?: Color
 }
 
-export class Box extends React.Component<BoxProps, any> {
+export class Box extends BernieComponent<BoxProps, any, any, Box> {
 
     constructor(props: BoxProps) {
-        super(props);
+        super(props, undefined, undefined, {
+            renderers: new Map<string, MuxRenderer<Box>>([
+                ["light-display", {
+                     render(component: Box): JSX.Element | undefined {
+                         return (
+                             <>implement..</>
+                         );
+                     }
+                }]
+            ])
+        });
     }
 
-    render() {
+    componentRender(p: BoxProps, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         const theme: Themeable.Theme = utilizeGlobalTheme();
         const meaningfulColors: MeaningfulColors = getMeaningfulColors(getOr(this.props.visualMeaning, ObjectVisualMeaning.UI_NO_HIGHLIGHT), theme);
         const col: Color = this.props.color ? this.props.color : meaningfulColors.main;
@@ -82,18 +95,18 @@ export class Box extends React.Component<BoxProps, any> {
           // border-radius: ${theme.radii.defaultObjectRadius.css()};
           
           border-radius: ${(() => {
-              const config = this.props.borderRadiiConfig;
-              if (config !== undefined && config.enableCustomBorderRadii) {
+            const config = this.props.borderRadiiConfig;
+            if (config !== undefined && config.enableCustomBorderRadii) {
                 const radii = getOr(config.fallbackCustomBorderRadii, theme.radii.defaultObjectRadius);
                 const topLeft: DimensionalMeasured = getOr(config.topLeft, radii);
                 const topRight: DimensionalMeasured = getOr(config.topRight, radii);
                 const bottomLeft: DimensionalMeasured = getOr(config.bottomLeft, radii);
                 const bottomRight: DimensionalMeasured = getOr(config.bottomRight, radii);
                 return `${topLeft.css()} ${topRight.css()} ${bottomLeft.css()} ${bottomRight.css()}`;
-              } else {
-                  return theme.radii.defaultObjectRadius.css();
-              }
-          })()};
+            } else {
+                return theme.radii.defaultObjectRadius.css();
+            }
+        })()};
           
           
           border: ${this.props.borderless ? "none" : `1px solid ${meaningfulColors.lighter.css()}`};

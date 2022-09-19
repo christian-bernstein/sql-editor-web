@@ -90,24 +90,18 @@ export const Text: React.FC<TextProps> = props => {
       align-items: center;
       gap: ${theme.paddings.defaultTextIconPadding.css()};
       cursor: ${getOr(props.cursor, Cursor.default)};
-      // color: ${props.coloredText ? meaningfulColors.lighter.css() : theme.colors.fontPrimaryColor.css()} !important;
       color: ${props.coloredText ? (props.color === undefined ? meaningfulColors.lighter.css() : props.color.css()) + "!important" : ""};
       transition: all ${theme.transitions.fastTime.css()};
-      // flex-grow: 0;
-      // flex-shrink: 0;
       text-overflow: ellipsis;
       
       &:hover {
         color: ${props.highlight ? meaningfulColors.main.css() : "auto"} !important;
       }
       
-      // min-width: 100%;
-      
       svg path {
         fill: ${(props.coloredIcon ? meaningfulColors.iconColored : meaningfulColors.icon).css()};
       }
       
-      // h1, h2, h3,
       p, h4, h5, h6, ul, li {
         margin-top: 0;
         margin-bottom: 0;

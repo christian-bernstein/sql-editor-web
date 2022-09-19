@@ -13,14 +13,21 @@ import {Screen} from "../components/lo/Page";
 import {Centered} from "../components/lo/PosInCenter";
 import {ObjectVisualMeaning} from "./style/ObjectVisualMeaning";
 import {Text} from "../components/lo/Text";
+import {CoMuxProps} from "../components/props/CoMuxProps";
+import {MuxRenderer} from "./MuxRenderer";
 
-export type BernieComponentConfig = {
+export type BernieComponentConfig<T extends BernieComponent<any, any, any> = any> = {
     enableLocalDialog: boolean,
     componentID?: string,
-    deviceRenderSeparation?: boolean
+    deviceRenderSeparation?: boolean,
+
+    renderers?: Map<string, MuxRenderer<T>>
 }
 
-export class BernieComponent<RProps, RState, LState extends object> extends React.Component<RProps, RState> {
+export type BernieComponentBaseProps<T> = T & CoMuxProps & {
+}
+
+export class BernieComponent<RProps, RState, LState extends object, Implementation extends BernieComponent<any, any, any, any> = any> extends React.Component<BernieComponentBaseProps<RProps>, RState> {
 
     private readonly _local: State<LState>;
 
@@ -40,7 +47,7 @@ export class BernieComponent<RProps, RState, LState extends object> extends Reac
 
     private renderLocalForegroundDialogGenerator?: (component: BernieComponent<RProps, RState, LState>) => JSX.Element;
 
-    constructor(props: RProps, state: RState, local: LState, config?: Partial<BernieComponentConfig>) {
+    constructor(props: BernieComponentBaseProps<RProps>, state: RState, local: LState, config?: Partial<BernieComponentConfig<Implementation>>) {
         super(props);
 
         // todo test
@@ -179,14 +186,6 @@ export class BernieComponent<RProps, RState, LState extends object> extends Reac
         }
     }
 
-    public renderDefault(p: RProps, s: RState, l: LState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
-        return this.componentRender(p, s, l, t, a);
-    }
-
-    public renderMobile(p: RProps, s: RState, l: LState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
-        return this.componentRender(p, s, l, t, a);
-    }
-
     public componentRender(p: RProps, s: RState, l: LState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return undefined;
     }
@@ -308,21 +307,3 @@ export {
 export type CProps<T, S, V extends object> = {
     render?: ((i: BernieComponent<T, S, V>, p: T, s: S, l: V) => (JSX.Element | undefined))
 }
-
-// export function createComponentClass<T, S, V extends object>(props: CProps<T, S, V>): typeof BernieComponent {
-//
-//     return class CCImpl<T, S, V extends object> extends BernieComponent<T, S, V> {
-//
-//         componentRender(p: T, s: S, l: V, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
-//             const abc: CCImpl<T, S, V> = this;
-//
-//             return props.render === undefined ? (
-//                 super.componentRender(p, s, l, t, a)
-//             ) : (
-//                 props.render(this, p, s, l)
-//             );
-//         }
-//
-//     };
-//
-// }
