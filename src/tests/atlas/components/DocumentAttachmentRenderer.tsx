@@ -82,31 +82,47 @@ export class DocumentAttachmentRenderer extends BC<DocumentAttachmentRendererPro
                             } onClick={() => {
                                 this.dialog(
                                     <StaticDrawerMenu body={props => (
-                                        <Button text={"share"} onClick={() => {
-                                            const file = new File([new Blob([data?.src as string], {
-                                                type: "image/png"
-                                            })], "image.png", {
-                                                type: "image/png"
-                                            });
+                                        <Flex elements={[
+                                            <Button text={"share"} onClick={() => {
+                                                const file = new File([new Blob([data?.src as string], {
+                                                    type: "image/png"
+                                                })], "image.png", {
+                                                    type: "image/png"
+                                                });
 
-                                            if (navigator.canShare({ files: [file] })) {
-                                                navigator.share({
-                                                    title: "share an attachment",
-                                                    text: "share this attachment..",
-                                                    files: [new File([new Blob([data?.src as string], {
-                                                        type: "text/plain"
-                                                    })], "image.png")]
-                                                }).then(r => console.log(r))
-                                            } else {
-                                                this.dialog(
-                                                    <AnomalyInfo anomaly={{
-                                                        description: "No sharing"
-                                                    }}/>
-                                                )
-                                            }
+                                                if (navigator.canShare({ files: [file] })) {
+                                                    navigator.share({
+                                                        title: "share an attachment",
+                                                        text: "share this attachment..",
+                                                        files: [new File([new Blob([data?.src as string], {
+                                                            type: "text/plain"
+                                                        })], "image.png")]
+                                                    }).then(r => console.log(r))
+                                                } else {
+                                                    this.dialog(
+                                                        <AnomalyInfo anomaly={{
+                                                            description: "No sharing"
+                                                        }}/>
+                                                    )
+                                                }
+                                            }}/>,
+
+                                            <Button text={"delete"} onClick={() => {
+                                                AtlasMain.atlas().api().persistentDB().documentAttachments.delete(p.attachmentID).then(() => {
 
 
-                                        }}/>
+                                                    // TODO: Not working correctly
+                                                    AtlasMain.atlas().api().updateDocument(p.attachmentID, document => {
+                                                        let iDs: Array<string> | undefined = document.attachmentIDs;
+                                                        if (iDs === undefined) {
+                                                            iDs = [];
+                                                        }
+                                                        document.attachmentIDs = iDs.filter(id => p.attachmentID !== id);
+                                                        return document;
+                                                    });
+                                                });
+                                            }}/>
+                                        ]}/>
                                     )}/>
                                 );
                             }}/>
