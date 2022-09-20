@@ -84,6 +84,7 @@
     "sourcemapped-stacktrace": "^1.1.11",
     "sql-formatter": "^6.1.2",
     "styled-components": "^5.0.0",
+    "swiper": "^8.4.2",
     "typescript": "^4.7.4",
     "typescript-debounce-decorator": "^0.0.18",
     "use-lodash-debounce": "^1.2.0",

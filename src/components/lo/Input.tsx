@@ -48,7 +48,8 @@ export type InputProps = {
 
     min?: string,
     max?: string,
-    step?: string
+    step?: string,
+    accept?: string
 }
 
 export type InputState = {
@@ -179,6 +180,7 @@ export class Input extends React.Component<InputProps, InputState> {
                        min={this.props.min}
                        max={this.props.max}
                        step={this.props.step}
+                       accept={this.props.accept}
                 />
                 <If condition={getOr(this.props.hideLabel, false)} ifTrue={
                     <></>

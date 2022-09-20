@@ -44,6 +44,7 @@ import {QuickTest} from "./QuickTest";
 import {NumPadTest} from "./tests/NumPadTest";
 import {SnackbarTest} from "./tests/SnackbarTest";
 import {AtlasTest} from "./tests/AtlasTest";
+import {DBTest} from "./tests/DBTest";
 
 export type UnitTestPageLocalState = {
     fdh: FormDataHub
@@ -57,6 +58,7 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
         UnitTestUtils.createTest(NumPadTest.test);
         UnitTestUtils.createTest(SnackbarTest.test);
         UnitTestUtils.createTest(AtlasTest.test);
+        UnitTestUtils.createTest(DBTest.test);
     }
 
     constructor() {

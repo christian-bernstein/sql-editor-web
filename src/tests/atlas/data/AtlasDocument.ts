@@ -5,4 +5,5 @@ import {DocumentType} from "./DocumentType";
 export type AtlasDocument = AtlasEntity & Identifiable & {
     issuer?: string,
     documentType?: DocumentType,
+    attachmentIDs?: Array<string>
 }

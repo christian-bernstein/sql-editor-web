@@ -3,6 +3,7 @@ import {AtlasDocument} from "../data/AtlasDocument";
 import {Category} from "../data/Category";
 import {IPredicate} from "./IPredicate";
 import {FormDataHub} from "../../epicure/components/FormDataHub";
+import {AtlasDB} from "./AtlasDB";
 
 export interface IAtlasAPI {
     getFolder(id: string): Folder;
@@ -30,4 +31,6 @@ export interface IAtlasAPI {
 
     db(): FormDataHub;
     clear(): IAtlasAPI;
+
+    persistentDB(): AtlasDB;
 }

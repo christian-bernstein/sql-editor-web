@@ -4,6 +4,7 @@ import {AtlasDocument} from "../data/AtlasDocument";
 import {Category} from "../data/Category";
 import {IPredicate} from "./IPredicate";
 import {FormDataHub} from "../../epicure/components/FormDataHub";
+import {AtlasDB} from "./AtlasDB";
 
 enum DBAddresses {
     DOCUMENTS = "documents",
@@ -14,6 +15,8 @@ enum DBAddresses {
 export class InDevAtlasAPI implements IAtlasAPI {
 
     private database: FormDataHub = new FormDataHub("InDevAtlasAPI").loadFromLocalStore();
+
+    private persistentDatabase: AtlasDB = new AtlasDB("InDevAtlasAPI");
 
     createDocument(data: AtlasDocument): boolean {
         try {
@@ -179,5 +182,9 @@ export class InDevAtlasAPI implements IAtlasAPI {
         window.localStorage.removeItem(this.db().key());
         this.database = new FormDataHub("InDevAtlasAPI").loadFromLocalStore();
         return this;
+    }
+
+    persistentDB(): AtlasDB {
+        return this.persistentDatabase;
     }
 }
