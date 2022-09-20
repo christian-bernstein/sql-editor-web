@@ -6,7 +6,7 @@ import {DBDocumentAttachment} from "../data/DBDocumentAttachment";
 import {AtlasMain} from "../AtlasMain";
 import {QueryDisplay} from "../../../components/logic/QueryDisplay";
 import {QueryError} from "../../../logic/query/QueryError";
-import {Flex} from "../../../components/lo/FlexBox";
+import {Flex, FlexBox} from "../../../components/lo/FlexBox";
 import {Icon} from "../../../components/lo/Icon";
 import {ReactComponent as AttachmentIcon} from "../../../assets/icons/ic-20/ic20-attachment.svg";
 import {Button} from "../../../components/lo/Button";
@@ -20,6 +20,8 @@ import {Align} from "../../../logic/style/Align";
 import {Justify} from "../../../logic/style/Justify";
 import {AnomalyInfo} from "../../../components/ho/anomalyInfo/AnomalyInfo";
 import {OverflowBehaviour} from "../../../logic/style/OverflowBehaviour";
+import {PuffLoader} from "react-spinners";
+import {Text} from "../../../components/lo/Text";
 
 export type DocumentAttachmentRendererProps = {
     attachmentID: string,
@@ -61,7 +63,7 @@ export class DocumentAttachmentRenderer extends BC<DocumentAttachmentRendererPro
             <QueryDisplay<DBDocumentAttachment | undefined> q={local.state.data} renderer={{
                 success: (q, data) => {
                     return (
-                        <Flex fw fh style={{ position: "relative" }} elements={[
+                        <Flex fw style={{ position: "relative" }} elements={[
                             <Box noPadding overflowYBehaviour={OverflowBehaviour.HIDDEN} overflowXBehaviour={OverflowBehaviour.HIDDEN} width={percent(100)} children={
                                 <img width={"100%"} src={`${data?.src}`} alt={"image attachment"} onClick={() => {
                                     this.dialog(
@@ -82,8 +84,10 @@ export class DocumentAttachmentRenderer extends BC<DocumentAttachmentRendererPro
                                     <StaticDrawerMenu body={props => (
                                         <Button text={"share"} onClick={() => {
                                             const file = new File([new Blob([data?.src as string], {
-                                                type: "text/plain"
-                                            })], "image.png");
+                                                type: "image/png"
+                                            })], "image.png", {
+                                                type: "image/png"
+                                            });
 
                                             if (navigator.canShare({ files: [file] })) {
                                                 navigator.share({
@@ -113,7 +117,14 @@ export class DocumentAttachmentRenderer extends BC<DocumentAttachmentRendererPro
                     return <>error</>
                 },
                 processing(q: Queryable<DBDocumentAttachment | undefined>): JSX.Element {
-                    return <>processing</>
+                    return (
+                        <Box children={
+                            <FlexBox gap={t.gaps.defaultGab} align={Align.CENTER} justifyContent={Justify.CENTER}>
+                                <PuffLoader color={t.colors.warnHighlightColor.css()}/>
+                                <Text text={"Loading attachment"} bold uppercase coloredText visualMeaning={ObjectVisualMeaning.WARNING}/>
+                            </FlexBox>
+                        }/>
+                    );
                 },
                 neural(q: Queryable<DBDocumentAttachment | undefined>): JSX.Element {
                     return <>neutral</>
