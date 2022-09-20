@@ -11,10 +11,19 @@ import {Assembly} from "./assembly/Assembly";
 import {InputBase, styled, SwipeableDrawer} from "@mui/material";
 import {Screen} from "../components/lo/Page";
 import {Centered} from "../components/lo/PosInCenter";
-import {ObjectVisualMeaning} from "./style/ObjectVisualMeaning";
+import {ObjectVisualMeaning, VM} from "./style/ObjectVisualMeaning";
 import {Text} from "../components/lo/Text";
 import {CoMuxProps} from "../components/props/CoMuxProps";
 import {MuxRenderer} from "./MuxRenderer";
+import {ConfirmationConfig, ConfirmationType} from "./ConfirmationConfig";
+import {StaticDrawerMenu} from "../components/lo/StaticDrawerMenu";
+import {Flex} from "../components/lo/FlexBox";
+import {DrawerHeader} from "../components/lo/DrawerHeader";
+import {percent, px} from "./style/DimensionalMeasured";
+import {Button} from "../components/lo/Button";
+import {LiteGrid} from "../components/lo/LiteGrid";
+import {AF} from "../components/logic/ArrayFragment";
+import {ComponentHelper} from "./ComponentHelper";
 
 export type BernieComponentConfig<T extends BernieComponent<any, any, any> = any> = {
     enableLocalDialog: boolean,
@@ -27,7 +36,10 @@ export type BernieComponentConfig<T extends BernieComponent<any, any, any> = any
 export type BernieComponentBaseProps<T> = T & CoMuxProps & {
 }
 
-export class BernieComponent<RProps, RState, LState extends object, Implementation extends BernieComponent<any, any, any, any> = any> extends React.Component<BernieComponentBaseProps<RProps>, RState> {
+export class BernieComponent<RProps, RState, LState extends object, Implementation extends BernieComponent<any, any, any> = any> extends React.Component<BernieComponentBaseProps<RProps>, RState> {
+    get helper(): ComponentHelper<RProps, RState, LState, Implementation> {
+        return this._helper;
+    }
 
     private readonly _local: State<LState>;
 
@@ -36,6 +48,8 @@ export class BernieComponent<RProps, RState, LState extends object, Implementati
     private readonly _assembly: Assembly = new Assembly();
 
     private readonly config: BernieComponentConfig;
+
+    private readonly _helper: ComponentHelper<RProps, RState, LState, Implementation>
 
     private redirectTo: string | undefined;
 
@@ -49,6 +63,8 @@ export class BernieComponent<RProps, RState, LState extends object, Implementati
 
     constructor(props: BernieComponentBaseProps<RProps>, state: RState, local: LState, config?: Partial<BernieComponentConfig<Implementation>>) {
         super(props);
+
+        this._helper = new ComponentHelper<RProps, RState, LState, Implementation>(() => this);
 
         // todo test
         this.config = {
@@ -173,7 +189,6 @@ export class BernieComponent<RProps, RState, LState extends object, Implementati
             } else {
                 throw new Error("Cannot call / open a local dialog if 'enableLocalDialog' is disabled in the (Bernie)-Components config");
             }
-
         }
 
         if (this.renderLocalForegroundDialog) {

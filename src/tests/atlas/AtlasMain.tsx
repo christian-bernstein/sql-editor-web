@@ -1,4 +1,4 @@
-import {BC} from "../../logic/BernieComponent";
+import {BC, BernieComponent} from "../../logic/BernieComponent";
 import {Assembly} from "../../logic/assembly/Assembly";
 import {Themeable} from "../../logic/style/Themeable";
 import {Screen} from "../../components/lo/Page";
@@ -29,6 +29,7 @@ import {Centered} from "../../components/lo/PosInCenter";
 import {Dot} from "../../components/lo/Dot";
 import {createMargin} from "../../logic/style/Margin";
 import {Icon} from "../../components/lo/Icon";
+import {ConfirmationDialog} from "../../components/lo/ConfirmationDialog";
 
 export type AtlasMainProps = {
     api: IAtlasAPI
@@ -146,11 +147,24 @@ export class AtlasMain extends BC<AtlasMainProps, any, any> {
                                                     color: theme.colors.errorColor,
                                                     iconGenerator: element => <DeleteIcon/>
                                                 }} onClick={element => {
-                                                    AtlasMain.atlas(atlas => {
-                                                        atlas.api().clear();
-                                                        atlas.rerender("folders");
-                                                        atlas.closeLocalDialog();
-                                                    });
+                                                    element.helper.confirm({
+                                                        title: "Clear data",
+                                                        vm: ObjectVisualMeaning.ERROR,
+                                                        text: "This action cannot be undone. Once data is cleared, it is removed unrecoverable from the system.\n**It is recommended to create recoverable backups via the ISO-image manager**.",
+                                                        actions: {
+                                                            onConfirm(component: BC<any, any, any>) {
+                                                                AtlasMain.atlas(atlas => {
+                                                                    atlas.api().clear();
+                                                                    atlas.rerender("folders");
+                                                                    component.closeLocalDialog();
+                                                                    element.closeLocalDialog();
+                                                                });
+                                                            },
+                                                            onCancel(component: BernieComponent<any, any, any>) {
+                                                                component.closeLocalDialog();
+                                                            }
+                                                        }
+                                                    }, (config, caller) => <ConfirmationDialog config={config} caller={caller}/>)
                                                 }}/>
                                             ]}/>
                                         ]}/>

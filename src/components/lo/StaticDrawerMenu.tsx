@@ -37,12 +37,16 @@ export class StaticDrawerMenu<T> extends BernieComponent<StaticDrawerMenuProps<T
 
     componentDidMount() {
         super.componentDidMount();
-        shouldVibrate("appear", this.props.vibration, pattern => {
-            if (window.navigator.vibrate !== undefined) {
-                window.navigator.vibrate(pattern);
-            }
-        });
-        this.props.componentDidMount?.(this);
+        try {
+            shouldVibrate("appear", this.props.vibration, pattern => {
+                if (window.navigator.vibrate !== undefined) {
+                    window.navigator.vibrate(pattern);
+                }
+            });
+            this.props.componentDidMount?.(this);
+        } catch (e) {
+            console.error(e);
+        }
     }
 
     componentRender(p: StaticDrawerMenuProps<T>, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
