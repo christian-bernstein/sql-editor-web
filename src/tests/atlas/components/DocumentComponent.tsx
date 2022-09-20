@@ -8,6 +8,7 @@ import {ReactComponent as DocumentIcon} from "../../../assets/icons/ic-20/ic20-f
 import {StaticDrawerMenu} from "../../../components/lo/StaticDrawerMenu";
 import {DocumentPreview} from "./DocumentPreview";
 import {AtlasMain} from "../AtlasMain";
+import {percent} from "../../../logic/style/DimensionalMeasured";
 
 export type DocumentComponentProps = {
     data: AtlasDocument
@@ -41,7 +42,7 @@ export class DocumentComponent extends BC<DocumentComponentProps, any, DocumentC
             try {
                 const refreshedData = this.getDocumentData(true);
                 this.dialog(
-                    <StaticDrawerMenu body={() => (
+                    <StaticDrawerMenu maxHeight={percent(85)} body={() => (
                         <DocumentPreview data={refreshedData}/>
                     )}/>
                 );

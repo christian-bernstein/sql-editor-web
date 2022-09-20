@@ -30,6 +30,13 @@ import {Icon} from "../../../components/lo/Icon";
 import {ReactComponent as AttachmentIcon} from "../../../assets/icons/ic-20/ic20-attachment.svg";
 import {ReactComponent as ActionIcon} from "../../../assets/icons/ic-20/ic20-more-ver.svg";
 import {Screen} from "../../../components/lo/Page";
+import {Centered} from "../../../components/lo/PosInCenter";
+import {SettingsElement} from "../../../components/ho/settingsElement/SettingsElement";
+import {SettingsGroup} from "../../../components/lo/SettingsGroup";
+import {FolderEditDialog} from "./FolderEditDialog";
+import {Folder} from "../data/Folder";
+import {DocumentEditDialog} from "./DocumentEditDialog";
+import {HOCWrapper} from "../../../components/HOCWrapper";
 
 export type DocumentPreviewProps = {
     data: AtlasDocument
@@ -100,7 +107,59 @@ export class DocumentPreview extends BC<DocumentPreviewProps, any, any> {
 
                     <Button height={percent(100)} children={
                         <Icon icon={<ActionIcon/>}/>
-                    }/>
+                    } onClick={() => {
+                        this.dialog(
+                            <StaticDrawerMenu body={() => (
+                                <Flex fw elements={[
+                                    <DrawerHeader
+                                        header={`Actions for *${p.data.title}*`}
+                                        enableBadge
+                                        badgeVM={VM.UI_NO_HIGHLIGHT}
+                                        badgeText={"Actions"}
+                                        description={`Available action for document *${p.data.title}*.`}
+                                    />,
+
+                                    <HOCWrapper body={wrapper => (
+                                        <SettingsGroup title={"Available actions"} elements={[
+                                            <SettingsElement groupDisplayMode title={"Edit document"} promiseBasedOnClick={element => {
+                                                return new Promise<void>((resolve, reject) => {
+                                                    try {
+                                                        wrapper.dialog(
+                                                            <DocumentEditDialog
+                                                                document={p.data}
+                                                                actions={{
+                                                                    onSubmit(edited: Folder) {
+                                                                        AtlasMain.atlas(atlas => {
+                                                                            atlas.api().updateDocument(p.data.id, original => {
+                                                                                return ({
+                                                                                    ...original,
+                                                                                    ...edited
+                                                                                })
+                                                                            });
+                                                                        })
+                                                                        wrapper.closeLocalDialog();
+                                                                        resolve();
+                                                                    },
+                                                                    onCancel() {
+                                                                        wrapper.closeLocalDialog();
+                                                                        resolve();
+                                                                    }
+                                                                }}
+                                                            />
+                                                        );
+                                                    } catch (e) {
+                                                        reject(e);
+                                                    }
+                                                })
+                                            }}/>,
+                                        ]}/>
+                                    )}/>
+
+
+                                ]}/>
+                            )}/>
+                        )
+                    }}/>
                 ]}/>,
 
                 <If condition={p.data.attachmentIDs !== undefined && p.data.attachmentIDs.length > 0} ifTrue={
@@ -109,13 +168,7 @@ export class DocumentPreview extends BC<DocumentPreviewProps, any, any> {
                         <Swiper style={{ width: "100%" }} spaceBetween={10} slidesPerView={1}>
                             {
                                 getOr(p.data.attachmentIDs, []).map(id => (
-                                    <SwiperSlide onClick={() => {
-                                        this.dialog(
-                                            <Screen deactivatePadding children={
-                                                <DocumentAttachmentRenderer attachmentID={id} fullscreen/>
-                                            }/>
-                                        )
-                                    }} children={
+                                    <SwiperSlide children={
                                         <DocumentAttachmentRenderer attachmentID={id}/>
                                     }/>
                                 ))

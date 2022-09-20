@@ -13,6 +13,13 @@ import {Button} from "../../../components/lo/Button";
 import React from "react";
 import {ObjectVisualMeaning} from "../../../logic/style/ObjectVisualMeaning";
 import {StaticDrawerMenu} from "../../../components/lo/StaticDrawerMenu";
+import {Screen} from "../../../components/lo/Page";
+import {Box} from "../../../components/lo/Box";
+import {percent} from "../../../logic/style/DimensionalMeasured";
+import {Align} from "../../../logic/style/Align";
+import {Justify} from "../../../logic/style/Justify";
+import {AnomalyInfo} from "../../../components/ho/anomalyInfo/AnomalyInfo";
+import {OverflowBehaviour} from "../../../logic/style/OverflowBehaviour";
 
 export type DocumentAttachmentRendererProps = {
     attachmentID: string,
@@ -55,14 +62,46 @@ export class DocumentAttachmentRenderer extends BC<DocumentAttachmentRendererPro
                 success: (q, data) => {
                     return (
                         <Flex fw fh style={{ position: "relative" }} elements={[
-                            <img width={"100%"} src={`${data?.src}`} alt={"image attachment"}/>,
-                            <Button border={false} bgColorOnDefault={false} visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} style={{ position: "absolute", top: t.gaps.smallGab.measurand, right: t.gaps.smallGab.measurand }} children={
+                            <Box noPadding overflowYBehaviour={OverflowBehaviour.HIDDEN} overflowXBehaviour={OverflowBehaviour.HIDDEN} width={percent(100)} children={
+                                <img width={"100%"} src={`${data?.src}`} alt={"image attachment"} onClick={() => {
+                                    this.dialog(
+                                        <Screen onDoubleClick={() => this.closeLocalDialog()} style={{ backgroundColor: "#000000" }} deactivatePadding children={
+                                            <Flex fw fh style={{ position: "relative" }} elements={[
+                                                <Flex fh fw align={Align.CENTER} justifyContent={Justify.CENTER} children={
+                                                    <DocumentAttachmentRenderer attachmentID={p.attachmentID} fullscreen/>
+                                                }/>
+                                            ]}/>
+                                        }/>
+                                    )
+                                }}/>
+                            }/>,
+                            <Button border={false} opaque bgColorOnDefault={false} visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT} style={{ position: "absolute", top: t.gaps.smallGab.measurand, right: t.gaps.smallGab.measurand }} children={
                                 <Icon icon={<AttachmentIcon/>}/>
                             } onClick={() => {
                                 this.dialog(
                                     <StaticDrawerMenu body={props => (
-                                        <Button text={"delete"} onClick={() => {
-                                            // TODO implement
+                                        <Button text={"share"} onClick={() => {
+                                            const file = new File([new Blob([data?.src as string], {
+                                                type: "text/plain"
+                                            })], "image.png");
+
+                                            if (navigator.canShare({ files: [file] })) {
+                                                navigator.share({
+                                                    title: "share an attachment",
+                                                    text: "share this attachment..",
+                                                    files: [new File([new Blob([data?.src as string], {
+                                                        type: "text/plain"
+                                                    })], "image.png")]
+                                                }).then(r => console.log(r))
+                                            } else {
+                                                this.dialog(
+                                                    <AnomalyInfo anomaly={{
+                                                        description: "No sharing"
+                                                    }}/>
+                                                )
+                                            }
+
+
                                         }}/>
                                     )}/>
                                 );

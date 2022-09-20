@@ -1,43 +1,44 @@
 import {BC} from "../../../logic/BernieComponent";
 import {Folder} from "../data/Folder";
-import {Themeable} from "../../../logic/style/Themeable";
+import {FormDataHub} from "../../epicure/components/FormDataHub";
+import {AtlasDocument} from "../data/AtlasDocument";
+import {FolderEditDialogProps} from "./FolderEditDialog";
 import {Assembly} from "../../../logic/assembly/Assembly";
+import {Themeable} from "../../../logic/style/Themeable";
 import {StaticDrawerMenu} from "../../../components/lo/StaticDrawerMenu";
 import {DimensionalMeasured, percent, px} from "../../../logic/style/DimensionalMeasured";
 import {Dimension} from "../../../logic/style/Dimension";
 import {OverflowWithHeader} from "../../../components/lo/OverflowWithHeader";
 import {FlexDirection} from "../../../logic/style/FlexDirection";
 import {DrawerHeader} from "../../../components/lo/DrawerHeader";
-import {getOr} from "../../../logic/Utils";
 import {VM} from "../../../logic/style/ObjectVisualMeaning";
-import React from "react";
-import {Button} from "../../../components/lo/Button";
 import {Flex} from "../../../components/lo/FlexBox";
 import {LiteGrid} from "../../../components/lo/LiteGrid";
 import {AF} from "../../../components/logic/ArrayFragment";
+import {Button} from "../../../components/lo/Button";
 import {BaseEntitySetupComponent} from "./BaseEntitySetupComponent";
-import {FormDataHub} from "../../epicure/components/FormDataHub";
+import React from "react";
 
-export interface FolderEditDialogActions {
-    onSubmit(folder: Folder): void,
+export interface DocumentEditDialogActions {
+    onSubmit(document: AtlasDocument): void,
     onCancel(): void,
 }
 
-export type FolderEditDialogProps = {
-    folder: Folder,
-    actions: FolderEditDialogActions
+export type DocumentEditDialogProps = {
+    document: AtlasDocument,
+    actions: DocumentEditDialogActions
 }
 
-export type FolderEditDialogLocalState = {
+export type DocumentEditDialogLocalState = {
     fdh: FormDataHub
 }
 
-export class FolderEditDialog extends BC<FolderEditDialogProps, any, FolderEditDialogLocalState> {
+export class DocumentEditDialog extends BC<DocumentEditDialogProps, any, DocumentEditDialogLocalState> {
 
-    constructor(props: FolderEditDialogProps) {
+    constructor(props: DocumentEditDialogProps) {
         super(props, undefined, {
-            fdh: new FormDataHub("FolderEditDialog", {
-                initialData: Array.from(Object.entries(props.folder).map(pair => ({
+            fdh: new FormDataHub("DocumentEditDialog", {
+                initialData: Array.from(Object.entries(props.document).map(pair => ({
                     key: pair[0] as string,
                     value: pair[1]
                 })))
@@ -45,7 +46,7 @@ export class FolderEditDialog extends BC<FolderEditDialogProps, any, FolderEditD
         });
     }
 
-    componentRender(p: FolderEditDialogProps, s: any, l: FolderEditDialogLocalState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
+    componentRender(p: DocumentEditDialogProps, s: any, l: DocumentEditDialogLocalState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
             <StaticDrawerMenu maxHeight={DimensionalMeasured.of(85, Dimension.vh)} body={() => {
 
@@ -58,11 +59,11 @@ export class FolderEditDialog extends BC<FolderEditDialogProps, any, FolderEditD
                             gap: t.gaps.smallGab,
                             elements: [
                                 <DrawerHeader
-                                    header={`Edit folder *${p.folder.title}*`}
+                                    header={`Edit document *${p.document.title}*`}
                                     enableBadge
                                     badgeVM={VM.UI_NO_HIGHLIGHT}
-                                    badgeText={"Edit folder"}
-                                    description={`Edit folder called '*${p.folder.title}*'.\nPress on **cancel** to cancel the editing, no changes will be done to the folder. Press on **Save** to save the edits.`}
+                                    badgeText={"Edit document"}
+                                    description={`Edit document called '*${p.document.title}*'.\nPress on **cancel** to cancel the editing, no changes will be done to the document. Press on **Save** to save the edits.`}
                                 />,
 
                                 <Flex fw padding paddingX={px(25)} elements={[
@@ -82,15 +83,13 @@ export class FolderEditDialog extends BC<FolderEditDialogProps, any, FolderEditD
                                                 visualMeaning={VM.INFO}
                                                 onClick={() => {
                                                     p.actions.onSubmit({
-                                                        id: p.folder.id,
-                                                        creationDate: p.folder.creationDate,
+                                                        ...p.document,
                                                         note: this.local.state.fdh.get("note"),
                                                         tags: this.local.state.fdh.get("tags"),
                                                         title: this.local.state.fdh.get("title"),
                                                         creator: this.local.state.fdh.get("creator"),
                                                         description: this.local.state.fdh.get("description"),
                                                         iconColorHEX: this.local.state.fdh.get("iconColorHEX"),
-                                                        categories: p.folder.categories
                                                     })
                                                 }}
                                             />
