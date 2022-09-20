@@ -84,6 +84,8 @@ export class ISOUploadComponent extends BC<any, any, ISOUploadComponentLocalStat
                 );
             }}/>
         );
+
+        AtlasMain.atlas().rerender("folders");
     }
 
     private installIso(algorithm: string | "merge" | "replace") {
