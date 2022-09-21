@@ -23,6 +23,7 @@ import {SettingsElement} from "../../components/ho/settingsElement/SettingsEleme
 import {ReactComponent as DeleteIcon} from "../../assets/icons/ic-20/ic20-delete.svg";
 import {ReactComponent as SettingsIcon} from "../../assets/icons/ic-20/ic20-settings.svg";
 import {ReactComponent as ActionIcon} from "../../assets/icons/ic-20/ic20-more-ver.svg";
+import {ReactComponent as StorageIcon} from "../../assets/icons/ic-20/ic20-dns.svg";
 import {HOCWrapper} from "../../components/HOCWrapper";
 import {StorageQuotaDialog} from "./components/StorageQuotaDialog";
 import {Centered} from "../../components/lo/PosInCenter";
@@ -30,6 +31,14 @@ import {Dot} from "../../components/lo/Dot";
 import {createMargin} from "../../logic/style/Margin";
 import {Icon} from "../../components/lo/Icon";
 import {ConfirmationDialog} from "../../components/lo/ConfirmationDialog";
+import {
+    DriveEta,
+    DriveEtaRounded,
+    DriveFileMove,
+    DriveFileMoveRounded,
+    InsertDriveFileRounded,
+    Storage
+} from "@mui/icons-material";
 
 export type AtlasMainProps = {
     api: IAtlasAPI
@@ -125,7 +134,10 @@ export class AtlasMain extends BC<AtlasMainProps, any, any> {
                                                     );
                                                 }}/>,
 
-                                                <SettingsElement groupDisplayMode title={"Storage quota"} onClick={element => {
+                                                <SettingsElement groupDisplayMode title={"Storage quota"} iconConfig={{
+                                                    enable: true,
+                                                    iconGenerator: element => <StorageIcon/>
+                                                }} onClick={element => {
                                                     wrapper.dialog(
                                                         <StorageQuotaDialog/>
                                                     )
@@ -174,7 +186,6 @@ export class AtlasMain extends BC<AtlasMainProps, any, any> {
 
                         }}/>,
                     ]}/>,
-
 
                     this.component(() => {
                         // Render empty state

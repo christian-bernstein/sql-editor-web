@@ -178,7 +178,7 @@ export class FolderPreviewComponent extends BC<FolderPreviewComponentProps, any,
                                                                     fontSize={px(11)}
                                                                     coloredText={empty}
                                                                     bold={empty}
-                                                                    visualMeaning={empty ? VM.WARNING : VM.UI_NO_HIGHLIGHT}
+                                                                    visualMeaning={VM.UI_NO_HIGHLIGHT}
                                                                     type={TextType.secondaryDescription}
                                                                     enableLeftAppendix
                                                                     leftAppendix={
