@@ -30,6 +30,7 @@ import {Justify} from "../../../logic/style/Justify";
 import {Box} from "../../../components/lo/Box";
 import {Cursor} from "../../../logic/style/Cursor";
 import {FlexWrap} from "../../../logic/style/FlexWrap";
+import {Color} from "../../../logic/style/Color";
 
 export type FolderPreviewComponentProps = {
     data: Folder
@@ -148,6 +149,7 @@ export class FolderPreviewComponent extends BC<FolderPreviewComponentProps, any,
                                                         promiseBasedOnClick={element => this.onCategorySelect(element, category)}
                                                         iconConfig={{
                                                             enable: true,
+                                                            color: category.iconColorHEX === undefined ? undefined : Color.ofHex(category.iconColorHEX),
                                                             iconGenerator: element => (
                                                                 <CategoryIcon/>
                                                             )
