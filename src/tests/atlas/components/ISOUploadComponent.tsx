@@ -19,6 +19,8 @@ import {AtlasDocument} from "../data/AtlasDocument";
 import {AtlasMain} from "../AtlasMain";
 import {ISOInstaller} from "../data/ISOInstaller";
 import moment, {Duration} from "moment";
+import {ISOBase} from "../iso/ISOBase";
+import {ISOInstallMethod} from "../iso/ISOInstallMethod";
 
 export type ISOUploadComponentLocalState = {
     iso?: File,
@@ -33,13 +35,25 @@ export class ISOUploadComponent extends BC<any, any, ISOUploadComponentLocalStat
             isoInstallAlgorithms: new Map<string, ISOInstaller<ISOUploadComponent>>([
                 ["merge", {
                     install(iso: File, controller: ISOUploadComponent): boolean {
-                        controller.merge();
+                        const reader: FileReader = new FileReader();
+                        reader.onload = async (event: ProgressEvent<FileReader>) => {
+                            const isoRaw = event.target?.result;
+                            const base: ISOBase = JSON.parse(isoRaw as string);
+                            AtlasMain.atlas().api().isoAdapter("v1").install(ISOInstallMethod.MERGE, base);
+                        }
+                        reader.readAsText(iso);
                         return true;
                     }
                 }],
                 ["replace", {
                     install(iso: File, controller: ISOUploadComponent): boolean {
-                        controller.replace();
+                        const reader: FileReader = new FileReader();
+                        reader.onload = async (event: ProgressEvent<FileReader>) => {
+                            const isoRaw = event.target?.result;
+                            const base: ISOBase = JSON.parse(isoRaw as string);
+                            AtlasMain.atlas().api().isoAdapter("v1").install(ISOInstallMethod.REPLACE, base);
+                        }
+                        reader.readAsText(iso);
                         return true;
                     }
                 }],

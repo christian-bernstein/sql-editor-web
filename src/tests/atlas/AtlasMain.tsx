@@ -31,14 +31,7 @@ import {Dot} from "../../components/lo/Dot";
 import {createMargin} from "../../logic/style/Margin";
 import {Icon} from "../../components/lo/Icon";
 import {ConfirmationDialog} from "../../components/lo/ConfirmationDialog";
-import {
-    DriveEta,
-    DriveEtaRounded,
-    DriveFileMove,
-    DriveFileMoveRounded,
-    InsertDriveFileRounded,
-    Storage
-} from "@mui/icons-material";
+import fileDownload from "js-file-download";
 
 export type AtlasMainProps = {
     api: IAtlasAPI

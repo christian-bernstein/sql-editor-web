@@ -5,6 +5,8 @@ import {Category} from "../data/Category";
 import {IPredicate} from "./IPredicate";
 import {FormDataHub} from "../../epicure/components/FormDataHub";
 import {AtlasDB} from "./AtlasDB";
+import {IISOAdapter} from "../iso/IISOAdapter";
+import {ISOAdapterV1} from "../iso/v1/ISOAdapterV1";
 
 enum DBAddresses {
     DOCUMENTS = "documents",
@@ -18,36 +20,60 @@ export class InDevAtlasAPI implements IAtlasAPI {
 
     private persistentDatabase: AtlasDB = new AtlasDB("InDevAtlasAPI");
 
-    createDocument(data: AtlasDocument): boolean {
+    createDocument(...data: Array<AtlasDocument>): boolean {
         try {
-            const documents: Array<AtlasDocument> = this.database.get(DBAddresses.DOCUMENTS, []);
-            documents.push(data);
-            this.database.set(DBAddresses.DOCUMENTS, documents, true);
-            return true;
+            data.forEach(d => {
+                try {
+                    const documents: Array<AtlasDocument> = this.database.get(DBAddresses.DOCUMENTS, []);
+                    documents.push(d);
+                    this.database.set(DBAddresses.DOCUMENTS, documents, true);
+                    return true;
+                } catch (e) {
+                    console.error(e);
+                    return false;
+                }
+            });
+            return true
         } catch (e) {
             console.error(e);
             return false;
         }
     }
 
-    createFolder(data: Folder): boolean {
+    createFolder(...data: Array<Folder>): boolean {
         try {
-            const folders: Array<Folder> = this.database.get(DBAddresses.FOLDERS, []);
-            folders.push(data);
-            this.database.set(DBAddresses.FOLDERS, folders, true);
-            return true;
+            data.forEach(d => {
+                try {
+                    const folders: Array<Folder> = this.database.get(DBAddresses.FOLDERS, []);
+                    folders.push(d);
+                    this.database.set(DBAddresses.FOLDERS, folders, true);
+                    return true;
+                } catch (e) {
+                    console.error(e);
+                    return false;
+                }
+            });
+            return true
         } catch (e) {
             console.error(e);
             return false;
         }
     }
 
-    createCategory(data: Category): boolean {
+    createCategory(...data: Array<Category>): boolean {
         try {
-            const categories: Array<Category> = this.database.get(DBAddresses.CATEGORIES, []);
-            categories.push(data);
-            this.database.set(DBAddresses.CATEGORIES, categories, true);
-            return true;
+            data.forEach(d => {
+                try {
+                    const categories: Array<Category> = this.database.get(DBAddresses.CATEGORIES, []);
+                    categories.push(d);
+                    this.database.set(DBAddresses.CATEGORIES, categories, true);
+                    return true;
+                } catch (e) {
+                    console.error(e);
+                    return false;
+                }
+            });
+            return true
         } catch (e) {
             console.error(e);
             return false;
@@ -178,7 +204,10 @@ export class InDevAtlasAPI implements IAtlasAPI {
         return this.database;
     }
 
-    clear(): IAtlasAPI {
+    async clear(): Promise<IAtlasAPI> {
+        for (const table of this.persistentDatabase.tables) {
+            await table.clear();
+        }
         window.localStorage.removeItem(this.db().key());
         this.database = new FormDataHub("InDevAtlasAPI").loadFromLocalStore();
         return this;
@@ -186,5 +215,10 @@ export class InDevAtlasAPI implements IAtlasAPI {
 
     persistentDB(): AtlasDB {
         return this.persistentDatabase;
+    }
+
+    isoAdapter(id: string): IISOAdapter {
+        // TODO: Make better
+        return new ISOAdapterV1();
     }
 }
