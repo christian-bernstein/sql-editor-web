@@ -18,6 +18,7 @@ import {Button} from "../../../components/lo/Button";
 import {CategorySetupDialog} from "./CategorySetupDialog";
 import React from "react";
 import {AtlasDocument} from "../data/AtlasDocument";
+import {StaticDrawerMenu} from "../../../components/lo/StaticDrawerMenu";
 
 export type CategoryComponentProps = {
     data: Category
@@ -27,7 +28,7 @@ export class CategoryComponent extends BC<CategoryComponentProps, any, any> {
 
     componentRender(p: CategoryComponentProps, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
-            <Screen children={
+            <StaticDrawerMenu body={props => (
                 <Flex fw elements={[
                     <DrawerHeader
                         header={getOr(p.data.title, "N/A")}
@@ -81,7 +82,7 @@ export class CategoryComponent extends BC<CategoryComponentProps, any, any> {
 
 
                 ]}/>
-            }/>
+            )}/>
         );
     }
 
