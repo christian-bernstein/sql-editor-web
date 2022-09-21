@@ -31,6 +31,9 @@ import {Cursor} from "../../../logic/style/Cursor";
 import {FlexWrap} from "../../../logic/style/FlexWrap";
 import {Color} from "../../../logic/style/Color";
 import {ReactComponent as CreateIcon} from "../../../assets/icons/ic-20/ic20-plus.svg";
+import {ReactComponent as EditIcon} from "../../../assets/icons/ic-20/ic20-edit.svg";
+import {CategorySetupDialog} from "./CategorySetupDialog";
+import {FolderEditDialog} from "./FolderEditDialog";
 
 export type FolderPreviewComponentProps = {
     data: Folder
@@ -80,23 +83,11 @@ export class FolderPreviewComponent extends BC<FolderPreviewComponentProps, any,
                             }/>,
 
                             <Flex fw padding paddingX={px(25)} flexDir={FlexDirection.ROW} gap={t.gaps.smallGab} elements={[
-                                // <Button width={percent(100)} text={"Create category"} onClick={() => {
-                                //     this.dialog(
-                                //         <CategorySetupDialog folder={p.data} actions={{
-                                //             onSubmit: category => {
-                                //                 const success = AtlasMain.atlas().api().createCategory(category);
-                                //                 if (success) {
-                                //                     AtlasMain.atlas().api().linkCategoryToFolder(category.id, p.data.id);
-                                //                 }
-                                //                 setTimeout(() => {
-                                //                     this.closeLocalDialog();
-                                //                     this.rerender("categories");
-                                //                 }, 1);
-                                //                 return success;
-                                //             }
-                                //         }}/>
-                                //     );
-                                // }}/>,
+                                <Button children={
+                                    <Icon icon={<EditIcon/>}/>
+                                } onClick={() => {
+                                    // TODO: Add logic
+                                }}/>,
 
                                 <Button width={percent(100)} text={"Actions"} shrinkOnClick onClick={() => {
                                     this.dialog(
@@ -106,7 +97,26 @@ export class FolderPreviewComponent extends BC<FolderPreviewComponentProps, any,
 
                                 <Button children={
                                     <Icon icon={<CreateIcon/>}/>
-                                }/>,
+                                } onClick={() => {
+                                    this.dialog(
+                                        <CategorySetupDialog folder={p.data} actions={{
+                                            onCancel: () => {
+                                                this.closeLocalDialog();
+                                            },
+                                            onSubmit: category => {
+                                                const success = AtlasMain.atlas().api().createCategory(category);
+                                                if (success) {
+                                                    AtlasMain.atlas().api().linkCategoryToFolder(category.id, p.data.id);
+                                                }
+                                                setTimeout(() => {
+                                                    this.closeLocalDialog();
+                                                    this.rerender("categories");
+                                                }, 1);
+                                                return success;
+                                            }
+                                        }}/>
+                                    );
+                                }}/>,
                             ]}/>
                         ]
                     }}

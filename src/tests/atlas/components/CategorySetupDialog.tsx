@@ -15,9 +15,12 @@ import {v4} from "uuid";
 import {BaseEntitySetupComponent} from "./BaseEntitySetupComponent";
 import {OverflowWithHeader} from "../../../components/lo/OverflowWithHeader";
 import {FlexDirection} from "../../../logic/style/FlexDirection";
+import {LiteGrid} from "../../../components/lo/LiteGrid";
+import {AF} from "../../../components/logic/ArrayFragment";
 
 interface CategorySetupDialogActions {
     onSubmit(category: Category): boolean;
+    onCancel(): void;
 }
 
 export type CategorySetupDialogProps = {
@@ -72,9 +75,16 @@ export class CategorySetupDialog extends BC<CategorySetupDialogProps, any, Categ
                             />,
 
                             <Flex fw padding paddingX={px(25)} elements={[
-                                <Button width={percent(100)} text={"Create category"} opaque visualMeaning={VM.INFO} onClick={() => {
-                                    this.createCategory();
-                                }}/>
+                                <LiteGrid columns={2} gap={t.gaps.smallGab} children={
+                                    <AF elements={[
+                                        <Button width={percent(100)} text={"Cancel"} onClick={() => {
+                                            p.actions.onCancel();
+                                        }}/>,
+                                        <Button width={percent(100)} text={"Create category"} opaque visualMeaning={VM.INFO} onClick={() => {
+                                            this.createCategory();
+                                        }}/>
+                                    ]}/>
+                                }/>
                             ]}/>
                         ]}/>
                     ]

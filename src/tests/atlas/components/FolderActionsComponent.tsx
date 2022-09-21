@@ -44,6 +44,9 @@ export class FolderActionsComponent extends BC<FolderActionsComponentProps, any,
                 return new Promise<void>((resolve, reject) => {
                     controller.dialog(
                         <CategorySetupDialog folder={folder} actions={{
+                            onCancel() {
+                                controller.closeLocalDialog();
+                            },
                             onSubmit: category => {
                                 const success = AtlasMain.atlas().api().createCategory(category);
                                 if (success) {
@@ -121,9 +124,9 @@ export class FolderActionsComponent extends BC<FolderActionsComponentProps, any,
                     />,
 
                     <SettingsGroup title={"Available actions"} elements={[
+                        <SettingsElement groupDisplayMode title={"Create category"} promiseBasedOnClick={element => this.executeAction("create-category")}/>,
                         <SettingsElement groupDisplayMode title={"Edit folder"} promiseBasedOnClick={element => this.executeAction("edit")}/>,
                         <SettingsElement groupDisplayMode title={"Delete folder"} promiseBasedOnClick={element => this.executeAction("delete")}/>,
-                        <SettingsElement groupDisplayMode title={"Create category"} promiseBasedOnClick={element => this.executeAction("create-category")}/>
                     ]}/>
                 ]}/>
             )}/>
