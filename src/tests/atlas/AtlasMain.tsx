@@ -211,6 +211,22 @@ export class AtlasMain extends BC<AtlasMainProps, any, any> {
                                                         visualMeaning={VM.INFO}
                                                     />
                                                 }
+                                                onClick={() => {
+                                                    this.dialog(
+                                                        <FolderSetupDialog actions={{
+                                                            onSubmit(folder: Folder): boolean {
+                                                                const success = AtlasMain.atlas().api().createFolder(folder);
+                                                                setTimeout(() => {
+                                                                    AtlasMain.atlas(atlas => {
+                                                                        atlas.closeLocalDialog();
+                                                                        atlas.rerender("folders");
+                                                                    });
+                                                                }, 1);
+                                                                return success;
+                                                            }
+                                                        }}/>
+                                                    );
+                                                }}
                                             />,
                                             <Dot/>,
                                             <Button

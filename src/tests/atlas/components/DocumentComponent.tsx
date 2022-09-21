@@ -9,6 +9,7 @@ import {StaticDrawerMenu} from "../../../components/lo/StaticDrawerMenu";
 import {DocumentPreview} from "./DocumentPreview";
 import {AtlasMain} from "../AtlasMain";
 import {percent} from "../../../logic/style/DimensionalMeasured";
+import {Color} from "../../../logic/style/Color";
 
 export type DocumentComponentProps = {
     data: AtlasDocument
@@ -61,6 +62,7 @@ export class DocumentComponent extends BC<DocumentComponentProps, any, DocumentC
                 title={getOr(p.data.title, "N/A")}
                 iconConfig={{
                     enable: true,
+                    color: p.data.iconColorHEX === undefined ? undefined : Color.ofHex(p.data.iconColorHEX),
                     iconGenerator: element => (
                         <DocumentIcon/>
                     )
