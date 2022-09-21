@@ -7,7 +7,7 @@ import React from "react";
 import {Flex} from "../../../components/lo/FlexBox";
 import {DrawerHeader} from "../../../components/lo/DrawerHeader";
 import {ObjectVisualMeaning, VM} from "../../../logic/style/ObjectVisualMeaning";
-import {percent, px} from "../../../logic/style/DimensionalMeasured";
+import {DimensionalMeasured, percent, px} from "../../../logic/style/DimensionalMeasured";
 import {Button} from "../../../components/lo/Button";
 import {Align} from "../../../logic/style/Align";
 import {createMargin} from "../../../logic/style/Margin";
@@ -21,9 +21,19 @@ import {ISOInstaller} from "../data/ISOInstaller";
 import moment, {Duration} from "moment";
 import {ISOBase} from "../iso/ISOBase";
 import {ISOInstallMethod} from "../iso/ISOInstallMethod";
+import {ISOBasePreview} from "./ISOBasePreview";
+import {If} from "../../../components/logic/If";
+import {Group} from "../../../components/lo/Group";
+import {Orientation} from "../../../logic/style/Orientation";
+import {AF} from "../../../components/logic/ArrayFragment";
+import {Separator} from "../../../components/lo/Separator";
+import {Dimension} from "../../../logic/style/Dimension";
+import {OverflowWithHeader} from "../../../components/lo/OverflowWithHeader";
+import {FlexDirection} from "../../../logic/style/FlexDirection";
 
 export type ISOUploadComponentLocalState = {
     iso?: File,
+    isoBase?: ISOBase,
     isoInstallAlgorithms: Map<string, ISOInstaller<ISOUploadComponent>>,
     installationDuration?: Duration
 }
@@ -178,88 +188,110 @@ export class ISOUploadComponent extends BC<any, any, ISOUploadComponentLocalStat
 
     componentRender(p: any, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
-            <StaticDrawerMenu body={() => {
-
+            <StaticDrawerMenu maxHeight={DimensionalMeasured.of(75, Dimension.vh)} body={() => {
                 return (
-                    <Flex elements={[
-                        <DrawerHeader
-                            header={"ISO-image installer"}
-                            enableBadge
-                            badgeVM={VM.UI_NO_HIGHLIGHT}
-                            badgeText={"VFS-ISO"}
-                            description={"Upload and install Atlas™-ISO-images.\n\n*Tip: Atlas-ISO-Images are in JSON-format, which makes them human-readable & easily processable. You can for example inspect the ISO by opening it in a browser window.*"}
-                            margin={createMargin(0, 0, 40, 0)}
-                        />,
+                    <OverflowWithHeader height={percent(100)} dir={FlexDirection.COLUMN_REVERSE} staticContainer={{
+                        elements: [
+                            <DrawerHeader
+                                header={"ISO-image installer"}
+                                enableBadge
+                                badgeVM={VM.UI_NO_HIGHLIGHT}
+                                badgeText={"VFS-ISO"}
+                                description={"Upload and install Atlas™-ISO-images.\n\n*Tip: Atlas-ISO-Images are in JSON-format, which makes them human-readable & easily processable. You can for example inspect the ISO by opening it in a browser window.*"}
+                                margin={createMargin(0, 0, 40, 0)}
+                            />
+                        ]
+                    }} overflowContainer={{
+                        gap: t.gaps.smallGab,
+                        elements: [
+                            <Flex fw gap={px()} elements={[
+                                <Text text={"Step 1"} bold/>,
+                                <Text text={"Select an Atlas™-ISO-image-file"} type={TextType.secondaryDescription} fontSize={px(11)}/>
+                            ]}/>,
 
-                        <Flex fw gap={px()} elements={[
-                            <Text text={"Step 1"} bold/>,
-                            <Text text={"Select an Atlas™-ISO-image-file"} type={TextType.secondaryDescription} fontSize={px(11)}/>
-                        ]}/>,
-                        <Input autoFocus type={"file"} onChange={ev => {
-                            if (ev.target.files !== null) {
-                                const file: File = ev.target.files[0];
-                                this.local.setStateWithChannels({
-                                    iso: file
-                                }, ["iso"]);
-                            }
-                        }}/>,
+                            <Group enableSeparators={false} width={percent(100)} orientation={Orientation.VERTICAL} elements={[
+                                <Input autoFocus type={"file"} onChange={ev => {
+                                    if (ev.target.files !== null) {
+                                        const file: File = ev.target.files[0];
+                                        const reader: FileReader = new FileReader();
+                                        reader.onload = async (event: ProgressEvent<FileReader>) => {
+                                            const isoBase: ISOBase = JSON.parse(event.target?.result as string);
+                                            this.local.setStateWithChannels({
+                                                isoBase: isoBase,
+                                                iso: file
+                                            }, ["iso"]);
+                                        }
+                                        reader.readAsText(file);
+                                    }
+                                }}/>,
 
-                        // TODO: Display ISO-meta preview
+                                this.component((local) => (
+                                    <If condition={local.state.iso !== undefined} ifTrue={
+                                        <AF elements={[
+                                            <Separator/>,
+                                            <ISOBasePreview
+                                                iso={local.state.isoBase as ISOBase}
+                                            />
+                                        ]}/>
+                                    }/>
+                                ), "iso")
+                            ]}/>,
 
-                        <Flex fw gap={px()} elements={[
-                            <Text text={"Step 2"} bold/>,
-                            <Text text={"Choose a method for installation"} type={TextType.secondaryDescription} fontSize={px(11)}/>
-                        ]}/>,
+                            <Flex fw gap={px()} elements={[
+                                <Text text={"Step 2"} bold/>,
+                                <Text text={"Choose a method for installation"} type={TextType.secondaryDescription} fontSize={px(11)}/>
+                            ]}/>,
 
-                        <Flex fw padding={false} paddingX={px(25)} gap={t.gaps.smallGab} elements={[
-                            <Button
-                                width={percent(100)}
-                                onClick={() => this.installIso("merge")}
-                                children={
-                                    <Flex gap={px(0)} align={Align.CENTER} fw elements={[
-                                        <Flex fw align={Align.CENTER} margin={createMargin(0, 0, t.gaps.smallGab.measurand, 0)} elements={[
-                                            Badge.badge("Recommended", {
-                                                visualMeaning: ObjectVisualMeaning.INFO
-                                            }),
-                                        ]}/>,
-                                        <Text
-                                            bold
-                                            text={"Merge"}
-                                        />,
-                                        <Text
-                                            text={`Merge into current Atlas™-state`}
-                                            type={TextType.secondaryDescription}
-                                            fontSize={px(11)}
-                                            align={Align.CENTER}
-                                        />
-                                    ]}/>
-                                }
-                            />,
-                            <Button
-                                width={percent(100)}
-                                onClick={() => this.installIso("replace")}
-                                children={
-                                    <Flex gap={px(0)} align={Align.CENTER} fw elements={[
-                                        <Flex fw align={Align.CENTER} margin={createMargin(0, 0, t.gaps.smallGab.measurand, 0)} elements={[
-                                            Badge.badge("Affects data-integrity", {
-                                                visualMeaning: ObjectVisualMeaning.WARNING
-                                            }),
-                                        ]}/>,
-                                        <Text
-                                            bold
-                                            text={"Replace"}
-                                        />,
-                                        <Text
-                                            text={`Replace Atlas™-state with ISO-data`}
-                                            type={TextType.secondaryDescription}
-                                            fontSize={px(11)}
-                                            align={Align.CENTER}
-                                        />
-                                    ]}/>
-                                }
-                            />,
-                        ]}/>,
-                    ]}/>
+                            <Flex fw padding={false} paddingX={px(25)} gap={t.gaps.smallGab} elements={[
+                                <Button
+                                    width={percent(100)}
+                                    onClick={() => this.installIso("merge")}
+                                    children={
+                                        <Flex gap={px(0)} align={Align.CENTER} fw elements={[
+                                            <Flex fw align={Align.CENTER} margin={createMargin(0, 0, t.gaps.smallGab.measurand, 0)} elements={[
+                                                Badge.badge("Recommended", {
+                                                    visualMeaning: ObjectVisualMeaning.INFO
+                                                }),
+                                            ]}/>,
+                                            <Text
+                                                bold
+                                                text={"Merge"}
+                                            />,
+                                            <Text
+                                                text={`Merge into current Atlas™-state`}
+                                                type={TextType.secondaryDescription}
+                                                fontSize={px(11)}
+                                                align={Align.CENTER}
+                                            />
+                                        ]}/>
+                                    }
+                                />,
+                                <Button
+                                    width={percent(100)}
+                                    onClick={() => this.installIso("replace")}
+                                    children={
+                                        <Flex gap={px(0)} align={Align.CENTER} fw elements={[
+                                            <Flex fw align={Align.CENTER} margin={createMargin(0, 0, t.gaps.smallGab.measurand, 0)} elements={[
+                                                Badge.badge("Affects data-integrity", {
+                                                    visualMeaning: ObjectVisualMeaning.WARNING
+                                                }),
+                                            ]}/>,
+                                            <Text
+                                                bold
+                                                text={"Replace"}
+                                            />,
+                                            <Text
+                                                text={`Replace Atlas™-state with ISO-data`}
+                                                type={TextType.secondaryDescription}
+                                                fontSize={px(11)}
+                                                align={Align.CENTER}
+                                            />
+                                        ]}/>
+                                    }
+                                />,
+                            ]}/>,
+                        ]
+                    }}/>
                 );
             }}/>
         );
