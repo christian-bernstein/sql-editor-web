@@ -188,7 +188,7 @@ export class ISOUploadComponent extends BC<any, any, ISOUploadComponentLocalStat
 
     componentRender(p: any, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
-            <StaticDrawerMenu maxHeight={DimensionalMeasured.of(75, Dimension.vh)} body={() => {
+            <StaticDrawerMenu maxHeight={DimensionalMeasured.of(85, Dimension.vh)} body={() => {
                 return (
                     <OverflowWithHeader height={percent(100)} dir={FlexDirection.COLUMN_REVERSE} staticContainer={{
                         elements: [
