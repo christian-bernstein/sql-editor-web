@@ -17,7 +17,6 @@ import {Icon} from "../../../components/lo/Icon";
 import {DimensionalMeasured, percent, px} from "../../../logic/style/DimensionalMeasured";
 import {CategoryComponent} from "./CategoryComponent";
 import {AtlasMain} from "../AtlasMain";
-import {CategorySetupDialog} from "./CategorySetupDialog";
 import {Button} from "../../../components/lo/Button";
 import React from "react";
 import {FolderActionsComponent} from "./FolderActionsComponent";
@@ -31,6 +30,7 @@ import {Box} from "../../../components/lo/Box";
 import {Cursor} from "../../../logic/style/Cursor";
 import {FlexWrap} from "../../../logic/style/FlexWrap";
 import {Color} from "../../../logic/style/Color";
+import {ReactComponent as CreateIcon} from "../../../assets/icons/ic-20/ic20-plus.svg";
 
 export type FolderPreviewComponentProps = {
     data: Folder
@@ -79,7 +79,7 @@ export class FolderPreviewComponent extends BC<FolderPreviewComponentProps, any,
                                 ))
                             }/>,
 
-                            <Flex fw padding paddingX={px(25)} gap={t.gaps.smallGab} elements={[
+                            <Flex fw padding paddingX={px(25)} flexDir={FlexDirection.ROW} gap={t.gaps.smallGab} elements={[
                                 // <Button width={percent(100)} text={"Create category"} onClick={() => {
                                 //     this.dialog(
                                 //         <CategorySetupDialog folder={p.data} actions={{
@@ -98,11 +98,15 @@ export class FolderPreviewComponent extends BC<FolderPreviewComponentProps, any,
                                 //     );
                                 // }}/>,
 
-                                <Button width={percent(100)} text={"Actions"} onClick={() => {
+                                <Button width={percent(100)} text={"Actions"} shrinkOnClick onClick={() => {
                                     this.dialog(
                                         <FolderActionsComponent data={this.props.data} caller={this}/>
                                     );
-                                }}/>
+                                }}/>,
+
+                                <Button children={
+                                    <Icon icon={<CreateIcon/>}/>
+                                }/>,
                             ]}/>
                         ]
                     }}
