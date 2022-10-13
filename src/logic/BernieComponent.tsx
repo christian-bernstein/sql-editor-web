@@ -15,14 +15,6 @@ import {ObjectVisualMeaning, VM} from "./style/ObjectVisualMeaning";
 import {Text} from "../components/lo/Text";
 import {CoMuxProps} from "../components/props/CoMuxProps";
 import {MuxRenderer} from "./MuxRenderer";
-import {ConfirmationConfig, ConfirmationType} from "./ConfirmationConfig";
-import {StaticDrawerMenu} from "../components/lo/StaticDrawerMenu";
-import {Flex} from "../components/lo/FlexBox";
-import {DrawerHeader} from "../components/lo/DrawerHeader";
-import {percent, px} from "./style/DimensionalMeasured";
-import {Button} from "../components/lo/Button";
-import {LiteGrid} from "../components/lo/LiteGrid";
-import {AF} from "../components/logic/ArrayFragment";
 import {ComponentHelper} from "./ComponentHelper";
 
 export type BernieComponentConfig<T extends BernieComponent<any, any, any> = any> = {

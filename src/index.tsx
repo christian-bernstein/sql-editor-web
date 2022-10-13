@@ -7,7 +7,9 @@ import {AppPage} from "./pages/app/AppPage";
 import {AppPageMode} from "./pages/app/AppPageMode";
 import {getOr} from "./logic/Utils";
 
-const mode: AppPageMode = Number(getOr(window.localStorage.getItem("app-page-mode"), AppPageMode.UNIT_TEST.toString()))
+let mode: AppPageMode = Number(getOr(window.localStorage.getItem("app-page-mode"), AppPageMode.UNIT_TEST.toString()))
+
+mode = AppPageMode.UNIT_TEST;
 
 ReactDOM.render(
     <AppPage

@@ -24,6 +24,7 @@ import {ReactComponent as DeleteIcon} from "../../assets/icons/ic-20/ic20-delete
 import {ReactComponent as SettingsIcon} from "../../assets/icons/ic-20/ic20-settings.svg";
 import {ReactComponent as ActionIcon} from "../../assets/icons/ic-20/ic20-more-ver.svg";
 import {ReactComponent as StorageIcon} from "../../assets/icons/ic-20/ic20-dns.svg";
+import {ReactComponent as DebugIcon} from "../../assets/icons/ic-20/ic20-bug.svg";
 import {HOCWrapper} from "../../components/HOCWrapper";
 import {StorageQuotaDialog} from "./components/StorageQuotaDialog";
 import {Centered} from "../../components/lo/PosInCenter";
@@ -31,7 +32,7 @@ import {Dot} from "../../components/lo/Dot";
 import {createMargin} from "../../logic/style/Margin";
 import {Icon} from "../../components/lo/Icon";
 import {ConfirmationDialog} from "../../components/lo/ConfirmationDialog";
-import fileDownload from "js-file-download";
+import {VFSFolderView} from "./components/VFSFolderView";
 
 export type AtlasMainProps = {
     api: IAtlasAPI
@@ -78,6 +79,27 @@ export class AtlasMain extends BC<AtlasMainProps, any, any> {
                     />,
 
                     <FlexRow fw padding paddingX={px(25)} gap={theme.gaps.smallGab} elements={[
+
+
+
+
+
+
+
+                        <Button height={percent(100)} opaque visualMeaning={ObjectVisualMeaning.BETA} children={ <Icon icon={<DebugIcon/>}/> } onClick={() => {
+                            this.dialog(
+                                <VFSFolderView
+                                    onClose={() => this.closeLocalDialog()}
+                                />
+                            );
+                        }}/>,
+
+
+
+
+
+
+
                         <Button height={percent(100)} children={
                             <Icon icon={<SettingsIcon/>}/>
                         }/>,
@@ -144,6 +166,8 @@ export class AtlasMain extends BC<AtlasMainProps, any, any> {
                                                         <ISOHubComponent/>
                                                     );
                                                 }}/>,
+
+                                                <SettingsElement groupDisplayMode title={"Settings"}/>,
                                             ]}/>,
 
                                             <SettingsGroup title={"Danger zone"} elements={[
@@ -159,10 +183,11 @@ export class AtlasMain extends BC<AtlasMainProps, any, any> {
                                                         actions: {
                                                             onConfirm(component: BC<any, any, any>) {
                                                                 AtlasMain.atlas(atlas => {
-                                                                    atlas.api().clear();
-                                                                    atlas.rerender("folders");
-                                                                    component.closeLocalDialog();
-                                                                    element.closeLocalDialog();
+                                                                    atlas.api().clear().then(() => {
+                                                                        atlas.rerender("folders");
+                                                                        component.closeLocalDialog();
+                                                                        element.closeLocalDialog();
+                                                                    });
                                                                 });
                                                             },
                                                             onCancel(component: BernieComponent<any, any, any>) {
@@ -176,7 +201,6 @@ export class AtlasMain extends BC<AtlasMainProps, any, any> {
                                     )}/>
                                 )}/>
                             )
-
                         }}/>,
                     ]}/>,
 
