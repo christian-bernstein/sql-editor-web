@@ -91,16 +91,22 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
 
     private reloadFolderView() {
         this.local.state.currentFolderData.query();
+        this.rerender("current-folder");
     }
 
     private folderLevelViewAssembly() {
         this.assembly.assembly("folder-level-view", theme => {
             const currentFolder = this.local.state.currentFolderData.get()[0];
+            const tree: Array<string> = new Array<string>();
 
-
+            let folder = currentFolder;
+            while (folder?.parentFolder !== undefined) {
+                folder = AtlasMain.atlas().api().getFolder(folder.parentFolder);
+                tree.push(folder.id);
+            }
 
             return (
-                <></>
+                <Text text={`Path: '${tree.join("/")}'`}/>
             );
         })
     }
@@ -219,7 +225,7 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                                 }} overflowContainer={{
                                     elements: [
                                         <Flex height={px(50)} fw fh padding style={{ backgroundColor: t.colors.backgroundHighlightColor.css() }} elements={[
-                                            this.a("folder-level-view"),
+                                            this.component(() => this.a("folder-level-view"), "current-folder"),
 
                                             this.component(() => (
                                                 <QueryDisplay<Folder | undefined> q={this.local.state.currentFolderData} renderer={{
