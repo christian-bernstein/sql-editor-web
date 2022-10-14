@@ -31,6 +31,7 @@ import {Q, Queryable} from "../../../logic/query/Queryable";
 import {Folder} from "../data/Folder";
 import {QueryDisplay} from "../../../components/logic/QueryDisplay";
 import {FolderSetupDialog} from "./FolderSetupDialog";
+import {AF} from "../../../components/logic/ArrayFragment";
 
 export type VFSFolderViewProps = {
     initialFolderID?: string,
@@ -96,17 +97,27 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
 
     private folderLevelViewAssembly() {
         this.assembly.assembly("folder-level-view", theme => {
+
             const currentFolder = this.local.state.currentFolderData.get()[0];
-            const tree: Array<string> = new Array<string>();
+            const tree: Array<Folder> = new Array<Folder>();
 
             let folder = currentFolder;
             while (folder?.parentFolder !== undefined) {
                 folder = AtlasMain.atlas().api().getFolder(folder.parentFolder);
-                tree.push(folder.id);
+                tree.push(folder);
             }
 
             return (
-                <Text text={`Path: '${tree.join("/")}'`}/>
+                <Flex flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab} align={Align.CENTER} elements={
+                    tree.reverse().map((folder, index, array) => {
+                        return (
+                            <AF elements={[
+                                <Text text={`${folder.title}`}/>,
+                                index < array.length ? <Dot/> : undefined
+                            ]}/>
+                        );
+                    })
+                }/>
             );
         })
     }
