@@ -90,6 +90,15 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
         this.folderLevelViewAssembly();
     }
 
+    private updateCurrentFolder(newFolderID: string) {
+        this.local.setState({
+            currentFolderID: newFolderID
+        }, new Map<string, any>(), () => {
+            this.reloadFolderView();
+        });
+    }
+
+    // TODO: merge with updateCurrentFolder(..)
     private reloadFolderView() {
         this.local.state.currentFolderData.query();
         this.rerender("current-folder");
@@ -97,11 +106,11 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
 
     private folderLevelViewAssembly() {
         this.assembly.assembly("folder-level-view", theme => {
-
             const currentFolder = this.local.state.currentFolderData.get()[0];
             const tree: Array<Folder> = new Array<Folder>();
 
             let folder = currentFolder;
+            tree.push(folder as Folder);
             while (folder?.parentFolder !== undefined) {
                 folder = AtlasMain.atlas().api().getFolder(folder.parentFolder);
                 tree.push(folder);
@@ -112,8 +121,10 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                     tree.reverse().map((folder, index, array) => {
                         return (
                             <AF elements={[
-                                <Text text={`${folder.title}`}/>,
-                                index < array.length ? <Dot/> : undefined
+                                <Text text={`${folder.title}`} cursor={Cursor.pointer} highlight onClick={() => {
+                                    this.updateCurrentFolder(folder.id);
+                                }}/>,
+                                index + 1 < array.length ? <Dot/> : undefined
                             ]}/>
                         );
                     })
