@@ -7,6 +7,7 @@ import {FlexDirection} from "../../../logic/style/FlexDirection";
 import {Text, TextType} from "../../../components/lo/Text";
 import {px} from "../../../logic/style/DimensionalMeasured";
 import {ReactComponent as BackIcon} from "../../../assets/icons/ic-20/ic20-chevron-down.svg";
+import {ReactComponent as SettingsIcon} from "../../../assets/icons/ic-20/ic20-settings.svg";
 import {Icon} from "../../../components/lo/Icon";
 import {Justify} from "../../../logic/style/Justify";
 import {Align} from "../../../logic/style/Align";
@@ -24,7 +25,7 @@ import {Cursor} from "../../../logic/style/Cursor";
 import React from "react";
 import {OverflowWithHeader} from "../../../components/lo/OverflowWithHeader";
 import {ReactComponent as AttachmentIcon} from "../../../assets/icons/ic-20/ic20-attachment.svg";
-import {ReactComponent as CreateIcon} from "../../../assets/icons/ic-20/ic20-plus.svg";
+import {ReactComponent as CreateIcon} from "../../../assets/icons/ic-20/ic20-edit.svg";
 import {AtlasMain} from "../AtlasMain";
 import {FolderComponent} from "./FolderComponent";
 import {Q, Queryable} from "../../../logic/query/Queryable";
@@ -32,6 +33,7 @@ import {Folder} from "../data/Folder";
 import {QueryDisplay} from "../../../components/logic/QueryDisplay";
 import {FolderSetupDialog} from "./FolderSetupDialog";
 import {AF} from "../../../components/logic/ArrayFragment";
+import {Tooltip} from "../../../components/ho/tooltip/Tooltip";
 
 export type VFSFolderViewProps = {
     initialFolderID?: string,
@@ -119,12 +121,25 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
             return (
                 <Flex flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab} align={Align.CENTER} elements={
                     tree.reverse().map((folder, index, array) => {
+                        const isLast = !(index + 1 < array.length);
                         return (
                             <AF elements={[
-                                <Text text={`${folder.title}`} cursor={Cursor.pointer} highlight onClick={() => {
-                                    this.updateCurrentFolder(folder.id);
-                                }}/>,
-                                index + 1 < array.length ? <Dot/> : undefined
+                                <Tooltip title={`Go to ${folder.id}`} arrow children={
+                                    <Text
+                                        text={`${folder.title}`}
+                                        cursor={Cursor.pointer}
+                                        highlight={isLast}
+                                        coloredText={isLast}
+                                        visualMeaning={isLast ? VM.INFO : VM.UI_NO_HIGHLIGHT}
+                                        onClick={() => {
+                                            if (!isLast) {
+                                                this.updateCurrentFolder(folder.id);
+                                            }
+                                        }
+                                    }/>
+                                }/>,
+                                // !isLast ? <Dot/> : undefined
+                                <Text text={"/"} type={TextType.secondaryDescription}/>
                             ]}/>
                         );
                     })
@@ -145,41 +160,44 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
             return (
                 <Flex fw elements={[
                     <Flex fw elements={[
-                        <Flex flexDir={FlexDirection.ROW} align={Align.CENTER} gap={theme.gaps.smallGab} elements={[
-                            <Text text={"Folders"} bold/>,
-                            <Dot/>,
-                            <Text text={`${subFolders.length}`} type={TextType.secondaryDescription}/>,
-                            <Dot/>,
-                            <Icon icon={<CreateIcon/>} onClick={() => {
-                                this.dialog(
-                                    <FolderSetupDialog actions={{
-                                        onSubmit: (folder: Folder) => {
-                                            const [parentFolder] = this.local.state.currentFolderData.get();
+                        <Flex fw flexDir={FlexDirection.ROW} align={Align.CENTER} justifyContent={Justify.SPACE_BETWEEN} elements={[
+                            <Flex flexDir={FlexDirection.ROW} align={Align.CENTER} gap={theme.gaps.smallGab} elements={[
+                                <Text text={"Folders"} bold/>,
+                                <Dot/>,
+                                <Text text={`${subFolders.length}`} type={TextType.secondaryDescription}/>,
+                            ]}/>,
 
-                                            if (parentFolder === undefined) {
-                                                return false;
-                                            }
+                            <Flex flexDir={FlexDirection.ROW} align={Align.CENTER} gap={theme.gaps.smallGab} elements={[
+                                <Tooltip title={"Create folder"} arrow children={
+                                    <Icon icon={<CreateIcon/>} size={px(16)} onClick={() => {
+                                        this.dialog(
+                                            <FolderSetupDialog actions={{
+                                                onSubmit: (folder: Folder) => {
+                                                    const [parentFolder] = this.local.state.currentFolderData.get();
+                                                    if (parentFolder === undefined) {
+                                                        return false;
+                                                    }
+                                                    folder.parentFolder = parentFolder.id;
+                                                    try {
+                                                        AtlasMain.atlas().api().createSubFolder(parentFolder.id, folder);
+                                                        setTimeout(() => {
+                                                            AtlasMain.atlas(atlas => {
+                                                                atlas.rerender("folders");
+                                                            });
+                                                        }, 1);
+                                                        this.closeLocalDialog();
+                                                        this.reloadFolderView();
 
-                                            folder.parentFolder = parentFolder.id;
-
-                                            try {
-                                                AtlasMain.atlas().api().createSubFolder(parentFolder.id, folder);
-                                                setTimeout(() => {
-                                                    AtlasMain.atlas(atlas => {
-                                                        atlas.rerender("folders");
-                                                    });
-                                                }, 1);
-                                                this.closeLocalDialog();
-                                                this.reloadFolderView();
-
-                                                return true;
-                                            } catch (e) {
-                                                return false;
-                                            }
-                                        }
+                                                        return true;
+                                                    } catch (e) {
+                                                        return false;
+                                                    }
+                                                }
+                                            }}/>
+                                        );
                                     }}/>
-                                );
-                            }}/>
+                                }/>
+                            ]}/>,
                         ]}/>,
 
                         <SettingsGroup elements={
@@ -203,14 +221,21 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
 
     private documentViewAssembly() {
         this.assembly.assembly("document-view", theme => {
-
             return (
                 <Flex fw elements={[
                     <Flex fw elements={[
-                        <Flex flexDir={FlexDirection.ROW} align={Align.CENTER} gap={theme.gaps.smallGab} elements={[
-                            <Text text={"Files"} bold/>,
-                            <Dot/>,
-                            <Text text={"14"} type={TextType.secondaryDescription}/>,
+                        <Flex fw flexDir={FlexDirection.ROW} align={Align.CENTER} justifyContent={Justify.SPACE_BETWEEN} elements={[
+                            <Flex flexDir={FlexDirection.ROW} align={Align.CENTER} gap={theme.gaps.smallGab} elements={[
+                                <Text text={"Documents"} bold/>,
+                                <Dot/>,
+                                <Text text={`${14}`} type={TextType.secondaryDescription}/>,
+                            ]}/>,
+
+                            <Flex flexDir={FlexDirection.ROW} align={Align.CENTER} gap={theme.gaps.smallGab} elements={[
+                                <Tooltip title={"Create document"} arrow children={
+                                    <Icon icon={<CreateIcon/>} size={px(16)}/>
+                                }/>
+                            ]}/>,
                         ]}/>,
 
                         <SettingsGroup elements={array(<SettingsElement groupDisplayMode forceRenderSubpageIcon title={"Hello world"}/>, 14)}/>
@@ -241,7 +266,7 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                                                 // Badge.beta(),
                                                 <Text text={"Atlas Document Viewer"} bold/>,
                                             ]}/>,
-                                            <Icon icon={<AttachmentIcon/>}/>
+                                            <Icon icon={<SettingsIcon/>}/>
                                         ]}/>
                                     ]
                                 }} overflowContainer={{
