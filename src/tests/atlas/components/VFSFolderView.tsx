@@ -24,6 +24,8 @@ import {Cursor} from "../../../logic/style/Cursor";
 import React from "react";
 import {OverflowWithHeader} from "../../../components/lo/OverflowWithHeader";
 import {ReactComponent as AttachmentIcon} from "../../../assets/icons/ic-20/ic20-attachment.svg";
+import {AtlasMain} from "../AtlasMain";
+import {FolderComponent} from "./FolderComponent";
 
 export type VFSFolderViewProps = {
     onClose: () => void
@@ -33,6 +35,39 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, any> {
 
     private onClose() {
         this.props.onClose();
+    }
+
+    init() {
+        super.init();
+        this.folderViewAssembly();
+    }
+
+    private folderViewAssembly() {
+        this.assembly.assembly("folder-view", theme => {
+            const folders = AtlasMain.atlas().api().getAllFolders();
+
+            return (
+                <Flex fw elements={[
+                    <Flex fw elements={[
+                        <Flex flexDir={FlexDirection.ROW} align={Align.CENTER} gap={theme.gaps.smallGab} elements={[
+                            <Text text={"Folders"} bold/>,
+                            <Dot/>,
+                            <Text text={`${folders.length}`} type={TextType.secondaryDescription}/>,
+                        ]}/>,
+
+                        <SettingsGroup elements={
+                            folders.map(folder => {
+                                return (
+                                    <FolderComponent data={folder} onSelect={(component, data) => new Promise<void>((resolve, reject) => {
+                                        // TODO: Implement switch folder logic
+                                    })}/>
+                                );
+                            })
+                        }/>
+                    ]}/>,
+                ]}/>
+            );
+        });
     }
 
     componentRender(p: any, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
@@ -47,7 +82,7 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, any> {
                 }} overflowContainer={{
                     elements: [
                         <Flex fh fw gap={px()} flexDir={FlexDirection.ROW} elements={[
-                            <Flex fh width={px(400)} style={{ backgroundColor: t.colors.backgroundHighlightColor.css() }} elements={[
+                            <Flex fh width={px(500)} style={{ backgroundColor: t.colors.backgroundHighlightColor.css() }} elements={[
                                 <OverflowWithHeader dir={FlexDirection.COLUMN_REVERSE} staticContainer={{
                                     elements: [
                                         <Flex fw padding align={Align.CENTER} flexDir={FlexDirection.ROW} justifyContent={Justify.CENTER} elements={[
@@ -93,16 +128,7 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, any> {
                                                     ]}/>
                                                 ]}/>,
 
-
-                                                <Flex fw elements={[
-                                                    <Flex flexDir={FlexDirection.ROW} align={Align.CENTER} gap={t.gaps.smallGab} elements={[
-                                                        <Text text={"Folders"} bold/>,
-                                                        <Dot/>,
-                                                        <Text text={"5"} type={TextType.secondaryDescription}/>,
-                                                    ]}/>,
-
-                                                    <SettingsGroup elements={array(<SettingsElement groupDisplayMode forceRenderSubpageIcon title={"Hello world"}/>, 5)}/>
-                                                ]}/>,
+                                                this.a("folder-view"),
 
                                                 <Flex fw elements={[
                                                     <Flex flexDir={FlexDirection.ROW} align={Align.CENTER} gap={t.gaps.smallGab} elements={[

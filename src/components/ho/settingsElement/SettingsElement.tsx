@@ -155,7 +155,7 @@ export class SettingsElement extends BernieComponent<SettingsElementProps, any, 
             <FlexBox width={percent(100)} align={Align.START} gap={t.gaps.smallGab}>
 
                 <FlexBox width={percent(100)} align={Align.START} gap={px()}>
-                    <Box width={percent(100)} style={{justifyContent: "center"}} minHeight={px(40)} cursor={Cursor.pointer} onClick={() => this.onSelect()} borderRadiiConfig={{
+                    <Box width={percent(100)} highlight style={{justifyContent: "center"}} minHeight={px(40)} cursor={Cursor.pointer} onClick={() => this.onSelect()} borderRadiiConfig={{
                         enableCustomBorderRadii: getOr(p.groupDisplayMode, false),
                         fallbackCustomBorderRadii: px()
                     }} noPadding borderless bgColor={t.colors.backgroundHighlightColor200} children={
