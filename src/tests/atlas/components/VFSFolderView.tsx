@@ -22,6 +22,8 @@ import {FlexWrap} from "../../../logic/style/FlexWrap";
 import {Box} from "../../../components/lo/Box";
 import {Cursor} from "../../../logic/style/Cursor";
 import React from "react";
+import {OverflowWithHeader} from "../../../components/lo/OverflowWithHeader";
+import {ReactComponent as AttachmentIcon} from "../../../assets/icons/ic-20/ic20-attachment.svg";
 
 export type VFSFolderViewProps = {
     onClose: () => void
@@ -36,58 +38,98 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, any> {
     componentRender(p: any, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
             <Screen deactivatePadding children={
-                <Flex fw fh overflowYBehaviour={OverflowBehaviour.SCROLL} padding elements={[
-                    <DrawerHeader
-                        header={"FOP"}
-                        badgeText={"Folder view"}
-                        enableBadge
-                        badgeVM={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
-                        description={"All your folders at-a-glance\nPress on the context icon to see available actions, like creating folders or accessing ISO-image manager"}
-                    />,
-
-
-                    <Flex wrap={FlexWrap.WRAP} flexDir={FlexDirection.ROW} fw gap={t.gaps.smallGab} align={Align.CENTER} justifyContent={Justify.CENTER} elements={
-                        ["FS-2", "ASD", "ObjectVisualMeaning"].map(s => (
-                            <Box highlightShadow={false} cursor={Cursor.pointer} highlight opaque paddingY={px(4)} paddingX={px(7)} visualMeaning={VM.SUCCESS} borderRadiiConfig={{ enableCustomBorderRadii: true, fallbackCustomBorderRadii: px(500)}} borderless children={
-                                <Text text={s} whitespace={"nowrap"} cursor={Cursor.pointer} visualMeaning={VM.SUCCESS} fontSize={px(12)} coloredText type={TextType.secondaryDescription}/>
-                            }/>
-                        ))
-                    }/>,
-
-
-                    <Flex flexDir={FlexDirection.ROW} paddingY={px(40)} paddingX={px()} padding elements={[
-                        <Button height={px(50)} width={px(50)} border={false} onClick={() => this.onClose()} children={
-                            <Flex fw fh justifyContent={Justify.CENTER} align={Align.CENTER} elements={[
-                                <Icon icon={<BackIcon/>}/>
-                            ]}/>
-                        }/>,
-                        <Flex fh gap={px()} justifyContent={Justify.SPACE_BETWEEN} elements={[
-                            <Text fontSize={px(22)} bold text={"FOP"}/>,
-                            <Text fontSize={px(14)} whitespace={"nowrap"} text={"export class VFSFolderView"}/>,
+                <OverflowWithHeader dir={FlexDirection.COLUMN_REVERSE} staticContainer={{
+                    elements: [
+                        <Flex fw padding paddingX={px(32)} paddingY={px(16)} style={{ backgroundColor: "#161b22" }} align={Align.CENTER} flexDir={FlexDirection.ROW} justifyContent={Justify.CENTER} elements={[
+                            <Icon icon={<AttachmentIcon/>}/>,
                         ]}/>
-                    ]}/>,
+                    ]
+                }} overflowContainer={{
+                    elements: [
+                        <Flex fh fw gap={px()} flexDir={FlexDirection.ROW} elements={[
+                            <Flex fh width={px(400)} style={{ backgroundColor: t.colors.backgroundHighlightColor.css() }} elements={[
+                                <OverflowWithHeader dir={FlexDirection.COLUMN_REVERSE} staticContainer={{
+                                    elements: [
+                                        <Flex fw padding align={Align.CENTER} flexDir={FlexDirection.ROW} justifyContent={Justify.CENTER} elements={[
+                                            <Icon icon={<AttachmentIcon/>}/>,
+                                            <Flex fw fh justifyContent={Justify.CENTER} gap={t.gaps.smallGab} align={Align.CENTER} elements={[
+                                                // Badge.beta(),
+                                                <Text text={"Atlas Document Viewer"} bold/>,
+                                            ]}/>,
+                                            <Icon icon={<AttachmentIcon/>}/>
+                                        ]}/>
+                                    ]
+                                }} overflowContainer={{
+                                    elements: [
+                                        <Flex height={px(50)} fw fh padding style={{ backgroundColor: t.colors.backgroundHighlightColor.css() }} elements={[
+                                            <Flex fw fh overflowYBehaviour={OverflowBehaviour.SCROLL} elements={[
+                                                <DrawerHeader
+                                                    header={"FOP"}
+                                                    badgeText={"Folder view"}
+                                                    enableBadge
+                                                    badgeVM={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
+                                                    description={"All your folders at-a-glance\nPress on the context icon to see available actions, like creating folders or accessing ISO-image manager"}
+                                                />,
 
 
-                    <Flex fw elements={[
-                        <Flex flexDir={FlexDirection.ROW} align={Align.CENTER} gap={t.gaps.smallGab} elements={[
-                            <Text text={"Folders"} bold/>,
-                            <Dot/>,
-                            <Text text={"5"} type={TextType.secondaryDescription}/>,
-                        ]}/>,
+                                                <Flex wrap={FlexWrap.WRAP} flexDir={FlexDirection.ROW} fw gap={t.gaps.smallGab} align={Align.CENTER} justifyContent={Justify.CENTER} elements={
+                                                    ["FS-2", "ASD", "ObjectVisualMeaning"].map(s => (
+                                                        <Box highlightShadow={false} cursor={Cursor.pointer} highlight opaque paddingY={px(4)} paddingX={px(7)} visualMeaning={VM.SUCCESS} borderRadiiConfig={{ enableCustomBorderRadii: true, fallbackCustomBorderRadii: px(500)}} borderless children={
+                                                            <Text text={s} whitespace={"nowrap"} cursor={Cursor.pointer} visualMeaning={VM.SUCCESS} fontSize={px(12)} coloredText type={TextType.secondaryDescription}/>
+                                                        }/>
+                                                    ))
+                                                }/>,
 
-                        <SettingsGroup elements={array(<SettingsElement groupDisplayMode forceRenderSubpageIcon title={"Hello world"}/>, 5)}/>
-                    ]}/>,
 
-                    <Flex fw elements={[
-                        <Flex flexDir={FlexDirection.ROW} align={Align.CENTER} gap={t.gaps.smallGab} elements={[
-                            <Text text={"Files"} bold/>,
-                            <Dot/>,
-                            <Text text={"14"} type={TextType.secondaryDescription}/>,
-                        ]}/>,
+                                                <Flex flexDir={FlexDirection.ROW} paddingY={px(40)} paddingX={px()} padding elements={[
+                                                    <Button height={px(50)} width={px(50)} border={false} onClick={() => this.onClose()} children={
+                                                        <Flex fw fh justifyContent={Justify.CENTER} align={Align.CENTER} elements={[
+                                                            <Icon icon={<BackIcon/>}/>
+                                                        ]}/>
+                                                    }/>,
+                                                    <Flex fh gap={px()} justifyContent={Justify.SPACE_BETWEEN} elements={[
+                                                        <Text fontSize={px(22)} bold text={"FOP"}/>,
+                                                        <Text fontSize={px(14)} whitespace={"nowrap"} text={"export class VFSFolderView"}/>,
+                                                    ]}/>
+                                                ]}/>,
 
-                        <SettingsGroup elements={array(<SettingsElement groupDisplayMode forceRenderSubpageIcon title={"Hello world"}/>, 14)}/>
-                    ]}/>
-                ]}/>
+
+                                                <Flex fw elements={[
+                                                    <Flex flexDir={FlexDirection.ROW} align={Align.CENTER} gap={t.gaps.smallGab} elements={[
+                                                        <Text text={"Folders"} bold/>,
+                                                        <Dot/>,
+                                                        <Text text={"5"} type={TextType.secondaryDescription}/>,
+                                                    ]}/>,
+
+                                                    <SettingsGroup elements={array(<SettingsElement groupDisplayMode forceRenderSubpageIcon title={"Hello world"}/>, 5)}/>
+                                                ]}/>,
+
+                                                <Flex fw elements={[
+                                                    <Flex flexDir={FlexDirection.ROW} align={Align.CENTER} gap={t.gaps.smallGab} elements={[
+                                                        <Text text={"Files"} bold/>,
+                                                        <Dot/>,
+                                                        <Text text={"14"} type={TextType.secondaryDescription}/>,
+                                                    ]}/>,
+
+                                                    <SettingsGroup elements={array(<SettingsElement groupDisplayMode forceRenderSubpageIcon title={"Hello world"}/>, 14)}/>
+                                                ]}/>
+                                            ]}/>
+                                        ]}/>
+                                    ]
+                                }}/>
+                            ]}/>,
+                            <Flex fw fh overflowYBehaviour={OverflowBehaviour.SCROLL} padding elements={[
+                                <DrawerHeader
+                                    header={"FOP"}
+                                    badgeText={"Folder view"}
+                                    enableBadge
+                                    badgeVM={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
+                                    description={"All your folders at-a-glance\nPress on the context icon to see available actions, like creating folders or accessing ISO-image manager"}
+                                />
+                            ]}/>
+                        ]}/>
+                    ]
+                }}/>
             }/>
         );
     }
