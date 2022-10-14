@@ -221,4 +221,15 @@ export class InDevAtlasAPI implements IAtlasAPI {
         // TODO: Make better
         return new ISOAdapterV1();
     }
+
+    createSubFolder(parentFolderID: string, subFolder: Folder): void {
+        if (this.createFolder(subFolder)) {
+            this.updateFolder(parentFolderID, folder => {
+                let subFolderIDs = folder.subFolderIDs ?? new Array<string>();
+                subFolderIDs.push(subFolder.id);
+                folder.subFolderIDs = subFolderIDs;
+                return folder;
+            });
+        }
+    }
 }
