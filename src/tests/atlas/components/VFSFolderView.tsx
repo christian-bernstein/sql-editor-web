@@ -445,17 +445,16 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                 <OverflowWithHeader dir={FlexDirection.COLUMN_REVERSE} staticContainer={{
                     gap: px(),
                     elements: [
-                        <Flex fw padding paddingX={px(32)} paddingY={px(16)} style={{ backgroundColor: "#161b22" }} align={Align.CENTER} flexDir={FlexDirection.ROW} justifyContent={Justify.SPACE_BETWEEN} elements={[
-                            <Icon icon={<AttachmentIcon/>}/>,
-                            // <Input width={px(500)} placeholder={"Search"}/>,
-
-                            <Button border={false} onClick={() => this.onClose()} children={
-                                <Flex fw fh justifyContent={Justify.CENTER} align={Align.CENTER} elements={[
-                                    <Icon icon={<ExitIcon/>}/>
-                                ]}/>
-                            }/>
-                        ]}/>,
-                        <Separator/>
+                        // TODO: Reactivate
+                        // <Flex fw padding paddingX={px(32)} paddingY={px(16)} style={{ backgroundColor: "#161b22" }} align={Align.CENTER} flexDir={FlexDirection.ROW} justifyContent={Justify.SPACE_BETWEEN} elements={[
+                        //     <Icon icon={<AttachmentIcon/>}/>,
+                        //     <Button border={false} onClick={() => this.onClose()} children={
+                        //         <Flex fw fh justifyContent={Justify.CENTER} align={Align.CENTER} elements={[
+                        //             <Icon icon={<ExitIcon/>}/>
+                        //         ]}/>
+                        //     }/>
+                        // ]}/>,
+                        // <Separator/>
                     ]
                 }} overflowContainer={{
                     elements: [

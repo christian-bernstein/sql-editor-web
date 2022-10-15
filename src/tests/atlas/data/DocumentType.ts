@@ -1,4 +1,5 @@
 export enum DocumentType {
     UNSPECIFIED,
-    NOTE
+    NOTE,
+    WEBSITE
 }
