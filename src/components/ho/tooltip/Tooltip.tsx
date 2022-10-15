@@ -2,7 +2,7 @@ import {BernieComponent} from "../../../logic/BernieComponent";
 import {Assembly} from "../../../logic/assembly/Assembly";
 import {Themeable} from "../../../logic/style/Themeable";
 import {CustomTooltip, CustomTooltipProps} from "../../lo/CustomTooltip";
-import {TooltipProps as MuiTooltipProps} from "@mui/material";
+import {tooltipClasses, TooltipProps as MuiTooltipProps} from "@mui/material";
 
 export type TooltipProps = MuiTooltipProps & CustomTooltipProps;
 

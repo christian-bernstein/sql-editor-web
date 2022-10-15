@@ -232,4 +232,15 @@ export class InDevAtlasAPI implements IAtlasAPI {
             });
         }
     }
+
+    createDocumentInFolder(folderID: string, data: AtlasDocument) {
+        if (this.createDocument(data)) {
+            this.updateFolder(folderID, folder => {
+                const docs = folder.documentsIDs ?? new Array<string>();
+                docs.push(data.id);
+                folder.documentsIDs = docs;
+                return folder;
+            });
+        }
+    }
 }

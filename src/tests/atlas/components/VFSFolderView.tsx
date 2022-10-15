@@ -6,7 +6,6 @@ import {Flex} from "../../../components/lo/FlexBox";
 import {FlexDirection} from "../../../logic/style/FlexDirection";
 import {Text, TextType} from "../../../components/lo/Text";
 import {px} from "../../../logic/style/DimensionalMeasured";
-import {ReactComponent as BackIcon} from "../../../assets/icons/ic-20/ic20-chevron-down.svg";
 import {ReactComponent as ExitIcon} from "../../../assets/icons/ic-20/ic20-close.svg";
 import {ReactComponent as SettingsIcon} from "../../../assets/icons/ic-20/ic20-settings.svg";
 import {Icon} from "../../../components/lo/Icon";
@@ -14,11 +13,9 @@ import {Justify} from "../../../logic/style/Justify";
 import {Align} from "../../../logic/style/Align";
 import {Button} from "../../../components/lo/Button";
 import {SettingsGroup} from "../../../components/lo/SettingsGroup";
-import {SettingsElement} from "../../../components/ho/settingsElement/SettingsElement";
 import {DrawerHeader} from "../../../components/lo/DrawerHeader";
 import {ObjectVisualMeaning, VM} from "../../../logic/style/ObjectVisualMeaning";
 import {Dot} from "../../../components/lo/Dot";
-import {array} from "../../../logic/Utils";
 import {OverflowBehaviour} from "../../../logic/style/OverflowBehaviour";
 import {FlexWrap} from "../../../logic/style/FlexWrap";
 import {Box} from "../../../components/lo/Box";
@@ -35,9 +32,14 @@ import {QueryDisplay} from "../../../components/logic/QueryDisplay";
 import {FolderSetupDialog} from "./FolderSetupDialog";
 import {AF} from "../../../components/logic/ArrayFragment";
 import {Tooltip} from "../../../components/ho/tooltip/Tooltip";
-import {Input} from "../../../components/lo/Input";
 import {createMargin} from "../../../logic/style/Margin";
 import {StaticDrawerMenu} from "../../../components/lo/StaticDrawerMenu";
+import {AtlasDocument} from "../data/AtlasDocument";
+import {IAtlasAPI} from "../api/IAtlasAPI";
+import {DocumentComponent} from "./DocumentComponent";
+import {UnresolvedDocumentComponent} from "./UnresolvedDocumentComponent";
+import {DocumentSetupDialog} from "./DocumentSetupDialog";
+import {DocumentCreateWizard} from "./DocumentCreateWizard";
 
 export type VFSFolderViewProps = {
     initialFolderID?: string,
@@ -159,6 +161,69 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
         })
     }
 
+    private openCreateFolderSetup() {
+        this.dialog(
+            <StaticDrawerMenu body={props => (
+                <FolderSetupDialog actions={{
+                    onSubmit: (folder: Folder) => {
+                        const [parentFolder] = this.local.state.currentFolderData.get();
+                        if (parentFolder === undefined) {
+                            return false;
+                        }
+                        folder.parentFolder = parentFolder.id;
+                        try {
+                            AtlasMain.atlas().api().createSubFolder(parentFolder.id, folder);
+                            setTimeout(() => {
+                                AtlasMain.atlas(atlas => {
+                                    atlas.rerender("folders");
+                                });
+                            }, 1);
+                            this.closeLocalDialog();
+                            this.reloadFolderView();
+
+                            return true;
+                        } catch (e) {
+                            return false;
+                        }
+                    }
+                }}/>
+            )}/>
+        );
+    }
+
+    private openCreateBlankDocumentSetup() {
+        this.dialog(
+            <DocumentCreateWizard/>
+        );
+
+        // this.dialog(
+        //     <DocumentSetupDialog
+        //         category={{
+        //             id: "",
+        //             documents: []
+        //         }}
+        //         actions={{
+        //             onSubmit: (document: AtlasDocument) => {
+        //                 const folder = this.getCurrentFolder();
+        //                 try {
+        //                     AtlasMain.atlas().api().createDocumentInFolder(folder.id, document);
+        //                     setTimeout(() => {
+        //                         AtlasMain.atlas(atlas => {
+        //                             atlas.rerender("folders");
+        //                         });
+        //                     }, 1);
+        //                     this.closeLocalDialog();
+        //                     this.reloadFolderView();
+        //                     return true;
+        //                 } catch (e) {
+        //                     return false;
+        //                 }
+        //             }
+        //         }}
+        //     />
+        // );
+    }
+
     private folderViewAssembly() {
         this.assembly.assembly("folder-view", theme => {
             const currentFolder = this.local.state.currentFolderData.get()[0] as Folder;
@@ -180,35 +245,7 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
 
                             <Flex flexDir={FlexDirection.ROW} align={Align.CENTER} gap={theme.gaps.smallGab} elements={[
                                 <Tooltip title={"Create folder"} arrow children={
-                                    <Icon icon={<CreateIcon/>} size={px(16)} onClick={() => {
-                                        this.dialog(
-                                            <StaticDrawerMenu body={props => (
-                                                <FolderSetupDialog actions={{
-                                                    onSubmit: (folder: Folder) => {
-                                                        const [parentFolder] = this.local.state.currentFolderData.get();
-                                                        if (parentFolder === undefined) {
-                                                            return false;
-                                                        }
-                                                        folder.parentFolder = parentFolder.id;
-                                                        try {
-                                                            AtlasMain.atlas().api().createSubFolder(parentFolder.id, folder);
-                                                            setTimeout(() => {
-                                                                AtlasMain.atlas(atlas => {
-                                                                    atlas.rerender("folders");
-                                                                });
-                                                            }, 1);
-                                                            this.closeLocalDialog();
-                                                            this.reloadFolderView();
-
-                                                            return true;
-                                                        } catch (e) {
-                                                            return false;
-                                                        }
-                                                    }
-                                                }}/>
-                                            )}/>
-                                        );
-                                    }}/>
+                                    <Icon icon={<CreateIcon/>} size={px(16)} onClick={() => this.openCreateFolderSetup()}/>
                                 }/>
                             ]}/>,
                         ]}/>,
@@ -227,7 +264,26 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                                     );
                                 })
                             }/>
-                        ) : <></>
+                        ) : (
+                            <Flex margin={createMargin(20, 0, 20, 0)} fw align={Align.CENTER} justifyContent={Justify.CENTER} gap={px()} elements={[
+                                <Text
+                                    text={"Empty"}
+                                    // fontSize={px(11)}
+                                    type={TextType.secondaryDescription}
+                                    bold
+                                />,
+                                <Text
+                                    text={"Create folder"}
+                                    fontSize={px(11)}
+                                    cursor={Cursor.pointer}
+                                    highlight
+                                    coloredText
+                                    visualMeaning={VM.INFO}
+                                    type={TextType.secondaryDescription}
+                                    onClick={() => this.openCreateFolderSetup()}
+                                />
+                            ]}/>
+                        )
                     ]}/>,
                 ]}/>
             );
@@ -236,6 +292,23 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
 
     private documentViewAssembly() {
         this.assembly.assembly("document-view", theme => {
+            const documentIDs: Array<string> = this.getCurrentFolder().documentsIDs ?? new Array<string>();
+            const documents: Array<AtlasDocument> = new Array<AtlasDocument>();
+
+            AtlasMain.atlas(atlas => {
+                const api: IAtlasAPI = atlas.api();
+                documentIDs.forEach(docID => {
+                    try {
+                        const doc: AtlasDocument = api.getDocument(docID);
+                        documents.push(doc);
+                    } catch (e) {
+                        console.error(e);
+                    }
+                });
+            });
+
+
+
             return (
                 <Flex fw elements={[
                     <Flex fw elements={[
@@ -243,17 +316,50 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                             <Flex flexDir={FlexDirection.ROW} align={Align.CENTER} gap={theme.gaps.smallGab} elements={[
                                 <Text text={"Documents"} bold/>,
                                 <Dot/>,
-                                <Text text={`${0}`} type={TextType.secondaryDescription}/>,
+                                <Text text={`${documents.length}`} type={TextType.secondaryDescription}/>,
                             ]}/>,
 
                             <Flex flexDir={FlexDirection.ROW} align={Align.CENTER} gap={theme.gaps.smallGab} elements={[
                                 <Tooltip title={"Create document"} arrow children={
-                                    <Icon icon={<CreateIcon/>} size={px(16)}/>
+                                    <Icon icon={<CreateIcon/>} size={px(16)} onClick={() => this.openCreateBlankDocumentSetup()}/>
                                 }/>
                             ]}/>,
                         ]}/>,
 
-                        // <SettingsGroup elements={array(<SettingsElement groupDisplayMode forceRenderSubpageIcon title={"Hello world"}/>, 14)}/>
+                        documents.length > 0 ? (
+                            <SettingsGroup elements={
+                                documents.map(doc => {
+                                    try {
+                                        return (
+                                            <DocumentComponent data={doc}/>
+                                        );
+                                    } catch (e) {
+                                        return (
+                                            <UnresolvedDocumentComponent id={doc.id} error={e}/>
+                                        );
+                                    }
+                                })
+                            }/>
+                        ) : (
+                            <Flex margin={createMargin(20, 0, 20, 0)} fw align={Align.CENTER} justifyContent={Justify.CENTER} gap={px()} elements={[
+                                <Text
+                                    text={"Empty"}
+                                    // fontSize={px(11)}
+                                    type={TextType.secondaryDescription}
+                                    bold
+                                />,
+                                <Text
+                                    text={"Create document"}
+                                    fontSize={px(11)}
+                                    cursor={Cursor.pointer}
+                                    highlight
+                                    coloredText
+                                    visualMeaning={VM.INFO}
+                                    type={TextType.secondaryDescription}
+                                    onClick={() => this.openCreateBlankDocumentSetup()}
+                                />
+                            ]}/>
+                        )
                     ]}/>
                 ]}/>
             );

@@ -33,6 +33,8 @@ import {createMargin} from "../../logic/style/Margin";
 import {Icon} from "../../components/lo/Icon";
 import {ConfirmationDialog} from "../../components/lo/ConfirmationDialog";
 import {VFSFolderView} from "./components/VFSFolderView";
+import {AccountTreeRounded} from "@mui/icons-material";
+import {Tooltip} from "../../components/ho/tooltip/Tooltip";
 
 export type AtlasMainProps = {
     api: IAtlasAPI
@@ -82,20 +84,15 @@ export class AtlasMain extends BC<AtlasMainProps, any, any> {
 
 
 
-
-
-
-
-                        <Button height={percent(100)} opaque visualMeaning={ObjectVisualMeaning.BETA} children={ <Icon icon={<DebugIcon/>}/> } onClick={() => {
-                            this.dialog(
-                                <VFSFolderView
-                                    onClose={() => this.closeLocalDialog()}
-                                />
-                            );
-                        }}/>,
-
-
-
+                        <Tooltip noBorder title={"Open tree view"} arrow children={
+                            <Button height={percent(100)} opaque visualMeaning={ObjectVisualMeaning.BETA} children={ <Icon icon={<AccountTreeRounded/>}/> } onClick={() => {
+                                this.dialog(
+                                    <VFSFolderView
+                                        onClose={() => this.closeLocalDialog()}
+                                    />
+                                );
+                            }}/>
+                        }/>,
 
 
 

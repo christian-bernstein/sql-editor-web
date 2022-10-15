@@ -25,6 +25,7 @@ export interface IAtlasAPI {
     linkCategoryToFolder(categoryID: string, folderID: string): void;
     linkDocumentToCategory(documentID: string, categoryID: string): void;
     createSubFolder(parentFolderID: string, subFolder: Folder): void;
+    createDocumentInFolder(folderID: string, data: AtlasDocument): void;
     db(): FormDataHub;
     clear(): Promise<IAtlasAPI>;
     persistentDB(): AtlasDB;
