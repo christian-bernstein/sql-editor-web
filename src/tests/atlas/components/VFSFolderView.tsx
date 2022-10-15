@@ -45,6 +45,8 @@ import {LiteGrid} from "../../../components/lo/LiteGrid";
 import {SettingsElement} from "../../../components/ho/settingsElement/SettingsElement";
 import {Separator} from "../../../components/lo/Separator";
 import {Orientation} from "../../../logic/style/Orientation";
+import {DocumentState} from "../data/DocumentState";
+import _ from "lodash";
 
 export type VFSFolderViewProps = {
     initialFolderID?: string,
@@ -55,13 +57,18 @@ export type VFSFolderViewLocalState = {
     currentFolderData: Q<Folder | undefined>
     currentFolderID?: string,
 
-    viewMultiplexers: Array<DocumentViewMultiplexerControlConfig>
+    viewMultiplexers: Array<DocumentViewMultiplexerControlConfig>,
+
+    documentStates: Map<string, DocumentState>;
+    documentBodyUpdaters: Map<string, (body: string) => void>
 }
 
 export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLocalState> {
 
     constructor(props: VFSFolderViewProps) {
         super(props, undefined, {
+            documentStates: new Map<string, DocumentState>(),
+            documentBodyUpdaters: new Map<string, (body: string) => void>(),
             currentFolderID: props.initialFolderID ?? "root",
             currentFolderData: new Queryable<Folder | undefined>({
                 component: () => this,
@@ -121,13 +128,13 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
             view: this
         });
 
-        this.createMultiplexer({
-            groupID: v4(),
-            groupTitle: "Test",
-            documents: new Array<AtlasDocument>(),
-            activeDocumentID: undefined,
-            view: this
-        });
+        // this.createMultiplexer({
+        //     groupID: v4(),
+        //     groupTitle: "Test",
+        //     documents: new Array<AtlasDocument>(),
+        //     activeDocumentID: undefined,
+        //     view: this
+        // });
     }
 
     init() {
@@ -327,6 +334,18 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
 
     private openDocument(data: AtlasDocument) {
         const updater = (muxID: string) => {
+            this.local.state.documentBodyUpdaters.set(data.id, _.debounce((body: string) => {
+                AtlasMain.atlas(atlas => {
+                    const api = atlas.api();
+                    api.updateDocument(data.id, document => {
+                        document.body = body;
+                        return document;
+                    });
+                });
+
+                // TODO: rerender!
+            }))
+
             this.updateMultiplexer(muxID, ["main"], multiplexer => {
                 const documents = multiplexer.documents;
                 documents.push(data);
@@ -439,6 +458,10 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
         });
     }
 
+    public updateBody(documentID: string, newBody: string) {
+        this.local.state.documentBodyUpdaters.get(documentID)?.(newBody);
+    }
+
     componentRender(p: any, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
             <Screen deactivatePadding children={
@@ -535,6 +558,9 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                                                             multiplexer.activeDocumentID = newActiveDocumentID;
                                                             return multiplexer;
                                                         });
+                                                    }}
+                                                    bodyUpdater={(documentID, body) => {
+                                                        this.updateBody(documentID, body)
                                                     }}
                                                 />
                                             ))

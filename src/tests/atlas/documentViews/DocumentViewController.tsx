@@ -11,7 +11,8 @@ import {Align} from "../../../logic/style/Align";
 import {Justify} from "../../../logic/style/Justify";
 
 export type DocumentViewControllerProps = {
-    document?: AtlasDocument
+    document?: AtlasDocument,
+    updateBody: (body: string) => void
 }
 
 export class DocumentViewController extends BC<DocumentViewControllerProps, any, any> {
@@ -27,7 +28,7 @@ export class DocumentViewController extends BC<DocumentViewControllerProps, any,
                 }/>
             );
         } else {
-            return inDevDocumentView.renderer(p.document);
+            return inDevDocumentView.renderer(p.document, p.updateBody);
         }
     }
 }

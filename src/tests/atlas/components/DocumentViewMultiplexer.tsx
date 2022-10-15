@@ -24,6 +24,7 @@ import {Tooltip} from "../../../components/ho/tooltip/Tooltip";
 import {Justify} from "../../../logic/style/Justify";
 import {Badge} from "../../../components/lo/Badge";
 import {ObjectVisualMeaning} from "../../../logic/style/ObjectVisualMeaning";
+import {DocumentState} from "../data/DocumentState";
 
 export type DocumentViewMultiplexerControlConfig = {
     documents: Array<AtlasDocument>
@@ -35,7 +36,8 @@ export type DocumentViewMultiplexerControlConfig = {
 
 export type DocumentViewMultiplexerProps = {
     controlConfigMirror: DocumentViewMultiplexerControlConfig,
-    changeActiveDocument: (newActiveDocumentID: string) => void
+    changeActiveDocument: (newActiveDocumentID?: string) => void,
+    bodyUpdater: (documentID: string, body: string) => void
 }
 
 export class DocumentViewMultiplexer extends BC<DocumentViewMultiplexerProps, any, any> {
@@ -54,6 +56,21 @@ export class DocumentViewMultiplexer extends BC<DocumentViewMultiplexerProps, an
             return undefined;
         }
         return this.props.controlConfigMirror.documents.filter(doc => doc.id === this.props.controlConfigMirror.activeDocumentID)[0];
+    }
+
+    private removeDocument(id: string) {
+        if (this.props.controlConfigMirror.activeDocumentID === undefined) {
+            return undefined;
+        }
+
+        if (this.getActiveDocument()?.id === id) {
+            this.props.changeActiveDocument(undefined);
+        }
+
+        this.view().updateMultiplexer(this.props.controlConfigMirror.groupID, ["main"], multiplexer => {
+            multiplexer.documents = multiplexer.documents.filter(doc => doc.id !== id);
+            return multiplexer;
+        });
     }
 
     componentRender(p: DocumentViewMultiplexerProps, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
@@ -87,7 +104,6 @@ export class DocumentViewMultiplexer extends BC<DocumentViewMultiplexerProps, an
                                                     />
                                                 ]}/>
                                             ) : (
-                                                // width={px(250)}
                                                 <Flex flexDir={FlexDirection.ROW} gap={t.gaps.smallGab} elements={[
                                                     ...p.controlConfigMirror.documents.map(document => {
                                                         const isActive: boolean = document.id === activeDocument?.id;
@@ -112,7 +128,10 @@ export class DocumentViewMultiplexer extends BC<DocumentViewMultiplexerProps, an
                                                                                 })
                                                                             ) : <></>,
                                                                             <Tooltip title={"Close document"} children={
-                                                                                <Icon icon={<CloseIcon/>} size={px(16)}/>
+                                                                                <Icon icon={<CloseIcon/>} size={px(16)} onClick={(event) => {
+                                                                                    this.removeDocument(document.id);
+                                                                                    event.stopPropagation();
+                                                                                }}/>
                                                                             }/>
                                                                         ]}/>
                                                                     );
@@ -141,7 +160,9 @@ export class DocumentViewMultiplexer extends BC<DocumentViewMultiplexerProps, an
                             elements: [
                                 <DocumentViewController document={
                                     this.getActiveDocument()
-                                }/>
+                                } updateBody={body => {
+                                    this.props.bodyUpdater(this.getActiveDocument()?.id as string, body);
+                                }}/>
                             ]
                         }}
                     />

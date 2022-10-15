@@ -13,7 +13,7 @@ export type IconProps = {
     icon: JSX.Element,
     size?: DimensionalMeasured,
     hoverAnimation?: boolean,
-    onClick?: () => void,
+    onClick?: (event: React.MouseEvent<HTMLDivElement>) => void,
     style?: CSSProperties
     color?: Color
 } & WithVisualMeaning
@@ -62,7 +62,7 @@ export const Icon: React.FC<IconProps> = React.memo(props => {
     `;
 
     return (
-        <Wrapper style={getOr(props.style, {})} onClick={() => props.onClick?.()}>
+        <Wrapper style={getOr(props.style, {})} onClick={(event: React.MouseEvent<HTMLDivElement>) => props.onClick?.(event)}>
             {props.icon}
         </Wrapper>
     );
