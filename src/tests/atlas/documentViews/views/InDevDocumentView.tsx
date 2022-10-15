@@ -70,11 +70,13 @@ export const inDevDocumentView: DocumentView = {
                         });
                     }}
                     theme={"ses-x-dark-tritanopia"}
-                    // defaultLanguage="typescript"
                     defaultValue={note ?? ""}
-                    // onChange={l.onChange}
+                    onChange={(value, ev) => {
+                        updateBody(JSON.stringify({
+                            note: value ?? ""
+                        } as NoteDocumentArchetype));
+                    }}
                     options={{
-                        // fontFamily: "JetBrains Mono",
                         fontLigatures: true
                     }}
                 />

@@ -56,9 +56,7 @@ export type VFSFolderViewProps = {
 export type VFSFolderViewLocalState = {
     currentFolderData: Q<Folder | undefined>
     currentFolderID?: string,
-
     viewMultiplexers: Array<DocumentViewMultiplexerControlConfig>,
-
     documentStates: Map<string, DocumentState>;
     documentBodyUpdaters: Map<string, (body: string) => void>
 }
@@ -344,7 +342,7 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                 });
 
                 // TODO: rerender!
-            }))
+            }, 1000));
 
             this.updateMultiplexer(muxID, ["main"], multiplexer => {
                 const documents = multiplexer.documents;
@@ -459,7 +457,13 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
     }
 
     public updateBody(documentID: string, newBody: string) {
-        this.local.state.documentBodyUpdaters.get(documentID)?.(newBody);
+        const updater = this.local.state.documentBodyUpdaters.get(documentID);
+
+        if (updater !== undefined) {
+            updater(newBody);
+        } else {
+            console.error(`Opened document '${documentID}' has no corresponding body update adapter`);
+        }
     }
 
     componentRender(p: any, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
