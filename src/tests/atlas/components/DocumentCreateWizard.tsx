@@ -29,6 +29,7 @@ import {wizardRoutines} from "../wizard/document/routines/WizardRoutineCollectio
 import {HOCWrapper} from "../../../components/HOCWrapper";
 import {VFSFolderView} from "./VFSFolderView";
 import {Folder} from "../data/Folder";
+import {AtlasMain} from "../AtlasMain";
 
 export type DocumentCreateWizardProps = {
     currentFolder: Folder,
@@ -78,53 +79,20 @@ export class DocumentCreateWizard extends BC<DocumentCreateWizardProps, any, any
                         <HOCWrapper body={wrapper => (
                             <LiteGrid columns={2} gap={t.gaps.smallGab} children={
                                 <AF elements={[
-
                                     ...wizardRoutines.map(routine => routine.previewCard(() => {
-                                        routine.run(p.view, p.currentFolder, wrapper);
-                                    })),
-
-                                    <Tooltip arrow title={"Upload & install Atlas™-ISO-image"} children={
-                                        <Button
-                                            shrinkOnClick
-                                            width={percent(100)}
-                                            children={
-                                                <Flex gap={px(3)} align={Align.CENTER} fw elements={[
-                                                    <Icon icon={<Upload/>} size={px(25)}/>,
-                                                    <Text
-                                                        bold
-                                                        text={"Import"}
-                                                    />,
-                                                    <Text
-                                                        align={Align.CENTER}
-                                                        text={"Import existing document"}
-                                                        type={TextType.secondaryDescription}
-                                                        fontSize={px(11)}
-                                                    />
-                                                ]}/>
-                                            }
-                                        />
-                                    }/>,
-                                    <Tooltip arrow title={"Download reusable Atlas™-ISO-image"} children={
-                                        <Button
-                                            shrinkOnClick
-                                            width={percent(100)}
-                                            children={
-                                                <Flex gap={px(3)} align={Align.CENTER} fw elements={[
-                                                    <Icon icon={<NoteIcon/>} size={px(25)}/>,
-                                                    <Text
-                                                        bold
-                                                        text={"Create note"}
-                                                    />,
-                                                    <Text
-                                                        align={Align.CENTER}
-                                                        text={"Empty markdown note"}
-                                                        type={TextType.secondaryDescription}
-                                                        fontSize={px(11)}
-                                                    />,
-                                                ]}/>
-                                            }
-                                        />
-                                    }/>
+                                        routine.run(p.view, p.currentFolder, wrapper).then(document => {
+                                            const folder = p.view.getCurrentFolder();
+                                            AtlasMain.atlas().api().createDocumentInFolder(folder.id, document);
+                                            setTimeout(() => {
+                                                AtlasMain.atlas(atlas => {
+                                                    atlas.rerender("folders");
+                                                });
+                                            }, 1);
+                                            wrapper.closeLocalDialog();
+                                            p.view.closeLocalDialog();
+                                            p.view.reloadFolderView();
+                                        });
+                                    }))
                                 ]}/>
                             }/>
                         )}/>,

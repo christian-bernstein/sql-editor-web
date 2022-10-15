@@ -8,6 +8,7 @@ import {Input} from "../../../../../components/lo/Input";
 import {Button} from "../../../../../components/lo/Button";
 import {v4} from "uuid";
 import {WebsiteDocumentArchetype} from "../../../data/documentArchetypes/WebsiteDocumentArchetype";
+import {AtlasDocument} from "../../../data/AtlasDocument";
 
 export const websiteWizardRoutine: WizardRoutine = {
     title: "Website",
@@ -22,37 +23,37 @@ export const websiteWizardRoutine: WizardRoutine = {
         />
     ),
     run: (view, currentFolder, component) => {
-        const onURLSelected = (url: string) => {
-            AtlasMain.atlas(atlas => {
-                atlas.api().createDocumentInFolder(currentFolder.id, {
-                    id: v4(),
-                    title: url,
-                    body: JSON.stringify({
-                        url: url
-                    } as WebsiteDocumentArchetype)
-                });
+        return new Promise<AtlasDocument>(async (resolve, reject) => {
+            const url = await new Promise<string>((urlResolve, urlReject) => {
+                component.dialog(
+                    <StaticDrawerMenu body={props => {
+                        const Form: React.FC = p => {
+                            const [url, setURL] = useState("");
+
+                            return (
+                                <Flex elements={[
+                                    <Input defaultValue={url} placeholder={"www.google.com"} onChange={ev => {
+                                        setURL(ev.target.value);
+                                    }}/>,
+                                    <Button text={"Choose"} onClick={() => {
+                                        urlResolve(url);
+                                    }}/>
+                                ]}/>
+                            );
+                        }
+
+                        return <Form/>;
+                    }}/>
+                )
             });
-        }
 
-        component.dialog(
-            <StaticDrawerMenu body={props => {
-                const Form: React.FC = p => {
-                    const [url, setURL] = useState("");
-
-                    return (
-                        <Flex elements={[
-                            <Input defaultValue={url} placeholder={"www.google.com"} onChange={ev => {
-                                setURL(ev.target.value);
-                            }}/>,
-                            <Button text={"Choose"} onClick={() => {
-                                onURLSelected(url);
-                            }}/>
-                        ]}/>
-                    );
-                }
-
-                return <Form/>;
-            }}/>
-        )
+            resolve({
+                id: v4(),
+                title: url,
+                body: JSON.stringify({
+                    url: url
+                } as WebsiteDocumentArchetype)
+            });
+        });
     }
 }

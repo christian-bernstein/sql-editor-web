@@ -14,7 +14,10 @@ export const inDevDocumentView: DocumentView = {
 
         let note = undefined;
         try {
-            note = (JSON.parse(document.body ?? "") as NoteDocumentArchetype).note;
+            console.log("raw body", document.body)
+            console.log("parsed", JSON.parse(document.body as string));
+            note = (JSON.parse(document.body as string) as NoteDocumentArchetype).note;
+            console.log("parsed note", note);
         } catch (e) {
             console.error(e);
         }

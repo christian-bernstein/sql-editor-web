@@ -84,8 +84,9 @@ export class AtlasMain extends BC<AtlasMainProps, any, any> {
 
 
 
+                        // opaque visualMeaning={ObjectVisualMeaning.BETA}
                         <Tooltip noBorder title={"Open tree view"} arrow children={
-                            <Button height={percent(100)} opaque visualMeaning={ObjectVisualMeaning.BETA} children={ <Icon icon={<AccountTreeRounded/>}/> } onClick={() => {
+                            <Button height={percent(100)} children={ <Icon icon={<AccountTreeRounded/>}/> } onClick={() => {
                                 this.dialog(
                                     <VFSFolderView
                                         onClose={() => this.closeLocalDialog()}

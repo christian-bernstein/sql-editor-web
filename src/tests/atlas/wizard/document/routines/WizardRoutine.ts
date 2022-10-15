@@ -1,6 +1,7 @@
 import {BC} from "../../../../../logic/BernieComponent";
 import {Folder} from "../../../data/Folder";
 import {VFSFolderView} from "../../../components/VFSFolderView";
+import {AtlasDocument} from "../../../data/AtlasDocument";
 
 export type WizardRoutine = {
     title: string,
@@ -11,5 +12,5 @@ export type WizardRoutine = {
         view: VFSFolderView,
         currentFolder: Folder,
         component: BC<any, any, any>
-    ) => void
+    ) => Promise<AtlasDocument>
 }
