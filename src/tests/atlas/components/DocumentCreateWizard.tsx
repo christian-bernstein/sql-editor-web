@@ -25,10 +25,19 @@ import {SettingsGroup} from "../../../components/lo/SettingsGroup";
 import {SettingsElement} from "../../../components/ho/settingsElement/SettingsElement";
 import {Input} from "../../../components/lo/Input";
 import {WizardRoutineCard} from "./documentWizard/WizardRoutineCard";
+import {wizardRoutines} from "../wizard/document/routines/WizardRoutineCollection";
+import {HOCWrapper} from "../../../components/HOCWrapper";
+import {VFSFolderView} from "./VFSFolderView";
+import {Folder} from "../data/Folder";
 
-export class DocumentCreateWizard extends BC<any, any, any> {
+export type DocumentCreateWizardProps = {
+    currentFolder: Folder,
+    view: VFSFolderView
+}
 
-    componentRender(p: any, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
+export class DocumentCreateWizard extends BC<DocumentCreateWizardProps, any, any> {
+
+    componentRender(p: DocumentCreateWizardProps, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
             <StaticDrawerMenu body={props => {
                 return (
@@ -66,58 +75,61 @@ export class DocumentCreateWizard extends BC<any, any, any> {
                             ]}/>,
                         ]}/>,
 
-                        <LiteGrid columns={2} gap={t.gaps.smallGab} children={
-                            <AF elements={[
-                                <WizardRoutineCard
-                                    title={"Create blank"}
-                                    description={"Create document from scratch"}
-                                    tooltip={"Create document from scratch"}
-                                    onSelect={() => { }}
-                                />,
-                                <Tooltip arrow title={"Upload & install Atlas™-ISO-image"} children={
-                                    <Button
-                                        shrinkOnClick
-                                        width={percent(100)}
-                                        children={
-                                            <Flex gap={px(3)} align={Align.CENTER} fw elements={[
-                                                <Icon icon={<Upload/>} size={px(25)}/>,
-                                                <Text
-                                                    bold
-                                                    text={"Import"}
-                                                />,
-                                                <Text
-                                                    align={Align.CENTER}
-                                                    text={"Import existing document"}
-                                                    type={TextType.secondaryDescription}
-                                                    fontSize={px(11)}
-                                                />
-                                            ]}/>
-                                        }
-                                    />
-                                }/>,
-                                <Tooltip arrow title={"Download reusable Atlas™-ISO-image"} children={
-                                    <Button
-                                        shrinkOnClick
-                                        width={percent(100)}
-                                        children={
-                                            <Flex gap={px(3)} align={Align.CENTER} fw elements={[
-                                                <Icon icon={<NoteIcon/>} size={px(25)}/>,
-                                                <Text
-                                                    bold
-                                                    text={"Create note"}
-                                                />,
-                                                <Text
-                                                    align={Align.CENTER}
-                                                    text={"Empty markdown note"}
-                                                    type={TextType.secondaryDescription}
-                                                    fontSize={px(11)}
-                                                />,
-                                            ]}/>
-                                        }
-                                    />
-                                }/>
-                            ]}/>
-                        }/>,
+                        <HOCWrapper body={wrapper => (
+                            <LiteGrid columns={2} gap={t.gaps.smallGab} children={
+                                <AF elements={[
+
+                                    ...wizardRoutines.map(routine => routine.previewCard(() => {
+                                        routine.run(p.view, p.currentFolder, wrapper);
+                                    })),
+
+                                    <Tooltip arrow title={"Upload & install Atlas™-ISO-image"} children={
+                                        <Button
+                                            shrinkOnClick
+                                            width={percent(100)}
+                                            children={
+                                                <Flex gap={px(3)} align={Align.CENTER} fw elements={[
+                                                    <Icon icon={<Upload/>} size={px(25)}/>,
+                                                    <Text
+                                                        bold
+                                                        text={"Import"}
+                                                    />,
+                                                    <Text
+                                                        align={Align.CENTER}
+                                                        text={"Import existing document"}
+                                                        type={TextType.secondaryDescription}
+                                                        fontSize={px(11)}
+                                                    />
+                                                ]}/>
+                                            }
+                                        />
+                                    }/>,
+                                    <Tooltip arrow title={"Download reusable Atlas™-ISO-image"} children={
+                                        <Button
+                                            shrinkOnClick
+                                            width={percent(100)}
+                                            children={
+                                                <Flex gap={px(3)} align={Align.CENTER} fw elements={[
+                                                    <Icon icon={<NoteIcon/>} size={px(25)}/>,
+                                                    <Text
+                                                        bold
+                                                        text={"Create note"}
+                                                    />,
+                                                    <Text
+                                                        align={Align.CENTER}
+                                                        text={"Empty markdown note"}
+                                                        type={TextType.secondaryDescription}
+                                                        fontSize={px(11)}
+                                                    />,
+                                                ]}/>
+                                            }
+                                        />
+                                    }/>
+                                ]}/>
+                            }/>
+                        )}/>,
+
+
 
 
 

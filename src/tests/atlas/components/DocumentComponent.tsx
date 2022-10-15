@@ -13,6 +13,7 @@ import {Color} from "../../../logic/style/Color";
 
 export type DocumentComponentProps = {
     data: AtlasDocument
+    onSelect?: (element: SettingsElement, data: AtlasDocument) => "break" | "open-local-document-view"
 }
 
 export type DocumentComponentLocalState = {
@@ -40,13 +41,18 @@ export class DocumentComponent extends BC<DocumentComponentProps, any, DocumentC
 
     private onClick(element: SettingsElement): Promise<void> {
         return new Promise<void>((resolve, reject) => {
+
+
             try {
                 const refreshedData = this.getDocumentData(true);
-                this.dialog(
-                    <StaticDrawerMenu maxHeight={percent(85)} body={() => (
-                        <DocumentPreview data={refreshedData}/>
-                    )}/>
-                );
+                if (this.props.onSelect?.(element, refreshedData) === "open-local-document-view") {
+                    this.dialog(
+                        <StaticDrawerMenu maxHeight={percent(85)} body={() => (
+                            <DocumentPreview data={refreshedData}/>
+                        )}/>
+                    );
+                }
+
                 resolve();
             } catch (e) {
                 reject(e);

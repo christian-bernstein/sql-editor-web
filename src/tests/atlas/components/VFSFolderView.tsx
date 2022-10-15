@@ -40,6 +40,7 @@ import {DocumentComponent} from "./DocumentComponent";
 import {UnresolvedDocumentComponent} from "./UnresolvedDocumentComponent";
 import {DocumentSetupDialog} from "./DocumentSetupDialog";
 import {DocumentCreateWizard} from "./DocumentCreateWizard";
+import {DocumentViewController} from "../documentViews/DocumentViewController";
 
 export type VFSFolderViewProps = {
     initialFolderID?: string,
@@ -48,7 +49,9 @@ export type VFSFolderViewProps = {
 
 export type VFSFolderViewLocalState = {
     currentFolderData: Q<Folder | undefined>
-    currentFolderID?: string
+    currentFolderID?: string,
+
+    openedDocument?: AtlasDocument
 }
 
 export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLocalState> {
@@ -89,7 +92,7 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
         this.props.onClose();
     }
 
-    private getCurrentFolder(): Folder {
+    getCurrentFolder(): Folder {
         return this.local.state.currentFolderData.get()[0] as Folder;
     }
 
@@ -114,7 +117,7 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
     }
 
     // TODO: merge with updateCurrentFolder(..)
-    private reloadFolderView() {
+    reloadFolderView() {
         this.local.state.currentFolderData.query();
         this.rerender("current-folder");
     }
@@ -193,35 +196,11 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
 
     private openCreateBlankDocumentSetup() {
         this.dialog(
-            <DocumentCreateWizard/>
+            <DocumentCreateWizard
+                view={this}
+                currentFolder={this.getCurrentFolder()}
+            />
         );
-
-        // this.dialog(
-        //     <DocumentSetupDialog
-        //         category={{
-        //             id: "",
-        //             documents: []
-        //         }}
-        //         actions={{
-        //             onSubmit: (document: AtlasDocument) => {
-        //                 const folder = this.getCurrentFolder();
-        //                 try {
-        //                     AtlasMain.atlas().api().createDocumentInFolder(folder.id, document);
-        //                     setTimeout(() => {
-        //                         AtlasMain.atlas(atlas => {
-        //                             atlas.rerender("folders");
-        //                         });
-        //                     }, 1);
-        //                     this.closeLocalDialog();
-        //                     this.reloadFolderView();
-        //                     return true;
-        //                 } catch (e) {
-        //                     return false;
-        //                 }
-        //             }
-        //         }}
-        //     />
-        // );
     }
 
     private folderViewAssembly() {
@@ -290,6 +269,12 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
         });
     }
 
+    private openDocument(data: AtlasDocument) {
+        this.local.setStateWithChannels({
+            openedDocument: data
+        }, ["opened-document"])
+    }
+
     private documentViewAssembly() {
         this.assembly.assembly("document-view", theme => {
             const documentIDs: Array<string> = this.getCurrentFolder().documentsIDs ?? new Array<string>();
@@ -331,7 +316,10 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                                 documents.map(doc => {
                                     try {
                                         return (
-                                            <DocumentComponent data={doc}/>
+                                            <DocumentComponent data={doc} onSelect={(element, data) => {
+                                                this.openDocument(data);
+                                                return "break";
+                                            }}/>
                                         );
                                     } catch (e) {
                                         return (
@@ -445,15 +433,14 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                                     ]
                                 }}/>
                             ]}/>,
-                            <Flex fw fh overflowYBehaviour={OverflowBehaviour.SCROLL} padding elements={[
-                                <DrawerHeader
-                                    header={"FOP"}
-                                    badgeText={"Folder view"}
-                                    enableBadge
-                                    badgeVM={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
-                                    description={"All your folders at-a-glance\nPress on the context icon to see available actions, like creating folders or accessing ISO-image manager"}
-                                />
-                            ]}/>
+
+                            this.component(local => {
+                                return (
+                                    <DocumentViewController
+                                        document={local.state.openedDocument}
+                                    />
+                                );
+                            }, "opened-document"),
                         ]}/>
                     ]
                 }}/>
