@@ -38,9 +38,13 @@ import {AtlasDocument} from "../data/AtlasDocument";
 import {IAtlasAPI} from "../api/IAtlasAPI";
 import {DocumentComponent} from "./DocumentComponent";
 import {UnresolvedDocumentComponent} from "./UnresolvedDocumentComponent";
-import {DocumentSetupDialog} from "./DocumentSetupDialog";
 import {DocumentCreateWizard} from "./DocumentCreateWizard";
-import {DocumentViewController} from "../documentViews/DocumentViewController";
+import {DocumentViewMultiplexer, DocumentViewMultiplexerControlConfig} from "./DocumentViewMultiplexer";
+import {v4} from "uuid";
+import {LiteGrid} from "../../../components/lo/LiteGrid";
+import {SettingsElement} from "../../../components/ho/settingsElement/SettingsElement";
+import {Separator} from "../../../components/lo/Separator";
+import {Orientation} from "../../../logic/style/Orientation";
 
 export type VFSFolderViewProps = {
     initialFolderID?: string,
@@ -51,7 +55,7 @@ export type VFSFolderViewLocalState = {
     currentFolderData: Q<Folder | undefined>
     currentFolderID?: string,
 
-    openedDocument?: AtlasDocument
+    viewMultiplexers: Array<DocumentViewMultiplexerControlConfig>
 }
 
 export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLocalState> {
@@ -84,8 +88,17 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                         resolve(currentFolder);
                     }
                 }
-            })
+            }),
+            viewMultiplexers: []
         });
+    }
+
+    public createMultiplexer(config: DocumentViewMultiplexerControlConfig) {
+        const muxers = this.local.state.viewMultiplexers;
+        muxers.push(config);
+        this.local.setStateWithChannels({
+            viewMultiplexers: muxers
+        }, ["multiplexer-created"]);
     }
 
     private onClose() {
@@ -99,6 +112,22 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
     componentDidMount() {
         super.componentDidMount();
         this.local.state.currentFolderData.query();
+
+        this.createMultiplexer({
+            groupID: v4(),
+            groupTitle: "Main",
+            documents: new Array<AtlasDocument>(),
+            activeDocumentID: undefined,
+            view: this
+        });
+
+        this.createMultiplexer({
+            groupID: v4(),
+            groupTitle: "Test",
+            documents: new Array<AtlasDocument>(),
+            activeDocumentID: undefined,
+            view: this
+        });
     }
 
     init() {
@@ -269,10 +298,68 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
         });
     }
 
+    public updateMultiplexer(multiplexerID: string, updateChannels: Array<string>, updater: (multiplexer: DocumentViewMultiplexerControlConfig) => DocumentViewMultiplexerControlConfig) {
+        const multiplexerControlConfigs: DocumentViewMultiplexerControlConfig[] = this.local.state.viewMultiplexers.filter(mux => mux.groupID === multiplexerID);
+        if (multiplexerControlConfigs.length === 0) {
+            console.error("no multiplexer found")
+            return;
+        }
+
+        let multiplexer = multiplexerControlConfigs[0];
+        multiplexer = updater(multiplexer);
+        const updatedMultiplexers = this.local.state.viewMultiplexers.filter(mux => mux.groupID !== multiplexerID);
+        updatedMultiplexers.push(multiplexer);
+
+        this.local.setState({
+            viewMultiplexers: updatedMultiplexers
+        }, new Map<string, any>(), () => {
+            this.rerenderMultiplexer(multiplexerID, ...updateChannels);
+        });
+    }
+
+    public rerenderMultiplexer(multiplexerID: string, ...channels: Array<string>) {
+        this.rerender(...this.generateMultiplexerChannel(multiplexerID, ...channels));
+    }
+
+    public generateMultiplexerChannel(multiplexerID: string, ...channels: Array<string>): Array<string> {
+        return channels.map(channel => `${multiplexerID}-${channel}`);
+    }
+
     private openDocument(data: AtlasDocument) {
-        this.local.setStateWithChannels({
-            openedDocument: data
-        }, ["opened-document"])
+        const updater = (muxID: string) => {
+            this.updateMultiplexer(muxID, ["main"], multiplexer => {
+                const documents = multiplexer.documents;
+                documents.push(data);
+                multiplexer.documents = documents;
+                multiplexer.activeDocumentID = data.id;
+                return multiplexer;
+            });
+        }
+
+        if (this.local.state.viewMultiplexers.length > 1) {
+            this.selectMultiplexer().then(selectedMuxID => {
+                updater(selectedMuxID);
+            });
+        } else {
+            updater(this.local.state.viewMultiplexers[0].groupID)
+        }
+    }
+
+    private selectMultiplexer(): Promise<string> {
+        return new Promise<string>((resolve, reject) => {
+            this.dialog(
+                <StaticDrawerMenu body={props => (
+                    <SettingsGroup elements={
+                        this.local.state.viewMultiplexers.map(mux => (
+                            <SettingsElement groupDisplayMode forceRenderSubpageIcon title={mux.groupTitle} onClick={element => {
+                                this.closeLocalDialog();
+                                resolve(mux.groupID);
+                            }}/>
+                        ))
+                    }/>
+                )}/>
+            );
+        })
     }
 
     private documentViewAssembly() {
@@ -291,8 +378,6 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                     }
                 });
             });
-
-
 
             return (
                 <Flex fw elements={[
@@ -358,6 +443,7 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
         return (
             <Screen deactivatePadding children={
                 <OverflowWithHeader dir={FlexDirection.COLUMN_REVERSE} staticContainer={{
+                    gap: px(),
                     elements: [
                         <Flex fw padding paddingX={px(32)} paddingY={px(16)} style={{ backgroundColor: "#161b22" }} align={Align.CENTER} flexDir={FlexDirection.ROW} justifyContent={Justify.SPACE_BETWEEN} elements={[
                             <Icon icon={<AttachmentIcon/>}/>,
@@ -368,13 +454,15 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                                     <Icon icon={<ExitIcon/>}/>
                                 ]}/>
                             }/>
-                        ]}/>
+                        ]}/>,
+                        <Separator/>
                     ]
                 }} overflowContainer={{
                     elements: [
                         <Flex fh fw gap={px()} flexDir={FlexDirection.ROW} elements={[
-                            <Flex fh width={px(500)}  style={{ backgroundColor: t.colors.backgroundHighlightColor.css() }} elements={[
+                            <Flex fh width={px(500)} style={{ backgroundColor: t.colors.backgroundHighlightColor.css() }} elements={[
                                 <OverflowWithHeader dir={FlexDirection.COLUMN_REVERSE} staticContainer={{
+                                    gap: px(),
                                     elements: [
                                         <Flex fw padding align={Align.CENTER} flexDir={FlexDirection.ROW} justifyContent={Justify.CENTER} elements={[
                                             <Icon icon={<AttachmentIcon/>}/>,
@@ -434,13 +522,27 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                                 }}/>
                             ]}/>,
 
+                            <Separator orientation={Orientation.VERTICAL}/>,
+
                             this.component(local => {
                                 return (
-                                    <DocumentViewController
-                                        document={local.state.openedDocument}
-                                    />
+                                    <LiteGrid style={{ width: "100%" }} columns={local.state.viewMultiplexers.length} children={
+                                        <AF elements={
+                                            local.state.viewMultiplexers.map(config => (
+                                                <DocumentViewMultiplexer
+                                                    controlConfigMirror={config}
+                                                    changeActiveDocument={newActiveDocumentID => {
+                                                        this.updateMultiplexer(config.groupID, ["main"], multiplexer => {
+                                                            multiplexer.activeDocumentID = newActiveDocumentID;
+                                                            return multiplexer;
+                                                        });
+                                                    }}
+                                                />
+                                            ))
+                                        }/>
+                                    }/>
                                 );
-                            }, "opened-document"),
+                            }, "multiplexer-created"),
                         ]}/>
                     ]
                 }}/>

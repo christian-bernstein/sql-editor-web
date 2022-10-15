@@ -27,6 +27,7 @@ import {Group} from "../../lo/Group";
 import {Orientation} from "../../../logic/style/Orientation";
 import {Accordion, AccordionDetails, AccordionSummary} from "@mui/material";
 import {OverflowBehaviour} from "../../../logic/style/OverflowBehaviour";
+import {ObjectVisualMeaning} from "../../../logic/style/ObjectVisualMeaning";
 
 export type SettingsElementIconConfig = {
     enable: boolean,
@@ -155,10 +156,22 @@ export class SettingsElement extends BernieComponent<SettingsElementProps, any, 
             <FlexBox width={percent(100)} align={Align.START} gap={t.gaps.smallGab}>
 
                 <FlexBox width={percent(100)} align={Align.START} gap={px()}>
-                    <Box width={percent(100)} highlight style={{justifyContent: "center"}} minHeight={px(40)} cursor={Cursor.pointer} onClick={() => this.onSelect()} borderRadiiConfig={{
-                        enableCustomBorderRadii: getOr(p.groupDisplayMode, false),
-                        fallbackCustomBorderRadii: px()
-                    }} noPadding borderless bgColor={t.colors.backgroundHighlightColor200} children={
+                    <Box
+                        width={percent(100)}
+                        highlight
+                        style={{justifyContent: "center"}}
+                        minHeight={px(40)}
+                        cursor={Cursor.pointer}
+                        onClick={() => this.onSelect()}
+                        borderRadiiConfig={{
+                            enableCustomBorderRadii: getOr(p.groupDisplayMode, false),
+                            fallbackCustomBorderRadii: px()
+                        }}
+                        noPadding
+                        borderless
+                        // visualMeaning={p.visualMeaning}
+                        bgColor={t.colors.backgroundHighlightColor200}
+                        children={
                         <FlexBox justifyContent={Justify.SPACE_BETWEEN} height={percent(100)} align={Align.CENTER} flexDir={FlexDirection.ROW}>
 
                             <FlexBox align={Align.CENTER} flexDir={FlexDirection.ROW} gap={t.gaps.smallGab} height={percent(100)}>
