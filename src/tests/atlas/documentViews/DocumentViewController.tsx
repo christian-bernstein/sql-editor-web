@@ -9,8 +9,10 @@ import {Flex} from "../../../components/lo/FlexBox";
 import {px} from "../../../logic/style/DimensionalMeasured";
 import {Align} from "../../../logic/style/Align";
 import {Justify} from "../../../logic/style/Justify";
+import {VFSFolderView} from "../components/VFSFolderView";
 
 export type DocumentViewControllerProps = {
+    view: VFSFolderView,
     document?: AtlasDocument,
     updateBody: (body: string) => void
 }
@@ -28,7 +30,7 @@ export class DocumentViewController extends BC<DocumentViewControllerProps, any,
                 }/>
             );
         } else {
-            return inDevDocumentView.renderer(p.document, p.updateBody);
+            return inDevDocumentView.renderer(p.view, p.document, p.updateBody);
         }
     }
 }

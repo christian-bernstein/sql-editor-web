@@ -158,7 +158,6 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
 
     private folderLevelViewAssembly() {
         this.assembly.assembly("folder-level-view", theme => {
-
             return this.component(local => (
                 <QueryDisplay<Folder | undefined> q={this.local.state.currentFolderData} renderer={{
                     success: (q, f: Folder | undefined) => {
@@ -200,7 +199,7 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                         );
                     }
                 }}/>
-            ), ...Q.allChannels("current-folder"))
+            ), ...Q.allChannels("current-folder"));
         })
     }
 
@@ -335,8 +334,6 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
     public generateMultiplexerChannel(multiplexerID: string, ...channels: Array<string>): Array<string> {
         return channels.map(channel => `${multiplexerID}-${channel}`);
     }
-
-
 
     private isDocumentOpened(documentID: string): boolean {
         return this.local.state.viewMultiplexers.filter(mux => mux.documents.filter(doc => doc.id === documentID).length > 0).length > 0;
@@ -529,10 +526,10 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
 
     public updateBody(documentID: string, newBody: string) {
         setTimeout(() => {
-            this.getDocumentState(documentID).saveState = DocumentSaveState.PENDING;
-
-            // Cause lags -> Better solution?
-            this.rerender(this.toDocumentSpecificChannel(documentID, "persistence-sync-state"));
+            if (this.getDocumentState(documentID).saveState !== DocumentSaveState.PENDING) {
+                this.getDocumentState(documentID).saveState = DocumentSaveState.PENDING;
+                this.rerender(this.toDocumentSpecificChannel(documentID, "persistence-sync-state"));
+            }
 
             const updater = this.local.state.documentBodyUpdaters.get(documentID);
 

@@ -25,6 +25,10 @@ export type OverflowWithHeaderProps = {
     staticContainer: {
         gap?: DimensionalMeasured,
         elements: Array<JSX.Element>
+    },
+    staticContainerHeader?: {
+        gap?: DimensionalMeasured,
+        elements: Array<JSX.Element>
     }
 }
 
@@ -38,6 +42,16 @@ export class OverflowWithHeader extends BC<OverflowWithHeaderProps, any, any> {
                 height={getOr(p.height, DimensionalMeasured.of(100, Dimension.vh))}
                 width={percent(100)}
                 elements={[
+                    p.staticContainerHeader === undefined ? <></> : (
+                        <FlexBox
+                            gap={p.staticContainerHeader.gap}
+                            fw
+                            padding={false}
+                            style={{ flex: "0 1 auto" }}
+                            elements={p.staticContainerHeader.elements}
+                        />
+                    ),
+
                     <FlexBox
                         gap={p.overflowContainer.gap}
                         fw

@@ -36,6 +36,8 @@ import {VFSFolderView} from "./components/VFSFolderView";
 import {AccountTreeRounded} from "@mui/icons-material";
 import {Tooltip} from "../../components/ho/tooltip/Tooltip";
 
+// import PdfViewerComponent from './PdfViewerComponent';
+
 export type AtlasMainProps = {
     api: IAtlasAPI
 }
@@ -52,6 +54,8 @@ export class AtlasMain extends BC<AtlasMainProps, any, any> {
     init() {
         super.init();
         this.folderAssembly();
+
+        // pdfjs.GlobalWorkerOptions.workerSrc
     }
 
     public api(): IAtlasAPI {
@@ -79,6 +83,14 @@ export class AtlasMain extends BC<AtlasMainProps, any, any> {
                         badgeText={"Virtual Folder System"}
                         description={"All your folders at-a-glance\nPress on the context icon to see available actions, like creating folders or accessing ISO-image manager"}
                     />,
+
+
+                    // <PdfViewerComponent
+                    //     document={"sample.pdf"}
+                    // />,
+
+
+
 
                     <FlexRow fw padding paddingX={px(25)} gap={theme.gaps.smallGab} elements={[
 
