@@ -26,6 +26,10 @@ import {ReactComponent as SavedIcon} from "../../../../assets/icons/ic-20/ic20-c
 import {ReactComponent as PendingIcon} from "../../../../assets/icons/ic-20/ic20-hourglass-progress.svg";
 import {VM} from "../../../../logic/style/ObjectVisualMeaning";
 import {DocumentState} from "../../data/DocumentState";
+import {Button} from "../../../../components/lo/Button";
+import EmojiPicker, {Emoji, EmojiStyle, SuggestionMode, Theme} from "emoji-picker-react";
+import {ContextCompound} from "../../../../components/ho/contextCompound/ContextCompound";
+import styled from "styled-components";
 
 export const inDevDocumentView: DocumentView = {
     renderer: (view, document, updateBody) => {
@@ -86,9 +90,58 @@ class InDevDocumentView extends BC<InDevDocumentViewProps, any, InDevDocumentVie
                             fw
                             borderless
                             borderRadiiConfig={{enableCustomBorderRadii: true, fallbackCustomBorderRadii: px(0)}}
+                            paddingY={t.paddings.defaultButtonPadding}
                             elements={[
-                                <Flex flexDir={FlexDirection.ROW} align={Align.CENTER} elements={[
-                                    <Text text={"Toolbox"} fontSize={px(11)} type={TextType.secondaryDescription}/>
+                                <Flex flexDir={FlexDirection.ROW} align={Align.CENTER} gap={t.gaps.smallGab} elements={[
+                                    <Text text={"Toolbox"} fontSize={px(11)} type={TextType.secondaryDescription}/>,
+
+                                    <ContextCompound wrapMenu={false} menu={
+                                        (() => {
+                                            const Wrapper = styled.div`
+                                              .EmojiPickerReact {
+                                                background-color: ${t.colors.backgroundHighlightColor.withAlpha(.9).css()};
+                                                border: none !important;
+                                                
+                                                * {
+                                                  font-family: "OperatorMono", "Consolas", monospace !important;
+                                                }
+                                                
+                                                .epr-emoji-category-label {
+                                                  background-color: ${t.colors.backgroundHighlightColor.css()} !important;
+                                                }
+                                              }
+                                            `;
+
+                                            return (
+                                                <Wrapper children={
+                                                    <EmojiPicker suggestedEmojisMode={SuggestionMode.FREQUENT} autoFocusSearch theme={Theme.DARK} emojiStyle={EmojiStyle.TWITTER} onEmojiClick={(emoji, event) => {
+                                                        this.dialog(
+                                                            <>
+                                                                {emoji.unified}
+                                                                <Emoji emojiStyle={EmojiStyle.TWITTER} unified={emoji.unified}/>
+                                                            </>
+                                                        );
+                                                    }}/>
+                                                }/>
+                                            );
+                                        })()
+                                    } children={
+                                        <Tooltip title={"Open Emoji Picker"} children={
+                                            <Button children={<Emoji emojiStyle={EmojiStyle.TWITTER} unified={"1f389"} size={16} lazyLoad/>} onClick={(event) => {
+                                                if (event.ctrlKey) {
+                                                    this.dialog(
+                                                        <EmojiPicker suggestedEmojisMode={SuggestionMode.FREQUENT} autoFocusSearch theme={Theme.DARK} emojiStyle={EmojiStyle.TWITTER} onEmojiClick={(emoji, event) => {
+                                                            this.dialog(
+                                                                <Emoji emojiStyle={EmojiStyle.TWITTER} unified={emoji.unified}/>
+                                                            );
+                                                        }}/>
+                                                    )
+                                                };
+                                            }}/>
+                                        }/>
+                                    }/>,
+
+
                                 ]}/>,
                             ]}
                         />,
