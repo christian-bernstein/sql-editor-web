@@ -158,43 +158,49 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
 
     private folderLevelViewAssembly() {
         this.assembly.assembly("folder-level-view", theme => {
-            const currentFolder = this.local.state.currentFolderData.get()[0];
-            const tree: Array<Folder> = new Array<Folder>();
 
-            let folder = currentFolder;
-            tree.push(folder as Folder);
-            while (folder?.parentFolder !== undefined) {
-                folder = AtlasMain.atlas().api().getFolder(folder.parentFolder);
-                tree.push(folder);
-            }
-
-            return (
-                <Flex flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab} align={Align.CENTER} elements={
-                    tree.reverse().map((folder, index, array) => {
-                        const isLast = !(index + 1 < array.length);
+            return this.component(local => (
+                <QueryDisplay<Folder | undefined> q={this.local.state.currentFolderData} renderer={{
+                    success: (q, f: Folder | undefined) => {
+                        // TODO: use 'f' -> Clean up this code
+                        const currentFolder = this.local.state.currentFolderData.get()[0];
+                        const tree: Array<Folder> = new Array<Folder>();
+                        let folder = currentFolder;
+                        tree.push(folder as Folder);
+                        while (folder?.parentFolder !== undefined) {
+                            folder = AtlasMain.atlas().api().getFolder(folder.parentFolder);
+                            tree.push(folder);
+                        }
                         return (
-                            <AF elements={[
-                                <Tooltip title={`Go to ${folder.id}`} arrow children={
-                                    <Text
-                                        text={`${folder.title}`}
-                                        cursor={Cursor.pointer}
-                                        highlight={isLast}
-                                        coloredText={isLast}
-                                        visualMeaning={isLast ? VM.INFO : VM.UI_NO_HIGHLIGHT}
-                                        onClick={() => {
-                                            if (!isLast) {
-                                                this.updateCurrentFolder(folder.id);
-                                            }
-                                        }
-                                    }/>
-                                }/>,
-                                // !isLast ? <Dot/> : undefined
-                                <Text text={"/"} type={TextType.secondaryDescription}/>
-                            ]}/>
+                            <Flex flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab} align={Align.CENTER} elements={
+                                tree.reverse().map((folder, index, array) => {
+                                    const isLast = !(index + 1 < array.length);
+                                    return (
+                                        <AF elements={[
+                                            <Tooltip title={`Go to ${folder.id}`} arrow children={
+                                                <Text
+                                                    text={`${folder.title}`}
+                                                    cursor={Cursor.pointer}
+                                                    highlight={isLast}
+                                                    coloredText={isLast}
+                                                    visualMeaning={isLast ? VM.INFO : VM.UI_NO_HIGHLIGHT}
+                                                    onClick={() => {
+                                                        if (!isLast) {
+                                                            this.updateCurrentFolder(folder.id);
+                                                        }
+                                                    }
+                                                    }/>
+                                            }/>,
+                                            // !isLast ? <Dot/> : undefined
+                                            <Text text={"/"} type={TextType.secondaryDescription}/>
+                                        ]}/>
+                                    );
+                                })
+                            }/>
                         );
-                    })
-                }/>
-            );
+                    }
+                }}/>
+            ), ...Q.allChannels("current-folder"))
         })
     }
 
@@ -525,6 +531,7 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
         setTimeout(() => {
             this.getDocumentState(documentID).saveState = DocumentSaveState.PENDING;
 
+            // Cause lags -> Better solution?
             this.rerender(this.toDocumentSpecificChannel(documentID, "persistence-sync-state"));
 
             const updater = this.local.state.documentBodyUpdaters.get(documentID);
