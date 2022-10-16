@@ -17,14 +17,18 @@ import {Align} from "../../../logic/style/Align";
 import {getOr} from "../../../logic/Utils";
 import {Color} from "../../../logic/style/Color";
 import {ReactComponent as DocumentIcon} from "../../../assets/icons/ic-20/ic20-file.svg";
+import {ReactComponent as ActionsIcon} from "../../../assets/icons/ic-20/ic20-more-ver.svg";
+import {ReactComponent as PendingIcon} from "../../../assets/icons/ic-20/ic20-hourglass-progress.svg";
+import {ReactComponent as SavedIcon} from "../../../assets/icons/ic-20/ic20-check.svg";
 import {ReactComponent as CloseIcon} from "../../../assets/icons/ic-20/ic20-close.svg";
 import {Icon} from "../../../components/lo/Icon";
 import {createMargin} from "../../../logic/style/Margin";
 import {Tooltip} from "../../../components/ho/tooltip/Tooltip";
 import {Justify} from "../../../logic/style/Justify";
 import {Badge} from "../../../components/lo/Badge";
-import {ObjectVisualMeaning} from "../../../logic/style/ObjectVisualMeaning";
+import {ObjectVisualMeaning, VM} from "../../../logic/style/ObjectVisualMeaning";
 import {DocumentState} from "../data/DocumentState";
+import {DocumentSaveState} from "../data/DocumentSaveState";
 
 export type DocumentViewMultiplexerControlConfig = {
     documents: Array<AtlasDocument>
@@ -59,18 +63,7 @@ export class DocumentViewMultiplexer extends BC<DocumentViewMultiplexerProps, an
     }
 
     private removeDocument(id: string) {
-        if (this.props.controlConfigMirror.activeDocumentID === undefined) {
-            return undefined;
-        }
-
-        if (this.getActiveDocument()?.id === id) {
-            this.props.changeActiveDocument(undefined);
-        }
-
-        this.view().updateMultiplexer(this.props.controlConfigMirror.groupID, ["main"], multiplexer => {
-            multiplexer.documents = multiplexer.documents.filter(doc => doc.id !== id);
-            return multiplexer;
-        });
+        this.view().closeAndRemoveDocumentFromMultiplexer(this.props.controlConfigMirror.groupID, id);
     }
 
     componentRender(p: DocumentViewMultiplexerProps, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
@@ -107,6 +100,7 @@ export class DocumentViewMultiplexer extends BC<DocumentViewMultiplexerProps, an
                                                 <Flex flexDir={FlexDirection.ROW} gap={t.gaps.smallGab} elements={[
                                                     ...p.controlConfigMirror.documents.map(document => {
                                                         const isActive: boolean = document.id === activeDocument?.id;
+                                                        const docState: DocumentState = this.view().getDocumentState(document.id);
 
                                                         return (
                                                             <SettingsElement
@@ -127,6 +121,34 @@ export class DocumentViewMultiplexer extends BC<DocumentViewMultiplexerProps, an
                                                                                     visualMeaning: ObjectVisualMeaning.INFO
                                                                                 })
                                                                             ) : <></>,
+
+                                                                            this.view().component(l => (
+                                                                                (() => {
+                                                                                    switch (docState.saveState) {
+                                                                                        case DocumentSaveState.SAVED:
+                                                                                            return (
+                                                                                                <Tooltip title={"Saved"} children={
+                                                                                                    <Icon icon={<SavedIcon/>} size={px(16)}/>
+                                                                                                }/>
+                                                                                            );
+                                                                                        case DocumentSaveState.PENDING:
+                                                                                            return (
+                                                                                                <Tooltip title={"Pending changes are getting saved"} children={
+                                                                                                    <Icon icon={<PendingIcon/>} colored visualMeaning={VM.WARNING} size={px(16)}/>
+                                                                                                }/>
+                                                                                            );
+                                                                                    }
+                                                                                })()
+                                                                            ), this.view().toDocumentSpecificChannel(document.id, "persistence-sync-state")),
+
+
+                                                                            <Tooltip title={"Actions"} children={
+                                                                                <Icon icon={<ActionsIcon/>} size={px(16)} onClick={(event) => {
+                                                                                    // TODO: Handle -> Open context menu
+                                                                                    event.stopPropagation();
+                                                                                }}/>
+                                                                            }/>,
+
                                                                             <Tooltip title={"Close document"} children={
                                                                                 <Icon icon={<CloseIcon/>} size={px(16)} onClick={(event) => {
                                                                                     this.removeDocument(document.id);

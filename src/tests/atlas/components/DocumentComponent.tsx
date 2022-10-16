@@ -13,7 +13,8 @@ import {Color} from "../../../logic/style/Color";
 
 export type DocumentComponentProps = {
     data: AtlasDocument
-    onSelect?: (element: SettingsElement, data: AtlasDocument) => "break" | "open-local-document-view"
+    onSelect?: (element: SettingsElement, data: AtlasDocument) => "break" | "open-local-document-view",
+    appendix?: ((element: SettingsElement) => JSX.Element) | undefined
 }
 
 export type DocumentComponentLocalState = {
@@ -41,8 +42,6 @@ export class DocumentComponent extends BC<DocumentComponentProps, any, DocumentC
 
     private onClick(element: SettingsElement): Promise<void> {
         return new Promise<void>((resolve, reject) => {
-
-
             try {
                 const refreshedData = this.getDocumentData(true);
                 if (this.props.onSelect?.(element, refreshedData) === "open-local-document-view") {
@@ -52,7 +51,6 @@ export class DocumentComponent extends BC<DocumentComponentProps, any, DocumentC
                         )}/>
                     );
                 }
-
                 resolve();
             } catch (e) {
                 reject(e);
@@ -74,6 +72,7 @@ export class DocumentComponent extends BC<DocumentComponentProps, any, DocumentC
                     )
                 }}
                 promiseBasedOnClick={element => this.onClick(element)}
+                appendixGenerator={p.appendix}
             />
         );
     }

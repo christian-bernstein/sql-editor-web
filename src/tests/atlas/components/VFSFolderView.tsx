@@ -6,12 +6,10 @@ import {Flex} from "../../../components/lo/FlexBox";
 import {FlexDirection} from "../../../logic/style/FlexDirection";
 import {Text, TextType} from "../../../components/lo/Text";
 import {px} from "../../../logic/style/DimensionalMeasured";
-import {ReactComponent as ExitIcon} from "../../../assets/icons/ic-20/ic20-close.svg";
 import {ReactComponent as SettingsIcon} from "../../../assets/icons/ic-20/ic20-settings.svg";
 import {Icon} from "../../../components/lo/Icon";
 import {Justify} from "../../../logic/style/Justify";
 import {Align} from "../../../logic/style/Align";
-import {Button} from "../../../components/lo/Button";
 import {SettingsGroup} from "../../../components/lo/SettingsGroup";
 import {DrawerHeader} from "../../../components/lo/DrawerHeader";
 import {ObjectVisualMeaning, VM} from "../../../logic/style/ObjectVisualMeaning";
@@ -47,6 +45,8 @@ import {Separator} from "../../../components/lo/Separator";
 import {Orientation} from "../../../logic/style/Orientation";
 import {DocumentState} from "../data/DocumentState";
 import _ from "lodash";
+import {Badge} from "../../../components/lo/Badge";
+import {DocumentSaveState} from "../data/DocumentSaveState";
 
 export type VFSFolderViewProps = {
     initialFolderID?: string,
@@ -330,7 +330,31 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
         return channels.map(channel => `${multiplexerID}-${channel}`);
     }
 
+
+
+    private isDocumentOpened(documentID: string): boolean {
+        return this.local.state.viewMultiplexers.filter(mux => mux.documents.filter(doc => doc.id === documentID).length > 0).length > 0;
+    }
+
+    private isDocumentActive(documentID: string): boolean {
+        return this.local.state.viewMultiplexers.filter(mux => mux.activeDocumentID === documentID).length > 0;
+    }
+
+    private getDocumentMultiplexer(documentID: string): DocumentViewMultiplexerControlConfig | undefined {
+        return this.local.state.viewMultiplexers.filter(mux => mux.activeDocumentID === documentID)[0] ?? undefined;
+    }
+
+    public toDocumentSpecificChannel(documentID: string, channel: string): string {
+        return `${documentID}-${channel}`
+    }
+
     private openDocument(data: AtlasDocument) {
+        // Document can only be opened once (overarching all multiplexers)
+        // TODO: Allow a document to be opened once in every multiplexer -> Sync edits
+        if (this.isDocumentOpened(data.id)) {
+            return;
+        }
+
         const updater = (muxID: string) => {
             this.local.state.documentBodyUpdaters.set(data.id, _.debounce((body: string) => {
                 AtlasMain.atlas(atlas => {
@@ -340,9 +364,15 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                         return document;
                     });
                 });
-
-                // TODO: rerender!
+                this.getDocumentState(data.id).saveState = DocumentSaveState.SAVED;
+                this.rerender(this.toDocumentSpecificChannel(data.id, "persistence-sync-state"));
             }, 1000));
+
+            this.local.state.documentStates.set(data.id, {
+                saveState: DocumentSaveState.SAVED
+            });
+
+            this.rerender(this.toDocumentSpecificChannel(data.id, "opened"));
 
             this.updateMultiplexer(muxID, ["main"], multiplexer => {
                 const documents = multiplexer.documents;
@@ -360,6 +390,25 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
         } else {
             updater(this.local.state.viewMultiplexers[0].groupID)
         }
+    }
+
+    public closeAndRemoveDocumentFromMultiplexer(multiplexerID: string, documentID: string) {
+        const mux = this.local.state.viewMultiplexers.filter(mux => mux.groupID === multiplexerID)[0] ?? undefined;
+
+        if (mux === undefined) {
+            return;
+        }
+
+        if (mux.activeDocumentID === documentID) {
+            mux.activeDocumentID = undefined;
+        }
+
+        this.rerender(this.toDocumentSpecificChannel(documentID, "closed"));
+
+        this.updateMultiplexer(multiplexerID, ["main"], multiplexer => {
+            multiplexer.documents = multiplexer.documents.filter(doc => doc.id !== documentID);
+            return multiplexer;
+        });
     }
 
     private selectMultiplexer(): Promise<string> {
@@ -416,18 +465,34 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                         documents.length > 0 ? (
                             <SettingsGroup elements={
                                 documents.map(doc => {
-                                    try {
-                                        return (
-                                            <DocumentComponent data={doc} onSelect={(element, data) => {
-                                                this.openDocument(data);
-                                                return "break";
-                                            }}/>
-                                        );
-                                    } catch (e) {
-                                        return (
-                                            <UnresolvedDocumentComponent id={doc.id} error={e}/>
-                                        );
-                                    }
+                                    return this.component(local => {
+                                        try {
+                                            if (this.isDocumentOpened(doc.id)) {
+                                                // Document is opened in a multiplexer, Display visual hint
+                                                return (
+                                                    <DocumentComponent data={doc} onSelect={(element, data) => "open-local-document-view"} appendix={element => (
+                                                        <Flex flexDir={FlexDirection.ROW} align={Align.CENTER} elements={[
+                                                            Badge.badge("Open", {
+                                                                visualMeaning: ObjectVisualMeaning.INFO
+                                                            })
+                                                        ]}/>
+                                                    )}/>
+                                                );
+                                            } else {
+                                                return (
+                                                    <DocumentComponent data={doc} onSelect={(element, data) => {
+                                                        this.openDocument(data);
+                                                        return "break";
+                                                    }}/>
+                                                );
+                                            }
+                                        } catch (e) {
+                                            return (
+                                                <UnresolvedDocumentComponent id={doc.id} error={e}/>
+                                            );
+                                        }
+
+                                    }, ...["opened", "closed"].map(channel => this.toDocumentSpecificChannel(doc.id, channel)));
                                 })
                             }/>
                         ) : (
@@ -457,13 +522,27 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
     }
 
     public updateBody(documentID: string, newBody: string) {
-        const updater = this.local.state.documentBodyUpdaters.get(documentID);
+        setTimeout(() => {
+            this.getDocumentState(documentID).saveState = DocumentSaveState.PENDING;
 
-        if (updater !== undefined) {
-            updater(newBody);
-        } else {
-            console.error(`Opened document '${documentID}' has no corresponding body update adapter`);
+            this.rerender(this.toDocumentSpecificChannel(documentID, "persistence-sync-state"));
+
+            const updater = this.local.state.documentBodyUpdaters.get(documentID);
+
+            if (updater !== undefined) {
+                updater(newBody);
+            } else {
+                console.error(`Opened document '${documentID}' has no corresponding body update adapter`);
+            }
+        }, 1);
+    }
+
+    public getDocumentState(documentID: string): DocumentState {
+        const state = this.local.state.documentStates.get(documentID);
+        if (state === undefined) {
+            throw new Error(`getDocumentState cannot find state for document id '${documentID}'`)
         }
+        return state;
     }
 
     componentRender(p: any, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
