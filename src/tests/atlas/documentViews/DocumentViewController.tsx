@@ -13,6 +13,8 @@ import {VFSFolderView} from "../components/VFSFolderView";
 import {DocumentViewRenderContext} from "./DocumentViewRenderContext";
 import {AtlasMain} from "../AtlasMain";
 import {DocumentBodyUpdaterInstruction} from "./DocumentBodyUpdaterInstruction";
+import {DocumentType} from "../data/DocumentType";
+import {markdownDocumentView} from "./views/MarkdownDocumentView";
 
 export type DocumentViewControllerProps = {
     view: VFSFolderView,
@@ -34,6 +36,24 @@ export class DocumentViewController extends BC<DocumentViewControllerProps, any,
             );
         } else {
             const computedDocID = p.document?.id ?? "special@fallback";
+
+            // TODO: MAKE BETTER!!!
+
+            if (p.document.documentType === DocumentType.MARKDOWN) {
+                return markdownDocumentView.renderer(new DocumentViewRenderContext({
+                    view: p.view,
+                    documentID: p.document.id,
+                    documentGetter: () => AtlasMain.atlas().api().getDocument(computedDocID),
+                    documentStateGetter: () => p.view.getDocumentState(computedDocID),
+                    bodyUpdater: {
+                        update: (instruction: DocumentBodyUpdaterInstruction) => {
+                            // TODO implement better solution (bypass debouncing)
+                            p.updateBody(instruction.newBody);
+                        }
+                    }
+                }))
+            }
+
             return inDevDocumentView.renderer(new DocumentViewRenderContext({
                 view: p.view,
                 documentID: p.document.id,
