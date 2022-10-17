@@ -359,7 +359,7 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
         return `${documentID}-${channel}`
     }
 
-    private openDocument(data: AtlasDocument) {
+    public openDocument(data: AtlasDocument) {
         // Document can only be opened once (overarching all multiplexers)
         // TODO: Allow a document to be opened once in every multiplexer -> Sync edits
         if (this.isDocumentOpened(data.id)) {

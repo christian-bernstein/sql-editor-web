@@ -25,7 +25,7 @@ import {SettingsGroup} from "../../../components/lo/SettingsGroup";
 import {SettingsElement} from "../../../components/ho/settingsElement/SettingsElement";
 import {Input} from "../../../components/lo/Input";
 import {WizardRoutineCard} from "./documentWizard/WizardRoutineCard";
-import {wizardRoutines} from "../wizard/document/routines/WizardRoutineCollection";
+import {wizardRoutines} from "../wizard/document/wizards/WizardRoutineCollection";
 import {HOCWrapper} from "../../../components/HOCWrapper";
 import {VFSFolderView} from "./VFSFolderView";
 import {Folder} from "../data/Folder";
@@ -66,7 +66,7 @@ export class DocumentCreateWizard extends BC<DocumentCreateWizardProps, any, any
                             <Flex flexDir={FlexDirection.ROW} align={Align.CENTER} gap={t.gaps.smallGab} elements={[
                                 <Text text={"Recommended"} bold/>,
                                 <Dot/>,
-                                <Text text={`${3}`} type={TextType.secondaryDescription}/>,
+                                <Text text={`${wizardRoutines.length}`} type={TextType.secondaryDescription}/>,
                             ]}/>,
 
                             <Flex flexDir={FlexDirection.ROW} align={Align.CENTER} gap={t.gaps.smallGab} elements={[
@@ -80,9 +80,10 @@ export class DocumentCreateWizard extends BC<DocumentCreateWizardProps, any, any
                             <LiteGrid columns={2} gap={t.gaps.smallGab} children={
                                 <AF elements={[
                                     ...wizardRoutines.map(routine => routine.previewCard(() => {
-                                        routine.run(p.view, p.currentFolder, wrapper).then(document => {
-                                            const folder = p.view.getCurrentFolder();
-                                            AtlasMain.atlas().api().createDocumentInFolder(folder.id, document);
+
+                                        // TODO: Implement multi-engine support
+
+                                        routine.run(p.view, p.currentFolder, wrapper, document => {
                                             setTimeout(() => {
                                                 AtlasMain.atlas(atlas => {
                                                     atlas.rerender("folders");
@@ -91,7 +92,10 @@ export class DocumentCreateWizard extends BC<DocumentCreateWizardProps, any, any
                                             wrapper.closeLocalDialog();
                                             p.view.closeLocalDialog();
                                             p.view.reloadFolderView();
-                                        });
+
+                                            // TODO: Make optional -> onSetupComplete parameter: (openAfterCreation: boolean)
+                                            p.view.openDocument(document);
+                                        }).then(r => { /* TODO: Implement something here \c.c/ */ })
                                     }))
                                 ]}/>
                             }/>

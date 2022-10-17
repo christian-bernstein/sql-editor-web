@@ -1,22 +1,24 @@
-import {WizardRoutine} from "./WizardRoutine";
-import {WizardRoutineCard} from "../../../components/documentWizard/WizardRoutineCard";
+import {WizardRoutine} from "../../WizardRoutine";
+import {WizardRoutineCard} from "../../../../components/documentWizard/WizardRoutineCard";
 import React from "react";
-import {Button} from "../../../../../components/lo/Button";
-import {DocumentSetupDialog} from "../../../components/DocumentSetupDialog";
-import {AtlasDocument} from "../../../data/AtlasDocument";
-import {NoteDocumentArchetype} from "../../../data/documentArchetypes/NoteDocumentArchetype";
-import {Flex} from "../../../../../components/lo/FlexBox";
-import {BC} from "../../../../../logic/BernieComponent";
-import {Themeable} from "../../../../../logic/style/Themeable";
-import {Assembly} from "../../../../../logic/assembly/Assembly";
-import {StaticDrawerMenu} from "../../../../../components/lo/StaticDrawerMenu";
+import {Button} from "../../../../../../components/lo/Button";
+import {DocumentSetupDialog} from "../../../../components/DocumentSetupDialog";
+import {AtlasDocument} from "../../../../data/AtlasDocument";
+import {NoteDocumentArchetype} from "../../../../data/documentArchetypes/NoteDocumentArchetype";
+import {Flex} from "../../../../../../components/lo/FlexBox";
+import {BC} from "../../../../../../logic/BernieComponent";
+import {Themeable} from "../../../../../../logic/style/Themeable";
+import {Assembly} from "../../../../../../logic/assembly/Assembly";
+import {StaticDrawerMenu} from "../../../../../../components/lo/StaticDrawerMenu";
 import Editor from "@monaco-editor/react";
-import {DrawerHeader} from "../../../../../components/lo/DrawerHeader";
-import {DimensionalMeasured, percent, px} from "../../../../../logic/style/DimensionalMeasured";
-import {ObjectVisualMeaning, VM} from "../../../../../logic/style/ObjectVisualMeaning";
+import {DrawerHeader} from "../../../../../../components/lo/DrawerHeader";
+import {DimensionalMeasured, percent, px} from "../../../../../../logic/style/DimensionalMeasured";
+import {ObjectVisualMeaning, VM} from "../../../../../../logic/style/ObjectVisualMeaning";
 import _ from "lodash";
-import {FlexDirection} from "../../../../../logic/style/FlexDirection";
-import {Dimension} from "../../../../../logic/style/Dimension";
+import {FlexDirection} from "../../../../../../logic/style/FlexDirection";
+import {Dimension} from "../../../../../../logic/style/Dimension";
+import {WizardSubRoutine} from "../../WizardSubRoutine";
+import {DefaultWizardEngine} from "../../engines/DefaultWizardEngine";
 
 export const noteWizardRoutine: WizardRoutine = {
     title: "Create note",
@@ -30,46 +32,28 @@ export const noteWizardRoutine: WizardRoutine = {
             onSelect={() => onSelectCallback()}
         />
     ),
-    run: (view, currentFolder, component) => {
-        return new Promise<AtlasDocument>(async (resolve, reject) => {
-            const base: AtlasDocument = await new Promise<AtlasDocument>((resolve, reject) => {
-                component.dialog(
-                    <StaticDrawerMenu body={() => (
-                        <DocumentSetupDialog
-                            category={{
-                                id: "",
-                                documents: []
-                            }}
-                            actions={{
-                                onSubmit: (document: AtlasDocument) => {
-                                    try {
-                                        resolve(document);
-                                        return true;
-                                    } catch (e) {
-                                        return false;
-                                    }
-                                }
-                            }}
-                        />
-                    )}/>
-                );
-            });
-
-            const body: NoteDocumentArchetype = await new Promise<NoteDocumentArchetype>((resolve, reject) => {
-                component.dialog(
-                    <NoteWizardNoteForm onSubmit={note => {
-                        resolve({
-                            note: note
-                        });
-                    }}/>
-                );
-            });
-
-            console.log("JSON.stringify(body)", JSON.stringify(body))
-
-            base.body = JSON.stringify(body);
-
-            resolve(base);
+    run: (view, currentFolder, component, onSetupComplete) => {
+        return new DefaultWizardEngine().run({
+            view: view,
+            component: component,
+            currentFolder: currentFolder,
+            onSetupComplete: onSetupComplete,
+            wizardEngineID: "default",
+            subRoutines: new Array<WizardSubRoutine>({
+                run: (document, context) => {
+                    return new Promise<Partial<AtlasDocument>>((resolve, reject) => {
+                        context.component.dialog(
+                            <NoteWizardNoteForm onSubmit={note => {
+                                resolve({
+                                    body: JSON.stringify({
+                                        note: note
+                                    } as NoteDocumentArchetype)
+                                });
+                            }}/>
+                        );
+                    });
+                }
+            })
         });
     }
 }
