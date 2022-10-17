@@ -3,7 +3,6 @@ import {OverflowBehaviour} from "../../../../logic/style/OverflowBehaviour";
 import {Flex} from "../../../../components/lo/FlexBox";
 import React from "react";
 import Editor from "@monaco-editor/react";
-import {utilizeGlobalTheme} from "../../../../logic/app/App";
 import {NoteDocumentArchetype} from "../../data/documentArchetypes/NoteDocumentArchetype";
 import {OverflowWithHeader} from "../../../../components/lo/OverflowWithHeader";
 import {FlexDirection} from "../../../../logic/style/FlexDirection";
@@ -16,8 +15,6 @@ import {Box} from "../../../../components/lo/Box";
 import {BC} from "../../../../logic/BernieComponent";
 import {Assembly} from "../../../../logic/assembly/Assembly";
 import {Themeable} from "../../../../logic/style/Themeable";
-import {VFSFolderView} from "../../components/VFSFolderView";
-import {AtlasDocument} from "../../data/AtlasDocument";
 import {Dot} from "../../../../components/lo/Dot";
 import {DocumentSaveState} from "../../data/DocumentSaveState";
 import {Tooltip} from "../../../../components/ho/tooltip/Tooltip";
@@ -30,28 +27,29 @@ import {Button} from "../../../../components/lo/Button";
 import EmojiPicker, {Emoji, EmojiStyle, SuggestionMode, Theme} from "emoji-picker-react";
 import {ContextCompound} from "../../../../components/ho/contextCompound/ContextCompound";
 import styled from "styled-components";
+import {DocumentViewRenderContext} from "../DocumentViewRenderContext";
+import {VFSFolderView} from "../../components/VFSFolderView";
 
 export const inDevDocumentView: DocumentView = {
-    renderer: (view, document, updateBody) => {
-        const t = utilizeGlobalTheme();
-
-        let note: string = "";
-        try {
-            note = (JSON.parse(document.body as string) as NoteDocumentArchetype).note ?? "Cannot load..";
-        } catch (e) {
-            console.error(e);
-        }
-
+    renderer: (context) => {
         return (
-            <InDevDocumentView view={view} document={document} updateBody={updateBody}/>
+            <InDevDocumentView context={context}/>
         );
     }
 }
 
+
+
+
+
+
+
+
+
+
+
 type InDevDocumentViewProps = {
-    view: VFSFolderView,
-    document: AtlasDocument,
-    updateBody: (body: string) => void
+    context: DocumentViewRenderContext
 }
 
 type InDevDocumentViewLocalState = {
@@ -68,10 +66,10 @@ class InDevDocumentView extends BC<InDevDocumentViewProps, any, InDevDocumentVie
     }
 
     componentRender(p: InDevDocumentViewProps, s: any, l: InDevDocumentViewLocalState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
-        const view = p.view;
-        const document = p.document;
-        const updateBody = p.updateBody
-        const docState: DocumentState = view.getDocumentState(document.id);
+        // const docState: DocumentState = view.getDocumentState(document.id);
+        const document = p.context.data.documentGetter();
+        const docState: DocumentState = p.context.data.documentStateGetter();
+        const view: VFSFolderView = p.context.data.view;
 
         let note: string = "";
         try {
@@ -130,7 +128,7 @@ class InDevDocumentView extends BC<InDevDocumentViewProps, any, InDevDocumentVie
                                             <Button children={<Emoji emojiStyle={EmojiStyle.TWITTER} unified={"1f389"} size={16} lazyLoad/>} onClick={(event) => {
                                                 if (event.ctrlKey) {
                                                     this.dialog(
-                                                        <EmojiPicker suggestedEmojisMode={SuggestionMode.FREQUENT} autoFocusSearch theme={Theme.DARK} emojiStyle={EmojiStyle.TWITTER} onEmojiClick={(emoji, event) => {
+                                                        <EmojiPicker lazyLoadEmojis suggestedEmojisMode={SuggestionMode.FREQUENT} autoFocusSearch theme={Theme.DARK} emojiStyle={EmojiStyle.TWITTER} onEmojiClick={(emoji, event) => {
                                                             this.dialog(
                                                                 <Emoji emojiStyle={EmojiStyle.TWITTER} unified={emoji.unified}/>
                                                             );
@@ -186,17 +184,18 @@ class InDevDocumentView extends BC<InDevDocumentViewProps, any, InDevDocumentVie
                                 theme={"ses-x-dark-tritanopia"}
                                 defaultValue={note ?? ""}
                                 onChange={(value, ev) => {
-                                    updateBody(JSON.stringify({
+                                    const newBody = JSON.stringify({
                                         note: value ?? ""
-                                    } as NoteDocumentArchetype));
+                                    } as NoteDocumentArchetype);
+
+                                    p.context.data.bodyUpdater.update({
+                                        newBody: newBody
+                                    });
+
                                     this.local.setState({
                                         noteMirror: value
                                     });
                                 }}
-                                // options={{
-                                //     fontLigatures: true
-                                // }}
-
                                 options={{
                                     hideCursorInOverviewRuler: true,
                                     lineDecorationsWidth: 0,
@@ -226,7 +225,7 @@ class InDevDocumentView extends BC<InDevDocumentViewProps, any, InDevDocumentVie
                             borderRadiiConfig={{enableCustomBorderRadii: true, fallbackCustomBorderRadii: px(0)}}
                             elements={[
                                 <Flex flexDir={FlexDirection.ROW} align={Align.CENTER} elements={[
-                                    view.component(l => {
+                                    p.context.data.view.component(l => {
                                         switch (docState.saveState) {
                                             case DocumentSaveState.SAVED:
                                                 return (

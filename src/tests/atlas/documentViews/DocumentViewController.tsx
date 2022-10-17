@@ -10,6 +10,9 @@ import {px} from "../../../logic/style/DimensionalMeasured";
 import {Align} from "../../../logic/style/Align";
 import {Justify} from "../../../logic/style/Justify";
 import {VFSFolderView} from "../components/VFSFolderView";
+import {DocumentViewRenderContext} from "./DocumentViewRenderContext";
+import {AtlasMain} from "../AtlasMain";
+import {DocumentBodyUpdaterInstruction} from "./DocumentBodyUpdaterInstruction";
 
 export type DocumentViewControllerProps = {
     view: VFSFolderView,
@@ -30,7 +33,19 @@ export class DocumentViewController extends BC<DocumentViewControllerProps, any,
                 }/>
             );
         } else {
-            return inDevDocumentView.renderer(p.view, p.document, p.updateBody);
+            const computedDocID = p.document?.id ?? "special@fallback";
+            return inDevDocumentView.renderer(new DocumentViewRenderContext({
+                view: p.view,
+                documentID: p.document.id,
+                documentGetter: () => AtlasMain.atlas().api().getDocument(computedDocID),
+                documentStateGetter: () => p.view.getDocumentState(computedDocID),
+                bodyUpdater: {
+                    update: (instruction: DocumentBodyUpdaterInstruction) => {
+                        // TODO implement better solution (bypass debouncing)
+                        p.updateBody(instruction.newBody);
+                    }
+                }
+            }));
         }
     }
 }
