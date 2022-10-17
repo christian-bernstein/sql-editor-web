@@ -1,4 +1,4 @@
-import {BC} from "../../../logic/BernieComponent";
+import {BC, BernieComponent} from "../../../logic/BernieComponent";
 import {Themeable} from "../../../logic/style/Themeable";
 import {Assembly} from "../../../logic/assembly/Assembly";
 import {Screen} from "../../../components/lo/Page";
@@ -47,6 +47,9 @@ import {DocumentState} from "../data/DocumentState";
 import _ from "lodash";
 import {Badge} from "../../../components/lo/Badge";
 import {DocumentSaveState} from "../data/DocumentSaveState";
+import {ReactComponent as ActionsIcon} from "../../../assets/icons/ic-20/ic20-more-ver.svg";
+import {ReactComponent as DeleteIcon} from "../../../assets/icons/ic-20/ic20-delete.svg";
+import {ConfirmationDialog} from "../../../components/lo/ConfirmationDialog";
 
 export type VFSFolderViewProps = {
     initialFolderID?: string,
@@ -441,7 +444,11 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                 documentIDs.forEach(docID => {
                     try {
                         const doc: AtlasDocument = api.getDocument(docID);
-                        documents.push(doc);
+                        if (doc !== undefined) {
+                            documents.push(doc);
+                        } else {
+                            // TODO: Display a warning
+                        }
                     } catch (e) {
                         console.error(e);
                     }
@@ -469,15 +476,61 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                             <SettingsGroup elements={
                                 documents.map(doc => {
                                     return this.component(local => {
+                                        const contextMenuRenderer = (element: SettingsElement) => {
+                                            return (
+                                                <Tooltip title={"Actions"} children={
+                                                    <Icon icon={<ActionsIcon/>} size={px(18)} onClick={(event) => {
+                                                        // TODO: Handle -> Open context menu (Improve menu)
+
+                                                        element.dialog(
+                                                            <StaticDrawerMenu body={() => (
+                                                                <Flex align={Align.CENTER} fh fw elements={[
+                                                                    <SettingsElement groupDisplayMode title={"Delete document"} iconConfig={{
+                                                                        enable: true,
+                                                                        color: theme.colors.errorColor,
+                                                                        iconGenerator: element => <DeleteIcon/>
+                                                                    }} onClick={element => {
+                                                                        element.helper.confirm({
+                                                                            title: `Delete document ${doc.title}`,
+                                                                            vm: ObjectVisualMeaning.ERROR,
+                                                                            text: "This action cannot be undone. Once the document is deleted, it is removed unrecoverable from the system.\n**It is recommended to create recoverable backups via the ISO-image manager**.",
+                                                                            actions: {
+                                                                                onConfirm: (component: BC<any, any, any>) => {
+                                                                                    AtlasMain.atlas(atlas => {
+                                                                                        if (atlas.api().deleteDocument(doc.id)) {
+                                                                                            this.local.state.viewMultiplexers.forEach(mux => {
+                                                                                                this.closeAndRemoveDocumentFromMultiplexer(mux.groupID, doc.id);
+                                                                                            })
+                                                                                            this.rerender("document-view", this.toDocumentSpecificChannel(doc.id, "meta-updated"));
+                                                                                        }
+                                                                                    });
+                                                                                },
+                                                                                onCancel(component: BernieComponent<any, any, any>) {
+                                                                                    component.closeLocalDialog();
+                                                                                }
+                                                                            }
+                                                                        }, (config, caller) => <ConfirmationDialog config={config} caller={caller}/>)
+                                                                    }}/>
+                                                                ]}/>
+                                                            )}/>
+                                                        )
+
+                                                        event.stopPropagation();
+                                                    }}/>
+                                                }/>
+                                            );
+                                        }
+
                                         try {
                                             if (this.isDocumentOpened(doc.id)) {
                                                 // Document is opened in a multiplexer, Display visual hint
                                                 return (
                                                     <DocumentComponent data={doc} onSelect={(element, data) => "open-local-document-view"} appendix={element => (
-                                                        <Flex flexDir={FlexDirection.ROW} align={Align.CENTER} elements={[
+                                                        <Flex flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab} align={Align.CENTER} elements={[
                                                             Badge.badge("Open", {
                                                                 visualMeaning: ObjectVisualMeaning.INFO
-                                                            })
+                                                            }),
+                                                            contextMenuRenderer(element)
                                                         ]}/>
                                                     )}/>
                                                 );
@@ -486,7 +539,11 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                                                     <DocumentComponent data={doc} onSelect={(element, data) => {
                                                         this.openDocument(data);
                                                         return "break";
-                                                    }}/>
+                                                    }} appendix={element => (
+                                                        <Flex flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab} align={Align.CENTER} elements={[
+                                                            contextMenuRenderer(element)
+                                                        ]}/>
+                                                    )}/>
                                                 );
                                             }
                                         } catch (e) {
@@ -495,7 +552,7 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                                             );
                                         }
 
-                                    }, ...["opened", "closed"].map(channel => this.toDocumentSpecificChannel(doc.id, channel)));
+                                    }, ...["opened", "closed", "meta-updated"].map(channel => this.toDocumentSpecificChannel(doc.id, channel)));
                                 })
                             }/>
                         ) : (
@@ -615,7 +672,7 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                                                                 }/>,
 
                                                                 this.a("folder-view"),
-                                                                this.a("document-view"),
+                                                                this.component(() => this.a("document-view"), "document-view"),
                                                             ]}/>
                                                         );
                                                     },
