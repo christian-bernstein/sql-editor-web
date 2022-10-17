@@ -50,6 +50,7 @@ import {DocumentSaveState} from "../data/DocumentSaveState";
 import {ReactComponent as ActionsIcon} from "../../../assets/icons/ic-20/ic20-more-ver.svg";
 import {ReactComponent as DeleteIcon} from "../../../assets/icons/ic-20/ic20-delete.svg";
 import {ConfirmationDialog} from "../../../components/lo/ConfirmationDialog";
+import {SideScroller} from "../../../components/layout/SideScroller";
 
 export type VFSFolderViewProps = {
     initialFolderID?: string,
@@ -173,31 +174,35 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                             folder = AtlasMain.atlas().api().getFolder(folder.parentFolder);
                             tree.push(folder);
                         }
+
                         return (
-                            <Flex flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab} align={Align.CENTER} elements={
-                                tree.reverse().map((folder, index, array) => {
-                                    const isLast = !(index + 1 < array.length);
-                                    return (
-                                        <AF elements={[
-                                            <Tooltip title={`Go to ${folder.id}`} arrow children={
-                                                <Text
-                                                    text={`${folder.title}`}
-                                                    cursor={Cursor.pointer}
-                                                    highlight={isLast}
-                                                    coloredText={isLast}
-                                                    visualMeaning={isLast ? VM.INFO : VM.UI_NO_HIGHLIGHT}
-                                                    onClick={() => {
-                                                        if (!isLast) {
-                                                            this.updateCurrentFolder(folder.id);
+                            <SideScroller useMouseDragging children={
+                                <Flex flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab} align={Align.CENTER} elements={
+                                    tree.reverse().map((folder, index, array) => {
+                                        const isLast = !(index + 1 < array.length);
+                                        return (
+                                            <AF elements={[
+                                                <Tooltip title={`Go to ${folder.id}`} arrow children={
+                                                    <Text
+                                                        whitespace={"nowrap"}
+                                                        text={`${folder.title}`}
+                                                        cursor={Cursor.pointer}
+                                                        highlight={isLast}
+                                                        coloredText={isLast}
+                                                        visualMeaning={isLast ? VM.INFO : VM.UI_NO_HIGHLIGHT}
+                                                        onClick={() => {
+                                                            if (!isLast) {
+                                                                this.updateCurrentFolder(folder.id);
+                                                            }
                                                         }
-                                                    }
-                                                    }/>
-                                            }/>,
-                                            // !isLast ? <Dot/> : undefined
-                                            <Text text={"/"} type={TextType.secondaryDescription}/>
-                                        ]}/>
-                                    );
-                                })
+                                                        }/>
+                                                }/>,
+                                                // !isLast ? <Dot/> : undefined
+                                                <Text text={"/"} type={TextType.secondaryDescription}/>
+                                            ]}/>
+                                        );
+                                    })
+                                }/>
                             }/>
                         );
                     }
