@@ -111,11 +111,20 @@ export const Text: React.FC<TextProps> = props => {
       .md {
         width: 100%;
         white-space: ${getOr(props.whitespace, "pre-wrap")};
-        // todo was comment, why? & does it make errors?
+        // todo was comment, why? & does it make errors? ==> YES!!! REMOVE IT!!
         
         text-align: ${getOr(props.align, Align.START)};
         // todo check if working
         text-transform: ${props.uppercase ? "uppercase" : "auto"};
+
+        code {
+          padding: 0.2em 0.4em;
+          margin: 0;
+          font-size: 85%;
+          background-color: rgba(110, 118, 129, .4);
+          border-radius: 6px;
+          font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+        }
       }
     `;
 
