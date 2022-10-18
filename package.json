@@ -84,6 +84,7 @@
     "react-tiger-transition": "^4.1.2",
     "react-tooltip": "^4.2.21",
     "rehype-raw": "^6.1.1",
+    "remark-gfm": "^3.0.1",
     "reshake": "^1.2.4",
     "sourcemapped-stacktrace": "^1.1.11",
     "sql-formatter": "^6.1.2",

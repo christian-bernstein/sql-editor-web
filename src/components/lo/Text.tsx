@@ -13,6 +13,7 @@ import {Cursor} from "../../logic/style/Cursor";
 import {Image} from "./Image";
 import rehypeRaw from "rehype-raw";
 import {Color} from "../../logic/style/Color";
+import remarkGfm from 'remark-gfm';
 
 // todo implement
 export type FontOptions = {
@@ -128,7 +129,7 @@ export const Text: React.FC<TextProps> = props => {
             {props.enableLeftAppendix ? props.leftAppendix : <></>}
 
             {renderMD ? (
-                <ReactMarkdown rehypePlugins={[rehypeRaw]} className={"md"} children={text} components={{
+                <ReactMarkdown rehypePlugins={[rehypeRaw]} remarkPlugins={[remarkGfm]} className={"md"} children={text} components={{
                     a: (mdProps, context) => {
                         if (getOr(props.advancedLinkRendering, false)) {
                             return (
