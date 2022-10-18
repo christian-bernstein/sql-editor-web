@@ -371,7 +371,7 @@ class MarkdownDocumentView extends BC<MarkdownDocumentViewProps, any, MarkdownDo
                 }}
                 overflowContainer={{
                     elements: [
-                        <Flex fw overflowYBehaviour={OverflowBehaviour.SCROLL} flexDir={FlexDirection.ROW} gap={px()}
+                        <Flex fw fh overflowYBehaviour={OverflowBehaviour.SCROLL} flexDir={FlexDirection.ROW} gap={px()}
                               elements={[
                                   this.component(() => this.a("editor"), "editor"),
                                   this.component(() => this.a("markdown-display"), "markdown-display"),
