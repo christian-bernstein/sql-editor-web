@@ -74,6 +74,23 @@ export function percent(measurand: number = 0): DimensionalMeasured {
     return dimension(measurand, Dimension.percentage);
 }
 
+export function auto(): DimensionalMeasured {
+    return new class extends DimensionalMeasured {
+        constructor() {
+            super(0, Dimension.NOT_SPECIFIED);
+        }
+
+        css(asCSSValue?: boolean): string {
+            const s = "auto";
+            if (asCSSValue) {
+                return `"${s}"`;
+            } else {
+                return s;
+            }
+        }
+    }()
+}
+
 // noinspection SpellCheckingInspection
 export function vh(measurand: number = 0): DimensionalMeasured {
     return dimension(measurand, Dimension.vh);

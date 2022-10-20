@@ -10,7 +10,7 @@ import {OverflowWithHeader} from "../../../../components/lo/OverflowWithHeader";
 import {FlexDirection} from "../../../../logic/style/FlexDirection";
 import {percent, px} from "../../../../logic/style/DimensionalMeasured";
 import {Box} from "../../../../components/lo/Box";
-import {Flex} from "../../../../components/lo/FlexBox";
+import {Flex, FlexBox} from "../../../../components/lo/FlexBox";
 import {Align} from "../../../../logic/style/Align";
 import {Text, TextType} from "../../../../components/lo/Text";
 import {Tooltip} from "../../../../components/ho/tooltip/Tooltip";
@@ -22,10 +22,17 @@ import {DocumentSaveState} from "../../data/DocumentSaveState";
 import {Icon} from "../../../../components/lo/Icon";
 import {ReactComponent as SavedIcon} from "../../../../assets/icons/ic-20/ic20-check.svg";
 import {ReactComponent as PendingIcon} from "../../../../assets/icons/ic-20/ic20-hourglass-progress.svg";
+import {ReactComponent as DebounceIcon} from "../../../../assets/icons/ic-20/ic20-stopwatch.svg";
 import {VM} from "../../../../logic/style/ObjectVisualMeaning";
 import {Dot} from "../../../../components/lo/Dot";
 import {MarkdownDocumentArchetype} from "../../data/documentArchetypes/MarkdownDocumentArchetype";
 import styled from "styled-components";
+import _ from "lodash";
+import {MarkdownViewerReloadPolicyMenu} from "../../components/menus/MarkdownViewerReloadPolicyMenu";
+import {ContextCompound} from "../../../../components/ho/contextCompound/ContextCompound";
+import {ConfigManager} from "../../config/ConfigManager";
+import {LocalStorageConfigManagerPersistentAdapter} from "../../config/LocalStorageConfigManagerPersistentAdapter";
+import {MarkdownViewerReloadPolicyConfig} from "../../config/configurations/MarkdownViewerReloadPolicyConfig";
 
 export const markdownDocumentView: DocumentView = {
     renderer: (context) => {
@@ -40,14 +47,20 @@ type MarkdownDocumentViewProps = {
 }
 
 type MarkdownDocumentViewLocalState = {
-    sourceMirror: string
+    sourceMirror: string,
+    updateRenderedMarkdownViewer: () => void,
+    configManager: ConfigManager
 }
 
 class MarkdownDocumentView extends BC<MarkdownDocumentViewProps, any, MarkdownDocumentViewLocalState> {
 
     constructor(props: MarkdownDocumentViewProps) {
         super(props, undefined, {
-            sourceMirror: ""
+            sourceMirror: "",
+            updateRenderedMarkdownViewer: _.debounce(() => {
+                this.rerender("markdown-display");
+            }, 1000),
+            configManager: new ConfigManager(new LocalStorageConfigManagerPersistentAdapter())
         });
     }
 
@@ -62,20 +75,54 @@ class MarkdownDocumentView extends BC<MarkdownDocumentViewProps, any, MarkdownDo
 
         this.local.setStateWithChannels({
             sourceMirror: newSource
-        }, ["source-updated"]);
+        }, ["source-updated"], () => {
+            this.local.state.updateRenderedMarkdownViewer();
+        });
     }
 
     componentDidMount() {
         super.componentDidMount();
+        this.updateRenderedMarkdownViewer();
         this.local.setStateWithChannels({
             sourceMirror: (JSON.parse(this.props.context.data.documentGetter().body as string) as MarkdownDocumentArchetype).source ?? "Cannot load.."
         }, ["source-updated"]);
+    }
+
+    private getMarkdownViewerReloadPolicyConfig(): MarkdownViewerReloadPolicyConfig{
+        return this.local.state.configManager.loadConfig<MarkdownViewerReloadPolicyConfig>("MarkdownViewerReloadPolicyConfig");
+    }
+
+    private updateRenderedMarkdownViewer(config?: MarkdownViewerReloadPolicyConfig) {
+        if (config === undefined) {
+            config = this.getMarkdownViewerReloadPolicyConfig();
+            if (config === undefined) {
+                throw new Error("updateRenderedMarkdownViewer: config cannot be resolved");
+            }
+        }
+        this.local.setState({
+            updateRenderedMarkdownViewer: config.enableDebounce ? _.debounce(() => {
+                this.rerender("markdown-display");
+            }, config.debounceMS) : () => {
+                this.rerender("markdown-display");
+            }
+        });
+
+        this.rerender("MarkdownViewerReloadPolicyConfig-change");
     }
 
     init() {
         super.init();
         this.editorAssembly();
         this.markdownDisplayAssembly();
+        this.local.state.configManager.init(manager => {
+            manager.registerChangeListener<MarkdownViewerReloadPolicyConfig>("MarkdownViewerReloadPolicyConfig", (config) => {
+                this.updateRenderedMarkdownViewer(config);
+            });
+            manager.loadConfig<MarkdownViewerReloadPolicyConfig>("MarkdownViewerReloadPolicyConfig", {
+                enableDebounce: false,
+                debounceMS: 1000
+            });
+        });
     }
 
     private editorAssembly() {
@@ -316,7 +363,7 @@ class MarkdownDocumentView extends BC<MarkdownDocumentViewProps, any, MarkdownDo
                                             <Text text={local.state.sourceMirror}/>
                                         }/>
                                     );
-                                }, "source-updated")
+                                }, "markdown-display")
                             ]}
                         />
                     ]}
@@ -387,51 +434,108 @@ class MarkdownDocumentView extends BC<MarkdownDocumentViewProps, any, MarkdownDo
                             borderless
                             borderRadiiConfig={{enableCustomBorderRadii: true, fallbackCustomBorderRadii: px(0)}}
                             elements={[
-                                <Flex flexDir={FlexDirection.ROW} align={Align.CENTER} elements={[
-                                    p.context.data.view.component(l => {
-                                        switch (docState.saveState) {
-                                            case DocumentSaveState.SAVED:
-                                                return (
-                                                    <Tooltip title={"Saved"} children={
-                                                        <Icon icon={<SavedIcon/>} size={px(16)}/>
-                                                    }/>
-                                                );
-                                            case DocumentSaveState.PENDING:
-                                                return (
-                                                    <Tooltip title={"Pending changes are getting saved"} children={
-                                                        <Icon icon={<PendingIcon/>} colored visualMeaning={VM.WARNING}
-                                                              size={px(16)}/>
-                                                    }/>
-                                                );
-                                            default:
-                                                return <></>
-                                        }
-                                    }, view.toDocumentSpecificChannel(document.id, "persistence-sync-state")),
+                                <FlexBox
+                                    flexDir={FlexDirection.ROW}
+                                    width={percent(100)}
+                                    elements={[
+                                        <FlexBox
+                                            gap={t.gaps.smallGab}
+                                            padding={false}
+                                            flexDir={FlexDirection.ROW}
+                                            style={{ flex: "0 1 auto" }}
+                                            elements={[
+                                                p.context.data.view.component(l => {
+                                                    switch (docState.saveState) {
+                                                        case DocumentSaveState.SAVED:
+                                                            return (
+                                                                <Tooltip title={"Saved"} children={
+                                                                    <Icon icon={<SavedIcon/>} size={px(16)}/>
+                                                                }/>
+                                                            );
+                                                        case DocumentSaveState.PENDING:
+                                                            return (
+                                                                <Tooltip title={"Pending changes are getting saved"} children={
+                                                                    <Icon icon={<PendingIcon/>} colored visualMeaning={VM.WARNING}
+                                                                          size={px(16)}/>
+                                                                }/>
+                                                            );
+                                                        default:
+                                                            return <></>
+                                                    }
+                                                }, view.toDocumentSpecificChannel(document.id, "persistence-sync-state")),
 
-                                    view.component(
-                                        () => {
-                                            const note = this.local.state.sourceMirror;
-                                            const charCount = note.length;
-                                            const wordCount = note.trim().split(/\s+/).length;
-                                            const byteLength = Buffer.byteLength(note, 'utf16le');
+                                                view.component(
+                                                    () => {
+                                                        const note = this.local.state.sourceMirror;
+                                                        const charCount = note.length;
+                                                        const wordCount = note.trim().split(/\s+/).length;
+                                                        const byteLength = Buffer.byteLength(note, 'utf16le');
 
-                                            return (
-                                                <Flex flexDir={FlexDirection.ROW} align={Align.CENTER}
-                                                      gap={t.gaps.smallGab} elements={[
-                                                    <Text text={`${wordCount} words`} fontSize={px(11)}
-                                                          type={TextType.secondaryDescription}/>,
-                                                    <Dot/>,
-                                                    <Text text={`${charCount} characters`} fontSize={px(11)}
-                                                          type={TextType.secondaryDescription}/>,
-                                                    <Dot/>,
-                                                    <Text text={`${byteLength} bytes (utf-16-le)`} fontSize={px(11)}
-                                                          type={TextType.secondaryDescription}/>,
-                                                ]}/>
-                                            );
-                                        },
-                                        view.toDocumentSpecificChannel(document.id, "persistence-sync-state")
-                                    )
-                                ]}/>,
+                                                        return (
+                                                            <Flex flexDir={FlexDirection.ROW} align={Align.CENTER}
+                                                                  gap={t.gaps.smallGab} elements={[
+                                                                <Text text={`${wordCount} words`} fontSize={px(11)}
+                                                                      type={TextType.secondaryDescription}/>,
+                                                                <Dot/>,
+                                                                <Text text={`${charCount} characters`} fontSize={px(11)}
+                                                                      type={TextType.secondaryDescription}/>,
+                                                                <Dot/>,
+                                                                <Text text={`${byteLength} bytes (utf-16-le)`} fontSize={px(11)}
+                                                                      type={TextType.secondaryDescription}/>,
+                                                            ]}/>
+                                                        );
+                                                    },
+                                                    view.toDocumentSpecificChannel(document.id, "persistence-sync-state")
+                                                ),
+                                            ]}
+                                        />,
+
+                                        <FlexBox
+                                            flexDir={FlexDirection.ROW}
+                                            gap={t.gaps.smallGab}
+                                            style={{ flex: "1 1 auto" }}
+                                            overflowYBehaviour={OverflowBehaviour.SCROLL}
+                                            elements={[]}
+                                        />,
+
+                                        <FlexBox
+                                            flexDir={FlexDirection.ROW}
+                                            gap={t.gaps.smallGab}
+                                            padding={false}
+                                            style={{ flex: "0 1 auto" }}
+                                            elements={[
+                                                <ContextCompound wrapMenu={false} children={
+                                                    this.component((local) => {
+                                                        const config = this.getMarkdownViewerReloadPolicyConfig();
+
+                                                        return (
+                                                            <Tooltip title={"Viewer debounce settings"} children={
+                                                                config.enableDebounce ? (
+                                                                    <Icon icon={<DebounceIcon/>} size={px(16)}/>
+                                                                ) : (
+                                                                    <Icon icon={<DebounceIcon/>} colored visualMeaning={VM.UI_NO_HIGHLIGHT} size={px(16)}/>
+                                                                )
+
+                                                            }/>
+                                                        );
+                                                    }, "MarkdownViewerReloadPolicyConfig-change")
+                                                } menu={
+                                                    <MarkdownViewerReloadPolicyMenu
+                                                        parent={this}
+                                                        getConfig={() => this.local.state.configManager.loadConfig("MarkdownViewerReloadPolicyConfig")}
+                                                        updater={{
+                                                            update: callback => {
+                                                                this.local.state.configManager.updateConfig<MarkdownViewerReloadPolicyConfig>("MarkdownViewerReloadPolicyConfig", config => {
+                                                                    return callback(config);
+                                                                })
+                                                            }
+                                                        }}
+                                                    />
+                                                }/>,
+                                            ]}
+                                        />
+                                    ]}
+                                />
                             ]}
                         />
                     ]

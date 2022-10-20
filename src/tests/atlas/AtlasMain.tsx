@@ -24,7 +24,6 @@ import {ReactComponent as DeleteIcon} from "../../assets/icons/ic-20/ic20-delete
 import {ReactComponent as SettingsIcon} from "../../assets/icons/ic-20/ic20-settings.svg";
 import {ReactComponent as ActionIcon} from "../../assets/icons/ic-20/ic20-more-ver.svg";
 import {ReactComponent as StorageIcon} from "../../assets/icons/ic-20/ic20-dns.svg";
-import {ReactComponent as DebugIcon} from "../../assets/icons/ic-20/ic20-bug.svg";
 import {HOCWrapper} from "../../components/HOCWrapper";
 import {StorageQuotaDialog} from "./components/StorageQuotaDialog";
 import {Centered} from "../../components/lo/PosInCenter";
@@ -35,6 +34,11 @@ import {ConfirmationDialog} from "../../components/lo/ConfirmationDialog";
 import {VFSFolderView} from "./components/VFSFolderView";
 import {AccountTreeRounded} from "@mui/icons-material";
 import {Tooltip} from "../../components/ho/tooltip/Tooltip";
+import {LiteGrid} from "../../components/lo/LiteGrid";
+import {AF} from "../../components/logic/ArrayFragment";
+import {arrayFactory} from "../../logic/Utils";
+import {Box} from "../../components/lo/Box";
+import {Justify} from "../../logic/style/Justify";
 
 // import PdfViewerComponent from './PdfViewerComponent';
 
@@ -84,13 +88,9 @@ export class AtlasMain extends BC<AtlasMainProps, any, any> {
                         description={"All your folders at-a-glance\nPress on the context icon to see available actions, like creating folders or accessing ISO-image manager"}
                     />,
 
-
                     // <PdfViewerComponent
                     //     document={"sample.pdf"}
                     // />,
-
-
-
 
                     <FlexRow fw padding paddingX={px(25)} gap={theme.gaps.smallGab} elements={[
 
