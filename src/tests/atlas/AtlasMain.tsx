@@ -34,15 +34,10 @@ import {ConfirmationDialog} from "../../components/lo/ConfirmationDialog";
 import {VFSFolderView} from "./components/VFSFolderView";
 import {AccountTreeRounded, CodeOffRounded, CodeRounded} from "@mui/icons-material";
 import {Tooltip} from "../../components/ho/tooltip/Tooltip";
-import {LiteGrid} from "../../components/lo/LiteGrid";
-import {AF} from "../../components/logic/ArrayFragment";
-import {arrayFactory} from "../../logic/Utils";
-import {Box} from "../../components/lo/Box";
-import {Justify} from "../../logic/style/Justify";
 import {Gloria} from "../../frameworks/gloria/Gloria";
 import {GloriaCommandPalette} from "../../frameworks/gloria/components/GloriaCommandPalette";
-
-// import PdfViewerComponent from './PdfViewerComponent';
+import {AF} from "../../components/logic/ArrayFragment";
+import {Utils} from "../../logic/Utils";
 
 export type AtlasMainProps = {
     api: IAtlasAPI
@@ -57,41 +52,25 @@ export class AtlasMain extends BC<AtlasMainProps, any, any> {
         return this.atlasInstance as AtlasMain;
     }
 
-    init() {
-        super.init();
-        this.folderAssembly();
-
-        // pdfjs.GlobalWorkerOptions.workerSrc
-    }
-
-    public api(): IAtlasAPI {
-        return this.props.api;
-    }
-
-    componentDidMount() {
-        super.componentDidMount();
-        AtlasMain.atlasInstance = this;
-        this.registerGloriaCommandInput();
-    }
-
     public static openGloria() {
         AtlasMain.atlas(atlas => {
             atlas.dialog(
                 <Screen style={{ backgroundColor: "transparent" }} children={
                     <Centered fullHeight children={
                         <GloriaCommandPalette gloria={new Gloria().registerCommand({
-                            id: "test-1",
-                            title: () => "Test 1",
+                            id: "long-duration-test",
+                            title: () => "I take a long time!",
                             description: () => "This is the test description for `Test 1`. This commands does only print to the console.",
                             executor: (ctx) => new Promise(resolve => {
-                                console.log("Test 1 running");
-                                resolve(undefined);
+                                setTimeout(() => {
+                                    resolve(undefined);
+                                }, 5000);
                             })
                         }).registerCommand({
-                            id: "test-2",
-                            title: () => "Test called 2",
+                            id: "open-tree-view",
+                            title: () => "Open tree view",
                             executor: (ctx) => new Promise(resolve => {
-                                console.log("Test 2 running");
+                                AtlasMain.atlas().openTreeViewDialog();
                                 resolve(undefined);
                             })
                         }).registerCommand({
@@ -115,6 +94,18 @@ export class AtlasMain extends BC<AtlasMainProps, any, any> {
         });
     }
 
+    public api(): IAtlasAPI {
+        return this.props.api;
+    }
+
+    public openTreeViewDialog() {
+        this.dialog(
+            <VFSFolderView
+                onClose={() => this.closeLocalDialog()}
+            />
+        );
+    }
+
     private registerGloriaCommandInput() {
         let delta: number = 500, lastKeypressTime: number = 0;
         document.addEventListener("keydown", ev => {
@@ -127,11 +118,6 @@ export class AtlasMain extends BC<AtlasMainProps, any, any> {
                 lastKeypressTime = thisKeypressTime;
             }
         });
-    }
-
-    componentWillUnmount() {
-        super.componentWillUnmount();
-        AtlasMain.atlasInstance = undefined;
     }
 
     private folderAssembly() {
@@ -154,11 +140,7 @@ export class AtlasMain extends BC<AtlasMainProps, any, any> {
 
                         <Tooltip noBorder title={"Open tree view"} arrow children={
                             <Button height={percent(100)} children={ <Icon icon={<AccountTreeRounded/>}/> } onClick={() => {
-                                this.dialog(
-                                    <VFSFolderView
-                                        onClose={() => this.closeLocalDialog()}
-                                    />
-                                );
+                                this.openTreeViewDialog();
                             }}/>
                         }/>,
 
@@ -375,13 +357,35 @@ export class AtlasMain extends BC<AtlasMainProps, any, any> {
         })
     }
 
+    init() {
+        super.init();
+        this.folderAssembly();
+    }
+
+    componentDidMount() {
+        super.componentDidMount();
+        AtlasMain.atlasInstance = this;
+        this.registerGloriaCommandInput();
+    }
+
+    componentWillUnmount() {
+        super.componentWillUnmount();
+        AtlasMain.atlasInstance = undefined;
+    }
+
     componentRender(p: any, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
-            <Screen deactivatePadding children={
-                <Flex fh fw align={Align.CENTER} elements={[
-                    this.a("folder")
-                ]}/>
-            }/>
+            <AF elements={[
+                // Visual content
+                <Screen deactivatePadding children={
+                    <Flex fh fw align={Align.CENTER} elements={[
+                        this.a("folder")
+                    ]}/>
+                }/>
+
+                // logic components
+                // TODO: Implement gloria panel -> separate dialog
+            ]}/>
         );
     }
 }

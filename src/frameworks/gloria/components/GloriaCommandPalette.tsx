@@ -23,22 +23,32 @@ import {ReactComponent as Watermark} from "../assets/footer.svg";
 import {createMargin} from "../../../logic/style/Margin";
 import {OverflowBehaviour} from "../../../logic/style/OverflowBehaviour";
 import {AF} from "../../../components/logic/ArrayFragment";
+import {ConfigManager} from "../../../tests/atlas/config/ConfigManager";
+import {
+    LocalStorageConfigManagerPersistentAdapter
+} from "../../../tests/atlas/config/LocalStorageConfigManagerPersistentAdapter";
+import {GloriaCommandPaletteConfig} from "../config/GloriaCommandPaletteConfig";
+import {KeyHint} from "../../../components/lo/KeyHint";
+import {Centered} from "../../../components/lo/PosInCenter";
+import {FlexWrap} from "../../../logic/style/FlexWrap";
 
 export type SampleCommandPaletteProps = {
     gloria: Gloria
 }
 
 export type SampleCommandPaletteLocalState = {
+    configManager: ConfigManager
     filteredCommands: Array<GloriaCommandDefinition>,
     filteredCommandsPointer: number,
     filter?: string,
-    calculateFilteredCommands: () => void
+    calculateFilteredCommands: () => void,
 }
 
 export class GloriaCommandPalette extends BC<SampleCommandPaletteProps, any, SampleCommandPaletteLocalState> {
 
     constructor(props: SampleCommandPaletteProps) {
         super(props, undefined, {
+            configManager: new ConfigManager(new LocalStorageConfigManagerPersistentAdapter()),
             filteredCommands: props.gloria.commands,
             filteredCommandsPointer: 0,
             calculateFilteredCommands: _.debounce(() => {
@@ -49,27 +59,12 @@ export class GloriaCommandPalette extends BC<SampleCommandPaletteProps, any, Sam
 
     init() {
         super.init();
+        this.ls().configManager.loadConfig<GloriaCommandPaletteConfig>("GloriaCommandPaletteConfig", {
+            openSidePanels: true
+        });
         this.westCompartmentAssembly();
         this.coreAssembly();
         this.eastCompartmentAssembly();
-    }
-
-    private _calculateFilteredCommands() {
-        const state = this.ls();
-        const gloria = this.props.gloria;
-        let filteredCommands: GloriaCommandDefinition[];
-        const filter = state.filter?.toLocaleLowerCase().trim() ?? /.*/;
-        if (state.filter === undefined) filteredCommands = gloria.commands;
-        else filteredCommands = gloria.commands.filter(cd => cd.title(gloria).toLocaleLowerCase().match(filter));
-        this.local.setStateWithChannels({
-            filteredCommands: filteredCommands,
-            filteredCommandsPointer: 0
-        }, ["filtered-commands", "pointer"]);
-    }
-
-
-    public calculateFilteredCommands() {
-        this.ls().calculateFilteredCommands();
     }
 
     public setFilteredCommandsPointer(newPointerPositionCandidate: number) {
@@ -89,11 +84,23 @@ export class GloriaCommandPalette extends BC<SampleCommandPaletteProps, any, Sam
         const command = state.filteredCommands[state.filteredCommandsPointer];
         this.props.gloria.run(command.id, new Map<string, string>(), undefined).then(r => {
             console.log("response", r);
-        })
+        });
     }
 
     public getSelectedCommand(): GloriaCommandDefinition {
         return this.ls().filteredCommands[this.ls().filteredCommandsPointer];
+    }
+
+    public toggleSidePanels() {
+        this.ls().configManager.updateConfig<GloriaCommandPaletteConfig>("GloriaCommandPaletteConfig", config => {
+            config.openSidePanels = !config.openSidePanels;
+            return config;
+        });
+        this.rerender("side-panels")
+    }
+
+    private getConfig(): GloriaCommandPaletteConfig {
+        return this.ls().configManager.loadConfig<GloriaCommandPaletteConfig>("GloriaCommandPaletteConfig");
     }
 
     private coreAssembly() {
@@ -156,6 +163,12 @@ export class GloriaCommandPalette extends BC<SampleCommandPaletteProps, any, Sam
                                                     if (e.keyCode == monaco.KeyCode.Enter) {
                                                         this.executePointedCommand();
                                                         e.preventDefault();
+                                                    }
+
+                                                    if (e.altKey && e.keyCode == monaco.KeyCode.KeyS) {
+                                                        this.toggleSidePanels();
+                                                        e.preventDefault();
+                                                        return;
                                                     }
 
                                                     if (e.ctrlKey) {
@@ -248,11 +261,15 @@ export class GloriaCommandPalette extends BC<SampleCommandPaletteProps, any, Sam
                         staticContainer={{
                             elements: [
                                 <Flex fw align={Align.CENTER} justifyContent={Justify.CENTER} margin={createMargin(0, 0, 20, 0)} elements={[
-                                    <Watermark/>
+                                    <Flex wrap={FlexWrap.WRAP} elements={[
+                                        <KeyHint keys={["ALT", "S"]} label={"Toggle side panels"}/>,
+                                    ]}/>,
+                                    <Centered children={
+                                        <Watermark/>
+                                    }/>
                                 ]}/>
                             ]
                         }}
-
                     />
                 ]}/>
 
@@ -262,6 +279,8 @@ export class GloriaCommandPalette extends BC<SampleCommandPaletteProps, any, Sam
 
     private westCompartmentAssembly() {
         this.assembly.assembly("west-compartment", theme => {
+            if (this.getConfig().openSidePanels) return <></>;
+
             return (
                 <Box
                     bgColor={Color.ofHex("#121212")}
@@ -283,6 +302,8 @@ export class GloriaCommandPalette extends BC<SampleCommandPaletteProps, any, Sam
 
     private eastCompartmentAssembly() {
         this.assembly.assembly("east-compartment", theme => {
+            if (this.getConfig().openSidePanels) return <></>;
+
             return (
                 <Box
                     bgColor={Color.ofHex("#121212")}
@@ -292,6 +313,13 @@ export class GloriaCommandPalette extends BC<SampleCommandPaletteProps, any, Sam
                     elements={[
                         this.component(() => {
                             const selectedCommand = this.getSelectedCommand();
+
+                            if (selectedCommand === undefined) {
+                                return (
+                                    <>No command selected</>
+                                );
+                            }
+
                             return (
                                 <AF elements={[
                                     <Flex fw flexDir={FlexDirection.ROW} padding paddingX={px(19)} paddingY={px(27)} elements={[
@@ -326,12 +354,29 @@ export class GloriaCommandPalette extends BC<SampleCommandPaletteProps, any, Sam
         });
     }
 
+    public calculateFilteredCommands() {
+        this.ls().calculateFilteredCommands();
+    }
+
+    private _calculateFilteredCommands() {
+        const state = this.ls();
+        const gloria = this.props.gloria;
+        let filteredCommands: GloriaCommandDefinition[];
+        const filter = state.filter?.toLocaleLowerCase().trim() ?? /.*/;
+        if (state.filter === undefined) filteredCommands = gloria.commands;
+        else filteredCommands = gloria.commands.filter(cd => cd.title(gloria).toLocaleLowerCase().match(filter));
+        this.local.setStateWithChannels({
+            filteredCommands: filteredCommands,
+            filteredCommandsPointer: 0
+        }, ["filtered-commands", "pointer"]);
+    }
+
     componentRender(p: SampleCommandPaletteProps, s: any, l: SampleCommandPaletteLocalState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
             <Flex flexDir={FlexDirection.ROW} justifyContent={Justify.CENTER} align={Align.CENTER} gap={px(20)} fw height={DimensionalMeasured.of(40, Dimension.vh)} elements={[
-                this.a("west-compartment"),
+                this.component(() => this.a("west-compartment"), "side-panels", "west-compartment"),
                 this.a("core"),
-                this.a("east-compartment")
+                this.component(() => this.a("east-compartment"), "side-panels", "east-compartment"),
             ]}/>
         );
     }
