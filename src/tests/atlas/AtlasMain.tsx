@@ -32,13 +32,15 @@ import {createMargin} from "../../logic/style/Margin";
 import {Icon} from "../../components/lo/Icon";
 import {ConfirmationDialog} from "../../components/lo/ConfirmationDialog";
 import {VFSFolderView} from "./components/VFSFolderView";
-import {AccountTreeRounded} from "@mui/icons-material";
+import {AccountTreeRounded, CodeOffRounded, CodeRounded} from "@mui/icons-material";
 import {Tooltip} from "../../components/ho/tooltip/Tooltip";
 import {LiteGrid} from "../../components/lo/LiteGrid";
 import {AF} from "../../components/logic/ArrayFragment";
 import {arrayFactory} from "../../logic/Utils";
 import {Box} from "../../components/lo/Box";
 import {Justify} from "../../logic/style/Justify";
+import {Gloria} from "../../frameworks/gloria/Gloria";
+import {GloriaCommandPalette} from "../../frameworks/gloria/components/GloriaCommandPalette";
 
 // import PdfViewerComponent from './PdfViewerComponent';
 
@@ -69,6 +71,62 @@ export class AtlasMain extends BC<AtlasMainProps, any, any> {
     componentDidMount() {
         super.componentDidMount();
         AtlasMain.atlasInstance = this;
+        this.registerGloriaCommandInput();
+    }
+
+    public static openGloria() {
+        AtlasMain.atlas(atlas => {
+            atlas.dialog(
+                <Screen style={{ backgroundColor: "transparent" }} children={
+                    <Centered fullHeight children={
+                        <GloriaCommandPalette gloria={new Gloria().registerCommand({
+                            id: "test-1",
+                            title: () => "Test 1",
+                            description: () => "This is the test description for `Test 1`. This commands does only print to the console.",
+                            executor: (ctx) => new Promise(resolve => {
+                                console.log("Test 1 running");
+                                resolve(undefined);
+                            })
+                        }).registerCommand({
+                            id: "test-2",
+                            title: () => "Test called 2",
+                            executor: (ctx) => new Promise(resolve => {
+                                console.log("Test 2 running");
+                                resolve(undefined);
+                            })
+                        }).registerCommand({
+                            id: "asd",
+                            title: () => "ASd",
+                            executor: (ctx) => new Promise(resolve => {
+                                console.log("asd running");
+                                resolve(undefined);
+                            })
+                        }).registerCommand({
+                            id: "test-3",
+                            title: () => "3 not 2!",
+                            executor: (ctx) => new Promise(resolve => {
+                                console.log("Test 3 running");
+                                resolve(undefined);
+                            })
+                        })}/>
+                    }/>
+                }/>
+            );
+        });
+    }
+
+    private registerGloriaCommandInput() {
+        let delta: number = 500, lastKeypressTime: number = 0;
+        document.addEventListener("keydown", ev => {
+            if (ev.ctrlKey) {
+                let thisKeypressTime: number = + new Date();
+                if ( thisKeypressTime - lastKeypressTime <= delta ) {
+                    AtlasMain.openGloria();
+                    thisKeypressTime = 0;
+                }
+                lastKeypressTime = thisKeypressTime;
+            }
+        });
     }
 
     componentWillUnmount() {
@@ -94,9 +152,6 @@ export class AtlasMain extends BC<AtlasMainProps, any, any> {
 
                     <FlexRow fw padding paddingX={px(25)} gap={theme.gaps.smallGab} elements={[
 
-
-
-                        // opaque visualMeaning={ObjectVisualMeaning.BETA}
                         <Tooltip noBorder title={"Open tree view"} arrow children={
                             <Button height={percent(100)} children={ <Icon icon={<AccountTreeRounded/>}/> } onClick={() => {
                                 this.dialog(
@@ -106,9 +161,6 @@ export class AtlasMain extends BC<AtlasMainProps, any, any> {
                                 );
                             }}/>
                         }/>,
-
-
-
 
                         <Button height={percent(100)} children={
                             <Icon icon={<SettingsIcon/>}/>
@@ -125,6 +177,12 @@ export class AtlasMain extends BC<AtlasMainProps, any, any> {
                                 }/>
                             );
                         }}/>,
+
+                        <Tooltip noBorder title={"Open command view"} arrow children={
+                            <Button height={percent(100)} children={ <Icon icon={<CodeRounded/>}/> } onClick={() => {
+                                AtlasMain.openGloria();
+                            }}/>
+                        }/>,
 
                         <Button height={percent(100)} children={
                             <Icon icon={<ActionIcon/>}/>

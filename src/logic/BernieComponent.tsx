@@ -112,6 +112,10 @@ export class BernieComponent<RProps, RState, LState extends object, Implementati
         return this._local;
     }
 
+    public ls(): LState {
+        return this.local.state;
+    }
+
     get controller(): RenderController {
         return this._controller;
     }
