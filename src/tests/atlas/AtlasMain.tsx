@@ -37,7 +37,6 @@ import {Tooltip} from "../../components/ho/tooltip/Tooltip";
 import {Gloria} from "../../frameworks/gloria/Gloria";
 import {GloriaCommandPalette} from "../../frameworks/gloria/components/GloriaCommandPalette";
 import {AF} from "../../components/logic/ArrayFragment";
-import {Utils} from "../../logic/Utils";
 
 export type AtlasMainProps = {
     api: IAtlasAPI
@@ -62,9 +61,7 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
 
     public openGloria() {
         const wrapper = AtlasMain.atlas().ls().gloriaDialogHOCWrapper;
-        if (wrapper === undefined) {
-            throw new Error("gloriaDialogHOCWrapper is undefined")
-        }
+        if (wrapper === undefined) throw new Error("gloriaDialogHOCWrapper is undefined");
 
         wrapper.dialog(
             <Screen style={{ backgroundColor: "transparent" }} deactivatePadding children={
@@ -122,7 +119,6 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
 
     private registerGloriaCommandInput() {
         document.addEventListener("keydown", ev => {
-            //if (ev.code === "Backquote") {
             if (ev.ctrlKey && ev.code === "KeyK") {
                 AtlasMain.atlas().openGloria();
                 ev.preventDefault();
@@ -142,6 +138,7 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
                         description={"All your folders at-a-glance\nPress on the context icon to see available actions, like creating folders or accessing ISO-image manager"}
                     />,
 
+                    // TODO: Remove
                     // <PdfViewerComponent
                     //     document={"sample.pdf"}
                     // />,
