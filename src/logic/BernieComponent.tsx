@@ -28,6 +28,8 @@ export type BernieComponentConfig<T extends BernieComponent<any, any, any> = any
 export type BernieComponentBaseProps<T> = T & CoMuxProps & {
 }
 
+export type GenericBC = BernieComponent<any, any, any>;
+
 export class BernieComponent<RProps, RState, LState extends object, Implementation extends BernieComponent<any, any, any> = any> extends React.Component<BernieComponentBaseProps<RProps>, RState> {
     get helper(): ComponentHelper<RProps, RState, LState, Implementation> {
         return this._helper;

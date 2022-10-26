@@ -1,4 +1,4 @@
-import {BC, BernieComponent} from "../../logic/BernieComponent";
+import {BC, BernieComponent, GenericBC} from "../../logic/BernieComponent";
 import {Assembly} from "../../logic/assembly/Assembly";
 import {Themeable} from "../../logic/style/Themeable";
 import {Screen} from "../../components/lo/Page";
@@ -43,7 +43,11 @@ export type AtlasMainProps = {
     api: IAtlasAPI
 }
 
-export class AtlasMain extends BC<AtlasMainProps, any, any> {
+export type AtlasMainLocalState = {
+    gloriaDialogHOCWrapper?: GenericBC
+}
+
+export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
 
     private static atlasInstance: AtlasMain | undefined = undefined;
 
@@ -52,46 +56,58 @@ export class AtlasMain extends BC<AtlasMainProps, any, any> {
         return this.atlasInstance as AtlasMain;
     }
 
-    public static openGloria() {
-        AtlasMain.atlas(atlas => {
-            atlas.dialog(
-                <Screen style={{ backgroundColor: "transparent" }} children={
-                    <Centered fullHeight children={
-                        <GloriaCommandPalette gloria={new Gloria().registerCommand({
-                            id: "long-duration-test",
-                            title: () => "I take a long time!",
-                            description: () => "This is the test description for `Test 1`. This commands does only print to the console.",
-                            executor: (ctx) => new Promise(resolve => {
-                                setTimeout(() => {
-                                    resolve(undefined);
-                                }, 5000);
-                            })
-                        }).registerCommand({
-                            id: "open-tree-view",
-                            title: () => "Open tree view",
-                            executor: (ctx) => new Promise(resolve => {
-                                AtlasMain.atlas().openTreeViewDialog();
+    constructor(props: AtlasMainProps) {
+        super(props, undefined, {});
+    }
+
+    public openGloria() {
+        const wrapper = AtlasMain.atlas().ls().gloriaDialogHOCWrapper;
+        if (wrapper === undefined) {
+            throw new Error("gloriaDialogHOCWrapper is undefined")
+        }
+
+        wrapper.dialog(
+            <Screen style={{ backgroundColor: "transparent" }} deactivatePadding children={
+                <Centered fullHeight children={
+                    <GloriaCommandPalette gloria={new Gloria().registerCommand({
+                        id: "long-duration-test",
+                        title: () => "I take a long time!",
+                        description: () => "This is the test description for `Test 1`. This commands does only print to the console.",
+                        executor: (ctx) => new Promise(resolve => {
+                            setTimeout(() => {
                                 resolve(undefined);
+                            }, 5000);
+                        })
+                    }).registerCommand({
+                        id: "open-tree-view",
+                        title: () => "Open tree view",
+                        executor: (ctx) => new Promise(resolve => {
+                            AtlasMain.atlas().openTreeViewDialog();
+                            AtlasMain.atlas(atlas => {
+                                atlas.ls().gloriaDialogHOCWrapper?.closeLocalDialog();
                             })
-                        }).registerCommand({
-                            id: "asd",
-                            title: () => "ASd",
-                            executor: (ctx) => new Promise(resolve => {
-                                console.log("asd running");
-                                resolve(undefined);
-                            })
-                        }).registerCommand({
-                            id: "test-3",
-                            title: () => "3 not 2!",
-                            executor: (ctx) => new Promise(resolve => {
-                                console.log("Test 3 running");
-                                resolve(undefined);
-                            })
-                        })}/>
-                    }/>
+                            resolve(undefined);
+                        })
+                    }).registerCommand({
+                        id: "asd",
+                        title: () => "ASd",
+                        executor: (ctx) => new Promise(resolve => {
+                            console.log("asd running");
+                            resolve(undefined);
+                        })
+                    }).registerCommand({
+                        id: "test-3",
+                        title: () => "3 not 2!",
+                        executor: (ctx) => new Promise(resolve => {
+                            console.log("Test 3 running");
+                            resolve(undefined);
+                        })
+                    })}/>
                 }/>
-            );
-        });
+            }/>
+        );
+
+
     }
 
     public api(): IAtlasAPI {
@@ -107,15 +123,11 @@ export class AtlasMain extends BC<AtlasMainProps, any, any> {
     }
 
     private registerGloriaCommandInput() {
-        let delta: number = 500, lastKeypressTime: number = 0;
         document.addEventListener("keydown", ev => {
-            if (ev.ctrlKey) {
-                let thisKeypressTime: number = + new Date();
-                if ( thisKeypressTime - lastKeypressTime <= delta ) {
-                    AtlasMain.openGloria();
-                    thisKeypressTime = 0;
-                }
-                lastKeypressTime = thisKeypressTime;
+            //if (ev.code === "Backquote") {
+            if (ev.ctrlKey && ev.code === "KeyK") {
+                AtlasMain.atlas().openGloria();
+                ev.preventDefault();
             }
         });
     }
@@ -162,7 +174,7 @@ export class AtlasMain extends BC<AtlasMainProps, any, any> {
 
                         <Tooltip noBorder title={"Open command view"} arrow children={
                             <Button height={percent(100)} children={ <Icon icon={<CodeRounded/>}/> } onClick={() => {
-                                AtlasMain.openGloria();
+                                AtlasMain.atlas().openGloria();
                             }}/>
                         }/>,
 
@@ -381,10 +393,14 @@ export class AtlasMain extends BC<AtlasMainProps, any, any> {
                     <Flex fh fw align={Align.CENTER} elements={[
                         this.a("folder")
                     ]}/>
-                }/>
+                }/>,
 
                 // logic components
-                // TODO: Implement gloria panel -> separate dialog
+                <HOCWrapper body={() => <></>} componentDidMount={wrapper => {
+                    this.local.setState({
+                        gloriaDialogHOCWrapper: wrapper
+                    });
+                }}/>
             ]}/>
         );
     }
