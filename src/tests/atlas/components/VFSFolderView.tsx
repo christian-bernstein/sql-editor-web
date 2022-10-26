@@ -51,6 +51,7 @@ import {ReactComponent as ActionsIcon} from "../../../assets/icons/ic-20/ic20-mo
 import {ReactComponent as DeleteIcon} from "../../../assets/icons/ic-20/ic20-delete.svg";
 import {ConfirmationDialog} from "../../../components/lo/ConfirmationDialog";
 import {SideScroller} from "../../../components/layout/SideScroller";
+import {FolderPathView} from "./FolderPathView";
 
 export type VFSFolderViewProps = {
     initialFolderID?: string,
@@ -648,6 +649,48 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                                     elements: [
                                         <Flex height={px(50)} fw fh padding style={{ backgroundColor: t.colors.backgroundHighlightColor.css() }} elements={[
                                             this.component(() => this.a("folder-level-view"), "current-folder"),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                            this.component(() => (
+                                                <FolderPathView
+                                                    path={[]}
+                                                    gotoFolder={selectedFolder => {
+                                                        // TODO: Implement
+                                                    }}
+                                                />
+                                            ), "current-folder"),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
                                             this.component(() => (
                                                 <QueryDisplay<Folder | undefined> q={this.local.state.currentFolderData} renderer={{
