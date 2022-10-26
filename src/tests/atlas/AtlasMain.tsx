@@ -106,8 +106,6 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
                 }/>
             }/>
         );
-
-
     }
 
     public api(): IAtlasAPI {
