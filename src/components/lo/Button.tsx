@@ -8,6 +8,7 @@ import {Color} from "../../logic/style/Color";
 import {DimensionalMeasured} from "../../logic/style/DimensionalMeasured";
 import {Cursor} from "../../logic/style/Cursor";
 import {Text} from "./Text";
+import {BackgroundColorProps} from "../props/BackgroundColorProps";
 
 export type ButtonProps = {
     style?: CSSProperties,
@@ -29,8 +30,7 @@ export type ButtonProps = {
     vibrateOnClick?: boolean,
     vibrationPattern?: number[],
     text?: string
-
-}
+} & BackgroundColorProps
 
 export class Button extends React.Component<ButtonProps, any> {
 
@@ -47,10 +47,16 @@ export class Button extends React.Component<ButtonProps, any> {
         }
     }
 
+    private getBackgroundColor(): Color {
+        const theme: Themeable.Theme = utilizeGlobalTheme();
+        const meaningfulColors: MeaningfulColors = getMeaningfulColors(getOr(this.props.visualMeaning, ObjectVisualMeaning.UI_NO_HIGHLIGHT), theme);
+        return this.props.opaque ? meaningfulColors.main.withAlpha(getOr(this.props.opaqueValue, .1)) : meaningfulColors.main;
+    }
+
     render() {
         const theme: Themeable.Theme = utilizeGlobalTheme();
         const meaningfulColors: MeaningfulColors = getMeaningfulColors(getOr(this.props.visualMeaning, ObjectVisualMeaning.UI_NO_HIGHLIGHT), theme);
-        const bgColor: Color = this.props.opaque ? meaningfulColors.main.withAlpha(getOr(this.props.opaqueValue, .1)): meaningfulColors.main;
+        const bgColor: Color = this.props.opaque ? meaningfulColors.main.withAlpha(getOr(this.props.opaqueValue, .1)) : meaningfulColors.main;
 
         const Button = styled.div`
           border-radius: ${theme.radii.defaultObjectRadius.css()};

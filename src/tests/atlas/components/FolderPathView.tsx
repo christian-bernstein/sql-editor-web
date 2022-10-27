@@ -35,7 +35,7 @@ export class FolderPathView extends BC<FolderPathViewProps, any, any> {
     private prependAssembly() {
         this.assembly.assembly("prepend", theme => {
             return (
-                <Button children={
+                <Button border={false} children={
                     <Icon icon={<BackIcon/>} size={px(16)}/>
                 }/>
             );
@@ -66,7 +66,6 @@ export class FolderPathView extends BC<FolderPathViewProps, any, any> {
                                         }
                                     }/>
                                 }/>,
-                                // !isLast ? <Dot/> : undefined
                                 <Text text={"/"} type={TextType.secondaryDescription}/>
                             ]}/>
                         );

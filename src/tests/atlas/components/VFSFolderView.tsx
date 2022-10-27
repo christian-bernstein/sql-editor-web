@@ -205,7 +205,7 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                                                                 this.updateCurrentFolder(folder.id);
                                                             }
                                                         }
-                                                        }/>
+                                                    }/>
                                                 }/>,
                                                 // !isLast ? <Dot/> : undefined
                                                 <Text text={"/"} type={TextType.secondaryDescription}/>
