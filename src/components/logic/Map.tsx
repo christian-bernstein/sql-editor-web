@@ -7,7 +7,7 @@ import {AF} from "./ArrayFragment";
 
 export type MapProps<T> = {
     data: T[],
-    renderer: (item: T, data: T[], component: Map<T>) => JSX.Element,
+    renderer: (item: T, data: T[], index: number, component: Map<T>, ) => JSX.Element,
     wrapper?: (props: PropsWithChildren<any>) => JSX.Element,
     renderWrapperOnEmpty?: boolean,
     staticPrefix?: (props: MapProps<T>) => JSX.Element,
@@ -21,7 +21,7 @@ export class Map<T> extends BernieComponent<MapProps<T>, any, any> {
         return (
             <AF elements={[
                 array(p.staticPrefix?.(p), getOr(p.staticPrefixDuplicationCount, 1)).filter(e => e) as Array<JSX.Element>,
-                p.data.map(item => p.renderer(item, p.data, this)),
+                p.data.map((item, index) => p.renderer(item, p.data, index, this)),
                 p.staticAppendix?.(p)
             ]}/>
         );

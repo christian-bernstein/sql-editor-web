@@ -131,13 +131,13 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
             view: this
         });
 
-        // this.createMultiplexer({
-        //     groupID: v4(),
-        //     groupTitle: "Test",
-        //     documents: new Array<AtlasDocument>(),
-        //     activeDocumentID: undefined,
-        //     view: this
-        // });
+        this.createMultiplexer({
+            groupID: v4(),
+            groupTitle: "Test",
+            documents: new Array<AtlasDocument>(),
+            activeDocumentID: undefined,
+            view: this
+        });
     }
 
     init() {
@@ -175,6 +175,15 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                             folder = AtlasMain.atlas().api().getFolder(folder.parentFolder);
                             tree.push(folder);
                         }
+
+                        return (
+                            <FolderPathView
+                                path={tree}
+                                gotoFolder={selectedFolder => {
+                                    // TODO: Implement
+                                }}
+                            />
+                        );
 
                         return (
                             <SideScroller useMouseDragging children={
@@ -649,49 +658,6 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                                     elements: [
                                         <Flex height={px(50)} fw fh padding style={{ backgroundColor: t.colors.backgroundHighlightColor.css() }} elements={[
                                             this.component(() => this.a("folder-level-view"), "current-folder"),
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                                            this.component(() => (
-                                                <FolderPathView
-                                                    path={[]}
-                                                    gotoFolder={selectedFolder => {
-                                                        // TODO: Implement
-                                                    }}
-                                                />
-                                            ), "current-folder"),
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                                             this.component(() => (
                                                 <QueryDisplay<Folder | undefined> q={this.local.state.currentFolderData} renderer={{
                                                     processing(q: Queryable<Folder | undefined>): JSX.Element {
