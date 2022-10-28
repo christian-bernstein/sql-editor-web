@@ -9,6 +9,7 @@ import {DimensionalMeasured} from "../../logic/style/DimensionalMeasured";
 import {Cursor} from "../../logic/style/Cursor";
 import {Text} from "./Text";
 import {BackgroundColorProps} from "../props/BackgroundColorProps";
+import {Tooltip} from "../ho/tooltip/Tooltip";
 
 export type ButtonProps = {
     style?: CSSProperties,
@@ -29,7 +30,9 @@ export type ButtonProps = {
     highlight?: boolean,
     vibrateOnClick?: boolean,
     vibrationPattern?: number[],
-    text?: string
+    text?: string,
+
+    tooltip?: string | JSX.Element
 } & BackgroundColorProps
 
 export class Button extends React.Component<ButtonProps, any> {
@@ -48,6 +51,10 @@ export class Button extends React.Component<ButtonProps, any> {
     }
 
     private getBackgroundColor(): Color {
+        // Check if custom background color is set
+        const backgroundConfig = this.props.backgroundColorConfig;
+        if (backgroundConfig?.backgroundColor !== undefined) return backgroundConfig.backgroundColor;
+        // Return default generated background color
         const theme: Themeable.Theme = utilizeGlobalTheme();
         const meaningfulColors: MeaningfulColors = getMeaningfulColors(getOr(this.props.visualMeaning, ObjectVisualMeaning.UI_NO_HIGHLIGHT), theme);
         return this.props.opaque ? meaningfulColors.main.withAlpha(getOr(this.props.opaqueValue, .1)) : meaningfulColors.main;
@@ -56,7 +63,7 @@ export class Button extends React.Component<ButtonProps, any> {
     render() {
         const theme: Themeable.Theme = utilizeGlobalTheme();
         const meaningfulColors: MeaningfulColors = getMeaningfulColors(getOr(this.props.visualMeaning, ObjectVisualMeaning.UI_NO_HIGHLIGHT), theme);
-        const bgColor: Color = this.props.opaque ? meaningfulColors.main.withAlpha(getOr(this.props.opaqueValue, .1)) : meaningfulColors.main;
+        const bgColor: Color = this.getBackgroundColor();
 
         const Button = styled.div`
           border-radius: ${theme.radii.defaultObjectRadius.css()};
@@ -108,7 +115,7 @@ export class Button extends React.Component<ButtonProps, any> {
           }
         `;
 
-        return (
+        const buttonRenderer = () => (
             <Button onClick={event => this.onClick(event)} style={getOr(this.props.style, {} as CSSProperties)}>
                 {this.props.text === undefined ? undefined : (
                     <Text whitespace={"nowrap"} text={this.props.text}/>
@@ -116,5 +123,15 @@ export class Button extends React.Component<ButtonProps, any> {
                 {this.props.children}
             </Button>
         );
+
+        if (this.props.tooltip !== undefined) {
+            return (
+                <Tooltip title={this.props.tooltip} children={
+                    buttonRenderer()
+                }/>
+            );
+        } else {
+            return buttonRenderer();
+        }
     }
 }

@@ -7,6 +7,7 @@ import {ObjectVisualMeaning} from "../../logic/style/ObjectVisualMeaning";
 import {DimensionalMeasured, px} from "../../logic/style/DimensionalMeasured";
 import {getOr} from "../../logic/Utils";
 import {Color} from "../../logic/style/Color";
+import {Tooltip} from "../ho/tooltip/Tooltip";
 
 export type IconProps = {
     colored?: boolean,
@@ -15,7 +16,8 @@ export type IconProps = {
     hoverAnimation?: boolean,
     onClick?: (event: React.MouseEvent<HTMLDivElement>) => void,
     style?: CSSProperties
-    color?: Color
+    color?: Color,
+    tooltip?: string | JSX.Element
 } & WithVisualMeaning
 
 export const Icon: React.FC<IconProps> = React.memo(props => {
@@ -61,9 +63,19 @@ export const Icon: React.FC<IconProps> = React.memo(props => {
       }
     `;
 
-    return (
+    const iconRenderer = () => (
         <Wrapper style={getOr(props.style, {})} onClick={(event: React.MouseEvent<HTMLDivElement>) => props.onClick?.(event)}>
             {props.icon}
         </Wrapper>
     );
+
+    if (props.tooltip !== undefined) {
+        return (
+            <Tooltip title={props.tooltip} children={
+                iconRenderer()
+            }/>
+        );
+    } else {
+        return iconRenderer();
+    }
 });
