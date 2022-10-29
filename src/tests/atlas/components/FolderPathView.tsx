@@ -7,7 +7,7 @@ import {percent, px} from "../../../logic/style/DimensionalMeasured";
 import {FlexDirection} from "../../../logic/style/FlexDirection";
 import {Tooltip} from "../../../components/ho/tooltip/Tooltip";
 import {Icon} from "../../../components/lo/Icon";
-import {VM} from "../../../logic/style/ObjectVisualMeaning";
+import {ObjectVisualMeaning, VM} from "../../../logic/style/ObjectVisualMeaning";
 import {Align} from "../../../logic/style/Align";
 import {Text, TextType} from "../../../components/lo/Text";
 import {OverflowBehaviour} from "../../../logic/style/OverflowBehaviour";
@@ -34,11 +34,24 @@ export class FolderPathView extends BC<FolderPathViewProps, any, any> {
 
     private prependAssembly() {
         this.assembly.assembly("prepend", theme => {
-            return (
-                <Button border={false} children={
-                    <Icon icon={<BackIcon/>} size={px(16)}/>
-                }/>
-            );
+            const path = this.props.path;
+            if (path.length > 1) {
+                // Can go back
+                return (
+                    <Button border={false} cursor={Cursor.pointer} onClick={() => {
+                        this.props.gotoFolder(path[path.length - 2]);
+                    }} children={
+                        <Icon icon={<BackIcon/>} size={px(16)}/>
+                    }/>
+                );
+            } else {
+                // Already at the root
+                return (
+                    <Button border={false} cursor={Cursor.notAllowed} children={
+                        <Icon icon={<BackIcon/>} size={px(16)} colored visualMeaning={ObjectVisualMeaning.UI_NO_HIGHLIGHT}/>
+                    }/>
+                );
+            }
         });
     }
 
@@ -46,9 +59,9 @@ export class FolderPathView extends BC<FolderPathViewProps, any, any> {
         this.assembly.assembly("folders", theme => {
             return (
                 <Map<Folder>
-                    data={this.props.path.reverse()}
+                    data={this.props.path}
                     renderer={(folder, data, index) => {
-                        const isLast = !(index + 1 < array.length);
+                        const isLast = !(index < array.length);
                         return (
                             <AF elements={[
                                 <Tooltip title={`Go to ${folder.id}`} arrow children={
@@ -60,6 +73,7 @@ export class FolderPathView extends BC<FolderPathViewProps, any, any> {
                                         coloredText={isLast}
                                         visualMeaning={isLast ? VM.INFO : VM.UI_NO_HIGHLIGHT}
                                         onClick={() => {
+                                            console.log(!isLast, index)
                                             if (!isLast) {
                                                 this.props.gotoFolder(folder);
                                             }

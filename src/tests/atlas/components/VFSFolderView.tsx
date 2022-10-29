@@ -199,7 +199,7 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
 
                         return (
                             <FolderPathView
-                                path={tree}
+                                path={tree.reverse()}
                                 gotoFolder={selectedFolder => {
                                     this.updateCurrentFolder(selectedFolder.id);
                                 }}
