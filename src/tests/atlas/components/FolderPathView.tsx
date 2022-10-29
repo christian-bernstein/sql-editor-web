@@ -61,7 +61,7 @@ export class FolderPathView extends BC<FolderPathViewProps, any, any> {
                                         visualMeaning={isLast ? VM.INFO : VM.UI_NO_HIGHLIGHT}
                                         onClick={() => {
                                             if (!isLast) {
-
+                                                this.props.gotoFolder(folder);
                                             }
                                         }
                                     }/>

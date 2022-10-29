@@ -14,7 +14,7 @@ import {Separator} from "../../../components/lo/Separator";
 import {Orientation} from "../../../logic/style/Orientation";
 import {SettingsElement} from "../../../components/ho/settingsElement/SettingsElement";
 import {Align} from "../../../logic/style/Align";
-import {getOr} from "../../../logic/Utils";
+import {array, getOr} from "../../../logic/Utils";
 import {Color} from "../../../logic/style/Color";
 import {ReactComponent as DocumentIcon} from "../../../assets/icons/ic-20/ic20-file.svg";
 import {ReactComponent as ActionsIcon} from "../../../assets/icons/ic-20/ic20-more-ver.svg";
@@ -29,6 +29,8 @@ import {Badge} from "../../../components/lo/Badge";
 import {ObjectVisualMeaning, VM} from "../../../logic/style/ObjectVisualMeaning";
 import {DocumentState} from "../data/DocumentState";
 import {DocumentSaveState} from "../data/DocumentSaveState";
+import {ContextCompound} from "../../../components/ho/contextCompound/ContextCompound";
+import {SettingsGroup} from "../../../components/lo/SettingsGroup";
 
 export type DocumentViewMultiplexerControlConfig = {
     documents: Array<AtlasDocument>
@@ -84,8 +86,23 @@ export class DocumentViewMultiplexer extends BC<DocumentViewMultiplexerProps, an
                     borderless
                     borderRadiiConfig={{enableCustomBorderRadii: true, fallbackCustomBorderRadii: px(0)}}
                     elements={[
-                        <Flex flexDir={FlexDirection.ROW} align={Align.CENTER} elements={[
+                        <Flex flexDir={FlexDirection.ROW} align={Align.CENTER} gap={t.gaps.smallGab} elements={[
                             <Text text={p.controlConfigMirror.groupTitle}/>,
+
+                            <ContextCompound wrapMenu={false} menu={
+                                <Box borderless paddingX={t.gaps.smallGab} paddingY={t.gaps.smallGab} width={px(300)} elements={[
+                                    <Flex align={Align.CENTER} fw elements={[
+                                        <SettingsGroup title={`Actions for ${p.controlConfigMirror.groupTitle}`} elements={[
+                                            <SettingsElement groupDisplayMode title={"Close multiplexer"} iconConfig={{ enable: true, iconGenerator: element => <CloseIcon/> }} onClick={element => {
+                                                p.controlConfigMirror.view.closeMultiplexer(p.controlConfigMirror.groupID);
+                                            }}/>
+                                        ]}/>
+                                    ]}/>
+                                ]}/>
+                            } children={
+                                <Icon icon={<ActionsIcon/>} tooltip={"Actions"} size={px(16)}/>
+                            }/>,
+
                             <Separator orientation={Orientation.VERTICAL}/>,
 
 

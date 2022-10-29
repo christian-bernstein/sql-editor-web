@@ -52,6 +52,7 @@ import {ReactComponent as DeleteIcon} from "../../../assets/icons/ic-20/ic20-del
 import {ConfirmationDialog} from "../../../components/lo/ConfirmationDialog";
 import {SideScroller} from "../../../components/layout/SideScroller";
 import {FolderPathView} from "./FolderPathView";
+import {SideMenu} from "./SideMenu";
 
 export type VFSFolderViewProps = {
     initialFolderID?: string,
@@ -63,13 +64,17 @@ export type VFSFolderViewLocalState = {
     currentFolderID?: string,
     viewMultiplexers: Array<DocumentViewMultiplexerControlConfig>,
     documentStates: Map<string, DocumentState>;
-    documentBodyUpdaters: Map<string, (body: string) => void>
+    documentBodyUpdaters: Map<string, (body: string) => void>,
+    menuVisible: boolean
 }
 
 export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLocalState> {
 
     constructor(props: VFSFolderViewProps) {
         super(props, undefined, {
+            // TODO: Store to ls
+            menuVisible: true,
+
             documentStates: new Map<string, DocumentState>(),
             documentBodyUpdaters: new Map<string, (body: string) => void>(),
             currentFolderID: props.initialFolderID ?? "root",
@@ -103,12 +108,27 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
         });
     }
 
+    public toggleMenu() {
+        this.local.setStateWithChannels({
+            menuVisible: !this.ls().menuVisible
+        }, ["menu"]);
+    }
+
     public createMultiplexer(config: DocumentViewMultiplexerControlConfig) {
         const muxers = this.local.state.viewMultiplexers;
         muxers.push(config);
         this.local.setStateWithChannels({
             viewMultiplexers: muxers
         }, ["multiplexer-created"]);
+    }
+
+    public closeMultiplexer(groupID: string) {
+        let muxers = this.local.state.viewMultiplexers;
+        muxers = muxers.filter(config => config.groupID !== groupID);
+
+        this.local.setStateWithChannels({
+            viewMultiplexers: muxers
+        }, ["multiplexer-removed"]);
     }
 
     private onClose() {
@@ -145,6 +165,7 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
         this.folderViewAssembly();
         this.documentViewAssembly();
         this.folderLevelViewAssembly();
+        this.menuAssembly();
     }
 
     private updateCurrentFolder(newFolderID: string) {
@@ -180,11 +201,12 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                             <FolderPathView
                                 path={tree}
                                 gotoFolder={selectedFolder => {
-                                    // TODO: Implement
+                                    this.updateCurrentFolder(selectedFolder.id);
                                 }}
                             />
                         );
 
+                        // TODO: Remove code fragment
                         return (
                             <SideScroller useMouseDragging children={
                                 <Flex flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab} align={Align.CENTER} elements={
@@ -621,6 +643,79 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
         return state;
     }
 
+    private menuAssembly() {
+        this.assembly.assembly("menu", t => {
+            if (this.ls().menuVisible) {
+                return (
+                    <Flex fh width={px(500)} style={{ backgroundColor: t.colors.backgroundHighlightColor.css() }} elements={[
+                        <OverflowWithHeader dir={FlexDirection.COLUMN_REVERSE} staticContainer={{
+                            gap: px(),
+                            elements: [
+                                <Flex fw padding align={Align.CENTER} flexDir={FlexDirection.ROW} justifyContent={Justify.CENTER} elements={[
+                                    <Icon icon={<AttachmentIcon/>}/>,
+                                    <Flex fw fh justifyContent={Justify.CENTER} gap={t.gaps.smallGab} align={Align.CENTER} elements={[
+                                        // Badge.beta(),
+                                        <Text text={"Atlas Document Viewer"} bold/>,
+                                    ]}/>,
+                                    <Icon icon={<SettingsIcon/>}/>
+                                ]}/>
+                            ]
+                        }} overflowContainer={{
+                            elements: [
+                                <Flex height={px(50)} fw fh padding style={{ backgroundColor: t.colors.backgroundHighlightColor.css() }} elements={[
+                                    this.component(() => this.a("folder-level-view"), "current-folder"),
+                                    this.component(() => (
+                                        <QueryDisplay<Folder | undefined> q={this.local.state.currentFolderData} renderer={{
+                                            processing(q: Queryable<Folder | undefined>): JSX.Element {
+                                                return (
+                                                    <>processing..</>
+                                                );
+                                            },
+                                            success: (q: Queryable<Folder | undefined>, data: Folder | undefined) => {
+                                                return (
+                                                    <Flex fw fh overflowYBehaviour={OverflowBehaviour.SCROLL} elements={[
+                                                        <DrawerHeader
+                                                            header={String(this.getCurrentFolder()?.title)}
+                                                            badgeText={"Folder view"}
+                                                            enableBadge
+                                                            badgeVM={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
+                                                            description={this.getCurrentFolder().description}
+                                                        />,
+
+
+                                                        <Flex margin={createMargin(0, 0, 40, 0)} wrap={FlexWrap.WRAP} flexDir={FlexDirection.ROW} fw gap={t.gaps.smallGab} align={Align.CENTER} justifyContent={Justify.CENTER} elements={
+                                                            this.getCurrentFolder().tags?.map(s => (
+                                                                <Box highlightShadow={false} cursor={Cursor.pointer} highlight opaque paddingY={px(4)} paddingX={px(7)} visualMeaning={VM.SUCCESS} borderRadiiConfig={{ enableCustomBorderRadii: true, fallbackCustomBorderRadii: px(500)}} borderless children={
+                                                                    <Text text={s} whitespace={"nowrap"} cursor={Cursor.pointer} visualMeaning={VM.SUCCESS} fontSize={px(12)} coloredText type={TextType.secondaryDescription}/>
+                                                                }/>
+                                                            ))
+                                                        }/>,
+
+                                                        this.a("folder-view"),
+                                                        this.component(() => this.a("document-view"), "document-view"),
+                                                    ]}/>
+                                                );
+                                            },
+                                            error: (q, error) => {
+                                                return (
+                                                    <>error</>
+                                                );
+                                            }
+                                        }}/>
+                                    ), ...Q.allChannels("current-folder"))
+                                ]}/>
+                            ]
+                        }}/>
+                    ]}/>
+                );
+            } else {
+                return (
+                    <></>
+                );
+            }
+        })
+    }
+
     componentRender(p: any, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
             <Screen deactivatePadding children={
@@ -641,66 +736,12 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                 }} overflowContainer={{
                     elements: [
                         <Flex fh fw gap={px()} flexDir={FlexDirection.ROW} elements={[
-                            <Flex fh width={px(500)} style={{ backgroundColor: t.colors.backgroundHighlightColor.css() }} elements={[
-                                <OverflowWithHeader dir={FlexDirection.COLUMN_REVERSE} staticContainer={{
-                                    gap: px(),
-                                    elements: [
-                                        <Flex fw padding align={Align.CENTER} flexDir={FlexDirection.ROW} justifyContent={Justify.CENTER} elements={[
-                                            <Icon icon={<AttachmentIcon/>}/>,
-                                            <Flex fw fh justifyContent={Justify.CENTER} gap={t.gaps.smallGab} align={Align.CENTER} elements={[
-                                                // Badge.beta(),
-                                                <Text text={"Atlas Document Viewer"} bold/>,
-                                            ]}/>,
-                                            <Icon icon={<SettingsIcon/>}/>
-                                        ]}/>
-                                    ]
-                                }} overflowContainer={{
-                                    elements: [
-                                        <Flex height={px(50)} fw fh padding style={{ backgroundColor: t.colors.backgroundHighlightColor.css() }} elements={[
-                                            this.component(() => this.a("folder-level-view"), "current-folder"),
-                                            this.component(() => (
-                                                <QueryDisplay<Folder | undefined> q={this.local.state.currentFolderData} renderer={{
-                                                    processing(q: Queryable<Folder | undefined>): JSX.Element {
-                                                        return (
-                                                            <>processing..</>
-                                                        );
-                                                    },
-                                                    success: (q: Queryable<Folder | undefined>, data: Folder | undefined) => {
-                                                        return (
-                                                            <Flex fw fh overflowYBehaviour={OverflowBehaviour.SCROLL} elements={[
-                                                                <DrawerHeader
-                                                                    header={String(this.getCurrentFolder()?.title)}
-                                                                    badgeText={"Folder view"}
-                                                                    enableBadge
-                                                                    badgeVM={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
-                                                                    description={this.getCurrentFolder().description}
-                                                                />,
 
+                            <SideMenu
+                                view={this}
+                            />,
 
-                                                                <Flex margin={createMargin(0, 0, 40, 0)} wrap={FlexWrap.WRAP} flexDir={FlexDirection.ROW} fw gap={t.gaps.smallGab} align={Align.CENTER} justifyContent={Justify.CENTER} elements={
-                                                                    this.getCurrentFolder().tags?.map(s => (
-                                                                        <Box highlightShadow={false} cursor={Cursor.pointer} highlight opaque paddingY={px(4)} paddingX={px(7)} visualMeaning={VM.SUCCESS} borderRadiiConfig={{ enableCustomBorderRadii: true, fallbackCustomBorderRadii: px(500)}} borderless children={
-                                                                            <Text text={s} whitespace={"nowrap"} cursor={Cursor.pointer} visualMeaning={VM.SUCCESS} fontSize={px(12)} coloredText type={TextType.secondaryDescription}/>
-                                                                        }/>
-                                                                    ))
-                                                                }/>,
-
-                                                                this.a("folder-view"),
-                                                                this.component(() => this.a("document-view"), "document-view"),
-                                                            ]}/>
-                                                        );
-                                                    },
-                                                    error: (q, error) => {
-                                                        return (
-                                                            <>error</>
-                                                        );
-                                                    }
-                                                }}/>
-                                            ), ...Q.allChannels("current-folder"))
-                                        ]}/>
-                                    ]
-                                }}/>
-                            ]}/>,
+                            this.component(() => this.a("menu"), "menu"),
 
                             <Separator orientation={Orientation.VERTICAL}/>,
 
@@ -725,7 +766,7 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                                         }/>
                                     }/>
                                 );
-                            }, "multiplexer-created"),
+                            }, "multiplexer-created", "multiplexer-removed", "multiplexer-root"),
                         ]}/>
                     ]
                 }}/>
