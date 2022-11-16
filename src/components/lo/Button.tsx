@@ -16,7 +16,11 @@ export type ButtonProps = {
     visualMeaning?: ObjectVisualMeaning,
     opaque?: boolean,
     opaqueValue?: number,
+
     onClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void,
+    onDoubleClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void,
+    onContextMenu?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void,
+
     shrinkOnClick?: boolean,
     width?: DimensionalMeasured,
     height?: DimensionalMeasured,
@@ -32,7 +36,16 @@ export type ButtonProps = {
     vibrationPattern?: number[],
     text?: string,
 
-    tooltip?: string | JSX.Element
+    tooltip?: string | JSX.Element,
+
+    borderRadiiConfig?: {
+        enableCustomBorderRadii?: boolean,
+        fallbackCustomBorderRadii?: DimensionalMeasured,
+        topLeft?: DimensionalMeasured,
+        topRight?: DimensionalMeasured,
+        bottomLeft?: DimensionalMeasured,
+        bottomRight?: DimensionalMeasured
+    },
 } & BackgroundColorProps
 
 export class Button extends React.Component<ButtonProps, any> {
@@ -47,6 +60,26 @@ export class Button extends React.Component<ButtonProps, any> {
         }
         if (this.props.onClick !== undefined) {
             this.props.onClick?.(event);
+        }
+    }
+
+    private onDoubleClick(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+        if (this.props.vibrateOnClick && window.navigator.vibrate !== undefined) {
+            window.navigator.vibrate(getOr(this.props.vibrationPattern, [1]));
+        }
+        if (this.props.onDoubleClick !== undefined) {
+            this.props.onDoubleClick?.(event);
+        }
+    }
+
+    private onContextMenu(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+        if (this.props.vibrateOnClick && window.navigator.vibrate !== undefined) {
+            window.navigator.vibrate(getOr(this.props.vibrationPattern, [1]));
+        }
+        if (this.props.onContextMenu !== undefined) {
+            this.props.onContextMenu?.(event);
+            event.preventDefault();
+            event.stopPropagation();
         }
     }
 
@@ -80,6 +113,21 @@ export class Button extends React.Component<ButtonProps, any> {
           cursor: ${getOr(this.props.cursor, Cursor.pointer)};
           transition: all ${theme.transitions.mainTime.css()};
           z-index: ${getOr(this.props.zIndex, 1)};
+          -webkit-tap-highlight-color: transparent;
+          
+          border-radius: ${(() => {
+            const config = this.props.borderRadiiConfig;
+            if (config !== undefined && config.enableCustomBorderRadii) {
+              const radii = getOr(config.fallbackCustomBorderRadii, theme.radii.defaultObjectRadius);
+              const topLeft: DimensionalMeasured = getOr(config.topLeft, radii);
+              const topRight: DimensionalMeasured = getOr(config.topRight, radii);
+              const bottomLeft: DimensionalMeasured = getOr(config.bottomLeft, radii);
+              const bottomRight: DimensionalMeasured = getOr(config.bottomRight, radii);
+              return `${topLeft.css()} ${topRight.css()} ${bottomLeft.css()} ${bottomRight.css()}`;
+            } else {
+              return theme.radii.defaultObjectRadius.css();
+            }
+          })()};
           
           ${getOr(this.props.enableBaseAnimation, false) ? (
               `animation: 1.5s infinite ${this.props.baseAnimation};`
@@ -116,7 +164,12 @@ export class Button extends React.Component<ButtonProps, any> {
         `;
 
         const buttonRenderer = () => (
-            <Button onClick={event => this.onClick(event)} style={getOr(this.props.style, {} as CSSProperties)}>
+            <Button
+                onClick={event => this.onClick(event)}
+                style={getOr(this.props.style, {} as CSSProperties)}
+                onDoubleClick={event => this.onDoubleClick(event)}
+                onContextMenu={event => this.onContextMenu(event)}
+            >
                 {this.props.text === undefined ? undefined : (
                     <Text whitespace={"nowrap"} text={this.props.text}/>
                 )}
@@ -126,7 +179,7 @@ export class Button extends React.Component<ButtonProps, any> {
 
         if (this.props.tooltip !== undefined) {
             return (
-                <Tooltip title={this.props.tooltip} children={
+                <Tooltip arrow title={this.props.tooltip} children={
                     buttonRenderer()
                 }/>
             );
