@@ -61,7 +61,9 @@ export class DevelopmentHuePlugToggleCard extends BC<DevelopmentHuePlugToggleCar
                     state: r
                 }, ["state"])
             }
-        })
+        }).catch(reason => {
+            console.error(reason);
+        });
     }
 
     private setPlugOnlineState(state: boolean) {
@@ -71,7 +73,9 @@ export class DevelopmentHuePlugToggleCard extends BC<DevelopmentHuePlugToggleCar
             // TODO: Remove maybe
             this.queryPlugState();
             // TODO: Handle response
-        })
+        }).catch(reason => {
+            console.error(reason);
+        });
     }
 
     public isPlugOn(): boolean {
@@ -191,40 +195,67 @@ export class DevelopmentHuePlugToggleCard extends BC<DevelopmentHuePlugToggleCar
     }
 
     componentRender(p: DevelopmentHuePlugToggleCardProps, s: any, l: DevelopmentHuePlugToggleCardLocalState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
-        return this.component(local => (
-            <Button
-                opaque
-                visualMeaning={this.isPlugOn() ? VM.SUCCESS_DEFAULT : VM.UI_NO_HIGHLIGHT}
-                cursor={Cursor.pointer}
-                onClick={() => this.setPlugOnlineState(!this.isPlugOn())}
-                onContextMenu={() => this.openContextMenu()}
-                shrinkOnClick
-                children={
-                    <Flex fw fh elements={[
-                        <Flex fw align={Align.CENTER} justifyContent={Justify.SPACE_BETWEEN} elements={[
-                            <Flex align={Align.CENTER} gap={t.gaps.smallGab} elements={[
-                                <If condition={this.isDataLoaded()} ifTrue={
-                                    <Icon icon={<PlugIcon/>}/>
+        return this.component(local => {
+            if (!this.isDataLoaded()) {
+                return (
+                    <Button
+                        opaque
+                        visualMeaning={VM.WARNING}
+                        cursor={Cursor.notAllowed}
+                        onContextMenu={() => this.openContextMenu()}
+                        shrinkOnClick
+                        tooltip={"No data available"}
+                        children={
+                            <Flex fw fh elements={[
+                                <Flex fw align={Align.CENTER} gap={t.gaps.smallGab} justifyContent={Justify.SPACE_BETWEEN} elements={[
+                                    <Flex align={Align.CENTER} gap={t.gaps.smallGab} elements={[
+                                        <Icon icon={<PlugIcon/>} colored visualMeaning={VM.WARNING}/>,
+                                        <Text
+                                            fontSize={px(14)}
+                                            text={this.ls().state?.name ?? "Hue device"}
+                                        />,
+                                    ]}/>
+                                ]}/>
+                            ]}/>
+                        }
+                    />
+                );
+            }
+
+            return (
+                <Button
+                    opaque
+                    visualMeaning={this.isPlugOn() ? VM.SUCCESS_DEFAULT : VM.UI_NO_HIGHLIGHT}
+                    cursor={Cursor.pointer}
+                    onClick={() => this.setPlugOnlineState(!this.isPlugOn())}
+                    onContextMenu={() => this.openContextMenu()}
+                    shrinkOnClick
+                    children={
+                        <Flex fw fh elements={[
+                            <Flex fw align={Align.CENTER} gap={t.gaps.smallGab} justifyContent={Justify.SPACE_BETWEEN} elements={[
+                                <Flex align={Align.CENTER} gap={t.gaps.smallGab} elements={[
+                                    <If condition={this.isDataLoaded()} ifTrue={
+                                        <Icon icon={<PlugIcon/>}/>
+                                    } ifFalse={
+                                        <Icon icon={<PlugIcon/>} colored visualMeaning={VM.UI_NO_HIGHLIGHT}/>
+                                    }/>,
+                                    <Text
+                                        fontSize={px(14)}
+                                        // type={TextType.displayDescription}
+                                        text={this.ls().state?.name ?? "Hue device"}
+                                    />,
+                                ]}/>,
+
+                                <If condition={this.isPlugOn()} ifTrue={
+                                    <Text text={"ON"}/>
                                 } ifFalse={
-                                    <Icon icon={<PlugIcon/>} colored visualMeaning={VM.UI_NO_HIGHLIGHT}/>
+                                    <Text text={"OFF"}/>
                                 }/>,
-                                <Text
-                                    fontSize={px(14)}
-                                    // type={TextType.displayDescription}
-                                    text={this.ls().state?.name ?? "Hue device"}
-                                />,
-                            ]}/>,
-
-                            <If condition={this.isPlugOn()} ifTrue={
-                                <Text text={"ON"}/>
-                            } ifFalse={
-                                <Text text={"OFF"}/>
-                            }/>,
+                            ]}/>
                         ]}/>
-                    ]}/>
-                }
-            />
-
-        ), "state");
+                    }
+                />
+            );
+        }, "state");
     }
 }
