@@ -240,7 +240,7 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
                                                                 return this.component(local => {
                                                                     const pure = this.isPure();
                                                                     return (
-                                                                        <IOSwitch value={pure} onChange={(event, checked) => {
+                                                                        <IOSwitch checked={pure} onChange={(event, checked) => {
                                                                             this.togglePureMode(checked, 100);
                                                                         }}/>
                                                                     );
