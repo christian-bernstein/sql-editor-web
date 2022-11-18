@@ -3,7 +3,7 @@ import {Assembly} from "../../logic/assembly/Assembly";
 import {Themeable} from "../../logic/style/Themeable";
 import React from "react";
 import {Screen} from "../../components/lo/Page";
-import {Flex} from "../../components/lo/FlexBox";
+import {Flex, FlexRow} from "../../components/lo/FlexBox";
 import {Align} from "../../logic/style/Align";
 import {AF} from "../../components/logic/ArrayFragment";
 import {percent, px} from "../../logic/style/DimensionalMeasured";
@@ -46,6 +46,13 @@ import {SnackbarTest} from "./tests/SnackbarTest";
 import {AtlasTest} from "./tests/AtlasTest";
 import {DBTest} from "./tests/DBTest";
 import {CommandPaletteTest} from "./tests/CommandPaletteTest";
+import {Nav, Navbar} from "react-bootstrap";
+import {NavHeader} from "../../components/ho/navHeader/NavHeader";
+import {QuickActionConfig} from "../../logic/data/quick/QuickActionConfig";
+import {ReactComponent as DarkThemeIcon} from "../../assets/icons/ic-20/ic20-brightness-low.svg";
+import {ReactComponent as LightThemeIcon} from "../../assets/icons/ic-20/ic20-brightness-high.svg";
+import {BadgedWrapper} from "../../components/lo/BadgedWrapper";
+import {ReactComponent as CheckIcon} from "../../assets/icons/ic-20/ic20-check.svg";
 
 export type UnitTestPageLocalState = {
     fdh: FormDataHub
@@ -227,6 +234,16 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
 
                                                 <AF elements={[
                                                     this.a("toolbar"),
+
+
+                                                    // <NavHeader onChange={(from, to) => {}} elements={new Map<string, (navInstance: NavHeader) => JSX.Element>([
+                                                    //     ["default", nav => <Text renderMarkdown={false} text={"Overview"}/>],
+                                                    //     ["env", nav => <Text renderMarkdown={false} text={"Environment"}/>],
+                                                    //     ["apps", nav => <Text renderMarkdown={false} text={"Apps"}/>],
+                                                    //     ["ui", nav => <Text renderMarkdown={false} text={"UI"}/>],
+                                                    // ])} />,
+
+
                                                     this.a("unit-selector")
                                                 ]}/>
 
@@ -259,6 +276,9 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
                                                     ]}/>
                                                 </Flex>
                                             </Flex>
+
+
+
                                         );
                                     }}/>
                                 );

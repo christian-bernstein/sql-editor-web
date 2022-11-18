@@ -7,6 +7,7 @@ import {Button} from "../../lo/Button";
 import {Separator} from "../../lo/Separator";
 import {ObjectVisualMeaning} from "../../../logic/style/ObjectVisualMeaning";
 import {getOr} from "../../../logic/Utils";
+import {Color} from "../../../logic/style/Color";
 
 export type NavHeaderProps = {
     elements: Map<string, (navInstance: NavHeader) => JSX.Element>,
@@ -27,16 +28,18 @@ export class NavHeader extends BernieComponent<NavHeaderProps, any, any> {
             <FlexBox flexDir={FlexDirection.ROW} gap={t.gaps.smallGab}>
                 {
                     Array.from(p.elements).map(([id, renderer]) => {
+                        const isActiveElement = element === id;
+
                         return (
                             <FlexBox flexDir={FlexDirection.COLUMN} gap={t.gaps.smallGab}>
-                                <Button border={false} bgColorOnDefault={false} opaque opaqueValue={.6} onClick={() => {
+                                <Button border={false} bgColorOnDefault={true} opaque opaqueValue={.6} onClick={() => {
                                     if (element !== id || p.bypassOnChangeFilter) {
                                         p.onChange(element, id);
                                     }
                                 }} children={
                                     renderer(this)
                                 }/>
-                                <Separator visualMeaning={ObjectVisualMeaning.INFO} visible={element === id}/>
+                                <Separator visualMeaning={ObjectVisualMeaning.INFO} visible={isActiveElement}/>
                             </FlexBox>
                         );
                     })
