@@ -22,7 +22,6 @@ export type DrawerHeaderProps = {
     header: string,
     description?: string,
     margin?: Margin,
-
     leftAppendix?: (component: DrawerHeader) => JSX.Element | undefined,
     rightAppendix?: (component: DrawerHeader) => JSX.Element | undefined,
 }

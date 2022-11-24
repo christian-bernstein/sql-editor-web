@@ -46,13 +46,20 @@ import {SnackbarTest} from "./tests/SnackbarTest";
 import {AtlasTest} from "./tests/AtlasTest";
 import {DBTest} from "./tests/DBTest";
 import {CommandPaletteTest} from "./tests/CommandPaletteTest";
-import {Nav, Navbar} from "react-bootstrap";
-import {NavHeader} from "../../components/ho/navHeader/NavHeader";
-import {QuickActionConfig} from "../../logic/data/quick/QuickActionConfig";
-import {ReactComponent as DarkThemeIcon} from "../../assets/icons/ic-20/ic20-brightness-low.svg";
-import {ReactComponent as LightThemeIcon} from "../../assets/icons/ic-20/ic20-brightness-high.svg";
-import {BadgedWrapper} from "../../components/lo/BadgedWrapper";
-import {ReactComponent as CheckIcon} from "../../assets/icons/ic-20/ic20-check.svg";
+import {
+    AnalyticsRounded, AodRounded,
+    Api,
+    ApiRounded,
+    Apps, ErrorRounded, PlayArrowRounded,
+    RefreshRounded,
+    RunCircleRounded, RunningWithErrorsRounded,
+    SettingsApplicationsRounded,
+    StorageRounded
+} from "@mui/icons-material";
+import {Centered} from "../../components/lo/PosInCenter";
+import {CircleLoader, PulseLoader, RotateLoader} from "react-spinners";
+import {Spinner} from "react-bootstrap";
+import {CircularProgress} from "@mui/material";
 
 export type UnitTestPageLocalState = {
     fdh: FormDataHub
@@ -131,6 +138,7 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
             return this.component(() => (
                 <Flex width={percent(100)} children={
                     <AF elements={[
+                        /*
                         <Text text={"Unittest Selector"} uppercase bold type={TextType.secondaryDescription} fontSize={px(12)} align={Align.START}/>,
                         <Select
                             elements={() => elements}
@@ -142,7 +150,103 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
                                     this.rerender("data", "test", "unit-selector");
                                 }, 1);
                             }}
-                        />
+                        />,
+                        */
+
+                        /* <SettingsGroup elements={
+                            elements.map((value, index) => {
+                                const isActive = activeUnittest?.name === value.value
+                                return (
+                                    <SettingsElement
+                                        forceRenderSubpageIcon={!isActive}
+                                        iconConfig={{
+                                            enable: true,
+                                            color: !isActive ? undefined : theme.colors.primaryHighlightColor,
+                                            iconGenerator: element => <StorageRounded/>
+                                        }}
+                                        groupDisplayMode title={value.value}
+                                    />
+                                );
+                            })
+                        }/>, */
+
+                        <SettingsGroup title={"General"} elements={[
+                            <SettingsElement
+                                title={"Enable pure mode"}
+                                description={"Pure mode hides unnecessary UI elements from the unit-test page"}
+                                groupDisplayMode
+                                appendixGenerator={element => {
+                                    return this.component(local => {
+                                        const pure = this.isPure();
+                                        return (
+                                            <IOSwitch checked={pure} onChange={(event, checked) => {
+                                                this.togglePureMode(checked, 100);
+                                            }}/>
+                                        );
+                                    }, "data");
+                                }}
+                                onClick={element => {
+                                    this.togglePureMode(undefined);
+                                }}
+                                iconConfig={{
+                                    enable: true,
+                                    iconGenerator: element => (
+                                        <Icon icon={<ControlsIcon/>}/>
+                                    )
+                                }}
+                            />,
+                            <SettingsElement
+                                forceRenderSubpageIcon
+                                groupDisplayMode
+                                iconConfig={{
+                                    enable: true,
+                                    iconGenerator: element => <PlayArrowRounded/>
+                                }}
+                                onClick={element => {
+                                    element.dialog(
+                                        <StaticDrawerMenu body={props => {
+                                            return (
+                                                <Flex fw elements={[
+
+                                                    <SettingsGroup elements={
+                                                        elements.map((value, index) => {
+                                                            const isActive = activeUnittest?.name === value.value
+                                                            return (
+                                                                <SettingsElement
+                                                                    forceRenderSubpageIcon={!isActive}
+                                                                    iconConfig={{
+                                                                        enable: true,
+                                                                        // color: !isActive ? undefined : theme.colors.primaryHighlightColor,
+                                                                        iconGenerator: element => isActive ?
+                                                                            <CircularProgress
+                                                                                size={"20px"}
+                                                                                thickness={5}
+                                                                                variant={"indeterminate"}
+                                                                                color={"warning"}
+                                                                            /> :
+                                                                            <PlayArrowRounded/>
+                                                                    }}
+                                                                    groupDisplayMode title={value.value}
+                                                                    promiseBasedOnClick={element1 => new Promise<any>((resolve, reject) => {
+                                                                        this.local.state.fdh.set(fdhAddress, value.value, true);
+
+                                                                        setTimeout(() => {
+                                                                            this.rerender("data", "test", "unit-selector");
+                                                                        }, 1);
+                                                                    })}
+                                                                />
+                                                            );
+                                                        })
+                                                    }/>
+                                                ]}/>
+                                            );
+                                        }}/>
+                                    );
+                                }}
+                                title={"Test"}
+                                appendixGenerator={element => <Text text={activeUnittestName ?? "none"} type={TextType.secondaryDescription} fontSize={px(10)}/>}
+                            />
+                        ]}/>
                     ]}/>
                 }/>
             ), "unit-selector");
@@ -162,42 +266,7 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
                     children={
                         <Flex align={Align.CENTER} flexDir={FlexDirection.ROW} children={
                             <AF elements={[
-                                <HOCWrapper body={wrapper => (
-                                    <If condition={App.app() !== undefined} ifTrue={
-                                        <Button text={"QA-Panel"} onClick={() => {
-                                            wrapper.dialog(
-                                                <StaticDrawerMenu body={props => (
-                                                    <QuickActionPanel noPadding/>
-                                                )}/>
-                                            );
-                                        }}/>
-                                    } ifFalse={
-                                        <Button cursor={Cursor.notAllowed} opaque children={
-                                            <Text whitespace={"nowrap"} text={"QA-Panel"} coloredText visualMeaning={VM.UI_NO_HIGHLIGHT}/>
-                                        }/>
-                                    }/>
-                                )}/>,
-                                <Button text={"Anomaly"} onClick={() => {
-                                    this.dialog(
-                                        <EnumSelector from={AnomalyLevel} onSubmit={element => {
-                                            this.dialog(
-                                                <AnomalyInfo anomaly={{
-                                                    level: AnomalyLevel[element as keyof typeof AnomalyLevel]
-                                                }}/>
-                                            );
-                                        }}/>
-                                    );
-                                }}/>,
-                                <HOCWrapper body={wrapper => (
-                                    <Button text={"App mode"} onClick={() => {
-                                        wrapper.dialog(
-                                            <AppModeSwitcher/>
-                                        );
-                                    }}/>
-                                )}/>,
-                                <Button text={"Rerender 'test'"} onClick={() => {
-                                    this.rerender("test")
-                                }}/>
+
                             ]}/>
                         }/>
                     }
@@ -217,13 +286,19 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
                             top: theme.paddings.defaultObjectPadding.css(),
                             right: theme.paddings.defaultObjectPadding.css()
                         }} children={
-                            <Button children={
-                                <Icon icon={<ControlsIcon/>}/>
+                            <Button shrinkOnClick children={
+                                <Icon icon={<ApiRounded/>}/>
                             } onClick={() => {
                                 wrapper.dialog(
                                     <StaticDrawerMenu body={props => {
                                         return (
                                             <Flex width={percent(100)}>
+                                                <Centered children={
+                                                    <Icon size={px(30)} icon={
+                                                        <ApiRounded/>
+                                                    }/>
+                                                }/>
+
                                                 <DrawerHeader
                                                     header={"Control-Center"}
                                                     description={"Configure the unit-test page to your needs"}
@@ -233,20 +308,76 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
                                                 />
 
                                                 <AF elements={[
-                                                    this.a("toolbar"),
+                                                    <FlexRow margin={createMargin(0, 0, 0, 0)} fw padding paddingX={px(25)} gap={theme.gaps.smallGab} elements={[
 
+                                                        <HOCWrapper body={wrapper => (
+                                                            <Button shrinkOnClick tooltip={"App mode"} children={
+                                                                <Icon icon={
+                                                                    <Apps/>
+                                                                }/>
+                                                            } onClick={() => {
+                                                                wrapper.dialog(
+                                                                    <AppModeSwitcher/>
+                                                                );
+                                                            }}/>
+                                                        )}/>,
 
-                                                    // <NavHeader onChange={(from, to) => {}} elements={new Map<string, (navInstance: NavHeader) => JSX.Element>([
-                                                    //     ["default", nav => <Text renderMarkdown={false} text={"Overview"}/>],
-                                                    //     ["env", nav => <Text renderMarkdown={false} text={"Environment"}/>],
-                                                    //     ["apps", nav => <Text renderMarkdown={false} text={"Apps"}/>],
-                                                    //     ["ui", nav => <Text renderMarkdown={false} text={"UI"}/>],
-                                                    // ])} />,
+                                                        <Button shrinkOnClick children={
+                                                            <Icon icon={
+                                                                <ErrorRounded/>
+                                                            }/>
+                                                        } onClick={() => {
+                                                            this.dialog(
+                                                                <EnumSelector from={AnomalyLevel} onSubmit={element => {
+                                                                    this.dialog(
+                                                                        <AnomalyInfo anomaly={{
+                                                                            level: AnomalyLevel[element as keyof typeof AnomalyLevel]
+                                                                        }}/>
+                                                                    );
+                                                                }}/>
+                                                            );
+                                                        }}/>,
+
+                                                        App.app() !== undefined ? (
+                                                            <Button shrinkOnClick width={percent(100)} children={
+                                                                <Icon tooltip={"QA-Panel"} icon={
+                                                                    <Api/>
+                                                                }/>
+                                                            } onClick={() => {
+                                                                wrapper.dialog(
+                                                                    <StaticDrawerMenu body={props => (
+                                                                        <QuickActionPanel noPadding/>
+                                                                    )}/>
+                                                                );
+                                                            }}/>
+                                                        ) : (
+                                                            <Button width={percent(100)} cursor={Cursor.notAllowed} opaque children={
+                                                                <Icon tooltip={"QA-Panel"} colored color={theme.colors.backgroundHighlightColor200} icon={
+                                                                    <Api/>
+                                                                }/>
+                                                            }/>
+                                                        ),
+
+                                                        <Button shrinkOnClick children={
+                                                            <Icon icon={
+                                                                <AnalyticsRounded/>
+                                                            }/>
+                                                        }/>,
+
+                                                        <Button tooltip={"Rerender 'test'-channel"} shrinkOnClick children={
+                                                            <Icon icon={
+                                                                <RefreshRounded/>
+                                                            }/>
+                                                        } onClick={() => this.rerender("test")}/>,
+                                                    ]}/>,
+
+                                                    // this.a("toolbar"),
 
 
                                                     this.a("unit-selector")
                                                 ]}/>
 
+                                                {/*
                                                 <Flex width={percent(100)}>
                                                     <SettingsGroup title={"UI settings"} elements={[
                                                         <SettingsElement
@@ -275,6 +406,7 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
                                                         />
                                                     ]}/>
                                                 </Flex>
+                                                */}
                                             </Flex>
 
 

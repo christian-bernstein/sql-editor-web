@@ -7,6 +7,7 @@ import {time, TimeMeasured} from "../misc/TimeMeasured";
 import {TimeUnit} from "../misc/TimeUnit";
 import {ThemeKeys, ThemeObject} from "react-json-view";
 import {createTheme, Theme as MUITheme} from "@mui/material";
+import {ThemeMultiplexRenderers} from "./ThemeMultiplexRenderers";
 
 export function getMeaningfulColors(meaning: ObjectVisualMeaning, theme: Themeable.Theme): MeaningfulColors {
     switch (meaning) {
@@ -219,8 +220,7 @@ export namespace Themeable {
         backgroundHighlightColor200: Color.ofHex("#282c34"),
         backgroundHighlightInputColor: Color.ofHex("#282c34"),
         backgroundDeactivatedColor: Color.ofHex("#434750"),
-        // tooltipBackgroundColor: Color.ofHex("#2b2c2e"),
-        tooltipBackgroundColor: Color.ofHex("#18191C"),
+        tooltipBackgroundColor: Color.ofHex("#2b2c2e"),
         tooltipPrimaryFontColor: Color.ofHex("#DEDFE0"),
         iconColor: Color.ofHex("#FFFFFF"),
         fontPrimaryColor: Color.ofHex("#FFFFFF"),
@@ -693,7 +693,7 @@ export namespace Themeable {
 
     export const malaPallet = createColorPallet({
         backgroundColor: Color.ofHex("#000000"),
-        backgroundHighlightColor200: Color.ofHex("#D9D9D9"),
+        backgroundHighlightColor200: Color.ofHex("#222222"),
         // backgroundHighlightColor: Color.ofHex("#171717"),
         backgroundHighlightColor: Color.ofHex("#ffffff"),
         backgroundColorOuter: Color.ofHex("#171717"),
