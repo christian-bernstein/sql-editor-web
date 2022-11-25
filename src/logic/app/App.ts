@@ -18,7 +18,7 @@ import {Assembly} from "../assembly/Assembly";
 import {LogEntry} from "../data/LogEntry";
 import {v4} from "uuid";
 import {UserProfileData} from "../data/UserProfileData";
-import {getOr} from "../Utils";
+import {fromLocalStorage, getOr} from "../Utils";
 import {CDNRequestPacketData} from "../../packets/out/CDNRequestPacketData";
 import {CDNResponsePacketData} from "../../packets/in/CDNResponsePacketData";
 import {CDNRequestBranch} from "../data/cdn/CDNRequestBranch";
@@ -49,13 +49,29 @@ export function utilizeUserProfile(defUser: UserData = {
     }
 }
 
-export function utilizeGlobalTheme(defTheme: Themeable.Theme = Themeable.darkTritanopiaTheme): Themeable.Theme {
+export const defaultGlobalFallbackTheme: Themeable.Theme = Themeable.darkTritanopiaTheme;
+
+export let globalFallbackTheme: Themeable.Theme = Array.from(Themeable.getAllThemes().values()).filter(theme =>
+    theme.displayName === fromLocalStorage("globalFallbackTheme", defaultGlobalFallbackTheme.displayName)
+)[0] ?? defaultGlobalFallbackTheme;
+
+export function setGlobalFallbackTheme(theme: Themeable.Theme) {
+    globalFallbackTheme = theme;
+    window.localStorage.setItem("globalFallbackTheme", theme.displayName)
+}
+
+export function utilizeGlobalTheme(defTheme: Themeable.Theme | undefined = undefined): Themeable.Theme {
     if (App.isInitiated()) {
         return App.app().getGlobalTheme();
     } else {
+        if (defTheme === undefined) {
+            return globalFallbackTheme
+        }
         return defTheme;
     }
 }
+
+
 
 export class App {
     get globalThemeName(): string {

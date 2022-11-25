@@ -27,6 +27,15 @@ export function logAndReturn<T>(obj: T, prefix: string = ""): T {
     return obj;
 }
 
+export function fromLocalStorage(key: string, def: string): string {
+    const lsVal = window.localStorage.getItem(key);
+    if (lsVal === null) {
+        window.localStorage.setItem(key, def)
+        return def;
+    }
+    return lsVal;
+}
+
 export namespace Utils {
 
     /**

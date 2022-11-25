@@ -130,6 +130,7 @@ export namespace Themeable {
     }
 
     export type Theme = {
+        displayName: string,
         colors: ColorPallet,
         mode: "dark" | "light",
         muiTheme: MUITheme,
@@ -276,6 +277,7 @@ export namespace Themeable {
     })
 
     export const darkTritanopiaTheme: Theme = {
+        displayName: "Dark tritanoptia",
         colors: darkTritanopiaThemePallet,
         mode: "dark",
         muiTheme: createTheme({
@@ -412,6 +414,7 @@ export namespace Themeable {
     }
 
     export const defaultTheme: Theme = {
+        displayName: "Default theme",
         colors: defaultThemePallet,
         mode: "dark",
         muiTheme: createTheme({
@@ -547,6 +550,7 @@ export namespace Themeable {
     }
 
     export const lightTheme: Theme = {
+        displayName: "Light theme",
         colors: lightThemePallet,
         mode: "light",
         muiTheme: createTheme({

@@ -23,7 +23,7 @@ import {AppModeSwitcher} from "../../components/ho/appModeSwitcher/AppModeSwitch
 import {DrawerHeader} from "../../components/lo/DrawerHeader";
 import {ObjectVisualMeaning, VM} from "../../logic/style/ObjectVisualMeaning";
 import {createMargin} from "../../logic/style/Margin";
-import {App} from "../../logic/app/App";
+import {App, defaultGlobalFallbackTheme, globalFallbackTheme, setGlobalFallbackTheme} from "../../logic/app/App";
 import {If} from "../../components/logic/If";
 import {Cursor} from "../../logic/style/Cursor";
 import {Icon} from "../../components/lo/Icon";
@@ -36,7 +36,7 @@ import {Orientation} from "../../logic/style/Orientation";
 import {AppPageMode} from "../app/AppPageMode";
 import {getOr} from "../../logic/Utils";
 import {Dot} from "../../components/lo/Dot";
-import {Select, SelectElement} from "../../components/lo/Select";
+import {SelectElement} from "../../components/lo/Select";
 import {UnitTestUtils} from "./UnitTestUtils";
 import {UnitTest} from "./UnitTest";
 import {ProjectCardTest} from "./tests/ProjectCardTest";
@@ -47,18 +47,17 @@ import {AtlasTest} from "./tests/AtlasTest";
 import {DBTest} from "./tests/DBTest";
 import {CommandPaletteTest} from "./tests/CommandPaletteTest";
 import {
-    AnalyticsRounded, AodRounded,
+    AnalyticsRounded,
     Api,
     ApiRounded,
-    Apps, ErrorRounded, PlayArrowRounded,
-    RefreshRounded,
-    RunCircleRounded, RunningWithErrorsRounded,
-    SettingsApplicationsRounded,
-    StorageRounded
+    Apps,
+    DarkModeRounded, DesignServicesRounded,
+    ErrorRounded, GridViewRounded,
+    LightModeRounded,
+    PlayArrowRounded,
+    RefreshRounded
 } from "@mui/icons-material";
 import {Centered} from "../../components/lo/PosInCenter";
-import {CircleLoader, PulseLoader, RotateLoader} from "react-spinners";
-import {Spinner} from "react-bootstrap";
 import {CircularProgress} from "@mui/material";
 
 export type UnitTestPageLocalState = {
@@ -207,6 +206,13 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
                                         <StaticDrawerMenu body={props => {
                                             return (
                                                 <Flex fw elements={[
+                                                    <DrawerHeader
+                                                        header={"Select unit test"}
+                                                        description={"Choose a unit test to run"}
+                                                        enableBadge={true}
+                                                        badgeText={"Unit test"}
+                                                        badgeVM={VM.UI_NO_HIGHLIGHT}
+                                                    />,
 
                                                     <SettingsGroup elements={
                                                         elements.map((value, index) => {
@@ -245,7 +251,79 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
                                 }}
                                 title={"Test"}
                                 appendixGenerator={element => <Text text={activeUnittestName ?? "none"} type={TextType.secondaryDescription} fontSize={px(10)}/>}
-                            />
+                            />,
+
+                            <SettingsElement title={"Default global theme"} groupDisplayMode forceRenderSubpageIcon onClick={element => {
+                                element.dialog(
+                                    <StaticDrawerMenu body={props => {
+                                        return (
+                                            <Flex fw fh elements={[
+                                                <DrawerHeader
+                                                    header={"Select theme"}
+                                                    description={"Choose a new default fallback theme"}
+                                                    enableBadge={true}
+                                                    badgeText={"Theme"}
+                                                    badgeVM={VM.UI_NO_HIGHLIGHT}
+                                                />,
+
+                                                <SettingsGroup title={"Available themes"} elements={
+                                                    Array.from(Themeable.getAllThemes()).map(([name, theme]) => {
+                                                        const isSelected = globalFallbackTheme === theme;
+                                                        const isDefault = theme === defaultGlobalFallbackTheme;
+
+                                                        return (
+                                                            <SettingsElement
+                                                                title={name}
+                                                                groupDisplayMode
+
+                                                                iconConfig={{
+                                                                    enable: true,
+                                                                    iconGenerator: e => theme.mode === "dark" ? <DarkModeRounded/> : <LightModeRounded/>
+                                                                }}
+                                                                appendixGenerator={e => {
+                                                                    return (
+                                                                        <FlexRow fh align={Align.CENTER} gap={theme.gaps.smallGab} margin={createMargin(0, theme.gaps.defaultGab.measurand, 0, 0)} elements={[
+                                                                            isDefault ? <Text type={TextType.secondaryDescription} fontSize={px(10)} text={`Default${isSelected ? "," : ""}`}/> : <></>,
+                                                                            isSelected ? <Text type={TextType.secondaryDescription} fontSize={px(10)} text={"Selected"}/> : <></>,
+
+                                                                        ]}/>
+                                                                    );
+                                                                }}
+                                                                onClick={e => {
+                                                                    if (isSelected) return;
+                                                                    setGlobalFallbackTheme(theme)
+                                                                    this.rerender("unittest-root")
+                                                                }}
+                                                            />
+                                                        );
+                                                    })
+                                                }/>,
+
+                                                <SettingsElement title={"Reset default theme"} onClick={e => {
+                                                    if (globalFallbackTheme === defaultGlobalFallbackTheme) return;
+                                                    setGlobalFallbackTheme(defaultGlobalFallbackTheme);
+                                                    this.rerender("unittest-root");
+                                                }}/>
+                                            ]}/>
+                                        );
+                                    }}/>
+                                );
+                            }} appendixGenerator={element => {
+                                const currentDefFallbackTheme = globalFallbackTheme;
+
+                                return (
+                                    <FlexRow align={Align.CENTER} fh elements={[
+                                        <Text type={TextType.secondaryDescription} fontSize={px(10)} text={currentDefFallbackTheme.displayName}/>
+                                    ]}/>
+                                );
+                            }} iconConfig={{
+                                enable: true,
+                                iconGenerator: e => <DesignServicesRounded/>
+                            }}/>,
+                            <SettingsElement title={"Environment variables"} groupDisplayMode forceRenderSubpageIcon iconConfig={{
+                                enable: true,
+                                iconGenerator: e => <GridViewRounded/>
+                            }}/>,
                         ]}/>
                     ]}/>
                 }/>
@@ -408,9 +486,6 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
                                                 </Flex>
                                                 */}
                                             </Flex>
-
-
-
                                         );
                                     }}/>
                                 );
