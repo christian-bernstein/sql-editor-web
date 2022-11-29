@@ -561,7 +561,6 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                             <Flex margin={createMargin(20, 0, 20, 0)} fw align={Align.CENTER} justifyContent={Justify.CENTER} gap={px()} elements={[
                                 <Text
                                     text={"Empty"}
-                                    // fontSize={px(11)}
                                     type={TextType.secondaryDescription}
                                     bold
                                 />,

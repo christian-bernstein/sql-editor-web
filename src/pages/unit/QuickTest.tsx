@@ -16,6 +16,7 @@ import {HOCWrapper} from "../../components/HOCWrapper";
 import fileDownload from "js-file-download";
 import {AF} from "../../components/logic/ArrayFragment";
 import {StringQuery} from "../../tests/atlas/components/queries/StringQuery";
+import {Description} from "../../components/lo/Description";
 
 export class QuickTest extends BernieComponent<any, any, any> {
 
@@ -113,6 +114,8 @@ export class QuickTest extends BernieComponent<any, any, any> {
                     <Centered children={
                         <DevelopmentHuePlugToggleCard/>
                     }/>,
+
+                    <Description text={"Test 123"}/>,
 
                     <Button text={"StringQuery"} onClick={() => {
                         this.dialog(
