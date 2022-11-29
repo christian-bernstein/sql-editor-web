@@ -56,7 +56,8 @@ import {SideMenu} from "./SideMenu";
 
 export type VFSFolderViewProps = {
     initialFolderID?: string,
-    onClose: () => void
+    onClose: () => void,
+    onMount?: (view: VFSFolderView) => void
 }
 
 export type VFSFolderViewLocalState = {
@@ -108,6 +109,11 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
         });
     }
 
+    public requestViewClosing() {
+        // TODO add shutdown logic / animation
+        this.props.onClose();
+    }
+
     public toggleMenu() {
         this.local.setStateWithChannels({
             menuVisible: !this.ls().menuVisible
@@ -142,7 +148,6 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
     componentDidMount() {
         super.componentDidMount();
         this.local.state.currentFolderData.query();
-
         this.createMultiplexer({
             groupID: v4(),
             groupTitle: "Main",
@@ -150,14 +155,7 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
             activeDocumentID: undefined,
             view: this
         });
-
-        this.createMultiplexer({
-            groupID: v4(),
-            groupTitle: "Test",
-            documents: new Array<AtlasDocument>(),
-            activeDocumentID: undefined,
-            view: this
-        });
+        this.props.onMount?.(this);
     }
 
     init() {
@@ -196,7 +194,6 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                             folder = AtlasMain.atlas().api().getFolder(folder.parentFolder);
                             tree.push(folder);
                         }
-
                         return (
                             <FolderPathView
                                 path={tree.reverse()}
@@ -204,38 +201,6 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                                     this.updateCurrentFolder(selectedFolder.id);
                                 }}
                             />
-                        );
-
-                        // TODO: Remove code fragment
-                        return (
-                            <SideScroller useMouseDragging children={
-                                <Flex flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab} align={Align.CENTER} elements={
-                                    tree.reverse().map((folder, index, array) => {
-                                        const isLast = !(index + 1 < array.length);
-                                        return (
-                                            <AF elements={[
-                                                <Tooltip title={`Go to ${folder.id}`} arrow children={
-                                                    <Text
-                                                        whitespace={"nowrap"}
-                                                        text={`${folder.title}`}
-                                                        cursor={Cursor.pointer}
-                                                        highlight={isLast}
-                                                        coloredText={isLast}
-                                                        visualMeaning={isLast ? VM.INFO : VM.UI_NO_HIGHLIGHT}
-                                                        onClick={() => {
-                                                            if (!isLast) {
-                                                                this.updateCurrentFolder(folder.id);
-                                                            }
-                                                        }
-                                                    }/>
-                                                }/>,
-                                                // !isLast ? <Dot/> : undefined
-                                                <Text text={"/"} type={TextType.secondaryDescription}/>
-                                            ]}/>
-                                        );
-                                    })
-                                }/>
-                            }/>
                         );
                     }
                 }}/>
@@ -647,7 +612,10 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
         this.assembly.assembly("menu", t => {
             if (this.ls().menuVisible) {
                 return (
-                    <Flex fh width={px(500)} style={{ backgroundColor: t.colors.backgroundHighlightColor.css() }} elements={[
+                    <Flex fh width={px(350)} style={{
+                        // width: "350px !important",
+                        backgroundColor: t.colors.backgroundHighlightColor.css()
+                    }} elements={[
                         <OverflowWithHeader dir={FlexDirection.COLUMN_REVERSE} staticContainer={{
                             gap: px(),
                             elements: [
@@ -737,9 +705,7 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                     elements: [
                         <Flex fh fw gap={px()} flexDir={FlexDirection.ROW} elements={[
 
-                            <SideMenu
-                                view={this}
-                            />,
+                            <SideMenu view={this}/>,
 
                             this.component(() => this.a("menu"), "menu"),
 

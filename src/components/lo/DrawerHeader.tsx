@@ -1,7 +1,7 @@
 import {BernieComponent} from "../../logic/BernieComponent";
 import {Themeable} from "../../logic/style/Themeable";
 import {Assembly} from "../../logic/assembly/Assembly";
-import {Flex, FlexBox} from "./FlexBox";
+import {FlexBox} from "./FlexBox";
 import {percent, px} from "../../logic/style/DimensionalMeasured";
 import {Align} from "../../logic/style/Align";
 import {AF} from "../logic/ArrayFragment";
@@ -11,9 +11,6 @@ import {Badge} from "./Badge";
 import {getOr} from "../../logic/Utils";
 import {Text, TextType} from "./Text";
 import {Margin} from "../../logic/style/Margin";
-import {LiteGrid} from "./LiteGrid";
-import {Centered} from "./PosInCenter";
-import {Justify} from "../../logic/style/Justify";
 
 export type DrawerHeaderProps = {
     enableBadge?: boolean,
@@ -49,7 +46,7 @@ export class DrawerHeader extends BernieComponent<DrawerHeaderProps, any, any> {
                         // }/>
                     }/>,
                     <FlexBox width={percent(100)} gap={t.gaps.smallGab} align={Align.CENTER}>
-                        <Text text={p.header} type={TextType.smallHeader}/>
+                        <Text text={p.header} type={TextType.smallHeader} align={Align.CENTER}/>
                         <If condition={p.description !== undefined} ifTrue={
                             <Text text={p.description as string} align={Align.CENTER} type={TextType.secondaryDescription} fontSize={px(11)}/>
                         }/>

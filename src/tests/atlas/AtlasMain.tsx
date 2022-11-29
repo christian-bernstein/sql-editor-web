@@ -37,13 +37,17 @@ import {Tooltip} from "../../components/ho/tooltip/Tooltip";
 import {Gloria} from "../../frameworks/gloria/Gloria";
 import {GloriaCommandPalette} from "../../frameworks/gloria/components/GloriaCommandPalette";
 import {AF} from "../../components/logic/ArrayFragment";
+import {v4} from "uuid";
+import {StringQuery} from "./components/queries/StringQuery";
 
 export type AtlasMainProps = {
     api: IAtlasAPI
 }
 
 export type AtlasMainLocalState = {
-    gloriaDialogHOCWrapper?: GenericBC
+    gloriaDialogHOCWrapper?: GenericBC,
+    vfsFolderViewInstance?: VFSFolderView,
+    vfsFolderViewOpened: boolean
 }
 
 export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
@@ -56,7 +60,23 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
     }
 
     constructor(props: AtlasMainProps) {
-        super(props, undefined, {});
+        super(props, undefined, {
+            vfsFolderViewOpened: false
+        });
+    }
+
+    public isVFSFolderViewOpened(): boolean {
+        const ls = this.ls();
+        return !(!ls.vfsFolderViewOpened || ls.vfsFolderViewInstance === undefined);
+    }
+
+    public useVFSFolderView(action: (view: VFSFolderView) => void, ifNotOpen?: () => void) {
+        const ls = this.ls();
+        if (!ls.vfsFolderViewOpened || ls.vfsFolderViewInstance === undefined) {
+            ifNotOpen?.();
+            return;
+        }
+        action(ls.vfsFolderViewInstance);
     }
 
     public openGloria() {
@@ -66,40 +86,58 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
         wrapper.dialog(
             <Screen style={{ backgroundColor: "transparent" }} deactivatePadding children={
                 <Centered fullHeight children={
-                    <GloriaCommandPalette gloria={new Gloria().registerCommand({
-                        id: "long-duration-test",
-                        title: () => "I take a long time!",
-                        description: () => "This is the test description for `Test 1`. This commands does only print to the console.",
-                        executor: (ctx) => new Promise(resolve => {
-                            setTimeout(() => {
-                                resolve(undefined);
-                            }, 5000);
-                        })
-                    }).registerCommand({
-                        id: "open-tree-view",
-                        title: () => "Open tree view",
-                        executor: (ctx) => new Promise(resolve => {
-                            AtlasMain.atlas().openTreeViewDialog();
-                            AtlasMain.atlas(atlas => {
-                                atlas.ls().gloriaDialogHOCWrapper?.closeLocalDialog();
-                            })
-                            resolve(undefined);
-                        })
-                    }).registerCommand({
-                        id: "asd",
-                        title: () => "ASd",
-                        executor: (ctx) => new Promise(resolve => {
-                            console.log("asd running");
-                            resolve(undefined);
-                        })
-                    }).registerCommand({
-                        id: "test-3",
-                        title: () => "3 not 2!",
-                        executor: (ctx) => new Promise(resolve => {
-                            console.log("Test 3 running");
-                            resolve(undefined);
-                        })
-                    })}/>
+                    <HOCWrapper body={gcpDialogWrapper => {
+                        return (
+                            <GloriaCommandPalette gloria={new Gloria().registerCommand({
+                                id: "open-tree-view",
+                                title: () => "Open tree view",
+                                executor: (ctx) => new Promise(resolve => {
+                                    AtlasMain.atlas().openTreeViewDialog();
+                                    AtlasMain.atlas(atlas => {
+                                        atlas.ls().gloriaDialogHOCWrapper?.closeLocalDialog();
+                                    })
+                                    resolve(undefined);
+                                })
+                            }).registerCommand({
+                                id: "create-multiplexer",
+                                title: () => "Create multiplexer",
+                                executor: (ctx) => new Promise(resolve => {
+                                    AtlasMain.atlas(atlas => {
+                                        // Open vfs folder view if not opened yet
+                                        if (!this.isVFSFolderViewOpened()) AtlasMain.atlas().openTreeViewDialog();
+                                        // Create a new multiplexer
+
+                                        let multiplexerName: string | undefined = undefined;
+
+                                        const multiplexerFactory = () => {
+                                            atlas.useVFSFolderView(view => {
+                                                view.createMultiplexer({
+                                                    groupID: v4(),
+                                                    view: view,
+                                                    groupTitle: multiplexerName ?? "Multiplexer",
+                                                    documents: []
+                                                });
+
+                                                atlas.ls().gloriaDialogHOCWrapper?.closeLocalDialog();
+                                            });
+                                        }
+
+                                        gcpDialogWrapper.dialog(
+                                            <StringQuery title={"Choose multiplexer name"} description={"Choose the title of the new multiplexer"} onSubmit={string => {
+                                                multiplexerName = string;
+                                                multiplexerFactory();
+                                            }}/>,
+                                            () => {
+                                                multiplexerFactory();
+                                            }
+                                        );
+                                    });
+
+                                    resolve(undefined);
+                                })
+                            })}/>
+                        );
+                    }}/>
                 }/>
             }/>
         );
@@ -110,10 +148,25 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
     }
 
     public openTreeViewDialog() {
+        const onClose = () => {
+            this.closeLocalDialog();
+            this.local.setStateWithChannels({
+                vfsFolderViewOpened: false,
+                vfsFolderViewInstance: undefined
+            }, ["vfs-folder-view"]);
+        }
+
         this.dialog(
             <VFSFolderView
-                onClose={() => this.closeLocalDialog()}
-            />
+                onClose={() => onClose()}
+                onMount={(view: VFSFolderView) => {
+                    this.local.setStateWithChannels({
+                        vfsFolderViewOpened: true,
+                        vfsFolderViewInstance: view
+                    }, ["vfs-folder-view"]);
+                }}
+            />,
+            () => onClose()
         );
     }
 

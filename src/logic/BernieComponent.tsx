@@ -21,16 +21,15 @@ export type BernieComponentConfig<T extends BernieComponent<any, any, any> = any
     enableLocalDialog: boolean,
     componentID?: string,
     deviceRenderSeparation?: boolean,
-
     renderers?: Map<string, MuxRenderer<T>>
 }
 
-export type BernieComponentBaseProps<T> = T & CoMuxProps & {
-}
+export type BernieComponentBaseProps<T> = T & CoMuxProps & {}
 
 export type GenericBC = BernieComponent<any, any, any>;
 
 export class BernieComponent<RProps, RState, LState extends object, Implementation extends BernieComponent<any, any, any> = any> extends React.Component<BernieComponentBaseProps<RProps>, RState> {
+
     get helper(): ComponentHelper<RProps, RState, LState, Implementation> {
         return this._helper;
     }
@@ -54,6 +53,8 @@ export class BernieComponent<RProps, RState, LState extends object, Implementati
     private renderLocalForegroundDialog: boolean;
 
     private renderLocalForegroundDialogGenerator?: (component: BernieComponent<RProps, RState, LState>) => JSX.Element;
+
+    private localForegroundDialogClosingListener?: () => void;
 
     constructor(props: BernieComponentBaseProps<RProps>, state: RState, local: LState, config?: Partial<BernieComponentConfig<Implementation>>) {
         super(props);
@@ -169,8 +170,13 @@ export class BernieComponent<RProps, RState, LState extends object, Implementati
     public init() {
     }
 
-    public dialog(component: JSX.Element) {
+    public dialog(component: JSX.Element, onClose?: () => void) {
         this.openLocalDialog(() => component);
+
+        // TODO: Make more versatile solution
+        if (onClose !== undefined && this.localForegroundDialogClosingListener === undefined) {
+            this.localForegroundDialogClosingListener = onClose;
+        }
     }
 
     public closeLocalDialog() {
@@ -231,6 +237,12 @@ export class BernieComponent<RProps, RState, LState extends object, Implementati
                 onClose={() => {
                     this.renderLocalForegroundDialog = false;
                     this.rerender("foreground-dialog");
+
+                    // TODO: Make more versatile solution
+                    if (this.localForegroundDialogClosingListener !== undefined) {
+                        this.localForegroundDialogClosingListener();
+                        this.localForegroundDialogClosingListener = undefined;
+                    }
                 }} sx={{
                     '& .MuiPaper-root': {
                         background: "transparent",

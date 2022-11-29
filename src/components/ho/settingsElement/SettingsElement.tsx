@@ -194,7 +194,13 @@ export class SettingsElement extends BernieComponent<SettingsElementProps, any, 
                                             }/>
                                     }/>
                                 }/>
-                                <Text cursor={Cursor.pointer} text={p.title} whitespace={"nowrap"} margin={createMargin(0, 0, 0, t.gaps.smallGab.times(2).withPlus(26).measurand)}/>
+                                <Text
+                                    // TODO: Add visual meaning
+                                    cursor={Cursor.pointer}
+                                    text={p.title}
+                                    whitespace={"nowrap"}
+                                    margin={createMargin(0, 0, 0, t.gaps.smallGab.times(2).withPlus(26).measurand)}
+                                />
                             </FlexBox>
 
                             <FlexBox align={Align.CENTER} flexDir={FlexDirection.ROW} gap={t.gaps.smallGab} height={percent(100)}>

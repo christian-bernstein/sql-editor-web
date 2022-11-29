@@ -299,6 +299,14 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
                                                     })
                                                 }/>,
 
+                                                <If condition={defaultGlobalFallbackTheme === globalFallbackTheme} ifTrue={
+                                                    <SettingsElement title={"Reset default theme"} onClick={e => {
+                                                        if (globalFallbackTheme === defaultGlobalFallbackTheme) return;
+                                                        setGlobalFallbackTheme(defaultGlobalFallbackTheme);
+                                                        this.rerender("unittest-root");
+                                                    }}/>
+                                                }/>,
+
                                                 <SettingsElement title={"Reset default theme"} onClick={e => {
                                                     if (globalFallbackTheme === defaultGlobalFallbackTheme) return;
                                                     setGlobalFallbackTheme(defaultGlobalFallbackTheme);
