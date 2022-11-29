@@ -613,7 +613,7 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
             if (this.ls().menuVisible) {
                 return (
                     <Flex fh width={px(350)} style={{
-                        // width: "350px !important",
+                        minWidth: "350px",
                         backgroundColor: t.colors.backgroundHighlightColor.css()
                     }} elements={[
                         <OverflowWithHeader dir={FlexDirection.COLUMN_REVERSE} staticContainer={{
