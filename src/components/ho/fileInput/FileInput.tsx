@@ -4,14 +4,7 @@ import {Themeable} from "../../../logic/style/Themeable";
 import {Assembly} from "../../../logic/assembly/Assembly";
 import styled from "styled-components";
 import {Icon} from "../../lo/Icon";
-import {
-    AttachFileRounded,
-    DeleteForeverRounded, DeleteRounded,
-    FilePresentRounded, RemoveCircleOutlineRounded,
-    RemoveRounded,
-    UploadFileRounded
-} from "@mui/icons-material";
-import {Tooltip} from "../tooltip/Tooltip";
+import {CheckRounded, DeleteRounded, FilePresentRounded, UploadFileRounded} from "@mui/icons-material";
 import {AF} from "../../logic/ArrayFragment";
 import {Description} from "../../lo/Description";
 import {FlexRow} from "../../lo/FlexBox";
@@ -23,16 +16,27 @@ import {Orientation} from "../../../logic/style/Orientation";
 import {px} from "../../../logic/style/DimensionalMeasured";
 import {VM} from "../../../logic/style/ObjectVisualMeaning";
 import {Utils} from "../../../logic/Utils";
+import {FileInputSubmissionMode} from "./FileInputSubmissionMode";
+import {If} from "../../logic/If";
+import {OverflowBehaviour} from "../../../logic/style/OverflowBehaviour";
+import {Document, pdfjs} from "react-pdf";
 
-export type FileInputLocalState = {
-    files?: FileList
+export type FileInputProps = {
+    submissionMode?: FileInputSubmissionMode
 }
 
-export class FileInput extends BernieComponent<any, any, FileInputLocalState> {
+export type FileInputLocalState = {
+    files?: FileList,
+}
 
-    constructor() {
-        super(undefined, undefined, {
-        });
+export class FileInput extends BernieComponent<FileInputProps, any, FileInputLocalState> {
+
+    private static readonly defaultProps: FileInputProps = {
+        submissionMode: FileInputSubmissionMode.AUTO_SUBMIT
+    }
+
+    constructor(props: FileInputProps) {
+        super({...FileInput.defaultProps, ...props}, undefined, {});
     }
 
     private clearFiles() {
@@ -41,11 +45,14 @@ export class FileInput extends BernieComponent<any, any, FileInputLocalState> {
         }, ["files"]);
     }
 
-    componentRender(p: any, s: any, l: FileInputLocalState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
+    private areFilesSelected(): boolean {
+        const ls = this.ls();
+        return ls.files !== undefined && ls.files.length > 0;
+    }
 
-        const Label = styled.label`
-        `;
 
+    componentRender(p: FileInputProps, s: any, l: FileInputLocalState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
+        const Label = styled.label``;
         const Input = styled.input`
           &[type="file"] {
             display: none;
@@ -56,6 +63,7 @@ export class FileInput extends BernieComponent<any, any, FileInputLocalState> {
             <Label children={
                 <Box cursor={Cursor.pointer} paddingY={t.gaps.smallGab} paddingX={t.gaps.smallGab} elements={[
                     <FlexRow gap={t.gaps.smallGab} fh align={Align.CENTER} elements={[
+
                         <Input multiple={false} autoFocus type={"file"} onChange={ev => {
                             this.local.setStateWithChannels({
                                 files: ev.target.files !== null ? ev.target.files : undefined
@@ -65,8 +73,9 @@ export class FileInput extends BernieComponent<any, any, FileInputLocalState> {
                         <Icon icon={<UploadFileRounded/>}/>,
 
                         this.component(() => {
-                            if (this.ls().files !== undefined) {
-                                const files = this.ls().files as FileList;
+                            const ls = this.ls();
+                            if (this.areFilesSelected()) {
+                                const files = ls.files as FileList;
                                 const mappable = [];
                                 for (let i = 0; i < files.length; i++) mappable.push(files[i]);
                                 return (
@@ -75,10 +84,19 @@ export class FileInput extends BernieComponent<any, any, FileInputLocalState> {
                                         mappable.map(file => {
                                             return (
                                                 <FlexRow gap={t.gaps.smallGab} elements={[
-                                                    // <Icon icon={<FilePresentRounded/>}/>,
+                                                    <Icon icon={<FilePresentRounded/>} tooltip={
+                                                        <Document
+                                                            options={{
+                                                                cMapUrl: `https://unpkg.com/pdfjs-dist@${pdfjs.version}/cmaps/`,
+                                                                cMapPacked: true,
+                                                            }}
+                                                            file={file}
+                                                        />
+                                                    }/>,
                                                     <Description
+                                                        renderMarkdown={false}
                                                         cursor={Cursor.pointer}
-                                                        text={`${file.name} *${Utils.humanFileSize(file.size)}*`}
+                                                        text={`${file.name} *${Utils.humanFileSize(file.size)}*; ${file.type}`}
                                                     />
                                                 ]}/>
                                             );
@@ -95,7 +113,21 @@ export class FileInput extends BernieComponent<any, any, FileInputLocalState> {
                                                 event.preventDefault();
                                                 event.stopPropagation();
                                             }}
-                                        />
+                                        />,
+                                        <If condition={p.submissionMode === FileInputSubmissionMode.MANUAL_SUBMIT} ifTrue={
+                                            <Icon
+                                                coloredOnDefault={false}
+                                                icon={<CheckRounded/>}
+                                                colored
+                                                visualMeaning={VM.SUCCESS}
+                                                tooltip={"Submit"}
+                                                onClick={(event) => {
+                                                    // TODO: Add submission logic
+                                                    event.preventDefault();
+                                                    event.stopPropagation();
+                                                }}
+                                            />
+                                        }/>
                                     ]}/>
                                 );
                             }

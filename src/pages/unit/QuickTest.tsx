@@ -4,20 +4,22 @@ import {Assembly} from "../../logic/assembly/Assembly";
 import {UnitTestUtils} from "./UnitTestUtils";
 import React from "react";
 import {Flex} from "../../components/lo/FlexBox";
-import {DevelopmentHuePlugToggleCard} from "../../projects/animate/components/DevelopmentHuePlugToggleCard";
 import {Centered} from "../../components/lo/PosInCenter";
 import {Button} from "../../components/lo/Button";
-import {percent} from "../../logic/style/DimensionalMeasured";
+import {percent, px} from "../../logic/style/DimensionalMeasured";
 import {Text} from "../../components/lo/Text";
-import {v4} from "uuid";
 import {Input} from "../../components/lo/Input";
 import {Group} from "../../components/lo/Group";
 import {HOCWrapper} from "../../components/HOCWrapper";
 import fileDownload from "js-file-download";
 import {AF} from "../../components/logic/ArrayFragment";
 import {StringQuery} from "../../tests/atlas/components/queries/StringQuery";
-import {Description} from "../../components/lo/Description";
 import {FileInput} from "../../components/ho/fileInput/FileInput";
+import {FileInputSubmissionMode} from "../../components/ho/fileInput/FileInputSubmissionMode";
+import {pdfjs} from "react-pdf";
+import {Document} from "react-pdf/dist/esm/entry.webpack";
+import {StaticDrawerMenu} from "../../components/lo/StaticDrawerMenu";
+import {VM} from "../../logic/style/ObjectVisualMeaning";
 
 export class QuickTest extends BernieComponent<any, any, any> {
 
@@ -72,6 +74,44 @@ export class QuickTest extends BernieComponent<any, any, any> {
                         xmlHttp.send(body);
                     }}/>,
 
+                    <Input autoFocus type={"file"} onChange={ev => {
+                        if (ev.target.files !== null) {
+                            const file: File = ev.target.files[0];
+                            const reader: FileReader = new FileReader();
+                            reader.onload = async (event: ProgressEvent<FileReader>) => {
+                                const src = event.target?.result;
+                                this.dialog(
+                                    <StaticDrawerMenu body={pr => {
+                                        return (
+                                            <Flex height={px(500)} elements={[
+                                                <Document
+                                                    options={{
+                                                        cMapUrl: `https://unpkg.com/pdfjs-dist@${pdfjs.version}/cmaps/`,
+                                                        cMapPacked: true,
+                                                    }}
+                                                    file={src}
+                                                    onLoadSuccess={pdf => {
+                                                        console.log("load successful", pdf)
+                                                    }}
+                                                    onLoadError={error => {
+                                                        console.log("error while loading pdf", error)
+                                                    }}
+                                                    onSourceError={error => {
+                                                        console.log("source error in pdf", error)
+                                                    }}
+                                                    error={
+                                                        <Text renderMarkdown={false} text={"Error"} visualMeaning={VM.ERROR} coloredText/>
+                                                    }
+                                                />
+                                            ]}/>
+                                        );
+                                    }}/>
+                                );
+                            }
+                            reader.readAsDataURL(file);
+                        }
+                    }}/>,
+
                     <HOCWrapper body={wrapper => {
                         type SharedFile = {
                             fileName: string,
@@ -81,7 +121,7 @@ export class QuickTest extends BernieComponent<any, any, any> {
                         return (
                             <AF elements={[
                                 <Centered children={
-                                    <FileInput/>
+                                    <FileInput submissionMode={FileInputSubmissionMode.MANUAL_SUBMIT}/>
                                 }/>,
 
                                 <Input autoFocus type={"file"} onChange={ev => {

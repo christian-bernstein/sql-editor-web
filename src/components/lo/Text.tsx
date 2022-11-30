@@ -93,7 +93,11 @@ export const Text: React.FC<TextProps> = props => {
       cursor: ${getOr(props.cursor, Cursor.default)};
       color: ${props.coloredText ? (props.color === undefined ? meaningfulColors.lighter.css() : props.color.css()) + "!important" : ""};
       transition: all ${theme.transitions.fastTime.css()};
-      text-overflow: ellipsis;
+      
+      * {
+        text-overflow: ellipsis;
+      }
+      
       
       &:hover {
         color: ${props.highlight ? meaningfulColors.main.css() : "auto"} !important;
