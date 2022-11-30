@@ -703,13 +703,9 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                 }} overflowContainer={{
                     elements: [
                         <Flex fh fw gap={px()} flexDir={FlexDirection.ROW} elements={[
-
                             <SideMenu view={this}/>,
-
                             this.component(() => this.a("menu"), "menu"),
-
                             <Separator orientation={Orientation.VERTICAL}/>,
-
                             this.component(local => {
                                 return (
                                     <LiteGrid style={{ width: "100%" }} columns={local.state.viewMultiplexers.length} children={

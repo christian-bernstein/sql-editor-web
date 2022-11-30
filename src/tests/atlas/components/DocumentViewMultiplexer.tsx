@@ -31,6 +31,7 @@ import {DocumentState} from "../data/DocumentState";
 import {DocumentSaveState} from "../data/DocumentSaveState";
 import {ContextCompound} from "../../../components/ho/contextCompound/ContextCompound";
 import {SettingsGroup} from "../../../components/lo/SettingsGroup";
+import {MultiplexerDocumentTab} from "./multiplexer/MultiplexerDocumentTab";
 
 export type DocumentViewMultiplexerControlConfig = {
     documents: Array<AtlasDocument>
@@ -48,7 +49,7 @@ export type DocumentViewMultiplexerProps = {
 
 export class DocumentViewMultiplexer extends BC<DocumentViewMultiplexerProps, any, any> {
 
-    private view(): VFSFolderView {
+    public view(): VFSFolderView {
         return this.props.controlConfigMirror.view;
     }
 
@@ -57,14 +58,14 @@ export class DocumentViewMultiplexer extends BC<DocumentViewMultiplexerProps, an
     }
 
     // TODO: Add refresh function
-    private getActiveDocument(): AtlasDocument | undefined {
+    public getActiveDocument(): AtlasDocument | undefined {
         if (this.props.controlConfigMirror.activeDocumentID === undefined) {
             return undefined;
         }
         return this.props.controlConfigMirror.documents.filter(doc => doc.id === this.props.controlConfigMirror.activeDocumentID)[0];
     }
 
-    private removeDocument(id: string) {
+    public removeDocument(id: string) {
         this.view().closeAndRemoveDocumentFromMultiplexer(this.props.controlConfigMirror.groupID, id);
     }
 
@@ -79,7 +80,6 @@ export class DocumentViewMultiplexer extends BC<DocumentViewMultiplexerProps, an
         this.assembly.assembly("header", t => {
             const activeDocument = this.getActiveDocument();
             const p = this.props;
-
             return (
                 <Box
                     fw
@@ -117,76 +117,83 @@ export class DocumentViewMultiplexer extends BC<DocumentViewMultiplexerProps, an
                             ) : (
                                 <Flex flexDir={FlexDirection.ROW} gap={t.gaps.smallGab} elements={[
                                     ...p.controlConfigMirror.documents.map(document => {
-                                        const isActive: boolean = document.id === activeDocument?.id;
-                                        const docState: DocumentState = this.view().getDocumentState(document.id);
+                                        // const isActive: boolean = document.id === activeDocument?.id;
+                                        // const docState: DocumentState = this.view().getDocumentState(document.id);
 
                                         return (
-                                            <SettingsElement
-                                                visualMeaning={isActive ? ObjectVisualMeaning.INFO : ObjectVisualMeaning.UI_NO_HIGHLIGHT}
-                                                title={getOr(document.title, "N/A")}
-                                                iconConfig={{
-                                                    enable: true,
-                                                    color: document.iconColorHEX === undefined ? undefined : Color.ofHex(document.iconColorHEX),
-                                                    iconGenerator: element => (
-                                                        <DocumentIcon/>
-                                                    )
-                                                }}
-                                                appendixGenerator={element => {
-                                                    return (
-                                                        <Flex flexDir={FlexDirection.ROW} align={Align.CENTER} gap={t.gaps.smallGab} margin={createMargin(0, t.gaps.smallGab.measurand, 0, 0)} elements={[
-                                                            isActive ? (
-                                                                Badge.badge("Open", {
-                                                                    visualMeaning: ObjectVisualMeaning.INFO
-                                                                })
-                                                            ) : <></>,
-
-                                                            this.view().component(l => (
-                                                                (() => {
-                                                                    switch (docState.saveState) {
-                                                                        case DocumentSaveState.SAVED:
-                                                                            return (
-                                                                                <Tooltip title={"Saved"} children={
-                                                                                    <Icon icon={<SavedIcon/>} size={px(16)}/>
-                                                                                }/>
-                                                                            );
-                                                                        case DocumentSaveState.PENDING:
-                                                                            return (
-                                                                                <Tooltip title={"Pending changes are getting saved"} children={
-                                                                                    <Icon icon={<PendingIcon/>} colored visualMeaning={VM.WARNING} size={px(16)}/>
-                                                                                }/>
-                                                                            );
-                                                                    }
-                                                                })()
-                                                            ), this.view().toDocumentSpecificChannel(document.id, "persistence-sync-state")),
-
-
-                                                            <Tooltip title={"Actions"} children={
-                                                                <Icon icon={<ActionsIcon/>} size={px(16)} onClick={(event) => {
-                                                                    // TODO: Handle -> Open context menu
-                                                                    event.stopPropagation();
-                                                                }}/>
-                                                            }/>,
-
-                                                            <Tooltip title={"Close document"} children={
-                                                                <Icon icon={<CloseIcon/>} size={px(16)} onClick={(event) => {
-                                                                    this.removeDocument(document.id);
-                                                                    event.stopPropagation();
-                                                                }}/>
-                                                            }/>
-                                                        ]}/>
-                                                    );
-                                                }}
-                                                promiseBasedOnClick={element => new Promise<void>((resolve, reject) => {
-                                                    try {
-                                                        this.props.changeActiveDocument(document.id);
-                                                        resolve();
-                                                    } catch (e) {
-                                                        console.error(e);
-                                                        reject();
-                                                    }
-                                                })}
+                                            <MultiplexerDocumentTab
+                                                document={document}
+                                                multiplexerInstance={this}
                                             />
                                         );
+
+                                        // return (
+                                        //     <SettingsElement
+                                        //         visualMeaning={isActive ? ObjectVisualMeaning.INFO : ObjectVisualMeaning.UI_NO_HIGHLIGHT}
+                                        //         title={getOr(document.title, "N/A")}
+                                        //         iconConfig={{
+                                        //             enable: true,
+                                        //             color: document.iconColorHEX === undefined ? undefined : Color.ofHex(document.iconColorHEX),
+                                        //             iconGenerator: element => (
+                                        //                 <DocumentIcon/>
+                                        //             )
+                                        //         }}
+                                        //         appendixGenerator={element => {
+                                        //             return (
+                                        //                 <Flex flexDir={FlexDirection.ROW} align={Align.CENTER} gap={t.gaps.smallGab} margin={createMargin(0, t.gaps.smallGab.measurand, 0, 0)} elements={[
+                                        //                     isActive ? (
+                                        //                         Badge.badge("Open", {
+                                        //                             visualMeaning: ObjectVisualMeaning.INFO
+                                        //                         })
+                                        //                     ) : <></>,
+                                        //                     this.view().component(l => (
+                                        //                         (() => {
+                                        //                             switch (docState.saveState) {
+                                        //                                 case DocumentSaveState.SAVED:
+                                        //                                     return (
+                                        //                                         <Icon
+                                        //                                             icon={<SavedIcon/>}
+                                        //                                             tooltip={"Saved"}
+                                        //                                             size={px(16)}
+                                        //                                         />
+                                        //                                     );
+                                        //                                 case DocumentSaveState.PENDING:
+                                        //                                     return (
+                                        //                                         <Icon
+                                        //                                             icon={<PendingIcon/>}
+                                        //                                             tooltip={"Pending changes are getting saved"}
+                                        //                                             colored
+                                        //                                             visualMeaning={VM.WARNING}
+                                        //                                             size={px(16)}
+                                        //                                         />
+                                        //                                     );
+                                        //                             }
+                                        //                         })()
+                                        //                     ), this.view().toDocumentSpecificChannel(document.id, "persistence-sync-state")),
+                                        //                     <Icon icon={<ActionsIcon/>} tooltip={"Actions"} size={px(16)} onClick={(event) => {
+                                        //                         // TODO: Handle -> Open context menu
+                                        //                         event.preventDefault();
+                                        //                         event.stopPropagation();
+                                        //                     }}/>,
+                                        //                     <Icon icon={<CloseIcon/>} tooltip={"Close document"} size={px(16)} onClick={(event) => {
+                                        //                         this.removeDocument(document.id);
+                                        //                         event.preventDefault();
+                                        //                         event.stopPropagation();
+                                        //                     }}/>
+                                        //                 ]}/>
+                                        //             );
+                                        //         }}
+                                        //         promiseBasedOnClick={element => new Promise<void>((resolve, reject) => {
+                                        //             try {
+                                        //                 this.props.changeActiveDocument(document.id);
+                                        //                 resolve();
+                                        //             } catch (e) {
+                                        //                 console.error(e);
+                                        //                 reject();
+                                        //             }
+                                        //         })}
+                                        //     />
+                                        // );
                                     })
                                 ]}/>
                             )
@@ -200,7 +207,6 @@ export class DocumentViewMultiplexer extends BC<DocumentViewMultiplexerProps, an
     private mainAssembly() {
         this.assembly.assembly("main", t => {
             const activeDocument = this.getActiveDocument();
-
             return (
                 <DocumentViewController view={this.props.controlConfigMirror.view} document={
                     activeDocument
@@ -214,7 +220,6 @@ export class DocumentViewMultiplexer extends BC<DocumentViewMultiplexerProps, an
     private footerAssembly() {
         this.assembly.assembly("footer", t => {
             const activeDocument = this.getActiveDocument();
-
             return (
                 <Box
                     fw
