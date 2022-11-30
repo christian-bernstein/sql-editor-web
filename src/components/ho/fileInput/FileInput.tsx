@@ -44,8 +44,6 @@ export class FileInput extends BernieComponent<any, any, FileInputLocalState> {
     componentRender(p: any, s: any, l: FileInputLocalState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
 
         const Label = styled.label`
-          width: 100%;
-          height: 100%;
         `;
 
         const Input = styled.input`
@@ -55,21 +53,17 @@ export class FileInput extends BernieComponent<any, any, FileInputLocalState> {
         `;
 
         return (
-            <Box cursor={Cursor.pointer} paddingY={t.gaps.smallGab} paddingX={t.gaps.smallGab} elements={[
-                <FlexRow gap={t.gaps.smallGab} fh align={Align.CENTER} elements={[
-                    <Tooltip arrow title={"Upload file"} children={
-                        <Label>
-                            <Input multiple={false} autoFocus type={"file"} onChange={ev => {
-                                this.local.setStateWithChannels({
-                                    files: ev.target.files !== null ? ev.target.files : undefined
-                                }, ["files"]);
-                            }}/>
-                            <Icon icon={<UploadFileRounded/>}/>
-                        </Label>
-                    }/>,
+            <Label children={
+                <Box cursor={Cursor.pointer} paddingY={t.gaps.smallGab} paddingX={t.gaps.smallGab} elements={[
+                    <FlexRow gap={t.gaps.smallGab} fh align={Align.CENTER} elements={[
+                        <Input multiple={false} autoFocus type={"file"} onChange={ev => {
+                            this.local.setStateWithChannels({
+                                files: ev.target.files !== null ? ev.target.files : undefined
+                            }, ["files"]);
+                        }}/>,
 
+                        <Icon icon={<UploadFileRounded/>}/>,
 
-                    <AF elements={[
                         this.component(() => {
                             if (this.ls().files !== undefined) {
                                 const files = this.ls().files as FileList;
@@ -96,7 +90,11 @@ export class FileInput extends BernieComponent<any, any, FileInputLocalState> {
                                             colored
                                             visualMeaning={VM.ERROR}
                                             tooltip={"Remove"}
-                                            onClick={() => this.clearFiles()}
+                                            onClick={(event) => {
+                                                this.clearFiles();
+                                                event.preventDefault();
+                                                event.stopPropagation();
+                                            }}
                                         />
                                     ]}/>
                                 );
@@ -108,7 +106,7 @@ export class FileInput extends BernieComponent<any, any, FileInputLocalState> {
                         }, "files")
                     ]}/>
                 ]}/>
-            ]}/>
+            }/>
         );
     }
 }
