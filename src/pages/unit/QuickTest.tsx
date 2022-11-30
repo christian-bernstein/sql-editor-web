@@ -81,31 +81,9 @@ export class QuickTest extends BernieComponent<any, any, any> {
                             reader.onload = async (event: ProgressEvent<FileReader>) => {
                                 const src = event.target?.result;
                                 this.dialog(
-                                    <StaticDrawerMenu body={pr => {
-                                        return (
-                                            <Flex height={px(500)} elements={[
-                                                <Document
-                                                    options={{
-                                                        cMapUrl: `https://unpkg.com/pdfjs-dist@${pdfjs.version}/cmaps/`,
-                                                        cMapPacked: true,
-                                                    }}
-                                                    file={src}
-                                                    onLoadSuccess={pdf => {
-                                                        console.log("load successful", pdf)
-                                                    }}
-                                                    onLoadError={error => {
-                                                        console.log("error while loading pdf", error)
-                                                    }}
-                                                    onSourceError={error => {
-                                                        console.log("source error in pdf", error)
-                                                    }}
-                                                    error={
-                                                        <Text renderMarkdown={false} text={"Error"} visualMeaning={VM.ERROR} coloredText/>
-                                                    }
-                                                />
-                                            ]}/>
-                                        );
-                                    }}/>
+                                    <iframe style={{
+                                        border: "none",
+                                    }} src={src as string} width={"100%"} height={`${window.innerHeight}px`}/>
                                 );
                             }
                             reader.readAsDataURL(file);

@@ -20,9 +20,11 @@ import {FileInputSubmissionMode} from "./FileInputSubmissionMode";
 import {If} from "../../logic/If";
 import {OverflowBehaviour} from "../../../logic/style/OverflowBehaviour";
 import {Document, pdfjs} from "react-pdf";
+import {FileInputSubmissionContext} from "./FileInputSubmissionContext";
 
 export type FileInputProps = {
-    submissionMode?: FileInputSubmissionMode
+    submissionMode?: FileInputSubmissionMode,
+    onSubmit?: (ctx: FileInputSubmissionContext) => void
 }
 
 export type FileInputLocalState = {
@@ -68,6 +70,19 @@ export class FileInput extends BernieComponent<FileInputProps, any, FileInputLoc
                             this.local.setStateWithChannels({
                                 files: ev.target.files !== null ? ev.target.files : undefined
                             }, ["files"]);
+
+                            if (ev.target.files !== null) {
+                                const file: File = ev.target.files[0];
+                                const reader: FileReader = new FileReader();
+                                reader.onload = async (event: ProgressEvent<FileReader>) => {
+                                    const src = event.target?.result;
+                                    p.onSubmit?.({
+                                        file: file,
+                                        dataURL: src as string
+                                    });
+                                }
+                                reader.readAsDataURL(file);
+                            }
                         }}/>,
 
                         <Icon icon={<UploadFileRounded/>}/>,
@@ -84,15 +99,6 @@ export class FileInput extends BernieComponent<FileInputProps, any, FileInputLoc
                                         mappable.map(file => {
                                             return (
                                                 <FlexRow gap={t.gaps.smallGab} elements={[
-                                                    <Icon icon={<FilePresentRounded/>} tooltip={
-                                                        <Document
-                                                            options={{
-                                                                cMapUrl: `https://unpkg.com/pdfjs-dist@${pdfjs.version}/cmaps/`,
-                                                                cMapPacked: true,
-                                                            }}
-                                                            file={file}
-                                                        />
-                                                    }/>,
                                                     <Description
                                                         renderMarkdown={false}
                                                         cursor={Cursor.pointer}

@@ -2,5 +2,6 @@ export enum DocumentType {
     MARKDOWN,
     UNSPECIFIED,
     NOTE,
-    WEBSITE
+    WEBSITE,
+    PDF
 }
