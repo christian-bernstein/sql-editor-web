@@ -40,8 +40,6 @@ export class MultiplexerDocumentTab extends BernieComponent<MultiplexerDocumentT
         const docState: DocumentState = view.getDocumentState(document.id);
         const defaultFileTypeIcon: IconLookup = { dict: "atlas", "id": "generic-file" };
 
-        console.log(document)
-
         return (
             <Box cursor={Cursor.pointer} paddingY={t.gaps.smallGab} paddingX={t.gaps.smallGab} style={{ position: "relative" }} onClick={event => {
                 if (!isActive) {

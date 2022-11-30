@@ -84,66 +84,62 @@ class InDevDocumentView extends BC<InDevDocumentViewProps, any, InDevDocumentVie
                 staticContainer={{
                     gap: px(),
                     elements: [
-                        <Box
-                            fw
-                            borderless
-                            borderRadiiConfig={{enableCustomBorderRadii: true, fallbackCustomBorderRadii: px(0)}}
-                            paddingY={t.paddings.defaultButtonPadding}
-                            elements={[
-                                <Flex flexDir={FlexDirection.ROW} align={Align.CENTER} gap={t.gaps.smallGab} elements={[
-                                    <Text text={"Toolbox"} fontSize={px(11)} type={TextType.secondaryDescription}/>,
-
-                                    <ContextCompound wrapMenu={false} menu={
-                                        (() => {
-                                            const Wrapper = styled.div`
-                                              .EmojiPickerReact {
-                                                background-color: ${t.colors.backgroundHighlightColor.withAlpha(.9).css()};
-                                                border: none !important;
-                                                
-                                                * {
-                                                  font-family: "OperatorMono", "Consolas", monospace !important;
-                                                }
-                                                
-                                                .epr-emoji-category-label {
-                                                  background-color: ${t.colors.backgroundHighlightColor.css()} !important;
-                                                }
-                                              }
-                                            `;
-
-                                            return (
-                                                <Wrapper children={
-                                                    <EmojiPicker suggestedEmojisMode={SuggestionMode.FREQUENT} autoFocusSearch theme={Theme.DARK} emojiStyle={EmojiStyle.TWITTER} onEmojiClick={(emoji, event) => {
-                                                        this.dialog(
-                                                            <>
-                                                                {emoji.unified}
-                                                                <Emoji emojiStyle={EmojiStyle.TWITTER} unified={emoji.unified}/>
-                                                            </>
-                                                        );
-                                                    }}/>
-                                                }/>
-                                            );
-                                        })()
-                                    } children={
-                                        <Tooltip title={"Open Emoji Picker"} children={
-                                            <Button children={<Emoji emojiStyle={EmojiStyle.TWITTER} unified={"1f389"} size={16} lazyLoad/>} onClick={(event) => {
-                                                if (event.ctrlKey) {
-                                                    this.dialog(
-                                                        <EmojiPicker lazyLoadEmojis suggestedEmojisMode={SuggestionMode.FREQUENT} autoFocusSearch theme={Theme.DARK} emojiStyle={EmojiStyle.TWITTER} onEmojiClick={(emoji, event) => {
-                                                            this.dialog(
-                                                                <Emoji emojiStyle={EmojiStyle.TWITTER} unified={emoji.unified}/>
-                                                            );
-                                                        }}/>
-                                                    )
-                                                };
-                                            }}/>
-                                        }/>
-                                    }/>,
-
-
-                                ]}/>,
-                            ]}
-                        />,
-                        <Separator orientation={Orientation.HORIZONTAL}/>
+                        // <Box
+                        //     fw
+                        //     borderless
+                        //     borderRadiiConfig={{enableCustomBorderRadii: true, fallbackCustomBorderRadii: px(0)}}
+                        //     paddingY={t.paddings.defaultButtonPadding}
+                        //     elements={[
+                        //         <Flex flexDir={FlexDirection.ROW} align={Align.CENTER} gap={t.gaps.smallGab} elements={[
+                        //             <Text text={"Toolbox"} fontSize={px(11)} type={TextType.secondaryDescription}/>,
+                        //             // <ContextCompound wrapMenu={false} menu={
+                        //             //     (() => {
+                        //             //         const Wrapper = styled.div`
+                        //             //           .EmojiPickerReact {
+                        //             //             background-color: ${t.colors.backgroundHighlightColor.withAlpha(.9).css()};
+                        //             //             border: none !important;
+                        //             //
+                        //             //             * {
+                        //             //               font-family: "OperatorMono", "Consolas", monospace !important;
+                        //             //             }
+                        //             //
+                        //             //             .epr-emoji-category-label {
+                        //             //               background-color: ${t.colors.backgroundHighlightColor.css()} !important;
+                        //             //             }
+                        //             //           }
+                        //             //         `;
+                        //             //         return (
+                        //             //             <Wrapper children={
+                        //             //                 <EmojiPicker suggestedEmojisMode={SuggestionMode.FREQUENT} autoFocusSearch theme={Theme.DARK} emojiStyle={EmojiStyle.TWITTER} onEmojiClick={(emoji, event) => {
+                        //             //                     this.dialog(
+                        //             //                         <>
+                        //             //                             {emoji.unified}
+                        //             //                             <Emoji emojiStyle={EmojiStyle.TWITTER} unified={emoji.unified}/>
+                        //             //                         </>
+                        //             //                     );
+                        //             //                 }}/>
+                        //             //             }/>
+                        //             //         );
+                        //             //     })()
+                        //             // } children={
+                        //             //     <Tooltip title={"Open Emoji Picker"} children={
+                        //             //         <Button children={<Emoji emojiStyle={EmojiStyle.TWITTER} unified={"1f389"} size={16} lazyLoad/>} onClick={(event) => {
+                        //             //             if (event.ctrlKey) {
+                        //             //                 this.dialog(
+                        //             //                     <EmojiPicker lazyLoadEmojis suggestedEmojisMode={SuggestionMode.FREQUENT} autoFocusSearch theme={Theme.DARK} emojiStyle={EmojiStyle.TWITTER} onEmojiClick={(emoji, event) => {
+                        //             //                         this.dialog(
+                        //             //                             <Emoji emojiStyle={EmojiStyle.TWITTER} unified={emoji.unified}/>
+                        //             //                         );
+                        //             //                     }}/>
+                        //             //                 )
+                        //             //             };
+                        //             //         }}/>
+                        //             //     }/>
+                        //             // }/>,
+                        //         ]}/>,
+                        //     ]}
+                        // />,
+                        // <Separator orientation={Orientation.HORIZONTAL}/>
                     ]
                 }}
                 overflowContainer={{

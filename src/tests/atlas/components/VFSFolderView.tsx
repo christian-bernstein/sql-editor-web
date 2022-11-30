@@ -2,10 +2,10 @@ import {BC, BernieComponent} from "../../../logic/BernieComponent";
 import {Themeable} from "../../../logic/style/Themeable";
 import {Assembly} from "../../../logic/assembly/Assembly";
 import {Screen} from "../../../components/lo/Page";
-import {Flex} from "../../../components/lo/FlexBox";
+import {Flex, FlexRow} from "../../../components/lo/FlexBox";
 import {FlexDirection} from "../../../logic/style/FlexDirection";
 import {Text, TextType} from "../../../components/lo/Text";
-import {px} from "../../../logic/style/DimensionalMeasured";
+import {percent, px} from "../../../logic/style/DimensionalMeasured";
 import {ReactComponent as SettingsIcon} from "../../../assets/icons/ic-20/ic20-settings.svg";
 import {Icon} from "../../../components/lo/Icon";
 import {Justify} from "../../../logic/style/Justify";
@@ -50,9 +50,11 @@ import {DocumentSaveState} from "../data/DocumentSaveState";
 import {ReactComponent as ActionsIcon} from "../../../assets/icons/ic-20/ic20-more-ver.svg";
 import {ReactComponent as DeleteIcon} from "../../../assets/icons/ic-20/ic20-delete.svg";
 import {ConfirmationDialog} from "../../../components/lo/ConfirmationDialog";
-import {SideScroller} from "../../../components/layout/SideScroller";
 import {FolderPathView} from "./FolderPathView";
 import {SideMenu} from "./SideMenu";
+import Editor from "@monaco-editor/react";
+import {Description} from "../../../components/lo/Description";
+import {KeyHint} from "../../../components/lo/KeyHint";
 
 export type VFSFolderViewProps = {
     initialFolderID?: string,
@@ -460,6 +462,7 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
             return (
                 <Flex fw elements={[
                     <Flex fw elements={[
+
                         <Flex fw flexDir={FlexDirection.ROW} align={Align.CENTER} justifyContent={Justify.SPACE_BETWEEN} elements={[
                             <Flex flexDir={FlexDirection.ROW} align={Align.CENTER} gap={theme.gaps.smallGab} elements={[
                                 <Text text={"Documents"} bold/>,
@@ -480,46 +483,45 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                                     return this.component(local => {
                                         const contextMenuRenderer = (element: SettingsElement) => {
                                             return (
-                                                <Tooltip title={"Actions"} children={
-                                                    <Icon icon={<ActionsIcon/>} size={px(18)} onClick={(event) => {
-                                                        // TODO: Handle -> Open context menu (Improve menu)
+                                                <Icon coloredOnDefault={false} uiNoHighlightOnDefault icon={<ActionsIcon/>} tooltip={"Actions"} size={px(18)} onClick={(event) => {
+                                                    // TODO: Handle -> Open context menu (Improve menu)
 
-                                                        element.dialog(
-                                                            <StaticDrawerMenu body={() => (
-                                                                <Flex align={Align.CENTER} fh fw elements={[
-                                                                    <SettingsElement groupDisplayMode title={"Delete document"} iconConfig={{
-                                                                        enable: true,
-                                                                        color: theme.colors.errorColor,
-                                                                        iconGenerator: element => <DeleteIcon/>
-                                                                    }} onClick={element => {
-                                                                        element.helper.confirm({
-                                                                            title: `Delete document ${doc.title}`,
-                                                                            vm: ObjectVisualMeaning.ERROR,
-                                                                            text: "This action cannot be undone. Once the document is deleted, it is removed unrecoverable from the system.\n**It is recommended to create recoverable backups via the ISO-image manager**.",
-                                                                            actions: {
-                                                                                onConfirm: (component: BC<any, any, any>) => {
-                                                                                    AtlasMain.atlas(atlas => {
-                                                                                        if (atlas.api().deleteDocument(doc.id)) {
-                                                                                            this.local.state.viewMultiplexers.forEach(mux => {
-                                                                                                this.closeAndRemoveDocumentFromMultiplexer(mux.groupID, doc.id);
-                                                                                            })
-                                                                                            this.rerender("document-view", this.toDocumentSpecificChannel(doc.id, "meta-updated"));
-                                                                                        }
-                                                                                    });
-                                                                                },
-                                                                                onCancel(component: BernieComponent<any, any, any>) {
-                                                                                    component.closeLocalDialog();
-                                                                                }
+                                                    element.dialog(
+                                                        <StaticDrawerMenu body={() => (
+                                                            <Flex align={Align.CENTER} fh fw elements={[
+                                                                <SettingsElement groupDisplayMode title={"Delete document"} iconConfig={{
+                                                                    enable: true,
+                                                                    color: theme.colors.errorColor,
+                                                                    iconGenerator: element => <DeleteIcon/>
+                                                                }} onClick={element => {
+                                                                    element.helper.confirm({
+                                                                        title: `Delete document ${doc.title}`,
+                                                                        vm: ObjectVisualMeaning.ERROR,
+                                                                        text: "This action cannot be undone. Once the document is deleted, it is removed unrecoverable from the system.\n**It is recommended to create recoverable backups via the ISO-image manager**.",
+                                                                        actions: {
+                                                                            onConfirm: (component: BC<any, any, any>) => {
+                                                                                AtlasMain.atlas(atlas => {
+                                                                                    if (atlas.api().deleteDocument(doc.id)) {
+                                                                                        this.local.state.viewMultiplexers.forEach(mux => {
+                                                                                            this.closeAndRemoveDocumentFromMultiplexer(mux.groupID, doc.id);
+                                                                                        })
+                                                                                        this.rerender("document-view", this.toDocumentSpecificChannel(doc.id, "meta-updated"));
+                                                                                    }
+                                                                                });
+                                                                            },
+                                                                            onCancel(component: BernieComponent<any, any, any>) {
+                                                                                component.closeLocalDialog();
                                                                             }
-                                                                        }, (config, caller) => <ConfirmationDialog config={config} caller={caller}/>)
-                                                                    }}/>
-                                                                ]}/>
-                                                            )}/>
-                                                        )
+                                                                        }
+                                                                    }, (config, caller) => <ConfirmationDialog config={config} caller={caller}/>)
+                                                                }}/>
+                                                            ]}/>
+                                                        )}/>
+                                                    )
 
-                                                        event.stopPropagation();
-                                                    }}/>
-                                                }/>
+                                                    event.preventDefault();
+                                                    event.stopPropagation();
+                                                }}/>
                                             );
                                         }
 
@@ -615,7 +617,71 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                         minWidth: "350px",
                         backgroundColor: t.colors.backgroundHighlightColor.css()
                     }} elements={[
-                        <OverflowWithHeader dir={FlexDirection.COLUMN_REVERSE} staticContainer={{
+                        <OverflowWithHeader height={percent(100)} dir={FlexDirection.COLUMN_REVERSE} staticContainerHeader={{
+                            gap: px(),
+                            elements: [
+                                <Separator orientation={Orientation.HORIZONTAL}/>,
+                                <Flex gap={px()} fw height={px(100)} elements={[
+                                    <FlexRow justifyContent={Justify.CENTER} padding paddingX={t.gaps.smallGab} gap={t.gaps.smallGab} align={Align.CENTER} fw elements={[
+                                        <Description bold text={"Search"}/>,
+                                        <Dot/>,
+                                        <KeyHint keys={["strg", "f"]}/>
+                                    ]}/>,
+                                    <Editor
+                                        saveViewState
+                                        beforeMount={monaco => {
+                                            monaco.languages.register({ id: "finder" })
+
+                                            monaco.languages.setMonarchTokensProvider("finder", {
+                                                tokenizer: {
+                                                    root: [
+                                                        [/-+\w+/, "argument"],
+                                                        [/\w+:\w+/, "parameter"],
+                                                    ]
+                                                }
+                                            })
+
+                                            monaco.editor.defineTheme("finder", {
+                                                base: "vs-dark",
+                                                inherit: true,
+                                                rules: [
+                                                    { token: "", background: t.colors.backgroundColor.toHex() },
+                                                    { token: "argument", foreground: "#585858" },
+                                                    { token: "parameter", foreground: t.colors.primaryHighlightColor.toHex() }
+                                                ],
+                                                colors: {
+                                                    "editor.foreground": "#FFFFFF",
+                                                    "editor.background": t.colors.backgroundHighlightColor.toHex(),
+                                                }
+                                            });
+                                        }}
+                                        onMount={(editor, monaco) => {
+                                            editor.focus();
+                                        }}
+                                        theme={"finder"}
+                                        language={"finder"}
+                                        options={{
+                                            hideCursorInOverviewRuler: true,
+                                            lineDecorationsWidth: 0,
+                                            renderValidationDecorations: "off",
+                                            overviewRulerBorder: false,
+                                            renderLineHighlight: "none",
+                                            lineNumbers: "off",
+                                            codeLens: false,
+                                            fontSize: 12,
+                                            cursorStyle: "underline",
+                                            scrollbar: {
+                                                vertical: "hidden",
+                                            },
+                                            minimap: {
+                                                enabled: false
+                                            },
+                                            fontLigatures: true
+                                        }}
+                                    />
+                                ]}/>,
+                            ]
+                        }} staticContainer={{
                             gap: px(),
                             elements: [
                                 <Flex fw padding align={Align.CENTER} flexDir={FlexDirection.ROW} justifyContent={Justify.CENTER} elements={[
@@ -631,6 +697,7 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                             elements: [
                                 <Flex height={px(50)} fw fh padding style={{ backgroundColor: t.colors.backgroundHighlightColor.css() }} elements={[
                                     this.component(() => this.a("folder-level-view"), "current-folder"),
+
                                     this.component(() => (
                                         <QueryDisplay<Folder | undefined> q={this.local.state.currentFolderData} renderer={{
                                             processing(q: Queryable<Folder | undefined>): JSX.Element {
