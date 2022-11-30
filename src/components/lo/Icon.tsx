@@ -17,15 +17,19 @@ export type IconProps = {
     onClick?: (event: React.MouseEvent<HTMLDivElement>) => void,
     style?: CSSProperties
     color?: Color,
-    tooltip?: string | JSX.Element
+    tooltip?: string | JSX.Element,
+    coloredOnDefault?: boolean,
+    uiNoHighlightOnDefault?: boolean
 } & WithVisualMeaning
 
 export const Icon: React.FC<IconProps> = React.memo(props => {
     const vm: ObjectVisualMeaning = getOr(props.visualMeaning, ObjectVisualMeaning.UI_NO_HIGHLIGHT);
     const theme: Themeable.Theme = utilizeGlobalTheme();
     const meaningfulColors: MeaningfulColors = getMeaningfulColors(vm, theme);
+    const meaningfulColorsUINOHighlight: MeaningfulColors = getMeaningfulColors(ObjectVisualMeaning.UI_NO_HIGHLIGHT, theme);
 
     const color: Color = (props.color !== undefined) ? props.color : (props.colored ? meaningfulColors.iconColored : meaningfulColors.icon);
+    const coloredOnDefault = props.coloredOnDefault ?? true;
 
     const Wrapper = styled.div`
       display: flex;
@@ -33,6 +37,7 @@ export const Icon: React.FC<IconProps> = React.memo(props => {
       justify-content: center;
       cursor: pointer;
       position: relative;
+      
       
       // todo implement icon highlight circle box
       // &:after {
@@ -50,16 +55,20 @@ export const Icon: React.FC<IconProps> = React.memo(props => {
       svg {
         width: ${(props.size || px(20)).css()};
         height: ${(props.size || px(20)).css()};
-        fill: ${color.css()};
         
-        path {      
-          fill: ${color.css()};
+        path {
+          transition: fill 100ms;
+          fill: ${coloredOnDefault ? color.css() : (props.uiNoHighlightOnDefault ?? false ? meaningfulColorsUINOHighlight.iconColored.css() : meaningfulColorsUINOHighlight.icon.css())};
         }
       }
       
       &:hover {
         border-radius: 50%;
         filter: brightness(1.1);
+
+        path {
+          fill: ${color.css()} !important;
+        }
       }
     `;
 

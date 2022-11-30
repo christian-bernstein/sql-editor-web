@@ -17,6 +17,7 @@ import fileDownload from "js-file-download";
 import {AF} from "../../components/logic/ArrayFragment";
 import {StringQuery} from "../../tests/atlas/components/queries/StringQuery";
 import {Description} from "../../components/lo/Description";
+import {FileInput} from "../../components/ho/fileInput/FileInput";
 
 export class QuickTest extends BernieComponent<any, any, any> {
 
@@ -36,86 +37,13 @@ export class QuickTest extends BernieComponent<any, any, any> {
 
         this.assembly.assembly("test", (theme, props) => {
             // Display your test component here
+
             let body = "";
             return (
                 <Flex fw elements={[
-                    // <CodeEditor value={body} theme={"dark"} classnames={["cm"]} upstreamHook={value => body = value}/>,
-                    // <Button text={"Send"} width={percent(100)} onClick={() => {
-                    //     const xmlHttp = new XMLHttpRequest();
-                    //     xmlHttp.open("POST", "http://192.168.178.22:8080/", true);
-                    //     xmlHttp.send(body);
-                    // }}/>,
-                    // <Flex fw height={px(500)} elements={[
-                    //     <Editor
-                    //         saveViewState
-                    //         beforeMount={monaco => {
-                    //             monaco.editor.defineTheme("SampleCommandPalette", {
-                    //                 base: "vs-dark",
-                    //                 inherit: true,
-                    //                 rules: [
-                    //                     { token: "", background: theme.colors.backgroundColor.toHex() }
-                    //                 ],
-                    //                 colors: {
-                    //                     "editor.foreground": "#ffffff",
-                    //                     "editor.background": theme.colors.backgroundColor.toHex()
-                    //                 }
-                    //             });
-                    //         }}
-                    //         onMount={(editor, monaco) => {
-                    //             const update = (json: any) => {
-                    //                 const candidate = (json as any[]).map((queueData: any) => {
-                    //                     return `${queueData.name} :: ${queueData.idle_since}`;
-                    //                 }).join("\n");
-                    //
-                    //                 if (candidate !== editor.getValue()) {
-                    //                     editor.setValue(
-                    //                         (json as any[]).map((queueData: any) => {
-                    //                             return `${queueData.name} :: ${queueData.idle_since}`;
-                    //                         }).join("\n")
-                    //                     );
-                    //                 }
-                    //             }
-                    //
-                    //             setInterval(() => {
-                    //                 fetch("http://192.168.178.22:8080/queues/").then(response => {
-                    //                     response.json().then(json => update(json))
-                    //                 }).catch(reason => console.error(reason))
-                    //             }, 1e3)
-                    //         }}
-                    //         theme={"SampleCommandPalette"}
-                    //         options={{
-                    //             lineNumbers: 'off',
-                    //             glyphMargin: false,
-                    //             folding: false,
-                    //             lineDecorationsWidth: 0,
-                    //             lineNumbersMinChars: 0,
-                    //             hideCursorInOverviewRuler: true,
-                    //             renderValidationDecorations: "off",
-                    //             overviewRulerBorder: false,
-                    //             renderLineHighlight: "none",
-                    //             codeLens: false,
-                    //             cursorStyle: "block",
-                    //             scrollbar: {
-                    //                 vertical: "hidden",
-                    //                 horizontal: "hidden"
-                    //             },
-                    //             minimap: {
-                    //                 enabled: false
-                    //             },
-                    //             fontLigatures: true,
-                    //             fontFamily: "OperatorMono",
-                    //             fontWeight: "350",
-                    //             fontSize: 12,
-                    //             lineHeight: 21
-                    //         }}
-                    //     />
-                    // ]}/>,
-
-                    <Centered children={
-                        <DevelopmentHuePlugToggleCard/>
-                    }/>,
-
-                    <Description text={"Test 123"}/>,
+                    // <Centered children={
+                    //     <DevelopmentHuePlugToggleCard/>
+                    // }/>,
 
                     <Button text={"StringQuery"} onClick={() => {
                         this.dialog(
@@ -123,7 +51,10 @@ export class QuickTest extends BernieComponent<any, any, any> {
                                 this.dialog(
                                     <Text text={string}/>
                                 );
-                            }}/>
+                            }}/>,
+                            () => {
+                                console.log("Closed!")
+                            }
                         );
                     }}/>,
 
@@ -149,6 +80,10 @@ export class QuickTest extends BernieComponent<any, any, any> {
 
                         return (
                             <AF elements={[
+                                <Centered children={
+                                    <FileInput/>
+                                }/>,
+
                                 <Input autoFocus type={"file"} onChange={ev => {
                                     if (ev.target.files !== null) {
                                         const file: File = ev.target.files[0];

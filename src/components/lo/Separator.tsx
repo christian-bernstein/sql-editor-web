@@ -24,6 +24,7 @@ export const Separator: React.FC<SeparatorProps> = React.memo(props => {
       border-radius: ${getOr(props.borderRadius, px()).css()};
       width: ${getOr(props.orientation, Orientation.HORIZONTAL) === Orientation.HORIZONTAL ? "100%" : getOr(props.width?.css(), "1px")};
       height: ${getOr(props.orientation, Orientation.HORIZONTAL) === Orientation.HORIZONTAL ? getOr(props.width?.css(), "1px") : "100%"};
+      
       background: ${col.css()};
       visibility: ${getOr(props.visible, true) ? "visible" : "hidden"};
     `;
