@@ -1,4 +1,4 @@
-import {IconConfig} from "./IconConfig";
+import {IconLookup} from "../icons/IconLookup";
 
 export type AtlasEntity = {
     creationDate?: string,
@@ -9,5 +9,5 @@ export type AtlasEntity = {
     note?: string,
 
     iconColorHEX?: string
-    icon?: IconConfig
+    icon?: IconLookup
 }

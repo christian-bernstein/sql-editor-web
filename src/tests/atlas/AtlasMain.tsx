@@ -32,13 +32,16 @@ import {createMargin} from "../../logic/style/Margin";
 import {Icon} from "../../components/lo/Icon";
 import {ConfirmationDialog} from "../../components/lo/ConfirmationDialog";
 import {VFSFolderView} from "./components/VFSFolderView";
-import {AccountTreeRounded, CodeOffRounded, CodeRounded} from "@mui/icons-material";
+import {AccountTreeRounded, CodeOffRounded, CodeRounded, HelpRounded} from "@mui/icons-material";
 import {Tooltip} from "../../components/ho/tooltip/Tooltip";
 import {Gloria} from "../../frameworks/gloria/Gloria";
 import {GloriaCommandPalette} from "../../frameworks/gloria/components/GloriaCommandPalette";
 import {AF} from "../../components/logic/ArrayFragment";
 import {v4} from "uuid";
 import {StringQuery} from "./components/queries/StringQuery";
+import {IconDict} from "./icons/IconDict";
+import {atlasIconDict} from "./icons/AtlasIconDict";
+import {IconLookup} from "./icons/IconLookup";
 
 export type AtlasMainProps = {
     api: IAtlasAPI
@@ -47,7 +50,8 @@ export type AtlasMainProps = {
 export type AtlasMainLocalState = {
     gloriaDialogHOCWrapper?: GenericBC,
     vfsFolderViewInstance?: VFSFolderView,
-    vfsFolderViewOpened: boolean
+    vfsFolderViewOpened: boolean,
+    iconDict: IconDict
 }
 
 export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
@@ -61,8 +65,21 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
 
     constructor(props: AtlasMainProps) {
         super(props, undefined, {
-            vfsFolderViewOpened: false
+            vfsFolderViewOpened: false,
+            iconDict: atlasIconDict
         });
+    }
+
+    public getAtlasIconDict(): IconDict {
+        return this.ls().iconDict;
+    }
+
+    public getIconFromLookup(lookup: IconLookup): JSX.Element {
+        return this.getAtlasIconDict().table.get(lookup.id)?.() ?? (
+            <Tooltip title={`**Error loading icon** Id: '${lookup.id}'; Dict: '${lookup.dict}'`} children={
+                <HelpRounded/>
+            }/>
+        );
     }
 
     public isVFSFolderViewOpened(): boolean {

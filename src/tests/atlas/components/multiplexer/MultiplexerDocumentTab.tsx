@@ -19,8 +19,10 @@ import {ReactComponent as ActionsIcon} from "../../../../assets/icons/ic-20/ic20
 import {ReactComponent as CloseIcon} from "../../../../assets/icons/ic-20/ic20-close.svg";
 import {Align} from "../../../../logic/style/Align";
 import {Cursor} from "../../../../logic/style/Cursor";
-import {CodeRounded} from "@mui/icons-material";
 import {Dot} from "../../../../components/lo/Dot";
+import {IconLookup} from "../../icons/IconLookup";
+import {AtlasMain} from "../../AtlasMain";
+import {ObjectJSONDisplay} from "../../../../components/ho/objectJSONDisplay/ObjectJSONDisplay";
 
 export type MultiplexerDocumentTabProps = {
     document: AtlasDocument,
@@ -33,14 +35,24 @@ export class MultiplexerDocumentTab extends BernieComponent<MultiplexerDocumentT
         const document: AtlasDocument = p.document;
         const mux: DocumentViewMultiplexer = p.multiplexerInstance;
         const view: VFSFolderView = mux.view();
+        const atlas: AtlasMain = AtlasMain.atlas();
         const isActive: boolean = document.id === mux.getActiveDocument()?.id;
         const docState: DocumentState = view.getDocumentState(document.id);
+        const defaultFileTypeIcon: IconLookup = { dict: "atlas", "id": "generic-file" };
+
+        console.log(document)
 
         return (
-            <Box cursor={Cursor.pointer} paddingY={t.gaps.smallGab} paddingX={t.gaps.smallGab} style={{ position: "relative" }} elements={[
+            <Box cursor={Cursor.pointer} paddingY={t.gaps.smallGab} paddingX={t.gaps.smallGab} style={{ position: "relative" }} onClick={event => {
+                if (!isActive) {
+                    mux.props.changeActiveDocument(document.id);
+                    event.stopPropagation();
+                    event.preventDefault();
+                }
+            }} elements={[
                 // Static content
                 <FlexRow align={Align.CENTER} gap={t.gaps.smallGab} fh fw elements={[
-                    <Icon icon={<CodeRounded/>}/>,
+                    <Icon icon={atlas.getIconFromLookup(document.icon ?? defaultFileTypeIcon)}/>,
                     <Description text={document.title ?? "Unnamed"} renderMarkdown={false} cursor={Cursor.pointer}/>,
                     <Dot/>,
                     view.component(l => (
@@ -51,6 +63,8 @@ export class MultiplexerDocumentTab extends BernieComponent<MultiplexerDocumentT
                                         <Icon
                                             icon={<SavedIcon/>}
                                             tooltip={"Saved"}
+                                            colored
+                                            visualMeaning={VM.UI_NO_HIGHLIGHT}
                                             size={px(16)}
                                         />
                                     );
@@ -79,7 +93,6 @@ export class MultiplexerDocumentTab extends BernieComponent<MultiplexerDocumentT
                         event.stopPropagation();
                     }}/>
                 ]}/>,
-
                 <If condition={isActive} ifTrue={
                     <Flex height={px(3)} padding={false} style={{
                         backgroundColor: t.colors.primaryHighlightColor.css(),

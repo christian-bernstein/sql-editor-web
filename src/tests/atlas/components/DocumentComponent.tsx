@@ -67,9 +67,7 @@ export class DocumentComponent extends BC<DocumentComponentProps, any, DocumentC
                 iconConfig={{
                     enable: true,
                     color: p.data.iconColorHEX === undefined ? undefined : Color.ofHex(p.data.iconColorHEX),
-                    iconGenerator: element => (
-                        <DocumentIcon/>
-                    )
+                    iconGenerator: element => AtlasMain.atlas().getIconFromLookup(p.data.icon ?? { dict: "atlas", id: "generic-file" })
                 }}
                 promiseBasedOnClick={element => this.onClick(element)}
                 appendixGenerator={p.appendix}

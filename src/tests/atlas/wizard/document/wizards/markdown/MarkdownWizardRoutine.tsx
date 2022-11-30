@@ -26,6 +26,12 @@ export const markdownWizardRoutine: WizardRoutine = {
             currentFolder: currentFolder,
             onSetupComplete: onSetupComplete,
             wizardEngineID: "default",
+            documentBase: {
+                icon: {
+                    dict: "atlas",
+                    id: "md-file"
+                }
+            },
             subRoutines: new Array<WizardSubRoutine>({
                 run: (document, context) => {
                     return new Promise<Partial<AtlasDocument>>((resolve, reject) => {

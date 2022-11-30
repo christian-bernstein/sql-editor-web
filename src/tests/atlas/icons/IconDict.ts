@@ -1,3 +1,6 @@
 import {IconRenderer} from "./IconRenderer";
 
-export type IconDict = Map<string, IconRenderer>
+export type IconDict = {
+    name: string
+    table: Map<string, IconRenderer>
+}
