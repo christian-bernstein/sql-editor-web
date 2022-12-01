@@ -450,16 +450,56 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
     }
 
     private initKeyCommandOrchestrator() {
-        document.addEventListener("keydown", ev => {
+        let alt = false;
 
+        const setAlt = (newAlt: boolean) => {
+            alt = newAlt;
+            console.warn("New alt", alt);
+        }
+
+        document.addEventListener("keydown", ev => {
+            if (alt) {
+                console.info("alt is true, return..");
+                return;
+            }
+            console.log("keydown")
+            if (ev.altKey) {
+                this.ls().keyCommandOrchestrator.engage();
+                setAlt(true);
+            }
         });
 
         document.addEventListener("keyup", ev => {
+            console.log("keyup")
+            const o = this.ls().keyCommandOrchestrator;
 
+            if (!ev.altKey && o.isEngaged()) {
+                o.disengage();
+            }
+
+            if (!ev.altKey && alt) {
+                setAlt(false);
+            }
         });
 
         document.addEventListener("keypress", ev => {
+            // console.log("keypress")
+            const o = this.ls().keyCommandOrchestrator;
+            if (o.isEngaged()) o.appendKey(ev.code)
+        });
 
+        this.ls().keyCommandOrchestrator.subscribe((fromCtx, toCtx, orchestrator) => {
+            if (fromCtx === undefined && toCtx !== undefined) {
+                // ENGAGED
+                this.dialog(
+                    <>Hello</>
+                )
+            }
+
+            if (fromCtx !== undefined && toCtx === undefined) {
+                // DISENGAGED
+                this.closeLocalDialog()
+            }
         });
     }
 
