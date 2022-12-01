@@ -358,7 +358,7 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
         return `${documentID}-${channel}`
     }
 
-    public openDocument(data: AtlasDocument) {
+    public openDocument(data: AtlasDocument, muxID: string | undefined = undefined) {
         // Document can only be opened once (overarching all multiplexers)
         // TODO: Allow a document to be opened once in every multiplexer -> Sync edits
         if (this.isDocumentOpened(data.id)) {
@@ -394,9 +394,13 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
         }
 
         if (this.local.state.viewMultiplexers.length > 1) {
-            this.selectMultiplexer().then(selectedMuxID => {
-                updater(selectedMuxID);
-            });
+            if (muxID !== undefined) {
+                updater(muxID);
+            } else {
+                this.selectMultiplexer().then(selectedMuxID => {
+                    updater(selectedMuxID);
+                });
+            }
         } else {
             updater(this.local.state.viewMultiplexers[0].groupID)
         }
@@ -620,66 +624,64 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                         <OverflowWithHeader height={percent(100)} dir={FlexDirection.COLUMN_REVERSE} staticContainerHeader={{
                             gap: px(),
                             elements: [
-                                <Separator orientation={Orientation.HORIZONTAL}/>,
-                                <Flex gap={px()} fw height={px(100)} elements={[
-                                    <FlexRow justifyContent={Justify.CENTER} padding paddingX={t.gaps.smallGab} gap={t.gaps.smallGab} align={Align.CENTER} fw elements={[
-                                        <Description bold text={"Search"}/>,
-                                        <Dot/>,
-                                        <KeyHint keys={["strg", "f"]}/>
-                                    ]}/>,
-                                    <Editor
-                                        saveViewState
-                                        beforeMount={monaco => {
-                                            monaco.languages.register({ id: "finder" })
-
-                                            monaco.languages.setMonarchTokensProvider("finder", {
-                                                tokenizer: {
-                                                    root: [
-                                                        [/-+\w+/, "argument"],
-                                                        [/\w+:\w+/, "parameter"],
-                                                    ]
-                                                }
-                                            })
-
-                                            monaco.editor.defineTheme("finder", {
-                                                base: "vs-dark",
-                                                inherit: true,
-                                                rules: [
-                                                    { token: "", background: t.colors.backgroundColor.toHex() },
-                                                    { token: "argument", foreground: "#585858" },
-                                                    { token: "parameter", foreground: t.colors.primaryHighlightColor.toHex() }
-                                                ],
-                                                colors: {
-                                                    "editor.foreground": "#FFFFFF",
-                                                    "editor.background": t.colors.backgroundHighlightColor.toHex(),
-                                                }
-                                            });
-                                        }}
-                                        onMount={(editor, monaco) => {
-                                            editor.focus();
-                                        }}
-                                        theme={"finder"}
-                                        language={"finder"}
-                                        options={{
-                                            hideCursorInOverviewRuler: true,
-                                            lineDecorationsWidth: 0,
-                                            renderValidationDecorations: "off",
-                                            overviewRulerBorder: false,
-                                            renderLineHighlight: "none",
-                                            lineNumbers: "off",
-                                            codeLens: false,
-                                            fontSize: 12,
-                                            cursorStyle: "underline",
-                                            scrollbar: {
-                                                vertical: "hidden",
-                                            },
-                                            minimap: {
-                                                enabled: false
-                                            },
-                                            fontLigatures: true
-                                        }}
-                                    />
-                                ]}/>,
+                                // <Separator orientation={Orientation.HORIZONTAL}/>,
+                                // <Flex gap={px()} fw height={px(100)} elements={[
+                                //     <FlexRow justifyContent={Justify.CENTER} padding paddingX={t.gaps.smallGab} gap={t.gaps.smallGab} align={Align.CENTER} fw elements={[
+                                //         <Description bold text={"Search"}/>,
+                                //         <Dot/>,
+                                //         <KeyHint keys={["strg", "f"]}/>
+                                //     ]}/>,
+                                //     <Editor
+                                //         saveViewState
+                                //         beforeMount={monaco => {
+                                //             monaco.languages.register({ id: "finder" })
+                                //             monaco.languages.setMonarchTokensProvider("finder", {
+                                //                 tokenizer: {
+                                //                     root: [
+                                //                         [/-+\w+/, "argument"],
+                                //                         [/\w+:\w+/, "parameter"],
+                                //                     ]
+                                //                 }
+                                //             })
+                                //             monaco.editor.defineTheme("finder", {
+                                //                 base: "vs-dark",
+                                //                 inherit: true,
+                                //                 rules: [
+                                //                     { token: "", background: t.colors.backgroundColor.toHex() },
+                                //                     { token: "argument", foreground: "#585858" },
+                                //                     { token: "parameter", foreground: t.colors.primaryHighlightColor.toHex() }
+                                //                 ],
+                                //                 colors: {
+                                //                     "editor.foreground": "#FFFFFF",
+                                //                     "editor.background": t.colors.backgroundHighlightColor.toHex(),
+                                //                 }
+                                //             });
+                                //         }}
+                                //         onMount={(editor, monaco) => {
+                                //             editor.focus();
+                                //         }}
+                                //         theme={"finder"}
+                                //         language={"finder"}
+                                //         options={{
+                                //             hideCursorInOverviewRuler: true,
+                                //             lineDecorationsWidth: 0,
+                                //             renderValidationDecorations: "off",
+                                //             overviewRulerBorder: false,
+                                //             renderLineHighlight: "none",
+                                //             lineNumbers: "off",
+                                //             codeLens: false,
+                                //             fontSize: 12,
+                                //             cursorStyle: "underline",
+                                //             scrollbar: {
+                                //                 vertical: "hidden",
+                                //             },
+                                //             minimap: {
+                                //                 enabled: false
+                                //             },
+                                //             fontLigatures: true
+                                //         }}
+                                //     />
+                                // ]}/>,
                             ]
                         }} staticContainer={{
                             gap: px(),

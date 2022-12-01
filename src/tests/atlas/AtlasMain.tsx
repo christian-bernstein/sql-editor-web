@@ -43,6 +43,7 @@ import {IconDict} from "./icons/IconDict";
 import {atlasIconDict} from "./icons/AtlasIconDict";
 import {IconLookup} from "./icons/IconLookup";
 import {CommandOrchestrator} from "./keylogger/CommandOrchestrator";
+import {KeyCommandHint} from "./keylogger/components/KeyCommandHint";
 
 export type AtlasMainProps = {
     api: IAtlasAPI
@@ -50,6 +51,7 @@ export type AtlasMainProps = {
 
 export type AtlasMainLocalState = {
     gloriaDialogHOCWrapper?: GenericBC,
+    keyCommandDialogHOCWrapper?: GenericBC,
     vfsFolderViewInstance?: VFSFolderView,
     vfsFolderViewOpened: boolean,
     iconDict: IconDict,
@@ -71,6 +73,10 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
             iconDict: atlasIconDict,
             keyCommandOrchestrator: new CommandOrchestrator()
         });
+    }
+
+    public getKeyCommandOrchestrator(): CommandOrchestrator {
+        return this.ls().keyCommandOrchestrator;
     }
 
     public getAtlasIconDict(): IconDict {
@@ -440,6 +446,62 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
     init() {
         super.init();
         this.folderAssembly();
+
+        this.ls().keyCommandOrchestrator.registerCommand({
+            title: "Test",
+            initKey: "KeyD",
+            helpText: "This is the test help text of command '*Test*'",
+            keyHintGenerator: cache => (["KeyA", "KeyB", "KeyC"]),
+            executor: (ctx, orchestrator) => new Promise<void>((resolve, reject) => {
+                setTimeout(() => resolve(), 8000);
+            })
+        });
+
+        this.ls().keyCommandOrchestrator.registerCommand({
+            title: "Another test",
+            initKey: "KeyT",
+            helpText: "This is the test help text of command '*Test*'",
+            keyHintGenerator: cache => ([]),
+            executor: (ctx, orchestrator) => new Promise<void>((resolve, reject) => {
+                resolve();
+            })
+        });
+
+        this.ls().keyCommandOrchestrator.registerCommand({
+            title: "Multiplexer",
+            initKey: "KeyM",
+            helpText: "",
+            keyHintGenerator: cache => ([]),
+            executor: (ctx, orchestrator) => new Promise<void>((resolve, reject) => {
+                const view = this.ls().vfsFolderViewInstance;
+                if (view === undefined) {
+                    reject();
+                    return;
+                }
+                try {
+                    const multiplexers = view.ls().viewMultiplexers;
+                    const multiplexer = multiplexers[0];
+                    const documents = multiplexer.documents;
+                    const indexKey = ctx.parameters[0];
+
+                    const index = Number(indexKey.slice(-1));
+
+                    console.log("indexKey", indexKey, indexKey.slice(-1), index);
+
+                    console.log("switch-document", documents[index].title, multiplexer.groupID);
+
+                    view.updateMultiplexer(multiplexer.groupID, ["main"], multiplexer => {
+                        multiplexer.activeDocumentID = documents[index].id;
+                        return multiplexer;
+                    });
+
+                    resolve();
+                } catch (e) {
+                    console.error(e);
+                    reject(e);
+                }
+            })
+        });
     }
 
     componentDidMount() {
@@ -451,59 +513,62 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
 
     private initKeyCommandOrchestrator() {
         let alt = false;
+        const setAlt = (newAlt: boolean) => alt = newAlt;
+        const isTriggerKeyPressed = (ev: KeyboardEvent) => ev.shiftKey;
 
-        const setAlt = (newAlt: boolean) => {
-            alt = newAlt;
-            console.warn("New alt", alt);
-        }
+        document.addEventListener("keydown", (ev: KeyboardEvent) => {
+            const o = this.ls().keyCommandOrchestrator;
+            const key = ev.keyCode || ev.charCode;
 
-        document.addEventListener("keydown", ev => {
-            if (alt) {
-                console.info("alt is true, return..");
-                return;
+            if (o.isEngaged() && (key == 8 || key == 46)) {
+                o.deleteKey();
             }
-            console.log("keydown")
-            if (ev.altKey) {
-                this.ls().keyCommandOrchestrator.engage();
+
+            if (alt) return;
+            if (isTriggerKeyPressed(ev)) {
+                ev.preventDefault();
+                o.engage();
                 setAlt(true);
             }
         });
 
         document.addEventListener("keyup", ev => {
-            console.log("keyup")
             const o = this.ls().keyCommandOrchestrator;
-
-            if (!ev.altKey && o.isEngaged()) {
+            if (!isTriggerKeyPressed(ev) && o.isEngaged()) {
                 o.disengage();
             }
-
-            if (!ev.altKey && alt) {
+            if (!isTriggerKeyPressed(ev) && alt) {
                 setAlt(false);
             }
         });
 
         document.addEventListener("keypress", ev => {
-            // console.log("keypress")
-            const o = this.ls().keyCommandOrchestrator;
-            if (o.isEngaged()) o.appendKey(ev.code)
+            const o = AtlasMain.atlas().ls().keyCommandOrchestrator;
+            // console.warn("keypress orc", o)
+            if (o.isEngaged()) {
+                o.appendKey(ev.code);
+                ev.preventDefault();
+                ev.stopPropagation();
+            }
         });
 
         this.ls().keyCommandOrchestrator.subscribe((fromCtx, toCtx, orchestrator) => {
             if (fromCtx === undefined && toCtx !== undefined) {
                 // ENGAGED
-                this.dialog(
-                    <>Hello</>
-                )
+                AtlasMain.atlas().ls().gloriaDialogHOCWrapper?.dialog(
+                    <KeyCommandHint/>
+                );
+                return;
             }
-
             if (fromCtx !== undefined && toCtx === undefined) {
                 // DISENGAGED
-                this.closeLocalDialog()
+                AtlasMain.atlas().ls().gloriaDialogHOCWrapper?.closeLocalDialog();
+                return;
             }
+            AtlasMain.atlas().rerender("key-command-hint");
         });
     }
 
-    // TODO: DISENGAGE KEY ORCHESTRATOR
     componentWillUnmount() {
         super.componentWillUnmount();
         AtlasMain.atlasInstance = undefined;
@@ -523,6 +588,13 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
                 <HOCWrapper body={() => <></>} componentDidMount={wrapper => {
                     this.local.setState({
                         gloriaDialogHOCWrapper: wrapper
+                    });
+                }}/>,
+
+                // key command hint components
+                <HOCWrapper body={() => <></>} componentDidMount={wrapper => {
+                    this.local.setState({
+                        keyCommandDialogHOCWrapper: wrapper
                     });
                 }}/>
             ]}/>

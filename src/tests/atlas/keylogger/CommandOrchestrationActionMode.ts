@@ -1,3 +1,3 @@
 export enum CommandOrchestrationActionMode {
-    EXECUTING, NONE
+    EXECUTING, NONE, FINISHED
 }
