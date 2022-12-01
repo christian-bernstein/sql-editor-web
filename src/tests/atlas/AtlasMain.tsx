@@ -42,6 +42,7 @@ import {StringQuery} from "./components/queries/StringQuery";
 import {IconDict} from "./icons/IconDict";
 import {atlasIconDict} from "./icons/AtlasIconDict";
 import {IconLookup} from "./icons/IconLookup";
+import {CommandOrchestrator} from "./keylogger/CommandOrchestrator";
 
 export type AtlasMainProps = {
     api: IAtlasAPI
@@ -51,7 +52,8 @@ export type AtlasMainLocalState = {
     gloriaDialogHOCWrapper?: GenericBC,
     vfsFolderViewInstance?: VFSFolderView,
     vfsFolderViewOpened: boolean,
-    iconDict: IconDict
+    iconDict: IconDict,
+    keyCommandOrchestrator: CommandOrchestrator
 }
 
 export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
@@ -66,7 +68,8 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
     constructor(props: AtlasMainProps) {
         super(props, undefined, {
             vfsFolderViewOpened: false,
-            iconDict: atlasIconDict
+            iconDict: atlasIconDict,
+            keyCommandOrchestrator: new CommandOrchestrator()
         });
     }
 
@@ -443,8 +446,24 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
         super.componentDidMount();
         AtlasMain.atlasInstance = this;
         this.registerGloriaCommandInput();
+        this.initKeyCommandOrchestrator();
     }
 
+    private initKeyCommandOrchestrator() {
+        document.addEventListener("keydown", ev => {
+
+        });
+
+        document.addEventListener("keyup", ev => {
+
+        });
+
+        document.addEventListener("keypress", ev => {
+
+        });
+    }
+
+    // TODO: DISENGAGE KEY ORCHESTRATOR
     componentWillUnmount() {
         super.componentWillUnmount();
         AtlasMain.atlasInstance = undefined;
