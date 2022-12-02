@@ -1,4 +1,4 @@
-import {BC} from "../../../logic/BernieComponent";
+import {BC, GenericBC} from "../../../logic/BernieComponent";
 import {Assembly} from "../../../logic/assembly/Assembly";
 import {Themeable} from "../../../logic/style/Themeable";
 import {Box} from "../../../components/lo/Box";
@@ -35,6 +35,7 @@ import {FlexWrap} from "../../../logic/style/FlexWrap";
 import {Default, Desktop, Mobile} from "../../../components/logic/Media";
 import {Description} from "@mui/icons-material";
 import {Icon} from "../../../components/lo/Icon";
+import {HOCWrapper} from "../../../components/HOCWrapper";
 
 export type SampleCommandPaletteProps = {
     gloria: Gloria
@@ -46,6 +47,7 @@ export type SampleCommandPaletteLocalState = {
     filteredCommandsPointer: number,
     filter?: string,
     calculateFilteredCommands: () => void,
+    dialogEntry?: GenericBC
 }
 
 export class GloriaCommandPalette extends BC<SampleCommandPaletteProps, any, SampleCommandPaletteLocalState> {
@@ -72,6 +74,10 @@ export class GloriaCommandPalette extends BC<SampleCommandPaletteProps, any, Sam
         this.mobileCoreAssembly();
     }
 
+    public getDialogEntry(): GenericBC {
+        return this.ls().dialogEntry as GenericBC;
+    }
+
     public setFilteredCommandsPointer(newPointerPositionCandidate: number) {
         if (newPointerPositionCandidate >= 0 && newPointerPositionCandidate < this.ls().filteredCommands.length) {
             this.local.setStateWithChannels({
@@ -87,7 +93,7 @@ export class GloriaCommandPalette extends BC<SampleCommandPaletteProps, any, Sam
     public async executePointedCommand() {
         const state = this.ls();
         const command = state.filteredCommands[state.filteredCommandsPointer];
-        const response: any = await this.props.gloria.run(command.id, new Map<string, string>(), undefined)
+        const response: any = await this.props.gloria.run(command.id, new Map<string, string>(), undefined, state.dialogEntry);
         console.log("response", response)
     }
 
@@ -124,7 +130,8 @@ export class GloriaCommandPalette extends BC<SampleCommandPaletteProps, any, Sam
                                             type={TextType.secondaryDescription}
                                             color={Color.ofHex("#ABABAB")}
                                             coloredText
-                                            text={"root/Tu Darmstadt/"}
+                                            renderMarkdown={false}
+                                            text={"~"}
                                         />,
                                         <Text
                                             whitespace={"nowrap"}
@@ -132,6 +139,7 @@ export class GloriaCommandPalette extends BC<SampleCommandPaletteProps, any, Sam
                                             type={TextType.secondaryDescription}
                                             color={Color.ofHex("#585858")}
                                             coloredText
+                                            renderMarkdown={false}
                                             text={"@"}
                                         />,
                                         <Editor
@@ -227,7 +235,7 @@ export class GloriaCommandPalette extends BC<SampleCommandPaletteProps, any, Sam
                                                 overviewRulerBorder: false,
                                                 renderLineHighlight: "none",
                                                 codeLens: false,
-                                                cursorStyle: "block",
+                                                cursorStyle: "underline",
                                                 scrollbar: {
                                                     vertical: "hidden",
                                                     horizontal: "hidden"
@@ -560,7 +568,14 @@ export class GloriaCommandPalette extends BC<SampleCommandPaletteProps, any, Sam
                 }/>,
                 <Mobile children={
                     this.a("mobile-core")
-                }/>
+                }/>,
+
+                // dialog component entry
+                <HOCWrapper body={() => <></>} componentDidMount={wrapper => {
+                    this.local.setState({
+                        dialogEntry: wrapper
+                    });
+                }}/>,
             ]}/>
 
         );

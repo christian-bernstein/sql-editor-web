@@ -18,6 +18,7 @@ import {CommandOrchestrationActionMode} from "../CommandOrchestrationActionMode"
 import {AF} from "../../../../components/logic/ArrayFragment";
 import {LinearProgress} from "@mui/material";
 import {CommandOrchestrationFinishState} from "../CommandOrchestrationFinishState";
+import {KeyCommandOption} from "../KeyCommandOption";
 
 export type KeyCommandHintProps = {}
 
@@ -31,6 +32,37 @@ export class KeyCommandHint extends BernieComponent<KeyCommandHintProps, any, an
 
             return (
                 <Flex margin={createMargin(0, 0, t.gaps.defaultGab.measurand, t.gaps.defaultGab.measurand)} gap={px(3)} elements={[
+                    <If condition={matchingCommand !== undefined && matchingCommand.keyOptionsGenerator !== undefined} ifTrue={
+                        (() => {
+                            const options: KeyCommandOption[] = matchingCommand?.keyOptionsGenerator?.(context!!) ?? [];
+                            const index: number = context?.selectedOptionIndex ?? -1;
+                            return (
+                                <Flex margin={createMargin(0, 0, t.gaps.defaultGab.measurand, 0)} gap={px()} elements={options.map((kco, i) => {
+                                    const isSelected = i === index;
+                                    return (
+                                        <FlexRow height={px(20)} gap={t.gaps.smallGab} align={Align.CENTER} elements={[
+                                            <If condition={isSelected} ifTrue={
+                                                <Flex fh style={{
+                                                    width: 3,
+                                                    borderRadius: 100,
+                                                    backgroundColor: t.colors.warnHighlightColor.css()
+                                                }}/>
+                                            } ifFalse={
+                                                <Flex fh style={{
+                                                    width: 3,
+                                                    borderRadius: 100,
+                                                    backgroundColor: t.colors.backgroundColor.css()
+                                                }}/>
+                                            }/>,
+                                            <Description text={kco.title} bold/>,
+                                            <Dot/>,
+                                            <Description text={kco.description}/>
+                                        ]}/>
+                                    );
+                                })}/>
+                            );
+                        })()
+                    }/>,
                     <If condition={matchingCommand !== undefined} ifTrue={
                         <FlexRow height={px(23)} gap={t.gaps.smallGab} align={Align.CENTER} elements={[
                             // <Description renderMarkdown={false} text={`Command: '${context?.command}'`}/>,

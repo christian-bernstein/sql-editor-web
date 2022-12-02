@@ -44,6 +44,7 @@ import {atlasIconDict} from "./icons/AtlasIconDict";
 import {IconLookup} from "./icons/IconLookup";
 import {CommandOrchestrator} from "./keylogger/CommandOrchestrator";
 import {KeyCommandHint} from "./keylogger/components/KeyCommandHint";
+import {KeyCommandOption} from "./keylogger/KeyCommandOption";
 
 export type AtlasMainProps = {
     api: IAtlasAPI
@@ -128,13 +129,12 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
                                 id: "create-multiplexer",
                                 title: () => "Create multiplexer",
                                 executor: (ctx) => new Promise(resolve => {
+                                    // TODO Fix bugs
                                     AtlasMain.atlas(atlas => {
                                         // Open vfs folder view if not opened yet
                                         if (!this.isVFSFolderViewOpened()) AtlasMain.atlas().openTreeViewDialog();
                                         // Create a new multiplexer
-
                                         let multiplexerName: string | undefined = undefined;
-
                                         const multiplexerFactory = () => {
                                             atlas.useVFSFolderView(view => {
                                                 view.createMultiplexer({
@@ -143,11 +143,9 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
                                                     groupTitle: multiplexerName ?? "Multiplexer",
                                                     documents: []
                                                 });
-
                                                 atlas.ls().gloriaDialogHOCWrapper?.closeLocalDialog();
                                             });
                                         }
-
                                         gcpDialogWrapper.dialog(
                                             <StringQuery title={"Choose multiplexer name"} description={"Choose the title of the new multiplexer"} onSubmit={string => {
                                                 multiplexerName = string;
@@ -158,7 +156,15 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
                                             }
                                         );
                                     });
-
+                                    resolve(undefined);
+                                })
+                            }).registerCommand({
+                                id: "iso-image-manager",
+                                title: () => "ISO-Image-Manager",
+                                executor: (ctx) => new Promise(resolve => {
+                                    ctx.dialogEntry?.dialog(
+                                        <ISOHubComponent/>
+                                    );
                                     resolve(undefined);
                                 })
                             })}/>
@@ -305,7 +311,6 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
 
                                                 <SettingsElement groupDisplayMode title={"Settings"}/>,
                                             ]}/>,
-
                                             <SettingsGroup title={"Danger zone"} elements={[
                                                 <SettingsElement groupDisplayMode title={"Clear data"} iconConfig={{
                                                     enable: true,
@@ -448,6 +453,25 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
         this.folderAssembly();
 
         this.ls().keyCommandOrchestrator.registerCommand({
+            title: "Toggle",
+            initKey: "KeyT",
+            helpText: "This is the test help text of command '*Test*'",
+            keyHintGenerator: cache => (["KeyM"]),
+            executor: (ctx, orchestrator) => new Promise<void>((resolve, reject) => {
+                if (ctx.parameters[0] === "KeyM") {
+                    AtlasMain.atlas(atlas => {
+                        atlas.useVFSFolderView(view => {
+                            view.toggleMenu();
+                            resolve();
+                        }, () => reject());
+                    });
+                }
+
+                reject();
+            })
+        });
+
+        this.ls().keyCommandOrchestrator.registerCommand({
             title: "Test",
             initKey: "KeyD",
             helpText: "This is the test help text of command '*Test*'",
@@ -458,9 +482,46 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
         });
 
         this.ls().keyCommandOrchestrator.registerCommand({
-            title: "Another test",
-            initKey: "KeyT",
+            title: "Open..",
+            initKey: "KeyO",
             helpText: "This is the test help text of command '*Test*'",
+            keyOptionsGenerator: ctx => [
+                { id: "gloria", title: "Gloria", description: "Gloria command palette dialog" },
+                { id: "vfs", title: "VFS", description: "VFS folder view dialog" },
+            ],
+            keyHintGenerator: cache => ([]),
+            executor: (ctx, orchestrator) => new Promise<void>((resolve, reject) => {
+                const index = ctx.selectedOptionIndex;
+                const options: Array<KeyCommandOption> = ctx.keyCommand?.keyOptionsGenerator?.(ctx) ?? [];
+                const selected = options[index];
+                const isSelected = (id: string) => selected.id === id;
+
+                console.log("selected", selected)
+
+                if (isSelected("gloria")) {
+                    AtlasMain.atlas(atlas => {
+                        atlas.openGloria();
+                        resolve();
+                    });
+                }
+
+                if (isSelected("vfs")) {
+                    AtlasMain.atlas(atlas => {
+                        atlas.openTreeViewDialog();
+                        resolve();
+                    });
+                }
+            })
+        });
+
+        this.ls().keyCommandOrchestrator.registerCommand({
+            title: "A is here",
+            initKey: "KeyA",
+            helpText: "This is the test help text of command '*Test*'",
+            keyOptionsGenerator: ctx => [
+                { id: "a", title: "A 123", description: "A description :)" },
+                { id: "b", title: "B 344", description: "B description" },
+            ],
             keyHintGenerator: cache => ([]),
             executor: (ctx, orchestrator) => new Promise<void>((resolve, reject) => {
                 resolve();
@@ -520,7 +581,23 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
             const o = this.ls().keyCommandOrchestrator;
             const key = ev.keyCode || ev.charCode;
 
+            if (o.isEngaged() && (key == 38 || key == 40)) {
+                ev.preventDefault();
+                switch (key) {
+                    // ARROW_UP
+                    case 38: {
+                        o.moveOptionIndex(-1);
+                        break;
+                    }
+                    // ARROW_DOWN
+                    case 40: {
+                        o.moveOptionIndex(1);
+                    }
+                }
+            }
+
             if (o.isEngaged() && (key == 8 || key == 46)) {
+                ev.preventDefault();
                 o.deleteKey();
             }
 
@@ -555,14 +632,14 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
         this.ls().keyCommandOrchestrator.subscribe((fromCtx, toCtx, orchestrator) => {
             if (fromCtx === undefined && toCtx !== undefined) {
                 // ENGAGED
-                AtlasMain.atlas().ls().gloriaDialogHOCWrapper?.dialog(
+                AtlasMain.atlas().ls().keyCommandDialogHOCWrapper?.dialog(
                     <KeyCommandHint/>
                 );
                 return;
             }
             if (fromCtx !== undefined && toCtx === undefined) {
                 // DISENGAGED
-                AtlasMain.atlas().ls().gloriaDialogHOCWrapper?.closeLocalDialog();
+                AtlasMain.atlas().ls().keyCommandDialogHOCWrapper?.closeLocalDialog();
                 return;
             }
             AtlasMain.atlas().rerender("key-command-hint");

@@ -2,6 +2,7 @@ import {KeyCommand} from "./KeyCommand";
 import {CommandOrchestratorContext} from "./CommandOrchestratorContext";
 import {CommandOrchestrationActionMode} from "./CommandOrchestrationActionMode";
 import {CommandOrchestrationFinishState} from "./CommandOrchestrationFinishState";
+import {KeyCommandOption} from "./KeyCommandOption";
 
 export class CommandOrchestrator {
 
@@ -19,11 +20,29 @@ export class CommandOrchestrator {
         return this._context !== undefined;
     }
 
+    public moveOptionIndex(delta: number) {
+        if (!this.isEngaged()) return;
+        const command: KeyCommand = this.getMatchingCommand() as KeyCommand;
+        const ctx: CommandOrchestratorContext = this.context as CommandOrchestratorContext;
+        const options: KeyCommandOption[] = command.keyOptionsGenerator?.(ctx) ?? [];
+        let nI = ctx.selectedOptionIndex + delta;
+        if (nI < 0) nI = 0;
+        if (nI >= options.length) nI = options.length - 1;
+        if (ctx.selectedOptionIndex !== nI) {
+            this.triggerContextUpdate((ctxU) => {
+                if (ctxU === undefined) return ctxU;
+                ctxU.selectedOptionIndex = nI;
+                return ctxU;
+            });
+        }
+    }
+
     public engage() {
         console.log("engage")
         this.triggerContextUpdate(() => ({
             parameters: [],
-            mode: CommandOrchestrationActionMode.NONE
+            mode: CommandOrchestrationActionMode.NONE,
+            selectedOptionIndex: 0
         }));
     }
 
@@ -57,7 +76,8 @@ export class CommandOrchestrator {
                 if (this.context?.finishState === CommandOrchestrationFinishState.ERROR) {
                     setTimeout(() => reset(), 1500);
                 } else {
-                    setTimeout(() => reset(), 500);
+                    // setTimeout(() => reset(), 500);
+                    reset();
                 }
             });
         } else reset();
@@ -71,6 +91,7 @@ export class CommandOrchestrator {
         this.triggerContextUpdate(ctx => {
             if (ctx?.command === undefined) {
                 ctx!!.command = key;
+                ctx!!.keyCommand = this.getMatchingCommand();
             } else {
                 ctx.parameters.push(key);
             }
@@ -93,6 +114,7 @@ export class CommandOrchestrator {
                     ctx.parameters.pop()
                 } else {
                     ctx.command = undefined;
+                    ctx.keyCommand = undefined;
                 }
             }
             return ctx;
@@ -105,7 +127,7 @@ export class CommandOrchestrator {
 
     private triggerContextUpdate(updater: (ctx: CommandOrchestratorContext | undefined) => CommandOrchestratorContext | undefined) {
         console.warn("triggerContextUpdate");
-        const prev = structuredClone(this._context);
+        const prev: CommandOrchestratorContext | undefined = this._context === undefined ? undefined : {...this._context};
         this._context = updater(this._context);
         this.contextUpdateSubscribers.forEach(sub => sub(prev, this._context, this));
     }

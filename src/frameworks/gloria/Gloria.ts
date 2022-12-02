@@ -1,4 +1,5 @@
 import {GloriaCommandDefinition} from "./GloriaCommandDefinition";
+import {GenericBC} from "../../logic/BernieComponent";
 
 export class Gloria {
 
@@ -10,7 +11,7 @@ export class Gloria {
         return this;
     }
 
-    public run(id: string, args?: Map<string, string>, parameter?: any): Promise<any> {
+    public run(id: string, args?: Map<string, string>, parameter?: any, dialogEntry: GenericBC | undefined = undefined): Promise<any> {
         return new Promise<any>(async (resolve, reject) => {
             const cd = this.commands.filter(cd => cd.id === id)[0];
             if (cd === undefined) reject();
@@ -19,7 +20,8 @@ export class Gloria {
                     gloria: this,
                     arguments: args ?? new Map<string, string>(),
                     parameter: parameter,
-                    definition: cd
+                    definition: cd,
+                    dialogEntry: dialogEntry
                 });
                 resolve(result);
             } catch (e) {

@@ -1,9 +1,11 @@
 import {GloriaCommandDefinition} from "./GloriaCommandDefinition";
 import {Gloria} from "./Gloria";
+import {GenericBC} from "../../logic/BernieComponent";
 
 export type GloriaCommandExecutorContext = {
     parameter: any,
     arguments: Map<string, string>,
     gloria: Gloria,
-    definition: GloriaCommandDefinition
+    definition: GloriaCommandDefinition,
+    dialogEntry: GenericBC | undefined
 }
