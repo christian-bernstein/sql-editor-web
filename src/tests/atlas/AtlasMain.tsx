@@ -472,11 +472,31 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
         });
 
         this.ls().keyCommandOrchestrator.registerCommand({
+            keyHintGenerator: (cache: Array<string>) => [],
             title: "Test",
             initKey: "KeyD",
             helpText: "This is the test help text of command '*Test*'",
-            keyHintGenerator: cache => (["KeyA", "KeyB", "KeyC"]),
+            keyOptionsGenerator: ctx => {
+                const folders = AtlasMain.atlas().api().getAllFolders();
+                const getFolder = (id: string): (Folder | undefined) => folders.filter(folder => folder.id === id)[0] ?? undefined;
+                return (AtlasMain.atlas().ls()?.vfsFolderViewInstance?.getCurrentFolder().subFolderIDs?.map(subFolderID => {
+                    const folder = getFolder(subFolderID);
+                    if (folder === undefined) return {
+                        id: subFolderID,
+                        title: `N/A '${subFolderID}'`
+                    }
+                    return ({
+                        id: subFolderID,
+                        title: folder.title
+                    });
+                }) ?? []) as Array<KeyCommandOption>;
+            },
             executor: (ctx, orchestrator) => new Promise<void>((resolve, reject) => {
+                const index = ctx.selectedOptionIndex;
+                const options: Array<KeyCommandOption> = ctx.keyCommand?.keyOptionsGenerator?.(ctx) ?? [];
+                const selected = options[index];
+                const isSelected = (id: string) => selected.id === id;
+
                 setTimeout(() => resolve(), 8000);
             })
         });
@@ -495,21 +515,41 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
                 const options: Array<KeyCommandOption> = ctx.keyCommand?.keyOptionsGenerator?.(ctx) ?? [];
                 const selected = options[index];
                 const isSelected = (id: string) => selected.id === id;
-
-                console.log("selected", selected)
-
                 if (isSelected("gloria")) {
                     AtlasMain.atlas(atlas => {
                         atlas.openGloria();
                         resolve();
                     });
                 }
-
                 if (isSelected("vfs")) {
                     AtlasMain.atlas(atlas => {
                         atlas.openTreeViewDialog();
                         resolve();
                     });
+                }
+            })
+        });
+
+        this.ls().keyCommandOrchestrator.registerCommand({
+            title: "Close a file",
+            initKey: "KeyX",
+            helpText: "This is the test help text of command '*Test*'",
+            keyHintGenerator: cache => ([]),
+            executor: (ctx, orchestrator) => new Promise<void>((resolve, reject) => {
+                const view = this.ls().vfsFolderViewInstance;
+                // TODO: Use .useVFS..(..)
+                if (view === undefined) {
+                    reject();
+                    return;
+                }
+                try {
+                    const multiplexers = view.ls().viewMultiplexers;
+                    const multiplexer = multiplexers[0];
+                    AtlasMain.atlas().ls()?.vfsFolderViewInstance?.closeAndRemoveDocumentFromMultiplexer(multiplexer.groupID, multiplexer.activeDocumentID as string);
+                    resolve();
+                } catch (e) {
+                    console.error(e);
+                    reject(e);
                 }
             })
         });

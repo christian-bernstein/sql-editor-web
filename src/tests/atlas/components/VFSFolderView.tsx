@@ -55,6 +55,7 @@ import {SideMenu} from "./SideMenu";
 import Editor from "@monaco-editor/react";
 import {Description} from "../../../components/lo/Description";
 import {KeyHint} from "../../../components/lo/KeyHint";
+import {measureTime} from "../utils/Utils";
 
 export type VFSFolderViewProps = {
     initialFolderID?: string,
@@ -407,7 +408,7 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
     }
 
     public closeAndRemoveDocumentFromMultiplexer(multiplexerID: string, documentID: string) {
-        const mux = this.local.state.viewMultiplexers.filter(mux => mux.groupID === multiplexerID)[0] ?? undefined;
+        const mux: DocumentViewMultiplexerControlConfig = this.local.state.viewMultiplexers.filter(mux => mux.groupID === multiplexerID)[0] ?? undefined;
 
         if (mux === undefined) {
             return;
@@ -421,6 +422,12 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
 
         this.updateMultiplexer(multiplexerID, ["main"], multiplexer => {
             multiplexer.documents = multiplexer.documents.filter(doc => doc.id !== documentID);
+
+            if (multiplexer.documents.length > 0) {
+                multiplexer.activeDocumentID = multiplexer.documents[0]?.id ?? undefined;
+            }
+
+
             return multiplexer;
         });
     }
@@ -447,6 +454,8 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
         const documents: Array<AtlasDocument> = new Array<AtlasDocument>();
         AtlasMain.atlas(atlas => {
             const api: IAtlasAPI = atlas.api();
+            //  TODO: Only call getDocument once -> Due to a performance leak
+            //   - WELL NOT REALLY ~1ms..
             documentIDs.forEach(docID => {
                 try {
                     const doc: AtlasDocument = api.getDocument(docID);
