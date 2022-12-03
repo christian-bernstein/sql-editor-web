@@ -14,12 +14,15 @@ import {px} from "../../../logic/style/DimensionalMeasured";
 
 export type FolderProps = {
     data: Folder,
-    onSelect: (component: FolderComponent, data: Folder) => Promise<any>
+    onSelect: (component: FolderComponent, data: Folder) => Promise<any>,
+    renderDetails?: boolean
 }
 
 export class FolderComponent extends BC<FolderProps, any, any> {
 
     componentRender(p: FolderProps, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
+        const renderDetails = p.renderDetails ?? true;
+
         return (
             <SettingsElement
                 forceRenderSubpageIcon
@@ -32,28 +35,32 @@ export class FolderComponent extends BC<FolderProps, any, any> {
                         <FolderIcon/>
                     )
                 }}
-                appendixGenerator={element => (
-                    <FlexRow gap={t.gaps.smallGab} elements={[
-                        <Text
-                            type={TextType.secondaryDescription}
-                            text={getOr(p.data.creator, "N/A")}
-                            fontSize={px(11)}
-                        />,
-                        <Text
-                            bold
-                            text={"@"}
-                            coloredText
-                            visualMeaning={VM.UI_NO_HIGHLIGHT}
-                            type={TextType.secondaryDescription}
-                            fontSize={px(11)}
-                        />,
-                        <Text
-                            type={TextType.secondaryDescription}
-                            text={p.data.creationDate === undefined ? "N/A" : new Date(p.data.creationDate).toLocaleDateString()}
-                            fontSize={px(11)}
-                        />
-                    ]}/>
-                )}
+                appendixGenerator={element => {
+                    if (renderDetails) {
+                        return (
+                            <FlexRow gap={t.gaps.smallGab} elements={[
+                                <Text
+                                    type={TextType.secondaryDescription}
+                                    text={getOr(p.data.creator, "N/A")}
+                                    fontSize={px(11)}
+                                />,
+                                <Text
+                                    bold
+                                    text={"@"}
+                                    coloredText
+                                    visualMeaning={VM.UI_NO_HIGHLIGHT}
+                                    type={TextType.secondaryDescription}
+                                    fontSize={px(11)}
+                                />,
+                                <Text
+                                    type={TextType.secondaryDescription}
+                                    text={p.data.creationDate === undefined ? "N/A" : new Date(p.data.creationDate).toLocaleDateString()}
+                                    fontSize={px(11)}
+                                />
+                            ]}/>
+                        );
+                    } else return <></>;
+                }}
                 promiseBasedOnClick={element => p.onSelect(this, p.data)}
             />
         );

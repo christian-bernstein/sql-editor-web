@@ -280,7 +280,7 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                             <SettingsGroup elements={
                                 subFolders.map(folder => {
                                     return (
-                                        <FolderComponent data={folder} onSelect={(component, data) => new Promise<void>((resolve, reject) => {
+                                        <FolderComponent renderDetails={false} data={folder} onSelect={(component, data) => new Promise<void>((resolve, reject) => {
                                             this.local.setState({
                                                 currentFolderID: data.id
                                             }, new Map<string, any>(), () => {

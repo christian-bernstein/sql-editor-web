@@ -7,7 +7,6 @@ export type AtlasEntity = {
     creator?: string,
     tags?: Array<string>,
     note?: string,
-
     iconColorHEX?: string
-    icon?: IconLookup
+    icon?: IconLookup,
 }

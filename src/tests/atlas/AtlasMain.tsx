@@ -466,7 +466,6 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
                         }, () => reject());
                     });
                 }
-
                 reject();
             })
         });
