@@ -19,6 +19,7 @@ import {AF} from "../../../../components/logic/ArrayFragment";
 import {LinearProgress} from "@mui/material";
 import {CommandOrchestrationFinishState} from "../CommandOrchestrationFinishState";
 import {KeyCommandOption} from "../KeyCommandOption";
+import {CommandOrchestrator} from "../CommandOrchestrator";
 
 export type KeyCommandHintProps = {}
 
@@ -35,28 +36,37 @@ export class KeyCommandHint extends BernieComponent<KeyCommandHintProps, any, an
                     <If condition={matchingCommand !== undefined && matchingCommand.keyOptionsGenerator !== undefined} ifTrue={
                         (() => {
                             const options: KeyCommandOption[] = matchingCommand?.keyOptionsGenerator?.(context!!) ?? [];
-                            const index: number = context?.selectedOptionIndex ?? -1;
                             return (
                                 <Flex margin={createMargin(0, 0, t.gaps.defaultGab.measurand, 0)} gap={px()} elements={options.map((kco, i) => {
-                                    const isSelected = i === index;
+                                    const showDescription = kco.description !== undefined && kco.description.trim().length > 0;
                                     return (
                                         <FlexRow height={px(20)} gap={t.gaps.smallGab} align={Align.CENTER} elements={[
-                                            <If condition={isSelected} ifTrue={
-                                                <Flex fh style={{
-                                                    width: 3,
-                                                    borderRadius: 100,
-                                                    backgroundColor: t.colors.warnHighlightColor.css()
-                                                }}/>
-                                            } ifFalse={
-                                                <Flex fh style={{
-                                                    width: 3,
-                                                    borderRadius: 100,
-                                                    backgroundColor: t.colors.backgroundColor.css()
-                                                }}/>
-                                            }/>,
+                                            AtlasMain.atlas().component(() => {
+                                                const index: number = context?.selectedOptionIndex ?? -1;
+                                                const isSelected = i === index;
+                                                return (
+                                                    <If condition={isSelected} ifTrue={
+                                                        <Flex fh style={{
+                                                            width: 3,
+                                                            borderRadius: 100,
+                                                            backgroundColor: t.colors.warnHighlightColor.css()
+                                                        }}/>
+                                                    } ifFalse={
+                                                        <Flex fh style={{
+                                                            width: 3,
+                                                            borderRadius: 100,
+                                                            backgroundColor: t.colors.backgroundColor.css()
+                                                        }}/>
+                                                    }/>
+                                                );
+                                            }, CommandOrchestrator.OPTION_INDEX_UPDATE_CHANNEL),
                                             <Description text={kco.title} bold/>,
-                                            <Dot/>,
-                                            <Description text={kco.description}/>
+                                            showDescription ? (<></>) : (
+                                                <>
+                                                    <Dot/>
+                                                    <Description text={kco.description as string}/>
+                                                </>
+                                            )
                                         ]}/>
                                     );
                                 })}/>
@@ -89,12 +99,18 @@ export class KeyCommandHint extends BernieComponent<KeyCommandHintProps, any, an
                                 ]}/>
                             }/>,
 
-                            <If condition={context?.mode === CommandOrchestrationActionMode.NONE} ifTrue={
-                                <AF elements={[
-                                    <Dot/>,
-                                    <KeyHint label={"Suggested keys:"} keys={matchingCommand?.keyHintGenerator(context?.parameters ?? []) ?? []}/>,
-                                ]}/>
-                            }/>
+                            (() => {
+                                if (context?.mode === CommandOrchestrationActionMode.NONE) {
+                                    const keys = matchingCommand?.keyHintGenerator(context?.parameters ?? []) ?? [];
+                                    if (keys.length === 0) return <></>;
+                                    return (
+                                        <AF elements={[
+                                            <Dot/>,
+                                            <KeyHint label={"Suggested keys:"} keys={keys}/>
+                                        ]}/>
+                                    );
+                                } else return <></>;
+                            })()
                         ]}/>
                     }/>,
                     <FlexRow height={px(23)} gap={t.gaps.smallGab} align={Align.CENTER} elements={[

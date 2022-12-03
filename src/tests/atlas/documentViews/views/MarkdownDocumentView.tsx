@@ -148,6 +148,8 @@ class MarkdownDocumentView extends BC<MarkdownDocumentViewProps, any, MarkdownDo
                                 editor.addCommand(monaco.KeyCode.F8, () => {
                                     // this.execute();
                                 }, "")
+
+                                editor.focus();
                             }}
                             beforeMount={monaco => {
                                 monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({

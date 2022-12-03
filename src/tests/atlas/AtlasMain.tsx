@@ -515,6 +515,28 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
         });
 
         this.ls().keyCommandOrchestrator.registerCommand({
+            title: "Open a file",
+            initKey: "KeyF",
+            helpText: "This is the test help text of command '*Test*'",
+            keyOptionsGenerator: ctx => {
+                return AtlasMain.atlas().ls()?.vfsFolderViewInstance?.getDocumentsInCurrentFolder().map(doc => ({
+                    id: doc.id,
+                    title: doc.title ?? `Unnamed '${doc.id}'`,
+                    description: undefined
+                })) ?? [];
+            },
+            keyHintGenerator: cache => ([]),
+            executor: (ctx, orchestrator) => new Promise<void>((resolve, reject) => {
+                const index = ctx.selectedOptionIndex;
+                const options: Array<KeyCommandOption> = ctx.keyCommand?.keyOptionsGenerator?.(ctx) ?? [];
+                const selected = options[index];
+                const document = AtlasMain.atlas().api().getDocument(selected.id);
+                AtlasMain.atlas().ls()?.vfsFolderViewInstance?.openDocument(document);
+                resolve();
+            })
+        });
+
+        this.ls().keyCommandOrchestrator.registerCommand({
             title: "A is here",
             initKey: "KeyA",
             helpText: "This is the test help text of command '*Test*'",
@@ -629,7 +651,7 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
             }
         });
 
-        this.ls().keyCommandOrchestrator.subscribe((fromCtx, toCtx, orchestrator) => {
+        this.ls().keyCommandOrchestrator.subscribe((fromCtx, toCtx, orchestrator, options) => {
             if (fromCtx === undefined && toCtx !== undefined) {
                 // ENGAGED
                 AtlasMain.atlas().ls().keyCommandDialogHOCWrapper?.dialog(
@@ -642,7 +664,12 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
                 AtlasMain.atlas().ls().keyCommandDialogHOCWrapper?.closeLocalDialog();
                 return;
             }
-            AtlasMain.atlas().rerender("key-command-hint");
+
+            if (options.useChannelizedRerender) {
+                AtlasMain.atlas().rerender(...options.channels);
+            } else {
+                AtlasMain.atlas().rerender("key-command-hint");
+            }
         });
     }
 

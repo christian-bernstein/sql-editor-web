@@ -150,7 +150,9 @@ class InDevDocumentView extends BC<InDevDocumentViewProps, any, InDevDocumentVie
                                 onMount={(editor, monaco) => {
                                     editor.addCommand(monaco.KeyCode.F8, () => {
                                         // this.execute();
-                                    }, "")
+                                    }, "");
+
+                                    editor.focus();
                                 }}
                                 beforeMount={monaco => {
                                     monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({

@@ -442,26 +442,30 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
         })
     }
 
+    public getDocumentsInCurrentFolder(): Array<AtlasDocument> {
+        const documentIDs: Array<string> = this.getCurrentFolder().documentsIDs ?? new Array<string>();
+        const documents: Array<AtlasDocument> = new Array<AtlasDocument>();
+        AtlasMain.atlas(atlas => {
+            const api: IAtlasAPI = atlas.api();
+            documentIDs.forEach(docID => {
+                try {
+                    const doc: AtlasDocument = api.getDocument(docID);
+                    if (doc !== undefined) {
+                        documents.push(doc);
+                    } else {
+                        // TODO: Display a warning
+                    }
+                } catch (e) {
+                    console.error(e);
+                }
+            });
+        });
+        return documents;
+    }
+
     private documentViewAssembly() {
         this.assembly.assembly("document-view", theme => {
-            const documentIDs: Array<string> = this.getCurrentFolder().documentsIDs ?? new Array<string>();
-            const documents: Array<AtlasDocument> = new Array<AtlasDocument>();
-
-            AtlasMain.atlas(atlas => {
-                const api: IAtlasAPI = atlas.api();
-                documentIDs.forEach(docID => {
-                    try {
-                        const doc: AtlasDocument = api.getDocument(docID);
-                        if (doc !== undefined) {
-                            documents.push(doc);
-                        } else {
-                            // TODO: Display a warning
-                        }
-                    } catch (e) {
-                        console.error(e);
-                    }
-                });
-            });
+            const documents: Array<AtlasDocument> = this.getDocumentsInCurrentFolder();
 
             return (
                 <Flex fw elements={[

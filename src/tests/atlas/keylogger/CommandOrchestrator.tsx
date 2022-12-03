@@ -3,8 +3,11 @@ import {CommandOrchestratorContext} from "./CommandOrchestratorContext";
 import {CommandOrchestrationActionMode} from "./CommandOrchestrationActionMode";
 import {CommandOrchestrationFinishState} from "./CommandOrchestrationFinishState";
 import {KeyCommandOption} from "./KeyCommandOption";
+import {KeyCommandHintUpdateOptions} from "./KeyCommandHintUpdateOptions";
 
 export class CommandOrchestrator {
+
+    public static readonly OPTION_INDEX_UPDATE_CHANNEL = "key-command-hint-option-index";
 
     private readonly keyCommands: Array<KeyCommand> = [];
 
@@ -33,6 +36,9 @@ export class CommandOrchestrator {
                 if (ctxU === undefined) return ctxU;
                 ctxU.selectedOptionIndex = nI;
                 return ctxU;
+            }, {
+                useChannelizedRerender: true,
+                channels: [CommandOrchestrator.OPTION_INDEX_UPDATE_CHANNEL]
             });
         }
     }
@@ -125,11 +131,13 @@ export class CommandOrchestrator {
         this.contextUpdateSubscribers.push(subscriber);
     }
 
-    private triggerContextUpdate(updater: (ctx: CommandOrchestratorContext | undefined) => CommandOrchestratorContext | undefined) {
-        console.warn("triggerContextUpdate");
+    private triggerContextUpdate(updater: (ctx: CommandOrchestratorContext | undefined) => CommandOrchestratorContext | undefined, rerenderOptions: KeyCommandHintUpdateOptions = {
+        useChannelizedRerender: false,
+        channels: []
+    }) {
         const prev: CommandOrchestratorContext | undefined = this._context === undefined ? undefined : {...this._context};
         this._context = updater(this._context);
-        this.contextUpdateSubscribers.forEach(sub => sub(prev, this._context, this));
+        this.contextUpdateSubscribers.forEach(sub => sub(prev, this._context, this, rerenderOptions));
     }
 
     get context(): CommandOrchestratorContext | undefined {
@@ -137,4 +145,4 @@ export class CommandOrchestrator {
     }
 }
 
-type Subscriber = (fromCtx: CommandOrchestratorContext | undefined, toCtx: CommandOrchestratorContext | undefined, orchestrator: CommandOrchestrator) => void;
+type Subscriber = (fromCtx: CommandOrchestratorContext | undefined, toCtx: CommandOrchestratorContext | undefined, orchestrator: CommandOrchestrator, options: KeyCommandHintUpdateOptions) => void;
