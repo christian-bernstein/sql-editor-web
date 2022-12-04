@@ -185,12 +185,12 @@ class InDevDocumentView extends BC<InDevDocumentViewProps, any, InDevDocumentVie
                                                 [/FUNC/, "keyword"],
                                                 [/FOR/, "keyword"],
                                                 [/IF/, "keyword"],
-                                                [/IN/, "keyword"],
                                                 [/FALSE/, "keyword"],
                                                 [/AS/, "keyword"],
                                                 [/TO/, "keyword"],
                                                 [/WITH/, "keyword"],
                                                 [/WHILE/, "keyword"],
+                                                [/THEN/, "keyword"],
                                                 [/".*"/, "string"],
                                                 [/'.*'/, "string"],
 
@@ -225,10 +225,20 @@ class InDevDocumentView extends BC<InDevDocumentViewProps, any, InDevDocumentVie
                                                 [/MIN/, "method"],
                                                 [/AVG/, "method"],
                                                 [/FILTER/, "method"],
+                                                [/LEN/, "method"],
+                                                [/EMPTY/, "method"],
+                                                [/LENGTH/, "method"],
+
+                                                // Conception highlights
+                                                [/CONCEPT/, "keyword"],
+                                                [/BUG/, "keyword"],
+                                                [/ERROR/, "keyword"],
+                                                [/DEBUG/, "keyword"],
 
                                                 // TODO Make better
                                                 [/LAMBDA/, "keyword"],
                                                 [/DO/, "keyword"],
+                                                [/IN/, "keyword"],
                                                 [/(\d|\.)+/, "number"],
                                             ]
                                         }

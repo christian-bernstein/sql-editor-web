@@ -9,4 +9,6 @@ export type AtlasEntity = {
     note?: string,
     iconColorHEX?: string
     icon?: IconLookup,
+    // INCUBATING FEATURES
+    pinned?: boolean
 }

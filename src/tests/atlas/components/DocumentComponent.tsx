@@ -4,12 +4,17 @@ import {Assembly} from "../../../logic/assembly/Assembly";
 import {AtlasDocument} from "../data/AtlasDocument";
 import {SettingsElement} from "../../../components/ho/settingsElement/SettingsElement";
 import {getOr} from "../../../logic/Utils";
-import {ReactComponent as DocumentIcon} from "../../../assets/icons/ic-20/ic20-file.svg";
 import {StaticDrawerMenu} from "../../../components/lo/StaticDrawerMenu";
 import {DocumentPreview} from "./DocumentPreview";
 import {AtlasMain} from "../AtlasMain";
 import {percent} from "../../../logic/style/DimensionalMeasured";
 import {Color} from "../../../logic/style/Color";
+import {FlexRow} from "../../../components/lo/FlexBox";
+import {Align} from "../../../logic/style/Align";
+import {If} from "../../../components/logic/If";
+import {Icon} from "../../../components/lo/Icon";
+import {FiberPinRounded, PinDropRounded, PinRounded, StarRounded} from "@mui/icons-material";
+import {BadgeMark} from "@mui/material";
 
 export type DocumentComponentProps = {
     data: AtlasDocument
@@ -27,6 +32,12 @@ export class DocumentComponent extends BC<DocumentComponentProps, any, DocumentC
         super(props, undefined, {
             data: props.data
         });
+    }
+
+    init() {
+        super.init();
+        this.appendixAssembly();
+        this.pinnedAssembly();
     }
 
     private getDocumentData(refresh: boolean = false): AtlasDocument {
@@ -58,6 +69,47 @@ export class DocumentComponent extends BC<DocumentComponentProps, any, DocumentC
         })
     }
 
+    private togglePinnedFlag() {
+        // TODO: Implement
+    }
+
+    private pinnedAssembly() {
+        this.assembly.assembly("pinned", (theme, element: SettingsElement) => {
+            const isPinned = this.ls().data.pinned ?? false;
+            return (
+                <FlexRow align={Align.CENTER} elements={[
+                    <If condition={isPinned} ifTrue={
+                        <Icon
+                            tooltip={"Unpin"}
+                            icon={<StarRounded/>}
+                            onClick={() => this.togglePinnedFlag()}
+                        />
+                    } ifFalse={
+                        <Icon
+                            tooltip={"Pin"}
+                            icon={<StarRounded/>}
+                            uiNoHighlightOnDefault
+                            coloredOnDefault={false}
+                            onClick={() => this.togglePinnedFlag()}
+                        />
+                    }/>
+                ]}/>
+            );
+        })
+    }
+
+    private appendixAssembly() {
+        this.assembly.assembly("appendix", (theme, element: SettingsElement) => {
+            return (
+                <FlexRow align={Align.CENTER} gap={theme.gaps.smallGab} elements={[
+                    this.props.appendix?.(element) ?? <></>,
+                    this.a("pinned")
+                ]}/>
+            );
+        })
+    }
+
+    // TODO: Replace with own implementation -> No SettingsElement -> Something with the icon hit box is off while using SettingsElement appendix
     componentRender(p: DocumentComponentProps, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
             <SettingsElement
@@ -70,7 +122,7 @@ export class DocumentComponent extends BC<DocumentComponentProps, any, DocumentC
                     iconGenerator: element => AtlasMain.atlas().getIconFromLookup(p.data.icon ?? { dict: "atlas", id: "generic-file" })
                 }}
                 promiseBasedOnClick={element => this.onClick(element)}
-                appendixGenerator={p.appendix}
+                appendixGenerator={element => this.a("appendix", element)}
             />
         );
     }
