@@ -636,12 +636,14 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
     private initKeyCommandOrchestrator() {
         let alt = false;
         const setAlt = (newAlt: boolean) => alt = newAlt;
-        const isTriggerKeyPressed = (ev: KeyboardEvent) => ev.shiftKey;
+        // const isTriggerKeyPressed = (ev: KeyboardEvent) => ev.shiftKey;
+        const isTriggerKeyPressed = (ev: KeyboardEvent) => ev.altKey;
 
         document.addEventListener("keydown", (ev: KeyboardEvent) => {
             const o = this.ls().keyCommandOrchestrator;
             const key = ev.keyCode || ev.charCode;
 
+            // Move option pointer
             if (o.isEngaged() && (key == 38 || key == 40)) {
                 ev.preventDefault();
                 switch (key) {
@@ -657,14 +659,17 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
                 }
             }
 
+            // Delete last selected key entry
             if (o.isEngaged() && (key == 8 || key == 46)) {
                 ev.preventDefault();
                 o.deleteKey();
             }
 
             if (alt) return;
+
             if (isTriggerKeyPressed(ev)) {
                 ev.preventDefault();
+                ev.stopPropagation();
                 o.engage();
                 setAlt(true);
             }

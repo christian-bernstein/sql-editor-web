@@ -163,14 +163,92 @@ class InDevDocumentView extends BC<InDevDocumentViewProps, any, InDevDocumentVie
                                         target: monaco.languages.typescript.ScriptTarget.Latest,
                                         allowNonTsExtensions: true
                                     });
-                                    monaco.editor.defineTheme("ses-x-dark-tritanopia", {
+
+                                    monaco.languages.register({ id: "notes-lang" })
+
+                                    monaco.languages.setMonarchTokensProvider("notes-lang", {
+                                        tokenizer: {
+                                            root: [
+                                                [/->/, "arrow-right"],
+                                                [/=>/, "arrow-right"],
+                                                [/-/, "bullet-point"],
+                                                [/:/, "double-point"],
+                                                [/;/, "semicolon"],
+                                                [/#.*/, "default-comment"],
+
+                                                [/TODO\(.*\)/, "todo"],
+
+                                                [/FOREACH/, "method"],
+
+                                                [/RETURN/, "keyword"],
+                                                [/FUNCTION/, "keyword"],
+                                                [/FUNC/, "keyword"],
+                                                [/FOR/, "keyword"],
+                                                [/IF/, "keyword"],
+                                                [/IN/, "keyword"],
+                                                [/FALSE/, "keyword"],
+                                                [/AS/, "keyword"],
+                                                [/TO/, "keyword"],
+                                                [/WITH/, "keyword"],
+                                                [/WHILE/, "keyword"],
+                                                [/".*"/, "string"],
+                                                [/'.*'/, "string"],
+
+                                                // Values
+                                                [/ELSE/, "keyword"],
+                                                [/TRUE/, "keyword"],
+                                                [/NULL/, "keyword"],
+                                                [/UNDEFINED/, "keyword"],
+
+                                                // Logic
+                                                [/AND/, "keyword"],
+                                                [/OR/, "keyword"],
+
+                                                // Imaginary data types: basics
+                                                [/INT/, "keyword"],
+                                                [/BOOLEAN/, "keyword"],
+                                                [/BOOL/, "keyword"],
+                                                [/BYTE/, "keyword"],
+                                                [/BIT/, "keyword"],
+                                                [/DOUBLE/, "keyword"],
+                                                [/LONG/, "keyword"],
+                                                [/FLOAT/, "keyword"],
+
+                                                // Imaginary data types: advanced structures
+                                                [/ARRAY/, "keyword"],
+                                                [/SET/, "keyword"],
+                                                [/MAP/, "keyword"],
+
+                                                // Imaginary functions
+                                                [/MAP/, "method"],
+                                                [/MAX/, "method"],
+                                                [/MIN/, "method"],
+                                                [/AVG/, "method"],
+                                                [/FILTER/, "method"],
+
+                                                // TODO Make better
+                                                [/LAMBDA/, "keyword"],
+                                                [/DO/, "keyword"],
+                                                [/(\d|\.)+/, "number"],
+                                            ]
+                                        }
+                                    })
+
+                                    monaco.editor.defineTheme("ses-x-dark-tritanopia-notes", {
                                         base: "vs-dark",
                                         inherit: true,
                                         rules: [
-                                            {
-                                                background: t.colors.backgroundColor.toHex(),
-                                                token: ""
-                                            },
+                                            { token: "", background: t.colors.backgroundColor.toHex() },
+                                            { token: "arrow-right", foreground: "#A782BB" },
+                                            { token: "bullet-point", foreground: "#585858" },
+                                            { token: "double-point", foreground: "#585858" },
+                                            { token: "default-comment", foreground: "#585858" },
+                                            { token: "number", foreground: "#6796BA" },
+                                            { token: "todo", foreground: "#A7BE23" },
+                                            { token: "keyword", foreground: "#CA7732" },
+                                            { token: "semicolon", foreground: "#CA7732" },
+                                            { token: "method", foreground: "#FFC66D" },
+                                            { token: "string", foreground: "#8EA765" },
                                         ],
                                         colors: {
                                             // "editor.background": t.colors.backgroundColor.toHex(),
@@ -179,17 +257,16 @@ class InDevDocumentView extends BC<InDevDocumentViewProps, any, InDevDocumentVie
                                         }
                                     });
                                 }}
-                                theme={"ses-x-dark-tritanopia"}
+                                theme={"ses-x-dark-tritanopia-notes"}
+                                language={"notes-lang"}
                                 defaultValue={note ?? ""}
                                 onChange={(value, ev) => {
                                     const newBody = JSON.stringify({
                                         note: value ?? ""
                                     } as NoteDocumentArchetype);
-
                                     p.context.data.bodyUpdater.update({
                                         newBody: newBody
                                     });
-
                                     this.local.setState({
                                         noteMirror: value
                                     });
@@ -201,6 +278,9 @@ class InDevDocumentView extends BC<InDevDocumentViewProps, any, InDevDocumentVie
                                     overviewRulerBorder: false,
                                     renderLineHighlight: "none",
                                     codeLens: false,
+                                    cursorStyle: "underline",
+                                    matchBrackets: "always",
+                                    autoClosingBrackets: "always",
                                     scrollbar: {
                                         vertical: "hidden",
                                     },
