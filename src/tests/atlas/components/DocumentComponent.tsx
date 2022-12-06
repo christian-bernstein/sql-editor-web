@@ -7,14 +7,24 @@ import {getOr} from "../../../logic/Utils";
 import {StaticDrawerMenu} from "../../../components/lo/StaticDrawerMenu";
 import {DocumentPreview} from "./DocumentPreview";
 import {AtlasMain} from "../AtlasMain";
-import {percent} from "../../../logic/style/DimensionalMeasured";
+import {percent, px} from "../../../logic/style/DimensionalMeasured";
 import {Color} from "../../../logic/style/Color";
-import {FlexRow} from "../../../components/lo/FlexBox";
+import {Flex, FlexBox, FlexRow} from "../../../components/lo/FlexBox";
 import {Align} from "../../../logic/style/Align";
 import {If} from "../../../components/logic/If";
 import {Icon} from "../../../components/lo/Icon";
 import {FiberPinRounded, PinDropRounded, PinRounded, StarRounded} from "@mui/icons-material";
 import {BadgeMark} from "@mui/material";
+import {Cursor} from "../../../logic/style/Cursor";
+import {Justify} from "../../../logic/style/Justify";
+import {FlexDirection} from "../../../logic/style/FlexDirection";
+import {Box} from "../../../components/lo/Box";
+import {OverflowBehaviour} from "../../../logic/style/OverflowBehaviour";
+import {Text} from "../../../components/lo/Text";
+import {createMargin} from "../../../logic/style/Margin";
+import {HashLoader} from "react-spinners";
+import {ReactComponent as SubpageIcon} from "../../../assets/icons/ic-16/ic16-chevron-right.svg";
+import React from "react";
 
 export type DocumentComponentProps = {
     data: AtlasDocument
@@ -69,8 +79,26 @@ export class DocumentComponent extends BC<DocumentComponentProps, any, DocumentC
         })
     }
 
+    private onClickTogglePinnedFlagIcon(event: React.MouseEvent<HTMLDivElement>) {
+        event.preventDefault();
+        event.stopPropagation();
+        this.togglePinnedFlag();
+    }
+
     private togglePinnedFlag() {
-        // TODO: Implement
+        AtlasMain.atlas(atlas => {
+            atlas.api()?.updateDocument(this.ls().data.id, document => {
+                document.pinned = document.pinned === undefined ? true : !document.pinned
+                return document;
+            });
+
+            atlas.useVFSFolderView(view => {
+                view.rerender("document-view");
+            }, () => {
+                // TODO: VFS not opened
+                console.error("Cannot rerender 'document-view' in VFSFolderView, because VFSFolderView isn't opened.");
+            })
+        });
     }
 
     private pinnedAssembly() {
@@ -80,17 +108,17 @@ export class DocumentComponent extends BC<DocumentComponentProps, any, DocumentC
                 <FlexRow align={Align.CENTER} elements={[
                     <If condition={isPinned} ifTrue={
                         <Icon
-                            tooltip={"Unpin"}
+                            // tooltip={"Unpin"}
                             icon={<StarRounded/>}
-                            onClick={() => this.togglePinnedFlag()}
+                            onClick={(event) => this.onClickTogglePinnedFlagIcon(event)}
                         />
                     } ifFalse={
                         <Icon
-                            tooltip={"Pin"}
+                            // tooltip={"Pin"}
                             icon={<StarRounded/>}
                             uiNoHighlightOnDefault
                             coloredOnDefault={false}
-                            onClick={() => this.togglePinnedFlag()}
+                            onClick={(event) => this.onClickTogglePinnedFlagIcon(event)}
                         />
                     }/>
                 ]}/>
@@ -111,6 +139,7 @@ export class DocumentComponent extends BC<DocumentComponentProps, any, DocumentC
 
     // TODO: Replace with own implementation -> No SettingsElement -> Something with the icon hit box is off while using SettingsElement appendix
     componentRender(p: DocumentComponentProps, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
+
         return (
             <SettingsElement
                 groupDisplayMode

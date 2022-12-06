@@ -65,10 +65,14 @@ export class SettingsElement extends BernieComponent<SettingsElementProps, any, 
         });
     }
 
-    private onSelect() {
+    private onSelect(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
         if (this.props.deactivateOnClick) {
             return;
         }
+
+        // TODO: Test
+        event.preventDefault();
+        event.stopPropagation();
 
         if (!this.local.state.processing) {
 
@@ -154,15 +158,17 @@ export class SettingsElement extends BernieComponent<SettingsElementProps, any, 
     componentRender(p: SettingsElementProps, s: any, l: SettingsElementLocalState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
             <FlexBox width={percent(100)} align={Align.START} gap={t.gaps.smallGab}>
-
                 <FlexBox width={percent(100)} align={Align.START} gap={px()}>
                     <Box
                         width={percent(100)}
-                        highlight
-                        style={{justifyContent: "center"}}
+
+                        // TODO: Create fix..
+                        highlight={false}
+
+                        style={{justifyContent: "center", position: "relative"}}
                         minHeight={px(40)}
                         cursor={Cursor.pointer}
-                        onClick={() => this.onSelect()}
+                        onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => this.onSelect(event)}
                         borderRadiiConfig={{
                             enableCustomBorderRadii: getOr(p.groupDisplayMode, false),
                             fallbackCustomBorderRadii: px()
@@ -203,7 +209,9 @@ export class SettingsElement extends BernieComponent<SettingsElementProps, any, 
                                 />
                             </FlexBox>
 
-                            <FlexBox align={Align.CENTER} flexDir={FlexDirection.ROW} gap={t.gaps.smallGab} height={percent(100)}>
+                            <FlexBox align={Align.CENTER} style={{
+                                minHeight: "40px"
+                            }} flexDir={FlexDirection.ROW} gap={t.gaps.smallGab} height={percent(100)}>
                                 {this.component(() => getOr(p.appendixGenerator?.(this), <></>), "appendix")}
 
                                 {this.component(local => {

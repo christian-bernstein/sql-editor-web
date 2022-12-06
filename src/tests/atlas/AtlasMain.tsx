@@ -637,7 +637,7 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
         let alt = false;
         const setAlt = (newAlt: boolean) => alt = newAlt;
         // const isTriggerKeyPressed = (ev: KeyboardEvent) => ev.shiftKey;
-        const isTriggerKeyPressed = (ev: KeyboardEvent) => ev.altKey;
+        const isTriggerKeyPressed = (ev: KeyboardEvent) => ev.ctrlKey && ev.shiftKey;
 
         document.addEventListener("keydown", (ev: KeyboardEvent) => {
             const o = this.ls().keyCommandOrchestrator;

@@ -474,7 +474,100 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
 
     private documentViewAssembly() {
         this.assembly.assembly("document-view", theme => {
-            const documents: Array<AtlasDocument> = this.getDocumentsInCurrentFolder();
+            type ADA = Array<AtlasDocument>;
+            const documents: ADA = this.getDocumentsInCurrentFolder();
+
+            const pinnedDocuments: ADA = documents.filter(doc => doc.pinned ?? false);
+            const unpinnedDocuments: ADA = documents.filter(doc => !(doc.pinned ?? false));
+
+            const renderDocuments: (docs: ADA, emptyRenderer?: () => JSX.Element) => JSX.Element = (docs, emptyRenderer) => {
+                if (docs.length > 0) {
+                    return (
+                        <SettingsGroup elements={
+                            docs.map(doc => {
+                                return this.component(local => {
+                                    const contextMenuRenderer = (element: SettingsElement) => {
+                                        return (
+                                            <Icon coloredOnDefault={false} uiNoHighlightOnDefault icon={<ActionsIcon/>} tooltip={"Actions"} size={px(18)} onClick={(event) => {
+                                                // TODO: Handle -> Open context menu (Improve menu)
+
+                                                element.dialog(
+                                                    <StaticDrawerMenu body={() => (
+                                                        <Flex align={Align.CENTER} fh fw elements={[
+                                                            <SettingsElement groupDisplayMode title={"Delete document"} iconConfig={{
+                                                                enable: true,
+                                                                color: theme.colors.errorColor,
+                                                                iconGenerator: element => <DeleteIcon/>
+                                                            }} onClick={element => {
+                                                                element.helper.confirm({
+                                                                    title: `Delete document ${doc.title}`,
+                                                                    vm: ObjectVisualMeaning.ERROR,
+                                                                    text: "This action cannot be undone. Once the document is deleted, it is removed unrecoverable from the system.\n**It is recommended to create recoverable backups via the ISO-image manager**.",
+                                                                    actions: {
+                                                                        onConfirm: (component: BC<any, any, any>) => {
+                                                                            AtlasMain.atlas(atlas => {
+                                                                                if (atlas.api().deleteDocument(doc.id)) {
+                                                                                    this.local.state.viewMultiplexers.forEach(mux => {
+                                                                                        this.closeAndRemoveDocumentFromMultiplexer(mux.groupID, doc.id);
+                                                                                    })
+                                                                                    this.rerender("document-view", this.toDocumentSpecificChannel(doc.id, "meta-updated"));
+                                                                                }
+                                                                            });
+                                                                        },
+                                                                        onCancel(component: BernieComponent<any, any, any>) {
+                                                                            component.closeLocalDialog();
+                                                                        }
+                                                                    }
+                                                                }, (config, caller) => <ConfirmationDialog config={config} caller={caller}/>)
+                                                            }}/>
+                                                        ]}/>
+                                                    )}/>
+                                                )
+
+                                                event.preventDefault();
+                                                event.stopPropagation();
+                                            }}/>
+                                        );
+                                    }
+
+                                    try {
+                                        if (this.isDocumentOpened(doc.id)) {
+                                            // Document is opened in a multiplexer, Display visual hint
+                                            return (
+                                                <DocumentComponent data={doc} onSelect={(element, data) => "open-local-document-view"} appendix={element => (
+                                                    <Flex flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab} align={Align.CENTER} elements={[
+                                                        Badge.badge("Open", {
+                                                            visualMeaning: ObjectVisualMeaning.INFO
+                                                        }),
+                                                        contextMenuRenderer(element)
+                                                    ]}/>
+                                                )}/>
+                                            );
+                                        } else {
+                                            return (
+                                                <DocumentComponent data={doc} onSelect={(element, data) => {
+                                                    this.openDocument(data);
+                                                    return "break";
+                                                }} appendix={element => (
+                                                    <Flex flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab} align={Align.CENTER} elements={[
+                                                        contextMenuRenderer(element)
+                                                    ]}/>
+                                                )}/>
+                                            );
+                                        }
+                                    } catch (e) {
+                                        return (
+                                            <UnresolvedDocumentComponent id={doc.id} error={e}/>
+                                        );
+                                    }
+
+                                }, ...["opened", "closed", "meta-updated"].map(channel => this.toDocumentSpecificChannel(doc.id, channel)));
+                            })
+                        }/>
+                    );
+                }
+                return emptyRenderer === undefined ? <></> : emptyRenderer();
+            }
 
             return (
                 <Flex fw elements={[
@@ -495,87 +588,10 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                         ]}/>,
 
                         documents.length > 0 ? (
-                            <SettingsGroup elements={
-                                documents.map(doc => {
-                                    return this.component(local => {
-                                        const contextMenuRenderer = (element: SettingsElement) => {
-                                            return (
-                                                <Icon coloredOnDefault={false} uiNoHighlightOnDefault icon={<ActionsIcon/>} tooltip={"Actions"} size={px(18)} onClick={(event) => {
-                                                    // TODO: Handle -> Open context menu (Improve menu)
-
-                                                    element.dialog(
-                                                        <StaticDrawerMenu body={() => (
-                                                            <Flex align={Align.CENTER} fh fw elements={[
-                                                                <SettingsElement groupDisplayMode title={"Delete document"} iconConfig={{
-                                                                    enable: true,
-                                                                    color: theme.colors.errorColor,
-                                                                    iconGenerator: element => <DeleteIcon/>
-                                                                }} onClick={element => {
-                                                                    element.helper.confirm({
-                                                                        title: `Delete document ${doc.title}`,
-                                                                        vm: ObjectVisualMeaning.ERROR,
-                                                                        text: "This action cannot be undone. Once the document is deleted, it is removed unrecoverable from the system.\n**It is recommended to create recoverable backups via the ISO-image manager**.",
-                                                                        actions: {
-                                                                            onConfirm: (component: BC<any, any, any>) => {
-                                                                                AtlasMain.atlas(atlas => {
-                                                                                    if (atlas.api().deleteDocument(doc.id)) {
-                                                                                        this.local.state.viewMultiplexers.forEach(mux => {
-                                                                                            this.closeAndRemoveDocumentFromMultiplexer(mux.groupID, doc.id);
-                                                                                        })
-                                                                                        this.rerender("document-view", this.toDocumentSpecificChannel(doc.id, "meta-updated"));
-                                                                                    }
-                                                                                });
-                                                                            },
-                                                                            onCancel(component: BernieComponent<any, any, any>) {
-                                                                                component.closeLocalDialog();
-                                                                            }
-                                                                        }
-                                                                    }, (config, caller) => <ConfirmationDialog config={config} caller={caller}/>)
-                                                                }}/>
-                                                            ]}/>
-                                                        )}/>
-                                                    )
-
-                                                    event.preventDefault();
-                                                    event.stopPropagation();
-                                                }}/>
-                                            );
-                                        }
-
-                                        try {
-                                            if (this.isDocumentOpened(doc.id)) {
-                                                // Document is opened in a multiplexer, Display visual hint
-                                                return (
-                                                    <DocumentComponent data={doc} onSelect={(element, data) => "open-local-document-view"} appendix={element => (
-                                                        <Flex flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab} align={Align.CENTER} elements={[
-                                                            Badge.badge("Open", {
-                                                                visualMeaning: ObjectVisualMeaning.INFO
-                                                            }),
-                                                            contextMenuRenderer(element)
-                                                        ]}/>
-                                                    )}/>
-                                                );
-                                            } else {
-                                                return (
-                                                    <DocumentComponent data={doc} onSelect={(element, data) => {
-                                                        this.openDocument(data);
-                                                        return "break";
-                                                    }} appendix={element => (
-                                                        <Flex flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab} align={Align.CENTER} elements={[
-                                                            contextMenuRenderer(element)
-                                                        ]}/>
-                                                    )}/>
-                                                );
-                                            }
-                                        } catch (e) {
-                                            return (
-                                                <UnresolvedDocumentComponent id={doc.id} error={e}/>
-                                            );
-                                        }
-
-                                    }, ...["opened", "closed", "meta-updated"].map(channel => this.toDocumentSpecificChannel(doc.id, channel)));
-                                })
-                            }/>
+                            <AF elements={[
+                                renderDocuments(pinnedDocuments, undefined),
+                                renderDocuments(unpinnedDocuments, undefined),
+                            ]}/>
                         ) : (
                             <Flex margin={createMargin(20, 0, 20, 0)} fw align={Align.CENTER} justifyContent={Justify.CENTER} gap={px()} elements={[
                                 <Text
