@@ -53,6 +53,7 @@ import {Input} from "../../../components/lo/Input";
 import {If} from "../../../components/logic/If";
 import {Button} from "../../../components/lo/Button";
 import {DeleteRounded} from "@mui/icons-material";
+import {FolderList} from "./vfs/menu/FolderList";
 
 export type VFSFolderViewProps = {
     initialFolderID?: string,
@@ -158,10 +159,11 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
 
                     // Filter component
                     this.component(() => {
-                        console.log("render filter input")
+                        // TODO: Fix: Clearing doesn't delete input value
+                        console.log("render filter input", this.ls().filterState.titleFilter)
 
                         return (
-                            <Input placeholder={"Search folders & documents"} defaultValue={this.ls().filterState.titleFilter} onChange={ev => {
+                            <Input placeholder={"Search folders & documents"} value={this.ls().filterState.titleFilter} onChange={ev => {
                                 const newTitleFilter: string = ev.target.value;
                                 this.ls().debouncedTitleFilterUpdater(newTitleFilter);
                             }}/>
@@ -282,7 +284,7 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
         })
     }
 
-    private openCreateFolderSetup() {
+    openCreateFolderSetup() {
         this.dialog(
             <StaticDrawerMenu body={props => (
                 <FolderSetupDialog actions={{
@@ -333,34 +335,10 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
             return (
                 <Flex fw elements={[
                     <Flex fw elements={[
-                        <Flex fw flexDir={FlexDirection.ROW} align={Align.CENTER} justifyContent={Justify.SPACE_BETWEEN} elements={[
-                            <Flex flexDir={FlexDirection.ROW} align={Align.CENTER} gap={theme.gaps.smallGab} elements={[
-                                <Text text={"Folders"} bold/>,
-                                <Dot/>,
-                                <Text text={`${subFolders.length}`} type={TextType.secondaryDescription}/>,
-                            ]}/>,
-
-                            <Flex flexDir={FlexDirection.ROW} align={Align.CENTER} gap={theme.gaps.smallGab} elements={[
-                                <Tooltip title={"Create folder"} arrow children={
-                                    <Icon icon={<CreateIcon/>} size={px(16)} onClick={() => this.openCreateFolderSetup()}/>
-                                }/>
-                            ]}/>,
-                        ]}/>,
-
                         subFolders.length > 0 ? (
-                            <SettingsGroup elements={
-                                subFolders.map(folder => {
-                                    return (
-                                        <FolderComponent renderDetails={false} data={folder} onSelect={(component, data) => new Promise<void>((resolve, reject) => {
-                                            this.local.setState({
-                                                currentFolderID: data.id
-                                            }, new Map<string, any>(), () => {
-                                                this.reloadFolderView();
-                                            });
-                                        })}/>
-                                    );
-                                })
-                            }/>
+                            <FolderList
+                                folders={subFolders}
+                            />
                         ) : (
                             <Flex margin={createMargin(20, 0, 20, 0)} fw align={Align.CENTER} justifyContent={Justify.CENTER} gap={px()} elements={[
                                 <Text
@@ -547,7 +525,13 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
     public applyDocumentFilters(documents: Array<AtlasDocument>): Array<AtlasDocument> {
         const filter = this.ls().filterState;
         // Apply search title filter
-        if (filter.titleFilter !== undefined) documents = documents.filter(doc => doc.title?.match(filter.titleFilter!));
+        try {
+            if (filter.titleFilter !== undefined) {
+                documents = documents.filter(doc => doc.title?.match(filter.titleFilter!));
+            }
+        } catch (e) {
+            console.error(e);
+        }
         return documents;
     }
 
@@ -702,7 +686,7 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
 
                                                         this.a("menu-filter"),
 
-                                                        this.a("folder-view"),
+                                                        this.component(() => this.a("folder-view"), "folder-view"),
 
                                                         this.component(() => this.a("document-view"), "document-view", "search-filter-state"),
                                                     ]}/>
