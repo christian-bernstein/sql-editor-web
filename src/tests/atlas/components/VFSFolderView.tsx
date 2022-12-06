@@ -1,4 +1,4 @@
-import {BC, BernieComponent} from "../../../logic/BernieComponent";
+import {BC} from "../../../logic/BernieComponent";
 import {Themeable} from "../../../logic/style/Themeable";
 import {Assembly} from "../../../logic/assembly/Assembly";
 import {Screen} from "../../../components/lo/Page";
@@ -34,8 +34,6 @@ import {createMargin} from "../../../logic/style/Margin";
 import {StaticDrawerMenu} from "../../../components/lo/StaticDrawerMenu";
 import {AtlasDocument} from "../data/AtlasDocument";
 import {IAtlasAPI} from "../api/IAtlasAPI";
-import {DocumentComponent} from "./DocumentComponent";
-import {UnresolvedDocumentComponent} from "./UnresolvedDocumentComponent";
 import {DocumentCreateWizard} from "./DocumentCreateWizard";
 import {DocumentViewMultiplexer, DocumentViewMultiplexerControlConfig} from "./DocumentViewMultiplexer";
 import {v4} from "uuid";
@@ -45,17 +43,16 @@ import {Separator} from "../../../components/lo/Separator";
 import {Orientation} from "../../../logic/style/Orientation";
 import {DocumentState} from "../data/DocumentState";
 import _ from "lodash";
-import {Badge} from "../../../components/lo/Badge";
 import {DocumentSaveState} from "../data/DocumentSaveState";
-import {ReactComponent as ActionsIcon} from "../../../assets/icons/ic-20/ic20-more-ver.svg";
-import {ReactComponent as DeleteIcon} from "../../../assets/icons/ic-20/ic20-delete.svg";
-import {ConfirmationDialog} from "../../../components/lo/ConfirmationDialog";
 import {FolderPathView} from "./FolderPathView";
 import {SideMenu} from "./SideMenu";
-import Editor from "@monaco-editor/react";
-import {Description} from "../../../components/lo/Description";
-import {KeyHint} from "../../../components/lo/KeyHint";
-import {measureTime} from "../utils/Utils";
+import {DocumentList} from "./vfs/menu/DocumentList";
+import {VFSFolderViewFilterState} from "../data/vfs/VFSFolderViewFilterState";
+import {UnaryFunction} from "../utils/UnaryFunction";
+import {Input} from "../../../components/lo/Input";
+import {If} from "../../../components/logic/If";
+import {Button} from "../../../components/lo/Button";
+import {DeleteRounded} from "@mui/icons-material";
 
 export type VFSFolderViewProps = {
     initialFolderID?: string,
@@ -69,19 +66,26 @@ export type VFSFolderViewLocalState = {
     viewMultiplexers: Array<DocumentViewMultiplexerControlConfig>,
     documentStates: Map<string, DocumentState>;
     documentBodyUpdaters: Map<string, (body: string) => void>,
-    menuVisible: boolean
+    menuVisible: boolean,
+    filterState: VFSFolderViewFilterState,
+    debouncedTitleFilterUpdater: (newTitleFilterValue: string) => void
 }
 
 export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLocalState> {
 
     constructor(props: VFSFolderViewProps) {
         super(props, undefined, {
-            // TODO: Store to ls
             menuVisible: true,
-
             documentStates: new Map<string, DocumentState>(),
             documentBodyUpdaters: new Map<string, (body: string) => void>(),
             currentFolderID: props.initialFolderID ?? "root",
+            filterState: {},
+            debouncedTitleFilterUpdater: _.debounce((newTitleFilterValue: string) => {
+                this.updateSearchFilter(property => {
+                    property.titleFilter = newTitleFilterValue;
+                    return property;
+                });
+            }, 1000),
             currentFolderData: new Queryable<Folder | undefined>({
                 component: () => this,
                 listeners: ["current-folder"],
@@ -110,6 +114,81 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
             }),
             viewMultiplexers: []
         });
+    }
+
+    init() {
+        super.init();
+        this.folderViewAssembly();
+        this.documentViewAssembly();
+        this.folderLevelViewAssembly();
+        this.menuAssembly();
+        this.menuFilterAssembly();
+    }
+
+    private menuFilterAssembly() {
+        this.assembly.assembly("menu-filter", theme => {
+            const updateChannel = "search-filter-state";
+            const updateInputChannel = "search-filter-input";
+            return (
+                <Flex fw elements={[
+                    // Filter header & toolbar
+                    <FlexRow fw align={Align.CENTER} style={{ minHeight: "20px" }} justifyContent={Justify.SPACE_BETWEEN} elements={[
+                        <Text text={"Filters"} bold/>,
+                        <FlexRow align={Align.CENTER} gap={theme.gaps.smallGab} elements={[
+                            this.component(() => (
+                                <If condition={this.isSearchFilterAffective()} ifTrue={
+                                    // Filter is effective
+                                    <Icon
+                                        colored
+                                        uiNoHighlightOnDefault
+                                        coloredOnDefault={false}
+                                        visualMeaning={VM.ERROR}
+                                        icon={<DeleteRounded/>}
+                                        tooltip={"Clear filters"}
+                                        onClick={() => {
+                                            this.clearSearchFilter();
+                                            // TODO: Make better
+                                            setTimeout(() => this.rerender(updateInputChannel), 500);
+                                        }}
+                                    />
+                                }/>
+                            ), updateChannel)
+                        ]}/>
+                    ]}/>,
+
+                    // Filter component
+                    this.component(() => {
+                        console.log("render filter input")
+
+                        return (
+                            <Input placeholder={"Search folders & documents"} defaultValue={this.ls().filterState.titleFilter} onChange={ev => {
+                                const newTitleFilter: string = ev.target.value;
+                                this.ls().debouncedTitleFilterUpdater(newTitleFilter);
+                            }}/>
+                        );
+                    }, updateInputChannel)
+                ]}/>
+            );
+        });
+    }
+
+    public clearSearchFilter() {
+        this.updateSearchFilter(property => {
+            property.titleFilter = undefined;
+            return property;
+        });
+    }
+
+    public updateSearchFilter(updater: UnaryFunction<VFSFolderViewFilterState>) {
+        let filterState = this.ls().filterState;
+        filterState = updater(filterState);
+        this.local.setStateWithChannels({
+            filterState: filterState
+        }, ["search-filter-state"]);
+    }
+
+    public isSearchFilterAffective(): boolean {
+        return this.ls().filterState.titleFilter !== undefined;
     }
 
     public requestViewClosing() {
@@ -159,14 +238,6 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
             view: this
         });
         this.props.onMount?.(this);
-    }
-
-    init() {
-        super.init();
-        this.folderViewAssembly();
-        this.documentViewAssembly();
-        this.folderLevelViewAssembly();
-        this.menuAssembly();
     }
 
     private updateCurrentFolder(newFolderID: string) {
@@ -241,7 +312,7 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
         );
     }
 
-    private openCreateBlankDocumentSetup() {
+    public openCreateBlankDocumentSetup() {
         this.dialog(
             <DocumentCreateWizard
                 view={this}
@@ -343,7 +414,7 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
         return channels.map(channel => `${multiplexerID}-${channel}`);
     }
 
-    private isDocumentOpened(documentID: string): boolean {
+    public isDocumentOpened(documentID: string): boolean {
         return this.local.state.viewMultiplexers.filter(mux => mux.documents.filter(doc => doc.id === documentID).length > 0).length > 0;
     }
 
@@ -449,9 +520,9 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
         })
     }
 
-    public getDocumentsInCurrentFolder(): Array<AtlasDocument> {
+    public getDocumentsInCurrentFolder(applyFilters: boolean = true): Array<AtlasDocument> {
         const documentIDs: Array<string> = this.getCurrentFolder().documentsIDs ?? new Array<string>();
-        const documents: Array<AtlasDocument> = new Array<AtlasDocument>();
+        let documents: Array<AtlasDocument> = new Array<AtlasDocument>();
         AtlasMain.atlas(atlas => {
             const api: IAtlasAPI = atlas.api();
             //  TODO: Only call getDocument once -> Due to a performance leak
@@ -469,150 +540,23 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                 }
             });
         });
+        if (applyFilters) documents = this.applyDocumentFilters(documents);
+        return documents;
+    }
+
+    public applyDocumentFilters(documents: Array<AtlasDocument>): Array<AtlasDocument> {
+        const filter = this.ls().filterState;
+        // Apply search title filter
+        if (filter.titleFilter !== undefined) documents = documents.filter(doc => doc.title?.match(filter.titleFilter!));
         return documents;
     }
 
     private documentViewAssembly() {
         this.assembly.assembly("document-view", theme => {
-            type ADA = Array<AtlasDocument>;
-            const documents: ADA = this.getDocumentsInCurrentFolder();
-
-            const pinnedDocuments: ADA = documents.filter(doc => doc.pinned ?? false);
-            const unpinnedDocuments: ADA = documents.filter(doc => !(doc.pinned ?? false));
-
-            const renderDocuments: (docs: ADA, emptyRenderer?: () => JSX.Element) => JSX.Element = (docs, emptyRenderer) => {
-                if (docs.length > 0) {
-                    return (
-                        <SettingsGroup elements={
-                            docs.map(doc => {
-                                return this.component(local => {
-                                    const contextMenuRenderer = (element: SettingsElement) => {
-                                        return (
-                                            <Icon coloredOnDefault={false} uiNoHighlightOnDefault icon={<ActionsIcon/>} tooltip={"Actions"} size={px(18)} onClick={(event) => {
-                                                // TODO: Handle -> Open context menu (Improve menu)
-
-                                                element.dialog(
-                                                    <StaticDrawerMenu body={() => (
-                                                        <Flex align={Align.CENTER} fh fw elements={[
-                                                            <SettingsElement groupDisplayMode title={"Delete document"} iconConfig={{
-                                                                enable: true,
-                                                                color: theme.colors.errorColor,
-                                                                iconGenerator: element => <DeleteIcon/>
-                                                            }} onClick={element => {
-                                                                element.helper.confirm({
-                                                                    title: `Delete document ${doc.title}`,
-                                                                    vm: ObjectVisualMeaning.ERROR,
-                                                                    text: "This action cannot be undone. Once the document is deleted, it is removed unrecoverable from the system.\n**It is recommended to create recoverable backups via the ISO-image manager**.",
-                                                                    actions: {
-                                                                        onConfirm: (component: BC<any, any, any>) => {
-                                                                            AtlasMain.atlas(atlas => {
-                                                                                if (atlas.api().deleteDocument(doc.id)) {
-                                                                                    this.local.state.viewMultiplexers.forEach(mux => {
-                                                                                        this.closeAndRemoveDocumentFromMultiplexer(mux.groupID, doc.id);
-                                                                                    })
-                                                                                    this.rerender("document-view", this.toDocumentSpecificChannel(doc.id, "meta-updated"));
-                                                                                }
-                                                                            });
-                                                                        },
-                                                                        onCancel(component: BernieComponent<any, any, any>) {
-                                                                            component.closeLocalDialog();
-                                                                        }
-                                                                    }
-                                                                }, (config, caller) => <ConfirmationDialog config={config} caller={caller}/>)
-                                                            }}/>
-                                                        ]}/>
-                                                    )}/>
-                                                )
-
-                                                event.preventDefault();
-                                                event.stopPropagation();
-                                            }}/>
-                                        );
-                                    }
-
-                                    try {
-                                        if (this.isDocumentOpened(doc.id)) {
-                                            // Document is opened in a multiplexer, Display visual hint
-                                            return (
-                                                <DocumentComponent data={doc} onSelect={(element, data) => "open-local-document-view"} appendix={element => (
-                                                    <Flex flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab} align={Align.CENTER} elements={[
-                                                        Badge.badge("Open", {
-                                                            visualMeaning: ObjectVisualMeaning.INFO
-                                                        }),
-                                                        contextMenuRenderer(element)
-                                                    ]}/>
-                                                )}/>
-                                            );
-                                        } else {
-                                            return (
-                                                <DocumentComponent data={doc} onSelect={(element, data) => {
-                                                    this.openDocument(data);
-                                                    return "break";
-                                                }} appendix={element => (
-                                                    <Flex flexDir={FlexDirection.ROW} gap={theme.gaps.smallGab} align={Align.CENTER} elements={[
-                                                        contextMenuRenderer(element)
-                                                    ]}/>
-                                                )}/>
-                                            );
-                                        }
-                                    } catch (e) {
-                                        return (
-                                            <UnresolvedDocumentComponent id={doc.id} error={e}/>
-                                        );
-                                    }
-
-                                }, ...["opened", "closed", "meta-updated"].map(channel => this.toDocumentSpecificChannel(doc.id, channel)));
-                            })
-                        }/>
-                    );
-                }
-                return emptyRenderer === undefined ? <></> : emptyRenderer();
-            }
-
             return (
-                <Flex fw elements={[
-                    <Flex fw elements={[
-
-                        <Flex fw flexDir={FlexDirection.ROW} align={Align.CENTER} justifyContent={Justify.SPACE_BETWEEN} elements={[
-                            <Flex flexDir={FlexDirection.ROW} align={Align.CENTER} gap={theme.gaps.smallGab} elements={[
-                                <Text text={"Documents"} bold/>,
-                                <Dot/>,
-                                <Text text={`${documents.length}`} type={TextType.secondaryDescription}/>,
-                            ]}/>,
-
-                            <Flex flexDir={FlexDirection.ROW} align={Align.CENTER} gap={theme.gaps.smallGab} elements={[
-                                <Tooltip title={"Create document"} arrow children={
-                                    <Icon icon={<CreateIcon/>} size={px(16)} onClick={() => this.openCreateBlankDocumentSetup()}/>
-                                }/>
-                            ]}/>,
-                        ]}/>,
-
-                        documents.length > 0 ? (
-                            <AF elements={[
-                                renderDocuments(pinnedDocuments, undefined),
-                                renderDocuments(unpinnedDocuments, undefined),
-                            ]}/>
-                        ) : (
-                            <Flex margin={createMargin(20, 0, 20, 0)} fw align={Align.CENTER} justifyContent={Justify.CENTER} gap={px()} elements={[
-                                <Text
-                                    text={"Empty"}
-                                    type={TextType.secondaryDescription}
-                                    bold
-                                />,
-                                <Text
-                                    text={"Create document"}
-                                    fontSize={px(11)}
-                                    cursor={Cursor.pointer}
-                                    highlight
-                                    coloredText
-                                    visualMeaning={VM.INFO}
-                                    type={TextType.secondaryDescription}
-                                    onClick={() => this.openCreateBlankDocumentSetup()}
-                                />
-                            ]}/>
-                        )
-                    ]}/>
-                ]}/>
+                <DocumentList
+                    documents={this.getDocumentsInCurrentFolder()}
+                />
             );
         });
     }
@@ -756,8 +700,11 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                                                             ))
                                                         }/>,
 
+                                                        this.a("menu-filter"),
+
                                                         this.a("folder-view"),
-                                                        this.component(() => this.a("document-view"), "document-view"),
+
+                                                        this.component(() => this.a("document-view"), "document-view", "search-filter-state"),
                                                     ]}/>
                                                 );
                                             },
