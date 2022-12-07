@@ -17,6 +17,7 @@ import {DocumentType} from "../data/DocumentType";
 import {markdownDocumentView} from "./views/MarkdownDocumentView";
 import {websiteDocumentView} from "./views/WebsiteDocumentView";
 import {pdfDocumentView} from "./views/PDFDocumentView";
+import {AF} from "../../../components/logic/ArrayFragment";
 
 export type DocumentViewControllerProps = {
     view: VFSFolderView,
@@ -29,10 +30,24 @@ export class DocumentViewController extends BC<DocumentViewControllerProps, any,
     componentRender(p: DocumentViewControllerProps, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         if (p.document === undefined) {
             return (
-                <Centered fullHeight children={
-                    <Flex align={Align.CENTER} justifyContent={Justify.CENTER} elements={[
-                        <Text text={"No document selected"} type={TextType.secondaryDescription}/>,
-                        <Text text={"Select a document from the folder view"} type={TextType.secondaryDescription} fontSize={px(11)}/>
+                <Centered style={{ position: "relative" }} fullHeight children={
+                    <AF elements={[
+                        <Flex align={Align.CENTER} justifyContent={Justify.CENTER} elements={[
+                            <Text text={"No document selected"} type={TextType.secondaryDescription}/>,
+                            <Text text={"Select a document from the folder view"} type={TextType.secondaryDescription} fontSize={px(11)}/>
+                        ]}/>,
+
+                        <Flex fw fh style={{ position: "absolute" }} elements={[
+                            <img
+                                width={"100%"}
+                                height={"100%"}
+                                alt={"Background image"}
+                                // src={""}
+                                style={{
+                                    userSelect: "none"
+                                }}
+                            />
+                        ]}/>
                     ]}/>
                 }/>
             );

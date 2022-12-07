@@ -45,6 +45,7 @@ import {IconLookup} from "./icons/IconLookup";
 import {CommandOrchestrator} from "./keylogger/CommandOrchestrator";
 import {KeyCommandHint} from "./keylogger/components/KeyCommandHint";
 import {KeyCommandOption} from "./keylogger/KeyCommandOption";
+import {SettingsDisplayRoot} from "./settings/component/SettingsDisplayRoot";
 
 export type AtlasMainProps = {
     api: IAtlasAPI
@@ -238,7 +239,11 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
 
                         <Button height={percent(100)} children={
                             <Icon icon={<SettingsIcon/>}/>
-                        }/>,
+                        } onClick={() => {
+                            this.dialog(
+                                <SettingsDisplayRoot/>
+                            );
+                        }}/>,
 
                         <Button width={percent(100)} shrinkOnClick text={"Finder"} onClick={() => {
                             this.dialog(
