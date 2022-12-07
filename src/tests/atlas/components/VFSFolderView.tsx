@@ -156,14 +156,13 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                             ), updateChannel)
                         ]}/>
                     ]}/>,
-
                     // Filter component
                     this.component(() => {
                         // TODO: Fix: Clearing doesn't delete input value
                         console.log("render filter input", this.ls().filterState.titleFilter)
 
                         return (
-                            <Input placeholder={"Search folders & documents"} value={this.ls().filterState.titleFilter} onChange={ev => {
+                            <Input placeholder={"Search folders & documents"} inputMode={"search"} defaultValue={this.ls().filterState.titleFilter} onChange={ev => {
                                 const newTitleFilter: string = ev.target.value;
                                 this.ls().debouncedTitleFilterUpdater(newTitleFilter);
                             }}/>

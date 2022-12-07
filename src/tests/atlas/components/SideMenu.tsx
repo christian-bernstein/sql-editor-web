@@ -11,6 +11,7 @@ import {FlexDirection} from "../../../logic/style/FlexDirection";
 import {Justify} from "../../../logic/style/Justify";
 import {OverflowWithHeader} from "../../../components/lo/OverflowWithHeader";
 import {ExitToAppRounded} from "@mui/icons-material";
+import {Color} from "../../../logic/style/Color";
 
 export type SideMenuProps = {
     view: VFSFolderView
@@ -69,7 +70,8 @@ export class SideMenu extends BC<SideMenuProps, any, any> {
                     enableCustomBorderRadii: true,
                     fallbackCustomBorderRadii: px(0)
                 }}
-                bgColor={t.colors.backgroundHighlightInputColor}
+                // bgColor={t.colors.backgroundHighlightInputColor}
+                bgColor={Color.ofHex("#222B38")}
                 elements={[
                     this.a("content-root")
                 ]}
