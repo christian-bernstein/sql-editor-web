@@ -9,7 +9,7 @@ import {getOr} from "./logic/Utils";
 
 let mode: AppPageMode = Number(getOr(window.localStorage.getItem("app-page-mode"), AppPageMode.UNIT_TEST.toString()))
 
-// mode = AppPageMode.UNIT_TEST;
+mode = AppPageMode.UNIT_TEST;
 
 ReactDOM.render(
     <AppPage
