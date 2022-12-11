@@ -25,7 +25,10 @@ import {InformationBox} from "../../../components/ho/informationBox/InformationB
 import {HyperionAPI} from "../HyperionAPI";
 import {HyperionImageProducerProps} from "../producers/HyperionImageProducer";
 
-export type HyperionImageSubscriberProps = HyperionSubscriberProps;
+export type HyperionImageSubscriberProps = HyperionSubscriberProps & {
+    openFullscreenContextOnClick?: boolean,
+    preventUserSelection?: boolean
+};
 
 export type HyperionImageSubscriberLocalState = {
     hyperionStorableEntryQueryable: Q<Optional<HyperionStorableEntry>>
@@ -65,6 +68,9 @@ export class HyperionImageSubscriber extends BC<HyperionImageSubscriberProps, an
     }
 
     componentRender(p: HyperionImageSubscriberProps, s: any, l: HyperionImageSubscriberLocalState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
+        const openFullscreenContextOnClick = p.openFullscreenContextOnClick ?? false;
+        const preventUserSelection = p.preventUserSelection ?? false;
+
         return this.component(() => {
             return (
                 <QueryDisplay<Optional<HyperionStorableEntry>>
@@ -85,7 +91,8 @@ export class HyperionImageSubscriber extends BC<HyperionImageSubscriberProps, an
                                     style={{
                                         width: "100%",
                                         height: "100%",
-                                        cursor: "zoom-in",
+                                        userSelect: preventUserSelection ? "none" : "auto",
+                                        cursor: openFullscreenContextOnClick ? "zoom-in" : "default",
                                         objectFit: imageData.imageFit,
                                         objectPosition: imageData.position,
                                         imageRendering: imageData.renderingMode,
@@ -94,21 +101,23 @@ export class HyperionImageSubscriber extends BC<HyperionImageSubscriberProps, an
                                     }}
                                     onClick={() => {
                                         // TODO: Make more compact version
-                                        this.dialog(
-                                            <img
-                                                alt={"hyperion-file"}
-                                                src={imageData.src}
-                                                style={{
-                                                    height: "100vh",
-                                                    backgroundColor: "black",
-                                                    objectFit: imageData.imageFit,
-                                                    objectPosition: imageData.position,
-                                                    imageRendering: imageData.renderingMode,
-                                                    opacity: imageData.opacity
-                                                    // TODO: Add rotation, fit
-                                                }}
-                                            />
-                                        )
+                                        if (openFullscreenContextOnClick) {
+                                            this.dialog(
+                                                <img
+                                                    alt={"hyperion-file"}
+                                                    src={imageData.src}
+                                                    style={{
+                                                        height: "100vh",
+                                                        backgroundColor: "black",
+                                                        objectFit: imageData.imageFit,
+                                                        objectPosition: imageData.position,
+                                                        imageRendering: imageData.renderingMode,
+                                                        opacity: imageData.opacity
+                                                        // TODO: Add rotation, fit
+                                                    }}
+                                                />
+                                            );
+                                        }
                                     }}
                                 />
                             );

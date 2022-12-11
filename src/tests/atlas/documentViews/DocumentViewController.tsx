@@ -44,6 +44,8 @@ export class DocumentViewController extends BC<DocumentViewControllerProps, any,
                         <Flex fw fh style={{ position: "absolute" }} elements={[
                             <HyperionImageSubscriber
                                 hyperionEntryID={"atlas-document-background"}
+                                openFullscreenContextOnClick={false}
+                                preventUserSelection
                             />
                         ]}/>,
 
