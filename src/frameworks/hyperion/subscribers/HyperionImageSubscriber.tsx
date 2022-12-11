@@ -59,6 +59,11 @@ export class HyperionImageSubscriber extends BC<HyperionImageSubscriberProps, an
         }
     }
 
+    componentDidMount() {
+        super.componentDidMount();
+        this.ls().hyperionStorableEntryQueryable.query();
+    }
+
     componentRender(p: HyperionImageSubscriberProps, s: any, l: HyperionImageSubscriberLocalState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return this.component(() => {
             return (
@@ -75,9 +80,11 @@ export class HyperionImageSubscriber extends BC<HyperionImageSubscriberProps, an
                             return (
                                 <img
                                     alt={"hyperion-file"}
-                                    height={"100%"}
+                                    // height={"100%"}
                                     src={imageData.src}
                                     style={{
+                                        width: "100%",
+                                        height: "100%",
                                         cursor: "zoom-in",
                                         objectFit: imageData.imageFit,
                                         objectPosition: imageData.position,
