@@ -7,7 +7,7 @@ import {FormTransactionType} from "./FormTransactionType";
 
 export type FormProps = {
     formID: string,
-    renderer: (ctx: FormContext) => JSX.Element
+    renderer: (ctx: FormContext, set: (id: string, value: any) => void) => JSX.Element
     onSubmit: (ctx: FormContext, get: (id: string, def?: any) => any) => void
 }
 
@@ -47,6 +47,6 @@ export class Form extends BC<FormProps, any, FormLocalState> {
     }
 
     componentRender(p: FormProps, s: any, l: FormLocalState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
-        return p.renderer(this.formContext());
+        return p.renderer(this.formContext(), (id, value) => this.ls().fdh.set(id, value));
     }
 }

@@ -94,7 +94,9 @@ export const Text: React.FC<TextProps> = props => {
       color: ${props.coloredText ? (props.color === undefined ? meaningfulColors.lighter.css() : props.color.css()) + "!important" : ""};
       transition: all ${theme.transitions.fastTime.css()};
       
+      // width: calc(100%);
       * {
+        overflow: hidden;
         text-overflow: ellipsis;
       }
       

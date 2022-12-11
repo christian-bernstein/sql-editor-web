@@ -24,7 +24,8 @@ import {FileInputSubmissionContext} from "./FileInputSubmissionContext";
 
 export type FileInputProps = {
     submissionMode?: FileInputSubmissionMode,
-    onSubmit?: (ctx: FileInputSubmissionContext) => void
+    onSubmit?: (ctx: FileInputSubmissionContext) => void,
+    renderDetails?: boolean,
 }
 
 export type FileInputLocalState = {
@@ -54,7 +55,9 @@ export class FileInput extends BernieComponent<FileInputProps, any, FileInputLoc
 
 
     componentRender(p: FileInputProps, s: any, l: FileInputLocalState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
-        const Label = styled.label``;
+        const Label = styled.label`
+          width: 100%;
+        `;
         const Input = styled.input`
           &[type="file"] {
             display: none;
@@ -63,7 +66,7 @@ export class FileInput extends BernieComponent<FileInputProps, any, FileInputLoc
 
         return (
             <Label children={
-                <Box cursor={Cursor.pointer} paddingY={t.gaps.smallGab} paddingX={t.gaps.smallGab} elements={[
+                <Box fw cursor={Cursor.pointer} paddingY={t.gaps.smallGab} paddingX={t.gaps.smallGab} elements={[
                     <FlexRow gap={t.gaps.smallGab} fh align={Align.CENTER} elements={[
 
                         <Input multiple={false} autoFocus type={"file"} onChange={ev => {
@@ -89,6 +92,10 @@ export class FileInput extends BernieComponent<FileInputProps, any, FileInputLoc
 
                         this.component(() => {
                             const ls = this.ls();
+                            if (!(p.renderDetails ?? true)) {
+                                return <></>;
+                            }
+
                             if (this.areFilesSelected()) {
                                 const files = ls.files as FileList;
                                 const mappable = [];
@@ -100,9 +107,11 @@ export class FileInput extends BernieComponent<FileInputProps, any, FileInputLoc
                                             return (
                                                 <FlexRow gap={t.gaps.smallGab} elements={[
                                                     <Description
+                                                        whitespace={"nowrap"}
                                                         renderMarkdown={false}
                                                         cursor={Cursor.pointer}
-                                                        text={`${file.name} *${Utils.humanFileSize(file.size)}*; ${file.type}`}
+                                                        // text={`${file.name} *${Utils.humanFileSize(file.size)}*; ${file.type}`}
+                                                        text={`${Utils.humanFileSize(file.size)}; ${file.type}`}
                                                     />
                                                 ]}/>
                                             );
@@ -139,7 +148,10 @@ export class FileInput extends BernieComponent<FileInputProps, any, FileInputLoc
                             }
 
                             return (
-                                <></>
+                                <AF elements={[
+                                    <Separator style={{ height: "20px" }} orientation={Orientation.VERTICAL} width={px(1)} />,
+                                    <Description text={"Upload"}/>
+                                ]}/>
                             );
                         }, "files")
                     ]}/>
