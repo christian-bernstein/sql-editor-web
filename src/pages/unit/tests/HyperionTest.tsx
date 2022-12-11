@@ -40,10 +40,7 @@ export class HyperionTest extends BC<any, any, HyperionTestLocalState> {
                 component: () => this,
                 fallback: undefined,
                 listeners: ["hyperion-file"],
-                process: (resolve, reject) => {
-                    console.debug("[Query] load hyperion-file");
-                    HyperionAPI.hyperion().get("hyperion-file").then(value => resolve(value));
-                }
+                process: (resolve, reject) => HyperionAPI.hyperion().get("document-view-background-image").then(value => resolve(value))
             })
         });
     }
@@ -72,7 +69,7 @@ export class HyperionTest extends BC<any, any, HyperionTestLocalState> {
                                 this.ls().hyperionFileQueryable.query();
                             },
                             entry: {
-                                id: "hyperion-file",
+                                id: "document-view-background-image",
                                 value: ctx.dataURL ?? "error"
                             }
                         }));

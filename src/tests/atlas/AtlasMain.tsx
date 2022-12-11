@@ -46,6 +46,10 @@ import {CommandOrchestrator} from "./keylogger/CommandOrchestrator";
 import {KeyCommandHint} from "./keylogger/components/KeyCommandHint";
 import {KeyCommandOption} from "./keylogger/KeyCommandOption";
 import {SettingsDisplayRoot} from "./settings/component/SettingsDisplayRoot";
+import {HyperionAPI} from "../../frameworks/hyperion/HyperionAPI";
+import {HyperionIndexedDBStreamAdapter} from "../../frameworks/hyperion/HyperionIndexedDBStreamAdapter";
+import {FileInput} from "../../components/ho/fileInput/FileInput";
+import {Box} from "../../components/lo/Box";
 
 export type AtlasMainProps = {
     api: IAtlasAPI
@@ -165,6 +169,28 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
                                 executor: (ctx) => new Promise(resolve => {
                                     ctx.dialogEntry?.dialog(
                                         <ISOHubComponent/>
+                                    );
+                                    resolve(undefined);
+                                })
+                            }).registerCommand({
+                                id: "upload-document-view-background-image",
+                                title: () => "Upload DocumentView background image",
+                                executor: (ctx) => new Promise(resolve => {
+                                    ctx.dialogEntry?.dialog(
+                                        <StaticDrawerMenu body={() => (
+                                            <FileInput onSubmit={ctx => {
+                                                HyperionAPI.hyperion(prop => prop.upstreamTransaction({
+                                                    transactionID: v4(),
+                                                    onStreamed: () => {
+                                                        // TODO: Rerender
+                                                    },
+                                                    entry: {
+                                                        id: "document-view-background-image",
+                                                        value: ctx.dataURL ?? "error"
+                                                    }
+                                                }));
+                                            }}/>
+                                        )}/>
                                     );
                                     resolve(undefined);
                                 })
@@ -455,6 +481,7 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
 
     init() {
         super.init();
+        HyperionAPI.hyperion(prop => prop.setStreamAdapter(new HyperionIndexedDBStreamAdapter()), () => new HyperionAPI());
         this.folderAssembly();
 
         this.ls().keyCommandOrchestrator.registerCommand({
