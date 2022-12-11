@@ -95,7 +95,7 @@ export class DocumentList extends BernieComponent<DocumentListProps, any, any> {
                                                     }}/>
                                                 ]}/>
                                             )}/>
-                                        )
+                                        );
 
                                         event.preventDefault();
                                         event.stopPropagation();

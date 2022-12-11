@@ -65,6 +65,7 @@
     "react-bootstrap": "^1.6.0",
     "react-bootstrap-floating-label": "^1.4.13",
     "react-codemirror2": "^7.2.1",
+    "react-device-detect": "^2.2.2",
     "react-dom": "^18.0.0",
     "react-highlighter": "^0.4.3",
     "react-image": "^4.0.3",

@@ -38,16 +38,6 @@ export const inDevDocumentView: DocumentView = {
     }
 }
 
-
-
-
-
-
-
-
-
-
-
 type InDevDocumentViewProps = {
     context: DocumentViewRenderContext
 }
@@ -59,7 +49,6 @@ type InDevDocumentViewLocalState = {
 class InDevDocumentView extends BC<InDevDocumentViewProps, any, InDevDocumentViewLocalState> {
 
     constructor(props: InDevDocumentViewProps) {
-
         super(props, undefined, {
             noteMirror: ""
         });

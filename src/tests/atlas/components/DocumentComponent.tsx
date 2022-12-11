@@ -139,7 +139,6 @@ export class DocumentComponent extends BC<DocumentComponentProps, any, DocumentC
 
     // TODO: Replace with own implementation -> No SettingsElement -> Something with the icon hit box is off while using SettingsElement appendix
     componentRender(p: DocumentComponentProps, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
-
         return (
             <SettingsElement
                 groupDisplayMode

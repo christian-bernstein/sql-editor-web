@@ -54,6 +54,9 @@ import {If} from "../../../components/logic/If";
 import {Button} from "../../../components/lo/Button";
 import {DeleteRounded} from "@mui/icons-material";
 import {FolderList} from "./vfs/menu/FolderList";
+import {Default, Mobile} from "../../../components/logic/Media";
+import {isMobile} from 'react-device-detect';
+import {DocumentViewController} from "../documentViews/DocumentViewController";
 
 export type VFSFolderViewProps = {
     initialFolderID?: string,
@@ -124,6 +127,9 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
         this.folderLevelViewAssembly();
         this.menuAssembly();
         this.menuFilterAssembly();
+        this.mobileMainAssembly();
+        this.desktopMainAssembly();
+        this.mobileMenuAssembly();
     }
 
     private menuFilterAssembly() {
@@ -407,7 +413,47 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
         return `${documentID}-${channel}`
     }
 
+    private openDocumentInMobileMode(data: AtlasDocument) {
+        // Create a persistent updater
+        this.ls().documentBodyUpdaters.set(data.id, _.debounce((body: string) => {
+            AtlasMain.atlas(atlas => {
+                const api = atlas.api();
+                api.updateDocument(data.id, document => {
+                    document.body = body;
+                    return document;
+                });
+                this.getDocumentState(data.id).saveState = DocumentSaveState.SAVED;
+                this.rerender(this.toDocumentSpecificChannel(data.id, "persistence-sync-state"));
+            });
+        }, 2e3));
+
+        // Set initial document save state to synchronized (saved)
+        this.local.state.documentStates.set(data.id, {
+            saveState: DocumentSaveState.SAVED
+        });
+
+        // TODO: Don't render a DocumentViewController directly, render the main multiplexer instead
+        //  - For the main mux to work the opening logic has to be nealy reverted back to classic openDocument logic -> mux logic
+        // Open a new DocumentViewController instance with the chosen document selected
+        this.dialog((
+            <DocumentViewController
+                view={this}
+                document={data}
+                updateBody={body => this.updateBody(data.id, body)}
+            />
+        ), () => {
+            // Remove the persistent updater
+            this.ls().documentBodyUpdaters.delete(data.id)
+        });
+    }
+
     public openDocument(data: AtlasDocument, muxID: string | undefined = undefined) {
+        // Choose alternate logic if app opened on mobile device
+        if (isMobile) {
+            this.openDocumentInMobileMode(data);
+            return;
+        }
+
         // Document can only be opened once (overarching all multiplexers)
         // TODO: Allow a document to be opened once in every multiplexer -> Sync edits
         if (this.isDocumentOpened(data.id)) {
@@ -577,69 +623,7 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                         minWidth: "350px",
                         backgroundColor: t.colors.backgroundHighlightColor.css()
                     }} elements={[
-                        <OverflowWithHeader height={percent(100)} dir={FlexDirection.COLUMN_REVERSE} staticContainerHeader={{
-                            gap: px(),
-                            elements: [
-                                // <Separator orientation={Orientation.HORIZONTAL}/>,
-                                // <Flex gap={px()} fw height={px(100)} elements={[
-                                //     <FlexRow justifyContent={Justify.CENTER} padding paddingX={t.gaps.smallGab} gap={t.gaps.smallGab} align={Align.CENTER} fw elements={[
-                                //         <Description bold text={"Search"}/>,
-                                //         <Dot/>,
-                                //         <KeyHint keys={["strg", "f"]}/>
-                                //     ]}/>,
-                                //     <Editor
-                                //         saveViewState
-                                //         beforeMount={monaco => {
-                                //             monaco.languages.register({ id: "finder" })
-                                //             monaco.languages.setMonarchTokensProvider("finder", {
-                                //                 tokenizer: {
-                                //                     root: [
-                                //                         [/-+\w+/, "argument"],
-                                //                         [/\w+:\w+/, "parameter"],
-                                //                     ]
-                                //                 }
-                                //             })
-                                //             monaco.editor.defineTheme("finder", {
-                                //                 base: "vs-dark",
-                                //                 inherit: true,
-                                //                 rules: [
-                                //                     { token: "", background: t.colors.backgroundColor.toHex() },
-                                //                     { token: "argument", foreground: "#585858" },
-                                //                     { token: "parameter", foreground: t.colors.primaryHighlightColor.toHex() }
-                                //                 ],
-                                //                 colors: {
-                                //                     "editor.foreground": "#FFFFFF",
-                                //                     "editor.background": t.colors.backgroundHighlightColor.toHex(),
-                                //                 }
-                                //             });
-                                //         }}
-                                //         onMount={(editor, monaco) => {
-                                //             editor.focus();
-                                //         }}
-                                //         theme={"finder"}
-                                //         language={"finder"}
-                                //         options={{
-                                //             hideCursorInOverviewRuler: true,
-                                //             lineDecorationsWidth: 0,
-                                //             renderValidationDecorations: "off",
-                                //             overviewRulerBorder: false,
-                                //             renderLineHighlight: "none",
-                                //             lineNumbers: "off",
-                                //             codeLens: false,
-                                //             fontSize: 12,
-                                //             cursorStyle: "underline",
-                                //             scrollbar: {
-                                //                 vertical: "hidden",
-                                //             },
-                                //             minimap: {
-                                //                 enabled: false
-                                //             },
-                                //             fontLigatures: true
-                                //         }}
-                                //     />
-                                // ]}/>,
-                            ]
-                        }} staticContainer={{
+                        <OverflowWithHeader height={percent(100)} dir={FlexDirection.COLUMN_REVERSE}  staticContainer={{
                             gap: px(),
                             elements: [
                                 <Flex fw padding align={Align.CENTER} flexDir={FlexDirection.ROW} justifyContent={Justify.CENTER} elements={[
@@ -711,55 +695,132 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
         })
     }
 
+    private mobileMenuAssembly() {
+        this.assembly.assembly("mobile-menu", t => {
+            return (
+                <Flex fh fw elements={[
+                    <OverflowWithHeader height={percent(100)} dir={FlexDirection.COLUMN_REVERSE} staticContainer={{
+                        gap: px(),
+                        elements: [
+                            <Flex fw padding align={Align.CENTER} flexDir={FlexDirection.ROW} justifyContent={Justify.CENTER} elements={[
+                                <Icon icon={<AttachmentIcon/>}/>,
+                                <Flex fw fh justifyContent={Justify.CENTER} gap={t.gaps.smallGab} align={Align.CENTER} elements={[
+                                    <Text text={"Atlas Document Viewer"} bold/>,
+                                ]}/>,
+                                <Icon icon={<SettingsIcon/>}/>
+                            ]}/>
+                        ]
+                    }} overflowContainer={{
+                        elements: [
+                            <Flex height={px(50)} fw fh padding style={{ backgroundColor: t.colors.backgroundHighlightColor.css() }} elements={[
+                                this.component(() => this.a("folder-level-view"), "current-folder"),
+
+                                this.component(() => (
+                                    <QueryDisplay<Folder | undefined> q={this.local.state.currentFolderData} renderer={{
+                                        processing(q: Queryable<Folder | undefined>): JSX.Element {
+                                            return (
+                                                <>processing..</>
+                                            );
+                                        },
+                                        success: (q: Queryable<Folder | undefined>, data: Folder | undefined) => {
+                                            return (
+                                                <Flex fw fh overflowYBehaviour={OverflowBehaviour.SCROLL} elements={[
+                                                    <DrawerHeader
+                                                        header={String(this.getCurrentFolder()?.title)}
+                                                        badgeText={"Folder view"}
+                                                        enableBadge
+                                                        badgeVM={ObjectVisualMeaning.UI_NO_HIGHLIGHT}
+                                                        description={this.getCurrentFolder().description}
+                                                    />,
+
+
+                                                    <Flex margin={createMargin(0, 0, 40, 0)} wrap={FlexWrap.WRAP} flexDir={FlexDirection.ROW} fw gap={t.gaps.smallGab} align={Align.CENTER} justifyContent={Justify.CENTER} elements={
+                                                        this.getCurrentFolder().tags?.map(s => (
+                                                            <Box highlightShadow={false} cursor={Cursor.pointer} highlight opaque paddingY={px(4)} paddingX={px(7)} visualMeaning={VM.SUCCESS} borderRadiiConfig={{ enableCustomBorderRadii: true, fallbackCustomBorderRadii: px(500)}} borderless children={
+                                                                <Text text={s} whitespace={"nowrap"} cursor={Cursor.pointer} visualMeaning={VM.SUCCESS} fontSize={px(12)} coloredText type={TextType.secondaryDescription}/>
+                                                            }/>
+                                                        ))
+                                                    }/>,
+
+                                                    this.a("menu-filter"),
+
+                                                    this.component(() => this.a("folder-view"), "folder-view"),
+
+                                                    this.component(() => this.a("document-view"), "document-view", "search-filter-state"),
+                                                ]}/>
+                                            );
+                                        },
+                                        error: (q, error) => {
+                                            return (
+                                                <>error</>
+                                            );
+                                        }
+                                    }}/>
+                                ), ...Q.allChannels("current-folder"))
+                            ]}/>
+                        ]
+                    }}/>
+                ]}/>
+            );
+        });
+    }
+
+    private mobileMainAssembly() {
+        this.assembly.assembly("mobile-main", theme => {
+            return (
+                <Screen deactivatePadding children={
+                    this.component(() => this.a("mobile-menu"), "menu")
+                }/>
+            );
+        });
+    }
+
+    private desktopMainAssembly() {
+        this.assembly.assembly("desktop-main", theme => {
+            return (
+                <Screen deactivatePadding children={
+                    <OverflowWithHeader dir={FlexDirection.COLUMN_REVERSE} staticContainer={{ gap: px(), elements: [] }} overflowContainer={{
+                        elements: [
+                            <Flex fh fw gap={px()} flexDir={FlexDirection.ROW} elements={[
+                                <SideMenu view={this}/>,
+                                this.component(() => this.a("menu"), "menu"),
+                                <Separator orientation={Orientation.VERTICAL}/>,
+                                this.component(local => {
+                                    return (
+                                        <LiteGrid style={{ width: "100%" }} columns={local.state.viewMultiplexers.length} children={
+                                            <AF elements={
+                                                local.state.viewMultiplexers.map(config => (
+                                                    <DocumentViewMultiplexer
+                                                        controlConfigMirror={config}
+                                                        changeActiveDocument={newActiveDocumentID => {
+                                                            this.updateMultiplexer(config.groupID, ["main"], multiplexer => {
+                                                                multiplexer.activeDocumentID = newActiveDocumentID;
+                                                                return multiplexer;
+                                                            });
+                                                        }}
+                                                        bodyUpdater={(documentID, body) => {
+                                                            this.updateBody(documentID, body)
+                                                        }}
+                                                    />
+                                                ))
+                                            }/>
+                                        }/>
+                                    );
+                                }, "multiplexer-created", "multiplexer-removed", "multiplexer-root"),
+                            ]}/>
+                        ]
+                    }}/>
+                }/>
+            );
+        });
+    }
+
     componentRender(p: any, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
-            <Screen deactivatePadding children={
-                <OverflowWithHeader dir={FlexDirection.COLUMN_REVERSE} staticContainer={{
-                    gap: px(),
-                    elements: [
-                        // TODO: Reactivate
-                        // <Flex fw padding paddingX={px(32)} paddingY={px(16)} style={{ backgroundColor: "#161b22" }} align={Align.CENTER} flexDir={FlexDirection.ROW} justifyContent={Justify.SPACE_BETWEEN} elements={[
-                        //     <Icon icon={<AttachmentIcon/>}/>,
-                        //     <Button border={false} onClick={() => this.onClose()} children={
-                        //         <Flex fw fh justifyContent={Justify.CENTER} align={Align.CENTER} elements={[
-                        //             <Icon icon={<ExitIcon/>}/>
-                        //         ]}/>
-                        //     }/>
-                        // ]}/>,
-                        // <Separator/>
-                    ]
-                }} overflowContainer={{
-                    elements: [
-                        <Flex fh fw gap={px()} flexDir={FlexDirection.ROW} elements={[
-                            <SideMenu view={this}/>,
-                            this.component(() => this.a("menu"), "menu"),
-                            <Separator orientation={Orientation.VERTICAL}/>,
-                            this.component(local => {
-                                return (
-                                    <LiteGrid style={{ width: "100%" }} columns={local.state.viewMultiplexers.length} children={
-                                        <AF elements={
-                                            local.state.viewMultiplexers.map(config => (
-                                                <DocumentViewMultiplexer
-                                                    controlConfigMirror={config}
-                                                    changeActiveDocument={newActiveDocumentID => {
-                                                        this.updateMultiplexer(config.groupID, ["main"], multiplexer => {
-                                                            multiplexer.activeDocumentID = newActiveDocumentID;
-                                                            return multiplexer;
-                                                        });
-                                                    }}
-                                                    bodyUpdater={(documentID, body) => {
-                                                        this.updateBody(documentID, body)
-                                                    }}
-                                                />
-                                            ))
-                                        }/>
-                                    }/>
-                                );
-                            }, "multiplexer-created", "multiplexer-removed", "multiplexer-root"),
-                        ]}/>
-                    ]
-                }}/>
-            }/>
+            <AF elements={[
+                <Mobile children={this.a("mobile-main")}/>,
+                <Default children={this.a("desktop-main")}/>
+            ]}/>
         );
     }
 }

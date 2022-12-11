@@ -45,7 +45,7 @@ import {IconLookup} from "./icons/IconLookup";
 import {CommandOrchestrator} from "./keylogger/CommandOrchestrator";
 import {KeyCommandHint} from "./keylogger/components/KeyCommandHint";
 import {KeyCommandOption} from "./keylogger/KeyCommandOption";
-import {SettingsDisplayRoot} from "./settings/component/SettingsDisplayRoot";
+import {SettingsDisplayRoot} from "./settings/components/SettingsDisplayRoot";
 import {HyperionAPI} from "../../frameworks/hyperion/HyperionAPI";
 import {HyperionIndexedDBStreamAdapter} from "../../frameworks/hyperion/HyperionIndexedDBStreamAdapter";
 import {FileInput} from "../../components/ho/fileInput/FileInput";
