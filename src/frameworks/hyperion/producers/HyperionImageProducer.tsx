@@ -46,11 +46,15 @@ import {Slider} from "@mui/material";
 import {Button} from "../../../components/lo/Button";
 import {Color} from "../../../logic/style/Color";
 import {DrawerHeader} from "../../../components/lo/DrawerHeader";
-import {LiteGrid} from "../../../components/lo/LiteGrid";
 import {Icon} from "../../../components/lo/Icon";
+import {Align} from "../../../logic/style/Align";
+import {Tooltip} from "../../../components/ho/tooltip/Tooltip";
+import {UpstreamTransactionType} from "../UpstreamTransactionType";
+import {If} from "../../../components/logic/If";
 
 export type HyperionImageProducerProps = {
-    hyperionEntryID: string
+    hyperionEntryID: string,
+    showDisplaySettings?: boolean
 }
 
 export type HyperionImageProducerLocalState = {
@@ -96,6 +100,8 @@ export class HyperionImageProducer extends BC<HyperionImageProducerProps, any, H
     }
 
     componentRender(p: HyperionImageProducerProps, s: any, l: HyperionImageProducerLocalState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
+        const showDisplaySettings = p.showDisplaySettings ?? true;
+
         return (
             <Box width={px(400)} elements={[
                 <Form formID={`${p.hyperionEntryID}-form`} onSubmit={(ctx, get) => {
@@ -120,6 +126,7 @@ export class HyperionImageProducer extends BC<HyperionImageProducerProps, any, H
                                 const encoded = JSON.stringify(hyperionImageData);
                                 HyperionAPI.hyperion(prop => prop.upstreamTransaction({
                                     transactionID: v4(),
+                                    type: UpstreamTransactionType.OVERWRITE,
                                     onStreamed: () => this.reloadPreview(),
                                     entry: {
                                         id: p.hyperionEntryID,
@@ -139,6 +146,7 @@ export class HyperionImageProducer extends BC<HyperionImageProducerProps, any, H
                                 const encoded = JSON.stringify(previousParsed);
                                 HyperionAPI.hyperion(prop => prop.upstreamTransaction({
                                     transactionID: v4(),
+                                    type: UpstreamTransactionType.OVERWRITE,
                                     onStreamed: () => this.reloadPreview(),
                                     entry: {
                                         id: p.hyperionEntryID,
@@ -169,9 +177,21 @@ export class HyperionImageProducer extends BC<HyperionImageProducerProps, any, H
                                                     const imageData = this.hyperionEntryToImageData(data);
                                                     if (imageData === undefined) {
                                                         return (
-                                                            <>No image</>
+                                                            <Centered fullHeight children={
+                                                                <Flex align={Align.CENTER} gap={t.gaps.smallGab} elements={[
+                                                                    <Description text={"No image"}/>,
+                                                                    <Tooltip arrow title={"Select image source"} children={
+                                                                        <FileInput renderDetails={false} onSubmit={fileCTX => {
+                                                                            set("src", fileCTX.dataURL);
+                                                                            ctx.transaction(FormTransactionType.SUBMIT);
+                                                                        }}/>
+                                                                    }/>
+                                                                ]}/>
+                                                            }/>
                                                         );
                                                     }
+
+                                                    console.log("image src", imageData, imageData.src);
 
                                                     // Click to open in fullscreen mode
                                                     return (
@@ -212,7 +232,7 @@ export class HyperionImageProducer extends BC<HyperionImageProducerProps, any, H
                                                     return (
                                                         <Centered fullHeight children={
                                                             <AF elements={[
-                                                                <Description text={"Loading"} bold coloredText visualMeaning={VM.WARNING}/>
+                                                                <Description text={"Loading"} coloredText visualMeaning={VM.UI_NO_HIGHLIGHT}/>
                                                             ]}/>
                                                         }/>
                                                     );
@@ -234,9 +254,7 @@ export class HyperionImageProducer extends BC<HyperionImageProducerProps, any, H
                                             success: (q, data) => {
                                                 const imageData = this.hyperionEntryToImageData(data);
                                                 if (imageData === undefined) {
-                                                    return (
-                                                        <>No image</>
-                                                    );
+                                                    return <></>;
                                                 }
                                                 return (
                                                     <Flex fw elements={[
@@ -250,111 +268,120 @@ export class HyperionImageProducer extends BC<HyperionImageProducerProps, any, H
                                                             <Button tooltip={"Download file"} children={
                                                                 <Icon icon={<Download/>}/>
                                                             }/>,
-                                                            <Button tooltip={"Remove image"} bgColorOnDefault={false}  visualMeaning={VM.ERROR} opaque children={
+                                                            <Button tooltip={"Remove image"} bgColorOnDefault={false} visualMeaning={VM.ERROR} opaque children={
                                                                 <Icon icon={<DeleteRounded/>}/>
-                                                            }/>,
+                                                            } onClick={() => {
+                                                                HyperionAPI.hyperion(prop => prop.upstreamTransaction({
+                                                                    transactionID: v4(),
+                                                                    type: UpstreamTransactionType.DELETE,
+                                                                    onStreamed: () => this.reloadPreview(),
+                                                                    targetEntryID: p.hyperionEntryID
+                                                                }));
+                                                            }}/>,
                                                         ]}/>,
 
-                                                        <SettingsGroup title={"Display settings"} elements={[
-                                                            <HOCWrapper body={wrapper => (
-                                                                <SettingsElement groupDisplayMode title={"Image position"} iconConfig={{
-                                                                    enable: true,
-                                                                    iconGenerator: () => <SettingsInputCompositeRounded/>
-                                                                }} appendixGenerator={() => (
-                                                                    <Description text={imageData.position} margin={createMargin(0, t.gaps.defaultGab.measurand, 0, 0)}/>
-                                                                )} promiseBasedOnClick={element => new Promise<void>((resolve, reject) => {
-                                                                    wrapper.dialog((
-                                                                        <EnumSelector from={ImagePosition} onSubmit={element => {
-                                                                            set("position", element);
-                                                                            resolve();
-                                                                            ctx.transaction(FormTransactionType.SUBMIT);
-                                                                        }}/>
-                                                                    ));
-                                                                })}/>
-                                                            )}/>,
-                                                            <HOCWrapper body={wrapper => (
-                                                                <SettingsElement groupDisplayMode title={"Image fit"} iconConfig={{
-                                                                    enable: true,
-                                                                    iconGenerator: () => <FullscreenRounded/>
-                                                                }} appendixGenerator={() => (
-                                                                    <Description text={imageData.imageFit} margin={createMargin(0, t.gaps.defaultGab.measurand, 0, 0)}/>
-                                                                )} promiseBasedOnClick={element => new Promise<void>((resolve, reject) => {
-                                                                    wrapper.dialog((
-                                                                        <EnumSelector from={ImageFit} onSubmit={element => {
-                                                                            set("fit", element);
-                                                                            resolve();
-                                                                            ctx.transaction(FormTransactionType.SUBMIT);
-                                                                        }}/>
-                                                                    ));
-                                                                })}/>
-                                                            )}/>,
-                                                            <HOCWrapper body={wrapper => (
-                                                                <SettingsElement groupDisplayMode title={"Render mode"} iconConfig={{
-                                                                    enable: true,
-                                                                    iconGenerator: () => <CameraRounded/>
-                                                                }} appendixGenerator={() => (
-                                                                    <Description text={imageData.renderingMode} margin={createMargin(0, t.gaps.defaultGab.measurand, 0, 0)}/>
-                                                                )} promiseBasedOnClick={element => new Promise<void>((resolve, reject) => {
-                                                                    wrapper.dialog((
-                                                                        <EnumSelector from={ImageRenderingMode} onSubmit={element => {
-                                                                            set("render-mode", element);
-                                                                            resolve();
-                                                                            ctx.transaction(FormTransactionType.SUBMIT);
-                                                                        }}/>
-                                                                    ));
-                                                                })}/>
-                                                            )}/>,
+                                                        <If condition={showDisplaySettings} ifTrue={
+                                                            <SettingsGroup title={"Display settings"} elements={[
+                                                                <HOCWrapper body={wrapper => (
+                                                                    <SettingsElement groupDisplayMode title={"Image position"} iconConfig={{
+                                                                        enable: true,
+                                                                        iconGenerator: () => <SettingsInputCompositeRounded/>
+                                                                    }} appendixGenerator={() => (
+                                                                        <Description text={imageData.position} margin={createMargin(0, t.gaps.defaultGab.measurand, 0, 0)}/>
+                                                                    )} promiseBasedOnClick={element => new Promise<void>((resolve, reject) => {
+                                                                        wrapper.dialog((
+                                                                            <EnumSelector from={ImagePosition} onSubmit={element => {
+                                                                                set("position", element);
+                                                                                resolve();
+                                                                                ctx.transaction(FormTransactionType.SUBMIT);
+                                                                            }}/>
+                                                                        ));
+                                                                    })}/>
+                                                                )}/>,
+                                                                <HOCWrapper body={wrapper => (
+                                                                    <SettingsElement groupDisplayMode title={"Image fit"} iconConfig={{
+                                                                        enable: true,
+                                                                        iconGenerator: () => <FullscreenRounded/>
+                                                                    }} appendixGenerator={() => (
+                                                                        <Description text={imageData.imageFit} margin={createMargin(0, t.gaps.defaultGab.measurand, 0, 0)}/>
+                                                                    )} promiseBasedOnClick={element => new Promise<void>((resolve, reject) => {
+                                                                        wrapper.dialog((
+                                                                            <EnumSelector from={ImageFit} onSubmit={element => {
+                                                                                set("fit", element);
+                                                                                resolve();
+                                                                                ctx.transaction(FormTransactionType.SUBMIT);
+                                                                            }}/>
+                                                                        ));
+                                                                    })}/>
+                                                                )}/>,
+                                                                <HOCWrapper body={wrapper => (
+                                                                    <SettingsElement groupDisplayMode title={"Render mode"} iconConfig={{
+                                                                        enable: true,
+                                                                        iconGenerator: () => <CameraRounded/>
+                                                                    }} appendixGenerator={() => (
+                                                                        <Description text={imageData.renderingMode} margin={createMargin(0, t.gaps.defaultGab.measurand, 0, 0)}/>
+                                                                    )} promiseBasedOnClick={element => new Promise<void>((resolve, reject) => {
+                                                                        wrapper.dialog((
+                                                                            <EnumSelector from={ImageRenderingMode} onSubmit={element => {
+                                                                                set("render-mode", element);
+                                                                                resolve();
+                                                                                ctx.transaction(FormTransactionType.SUBMIT);
+                                                                            }}/>
+                                                                        ));
+                                                                    })}/>
+                                                                )}/>,
 
-                                                            <HOCWrapper body={wrapper => (
-                                                                <SettingsElement groupDisplayMode title={"Opacity"} iconConfig={{
-                                                                    enable: true,
-                                                                    iconGenerator: () => <ColorLensRounded/>
-                                                                }} appendixGenerator={() => (
-                                                                    <Description text={`${(imageData.opacity * 100).toString()}%`} margin={createMargin(0, t.gaps.defaultGab.measurand, 0, 0)}/>
-                                                                )} promiseBasedOnClick={element => new Promise<void>((resolve, reject) => {
-                                                                    wrapper.dialog((
-                                                                        <StaticDrawerMenu width={px(400)} body={props => {
-                                                                            return (
-                                                                                <Flex fw elements={[
-                                                                                    <DrawerHeader
-                                                                                        header={"Opacity"}
-                                                                                        description={"Select the image opacity.\n_0% for full transparency & 100% for no transparency_"}
-                                                                                        margin={createMargin(0, 0, 40, 0)}
-                                                                                    />,
+                                                                <HOCWrapper body={wrapper => (
+                                                                    <SettingsElement groupDisplayMode title={"Opacity"} iconConfig={{
+                                                                        enable: true,
+                                                                        iconGenerator: () => <ColorLensRounded/>
+                                                                    }} appendixGenerator={() => (
+                                                                        <Description text={`${(imageData.opacity * 100).toString()}%`} margin={createMargin(0, t.gaps.defaultGab.measurand, 0, 0)}/>
+                                                                    )} promiseBasedOnClick={element => new Promise<void>((resolve, reject) => {
+                                                                        wrapper.dialog((
+                                                                            <StaticDrawerMenu width={px(400)} body={props => {
+                                                                                return (
+                                                                                    <Flex fw elements={[
+                                                                                        <DrawerHeader
+                                                                                            header={"Opacity"}
+                                                                                            description={"Select the image opacity.\n_0% for full transparency & 100% for no transparency_"}
+                                                                                            margin={createMargin(0, 0, 40, 0)}
+                                                                                        />,
 
-                                                                                    <Flex paddingX={px(25)} padding fw elements={[
-                                                                                        <Form
-                                                                                            formID={""}
-                                                                                            renderer={(localCtx, localSet) => {
-                                                                                                return (
-                                                                                                    <Flex fw elements={[
-                                                                                                        <Slider
-                                                                                                            valueLabelDisplay="auto"
-                                                                                                            aria-label="Opacity"
-                                                                                                            defaultValue={(imageData.opacity ?? 1) * 100}
-                                                                                                            getAriaValueText={value => `${value}%`}
-                                                                                                            title={"Opacity"}
-                                                                                                            color="primary"
-                                                                                                            onChange={(ev, value) => localSet("opacity", (value as number) / 100)}
-                                                                                                        />,
-                                                                                                        <Button text={"Update opacity"} width={percent(100)} onClick={() => localCtx.transaction(FormTransactionType.SUBMIT)}/>
-                                                                                                    ]}/>
-                                                                                                );
-                                                                                            }}
-                                                                                            onSubmit={(ctx1, get) => {
-                                                                                                set("opacity", get("opacity") ?? 1);
-                                                                                                resolve();
-                                                                                                ctx.transaction(FormTransactionType.SUBMIT);
-                                                                                            }}
-                                                                                        />
+                                                                                        <Flex paddingX={px(25)} padding fw elements={[
+                                                                                            <Form
+                                                                                                formID={""}
+                                                                                                renderer={(localCtx, localSet) => {
+                                                                                                    return (
+                                                                                                        <Flex fw elements={[
+                                                                                                            <Slider
+                                                                                                                valueLabelDisplay="auto"
+                                                                                                                aria-label="Opacity"
+                                                                                                                defaultValue={(imageData.opacity ?? 1) * 100}
+                                                                                                                getAriaValueText={value => `${value}%`}
+                                                                                                                title={"Opacity"}
+                                                                                                                color="primary"
+                                                                                                                onChange={(ev, value) => localSet("opacity", (value as number) / 100)}
+                                                                                                            />,
+                                                                                                            <Button text={"Update opacity"} width={percent(100)} onClick={() => localCtx.transaction(FormTransactionType.SUBMIT)}/>
+                                                                                                        ]}/>
+                                                                                                    );
+                                                                                                }}
+                                                                                                onSubmit={(ctx1, get) => {
+                                                                                                    set("opacity", get("opacity") ?? 1);
+                                                                                                    resolve();
+                                                                                                    ctx.transaction(FormTransactionType.SUBMIT);
+                                                                                                }}
+                                                                                            />
+                                                                                        ]}/>
                                                                                     ]}/>
-                                                                                ]}/>
-                                                                            );
-                                                                        }}/>
-                                                                    ));
-                                                                })}/>
-                                                            )}/>
-                                                        ]}/>
+                                                                                );
+                                                                            }}/>
+                                                                        ));
+                                                                    })}/>
+                                                                )}/>
+                                                            ]}/>
+                                                        }/>
                                                     ]}/>
                                                 );
                                             }

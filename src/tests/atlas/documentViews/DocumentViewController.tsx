@@ -26,6 +26,7 @@ import {Description} from "../../../components/lo/Description";
 import {QueryError} from "../../../logic/query/QueryError";
 import {QueryDisplay} from "../../../components/logic/QueryDisplay";
 import {HyperionIndexedDBStreamAdapter} from "../../../frameworks/hyperion/HyperionIndexedDBStreamAdapter";
+import {HyperionImageSubscriber} from "../../../frameworks/hyperion/subscribers/HyperionImageSubscriber";
 
 export type DocumentViewControllerProps = {
     view: VFSFolderView,
@@ -33,57 +34,20 @@ export type DocumentViewControllerProps = {
     updateBody: (body: string) => void
 }
 
-export type DocumentViewControllerLocalState = {
-    backgroundImageQueryable: Q<Optional<HyperionStorableEntry>>
-}
-
-export class DocumentViewController extends BC<DocumentViewControllerProps, any, DocumentViewControllerLocalState> {
-
-    constructor(props: DocumentViewControllerProps) {
-        super(props, undefined, {
-            backgroundImageQueryable: new Q<Optional<HyperionStorableEntry>>({
-                component: () => this,
-                fallback: undefined,
-                listeners: ["background-image"],
-                process: (resolve, reject) => HyperionAPI.hyperion().get("document-view-background-image").then(value => resolve(value))
-            })
-        });
-    }
-
-    componentDidMount() {
-        super.componentDidMount();
-        this.ls().backgroundImageQueryable.query();
-    }
+export class DocumentViewController extends BC<DocumentViewControllerProps, any, any> {
 
     componentRender(p: DocumentViewControllerProps, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         if (p.document === undefined) {
             return (
                 <Centered style={{ position: "relative" }} fullHeight children={
                     <AF elements={[
-                        this.component(() => (
-                            <Flex fw fh style={{ position: "absolute" }} elements={[
-                                <QueryDisplay q={this.ls().backgroundImageQueryable} renderer={{
-                                    success(q: Queryable<Optional<HyperionStorableEntry>>, data: Optional<HyperionStorableEntry>): JSX.Element {
-                                        if (data === undefined || data.value === undefined) {
-                                            return <Description text={"Couldn't load background image"}/>
-                                        }
-                                        return (
-                                            <img
-                                                width={"100%"}
-                                                height={"100%"}
-                                                alt={"Background image"}
-                                                src={data.value}
-                                                style={{
-                                                    objectFit: "cover",
-                                                    userSelect: "none"
-                                                }}
-                                            />
-                                        );
-                                    }
-                                }}/>
-                            ]}/>
-                        ), ...Q.allChannels("background-image")),
+                        <Flex fw fh style={{ position: "absolute" }} elements={[
+                            <HyperionImageSubscriber
+                                hyperionEntryID={"atlas-document-background"}
+                            />
+                        ]}/>,
 
+                        // TODO: Make visible again
                         <Flex align={Align.CENTER} justifyContent={Justify.CENTER} elements={[
                             <Text text={"No document selected"} type={TextType.secondaryDescription}/>,
                             <Text text={"Select a document from the folder view"} type={TextType.secondaryDescription} fontSize={px(11)}/>

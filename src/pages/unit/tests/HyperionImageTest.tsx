@@ -16,9 +16,13 @@ import {Text} from "../../../components/lo/Text";
 import {InformationBox} from "../../../components/ho/informationBox/InformationBox";
 import {ObjectVisualMeaning} from "../../../logic/style/ObjectVisualMeaning";
 import {Description} from "../../../components/lo/Description";
+import {Checkbox} from "@mui/material";
+import {Align} from "../../../logic/style/Align";
+import {Justify} from "../../../logic/style/Justify";
 
 export type HyperionImageTestLocalState = {
-    hyperionEntryID?: string
+    hyperionEntryID?: string,
+    showDisplaySettings: boolean
 }
 
 export class HyperionImageTest extends BC<any, any, HyperionImageTestLocalState> {
@@ -31,7 +35,9 @@ export class HyperionImageTest extends BC<any, any, HyperionImageTestLocalState>
     });
 
     constructor() {
-        super(undefined, undefined, {});
+        super(undefined, undefined, {
+            showDisplaySettings: true
+        });
     }
 
     componentRender(p: any, s: any, l: HyperionImageTestLocalState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
@@ -46,8 +52,31 @@ export class HyperionImageTest extends BC<any, any, HyperionImageTestLocalState>
                             renderer={(ctx, set) => {
                                 return (
                                     <Flex fw elements={[
-                                        <Input defaultValue={this.ls().hyperionEntryID} placeholder={"Hyperion entry id"} onChange={ev => set("id", ev.target.value)}/>,
-                                        <Button width={percent(100)} text={"Apply changes"} onClick={() => ctx.transaction(FormTransactionType.SUBMIT)}/>
+                                        <Description bold text={"Hyperion entry id"}/>,
+                                        <Input
+                                            defaultValue={this.ls().hyperionEntryID}
+                                            placeholder={"Hyperion entry id"}
+                                            onChange={ev => set("id", ev.target.value)}
+                                        />,
+
+                                        <Description bold text={"Producer component settings"}/>,
+                                        <FlexRow align={Align.CENTER} justifyContent={Justify.SPACE_BETWEEN} fw elements={[
+                                            <Description text={"Show display settings"}/>,
+                                            <Checkbox
+                                                defaultChecked={this.ls().showDisplaySettings}
+                                                onChange={(event, checked) => this.local.state.showDisplaySettings = checked}
+                                                sx={{
+                                                    color: t.colors.betaHighlightColor.toHex(),
+                                                    '&.Mui-checked': { color: t.colors.betaHighlightColor.toHex() },
+                                                }}
+                                            />,
+                                        ]}/>,
+
+                                        <Button
+                                            width={percent(100)}
+                                            text={"Apply changes"}
+                                            onClick={() => ctx.transaction(FormTransactionType.SUBMIT)}
+                                        />
                                     ]}/>
                                 );
                             }}
@@ -72,6 +101,7 @@ export class HyperionImageTest extends BC<any, any, HyperionImageTestLocalState>
                     />
                 ) : (
                     <HyperionImageProducer
+                        showDisplaySettings={this.ls().showDisplaySettings}
                         hyperionEntryID={this.ls().hyperionEntryID as string}
                     />
                 ), "test-object")

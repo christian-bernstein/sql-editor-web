@@ -32,7 +32,7 @@ import {createMargin} from "../../logic/style/Margin";
 import {Icon} from "../../components/lo/Icon";
 import {ConfirmationDialog} from "../../components/lo/ConfirmationDialog";
 import {VFSFolderView} from "./components/VFSFolderView";
-import {AccountTreeRounded, CodeOffRounded, CodeRounded, HelpRounded} from "@mui/icons-material";
+import {AccountTreeRounded, CodeRounded, HelpRounded} from "@mui/icons-material";
 import {Tooltip} from "../../components/ho/tooltip/Tooltip";
 import {Gloria} from "../../frameworks/gloria/Gloria";
 import {GloriaCommandPalette} from "../../frameworks/gloria/components/GloriaCommandPalette";
@@ -49,7 +49,7 @@ import {SettingsDisplayRoot} from "./settings/component/SettingsDisplayRoot";
 import {HyperionAPI} from "../../frameworks/hyperion/HyperionAPI";
 import {HyperionIndexedDBStreamAdapter} from "../../frameworks/hyperion/HyperionIndexedDBStreamAdapter";
 import {FileInput} from "../../components/ho/fileInput/FileInput";
-import {Box} from "../../components/lo/Box";
+import {UpstreamTransactionType} from "../../frameworks/hyperion/UpstreamTransactionType";
 
 export type AtlasMainProps = {
     api: IAtlasAPI
@@ -180,6 +180,7 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
                                         <StaticDrawerMenu body={() => (
                                             <FileInput onSubmit={ctx => {
                                                 HyperionAPI.hyperion(prop => prop.upstreamTransaction({
+                                                    type: UpstreamTransactionType.OVERWRITE,
                                                     transactionID: v4(),
                                                     onStreamed: () => {
                                                         // TODO: Rerender

@@ -14,12 +14,12 @@ import {v4} from "uuid";
 import {Description} from "../../../components/lo/Description";
 import {HyperionIndexedDBStreamAdapter} from "../../../frameworks/hyperion/HyperionIndexedDBStreamAdapter";
 import {FileInput} from "../../../components/ho/fileInput/FileInput";
-import {FileInputSubmissionMode} from "../../../components/ho/fileInput/FileInputSubmissionMode";
 import {QueryDisplay} from "../../../components/logic/QueryDisplay";
 import {Q, Queryable} from "../../../logic/query/Queryable";
 import {HyperionStorableEntry} from "../../../frameworks/hyperion/HyperionStorableEntry";
 import {Optional} from "../../../logic/Optional";
 import {QueryError} from "../../../logic/query/QueryError";
+import {UpstreamTransactionType} from "../../../frameworks/hyperion/UpstreamTransactionType";
 
 export type HyperionTestLocalState = {
     hyperionFileQueryable: Q<Optional<HyperionStorableEntry>>
@@ -64,6 +64,7 @@ export class HyperionTest extends BC<any, any, HyperionTestLocalState> {
                     <FileInput onSubmit={ctx => {
                         HyperionAPI.hyperion(prop => prop.upstreamTransaction({
                             transactionID: v4(),
+                            type: UpstreamTransactionType.OVERWRITE,
                             onStreamed: () => {
                                 console.debug("onStreamed");
                                 this.ls().hyperionFileQueryable.query();
@@ -116,6 +117,7 @@ export class HyperionTest extends BC<any, any, HyperionTestLocalState> {
 
                             prop.upstreamTransaction({
                                 transactionID: v4(),
+                                type: UpstreamTransactionType.OVERWRITE,
                                 onStreamed: () => {
                                     console.log("Import streamed")
                                 },

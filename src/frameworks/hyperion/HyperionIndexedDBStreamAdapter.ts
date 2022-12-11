@@ -5,6 +5,7 @@ import {HyperionStorableEntry} from "./HyperionStorableEntry";
 import {HyperionUpstreamTransaction} from "./HyperionUpstreamTransaction";
 import Dexie, {Table} from "dexie";
 import {DBFile, FileDB} from "../../pages/unit/tests/DBTest";
+import {UpstreamTransactionType} from "./UpstreamTransactionType";
 
 export interface DBHyperionEntry {
     id?: string,
@@ -47,22 +48,34 @@ export class HyperionIndexedDBStreamAdapter implements IHyperionStreamAdapter {
     upstreamTransaction(transaction: HyperionUpstreamTransaction): IHyperionStreamAdapter {
 
         // TODO: Implement caching
+        // TODO: Implement now-throwing error handling -> Pass error to transaction error callback
 
-        const entry = transaction.entry;
-        this.db.entries.get(entry.id).then(value => {
-            if (value !== undefined) {
-                this.db.entries.update(entry.id, {
-                    "id": entry.id,
-                    "value": entry.value
-                }).then(res => {
+        switch (transaction.type) {
+            case UpstreamTransactionType.OVERWRITE:
+                const entry = transaction.entry as HyperionStorableEntry;
+                this.db.entries.get(entry.id).then(value => {
+                    if (value !== undefined) {
+                        this.db.entries.update(entry.id, {
+                            "id": entry.id,
+                            "value": entry.value
+                        }).then(res => {
+                            transaction.onStreamed?.();
+                        });
+                    } else {
+                        this.db.entries.add(entry, entry.id).then(res => {
+                            transaction.onStreamed?.();
+                        });
+                    }
+                });
+                break;
+            case UpstreamTransactionType.DELETE:
+                if (transaction.targetEntryID === undefined) throw new Error("Cannot delete an entry without a 'targetEntryID'");
+                this.db.entries.delete(transaction.targetEntryID).then(res => {
                     transaction.onStreamed?.();
                 });
-            } else {
-                this.db.entries.add(entry, entry.id).then(res => {
-                    transaction.onStreamed?.();
-                });
-            }
-        });
+                break;
+        }
+
         return this;
     }
 }
