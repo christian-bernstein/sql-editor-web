@@ -13,7 +13,6 @@ import {Align} from "../../../logic/style/Align";
 import {SettingsGroup} from "../../../components/lo/SettingsGroup";
 import {DrawerHeader} from "../../../components/lo/DrawerHeader";
 import {ObjectVisualMeaning, VM} from "../../../logic/style/ObjectVisualMeaning";
-import {Dot} from "../../../components/lo/Dot";
 import {OverflowBehaviour} from "../../../logic/style/OverflowBehaviour";
 import {FlexWrap} from "../../../logic/style/FlexWrap";
 import {Box} from "../../../components/lo/Box";
@@ -21,15 +20,12 @@ import {Cursor} from "../../../logic/style/Cursor";
 import React from "react";
 import {OverflowWithHeader} from "../../../components/lo/OverflowWithHeader";
 import {ReactComponent as AttachmentIcon} from "../../../assets/icons/ic-20/ic20-attachment.svg";
-import {ReactComponent as CreateIcon} from "../../../assets/icons/ic-20/ic20-edit.svg";
 import {AtlasMain} from "../AtlasMain";
-import {FolderComponent} from "./FolderComponent";
 import {Q, Queryable} from "../../../logic/query/Queryable";
 import {Folder} from "../data/Folder";
 import {QueryDisplay} from "../../../components/logic/QueryDisplay";
 import {FolderSetupDialog} from "./FolderSetupDialog";
 import {AF} from "../../../components/logic/ArrayFragment";
-import {Tooltip} from "../../../components/ho/tooltip/Tooltip";
 import {createMargin} from "../../../logic/style/Margin";
 import {StaticDrawerMenu} from "../../../components/lo/StaticDrawerMenu";
 import {AtlasDocument} from "../data/AtlasDocument";
@@ -51,12 +47,19 @@ import {VFSFolderViewFilterState} from "../data/vfs/VFSFolderViewFilterState";
 import {UnaryFunction} from "../utils/UnaryFunction";
 import {Input} from "../../../components/lo/Input";
 import {If} from "../../../components/logic/If";
-import {Button} from "../../../components/lo/Button";
 import {DeleteRounded} from "@mui/icons-material";
 import {FolderList} from "./vfs/menu/FolderList";
 import {Default, Mobile} from "../../../components/logic/Media";
 import {isMobile} from 'react-device-detect';
 import {DocumentViewController} from "../documentViews/DocumentViewController";
+import {VFSSettings} from "../data/vfs/VFSSettings";
+import {HyperionAPI} from "../../../frameworks/hyperion/HyperionAPI";
+import {UpstreamTransactionType} from "../../../frameworks/hyperion/UpstreamTransactionType";
+import {Optional} from "../../../logic/Optional";
+import {Centered} from "../../../components/lo/PosInCenter";
+import {Description} from "../../../components/lo/Description";
+import {ProgressBar} from "react-bootstrap";
+import {LinearProgress} from "@mui/material";
 
 export type VFSFolderViewProps = {
     initialFolderID?: string,
@@ -72,10 +75,15 @@ export type VFSFolderViewLocalState = {
     documentBodyUpdaters: Map<string, (body: string) => void>,
     menuVisible: boolean,
     filterState: VFSFolderViewFilterState,
-    debouncedTitleFilterUpdater: (newTitleFilterValue: string) => void
+    debouncedTitleFilterUpdater: (newTitleFilterValue: string) => void,
+    vfsSettings: Q<Optional<VFSSettings>>
 }
 
 export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLocalState> {
+
+    public static readonly HYPERION_SETTINGS_ADDRESS: string = "vfs-settings";
+
+    private static readonly GENERIC_LOADING_INTERRUPT_CHANNEL: string = "generic-loading-interrupt-channel";
 
     constructor(props: VFSFolderViewProps) {
         super(props, undefined, {
@@ -116,6 +124,54 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                     }
                 }
             }),
+            vfsSettings: new Queryable<VFSSettings | undefined>({
+                component: () => this,
+                listeners: [VFSFolderView.HYPERION_SETTINGS_ADDRESS, VFSFolderView.GENERIC_LOADING_INTERRUPT_CHANNEL],
+                fallback: undefined,
+                process: (resolve, reject) => {
+                    try {
+                        HyperionAPI.hyperion(api => {
+                            api.get(VFSFolderView.HYPERION_SETTINGS_ADDRESS).then(entry => {
+                                if (entry === undefined) {
+                                    // No settings found :: Set default settings
+                                    const settings: VFSSettings = {
+                                        bypassMobileLaw: false
+                                    };
+                                    const encodedSettings = JSON.stringify(settings);
+                                    api.upstreamTransaction({
+                                        type: UpstreamTransactionType.OVERWRITE,
+                                        transactionID: v4(),
+                                        entry: {
+                                            id: VFSFolderView.HYPERION_SETTINGS_ADDRESS,
+                                            value: encodedSettings
+                                        }
+                                    });
+                                    resolve(settings);
+                                } else {
+                                    // No settings found :: Parse them
+                                    const rawSettings = entry.value;
+                                    const settings = JSON.parse(rawSettings) as VFSSettings;
+                                    resolve(settings);
+                                }
+                            }).catch(e => {
+                                console.error(e);
+                                reject({
+                                    // Err code 1 :: internal Hyperion api error
+                                    code: 1,
+                                    object: e
+                                })
+                            });
+                        });
+                    } catch (e) {
+                        console.error(e);
+                        reject({
+                            // Err code 2 :: uncaught Hyperion api error
+                            code: 2,
+                            object: e
+                        });
+                    }
+                }
+            }),
             viewMultiplexers: []
         });
     }
@@ -130,6 +186,21 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
         this.mobileMainAssembly();
         this.desktopMainAssembly();
         this.mobileMenuAssembly();
+        this.loadingInterruptAssembly();
+    }
+
+    componentDidMount() {
+        super.componentDidMount();
+        this.local.state.currentFolderData.query();
+        this.local.state.vfsSettings.query();
+        this.createMultiplexer({
+            groupID: v4(),
+            groupTitle: "Main",
+            documents: new Array<AtlasDocument>(),
+            activeDocumentID: undefined,
+            view: this
+        });
+        this.props.onMount?.(this);
     }
 
     private menuFilterAssembly() {
@@ -232,19 +303,6 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
 
     getCurrentFolder(): Folder {
         return this.local.state.currentFolderData.get()[0] as Folder;
-    }
-
-    componentDidMount() {
-        super.componentDidMount();
-        this.local.state.currentFolderData.query();
-        this.createMultiplexer({
-            groupID: v4(),
-            groupTitle: "Main",
-            documents: new Array<AtlasDocument>(),
-            activeDocumentID: undefined,
-            view: this
-        });
-        this.props.onMount?.(this);
     }
 
     private updateCurrentFolder(newFolderID: string) {
@@ -815,12 +873,39 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
         });
     }
 
-    componentRender(p: any, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
-        return (
-            <AF elements={[
-                <Mobile children={this.a("mobile-main")}/>,
-                <Default children={this.a("desktop-main")}/>
-            ]}/>
-        );
+    private loadingInterruptAssembly() {
+        this.assembly.assembly("loading-interrupt", theme => {
+            return (
+                <Screen deactivatePadding children={
+                    <Centered fullHeight children={
+                        <Flex align={Align.CENTER} elements={[
+                            <Description text={"Loading"}/>,
+                            <LinearProgress variant={"indeterminate"}/>,
+                        ]}/>
+                    }/>
+                }/>
+            );
+        })
+    }
+
+    /**
+     * TODO: Add loading interrupt error screen / anomaly display
+     */
+    componentRender(p: VFSFolderViewProps, s: any, l: VFSFolderViewLocalState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
+
+        return this.component(() => (
+            <QueryDisplay<Optional<VFSSettings>>
+                q={this.ls().vfsSettings}
+                renderer={{
+                    success: (q: Queryable<Optional<VFSSettings>>, data: Optional<VFSSettings>): JSX.Element => (
+                        <AF elements={[
+                            <Mobile children={this.a("mobile-main")}/>,
+                            <Default children={this.a("desktop-main")}/>
+                        ]}/>
+                    ),
+                    processing: (q: Queryable<Optional<VFSSettings>>): JSX.Element => this.a("loading-interrupt")
+                }}
+            />
+        ), ...Q.allChannels(VFSFolderView.GENERIC_LOADING_INTERRUPT_CHANNEL));
     }
 }
