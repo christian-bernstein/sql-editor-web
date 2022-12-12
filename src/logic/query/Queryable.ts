@@ -59,7 +59,7 @@ export class Queryable<T> {
         console.debug("re-rendering", this.config.listeners.map(channelBase => (
             Queryable.channels(channelBase, to)[0]
         )), "with data", this.data, "State will be", to)
-        this.config.component().ifActive(component => console.error("still active"))
+        // this.config.component().ifActive(component => console.error("still active"))
         this.state = to;
         this.config.component().rerender(
             ...this.config.listeners.map(channelBase => (
@@ -89,7 +89,6 @@ export class Queryable<T> {
             };
             this.changeQueryState(DataQueryState.ERROR);
         }
-
     }
 
     public query(): Queryable<T> {

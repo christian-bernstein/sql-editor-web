@@ -174,6 +174,11 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
             }),
             viewMultiplexers: []
         });
+
+        console.debug("VFSFolderView created")
+
+        // Begin all pre-rendering querying processes
+        this.ls().vfsSettings.query();
     }
 
     init() {
@@ -192,7 +197,6 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
     componentDidMount() {
         super.componentDidMount();
         this.local.state.currentFolderData.query();
-        this.local.state.vfsSettings.query();
         this.createMultiplexer({
             groupID: v4(),
             groupTitle: "Main",
@@ -201,6 +205,11 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
             view: this
         });
         this.props.onMount?.(this);
+    }
+
+    componentWillUnmount() {
+        super.componentWillUnmount();
+        this.props.onClose?.();
     }
 
     private menuFilterAssembly() {
@@ -879,6 +888,7 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                 <Screen deactivatePadding children={
                     <Centered fullHeight children={
                         <Flex align={Align.CENTER} elements={[
+                            <Text text={"Atlas"}/>,
                             <Description text={"Loading"}/>,
                             <LinearProgress variant={"indeterminate"}/>,
                         ]}/>

@@ -209,6 +209,8 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
 
     public openTreeViewDialog() {
         const onClose = () => {
+            console.debug("VFSFolderView onClose in AtlasMain")
+
             this.closeLocalDialog();
             this.local.setStateWithChannels({
                 vfsFolderViewOpened: false,
@@ -225,8 +227,8 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
                         vfsFolderViewInstance: view
                     }, ["vfs-folder-view"]);
                 }}
-            />,
-            () => onClose()
+            />
+            // , () => onClose()
         );
     }
 
