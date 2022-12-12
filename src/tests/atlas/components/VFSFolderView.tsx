@@ -58,7 +58,6 @@ import {UpstreamTransactionType} from "../../../frameworks/hyperion/UpstreamTran
 import {Optional} from "../../../logic/Optional";
 import {Centered} from "../../../components/lo/PosInCenter";
 import {Description} from "../../../components/lo/Description";
-import {ProgressBar} from "react-bootstrap";
 import {LinearProgress} from "@mui/material";
 
 export type VFSFolderViewProps = {
@@ -192,6 +191,7 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
         this.desktopMainAssembly();
         this.mobileMenuAssembly();
         this.loadingInterruptAssembly();
+        this.sideMenuAssembly();
     }
 
     componentDidMount() {
@@ -212,50 +212,113 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
         this.props.onClose?.();
     }
 
-    private menuFilterAssembly() {
-        this.assembly.assembly("menu-filter", theme => {
-            const updateChannel = "search-filter-state";
-            const updateInputChannel = "search-filter-input";
-            return (
-                <Flex fw elements={[
-                    // Filter header & toolbar
-                    <FlexRow fw align={Align.CENTER} style={{ minHeight: "20px" }} justifyContent={Justify.SPACE_BETWEEN} elements={[
-                        <Text text={"Filters"} bold/>,
-                        <FlexRow align={Align.CENTER} gap={theme.gaps.smallGab} elements={[
-                            this.component(() => (
-                                <If condition={this.isSearchFilterAffective()} ifTrue={
-                                    // Filter is effective
-                                    <Icon
-                                        colored
-                                        uiNoHighlightOnDefault
-                                        coloredOnDefault={false}
-                                        visualMeaning={VM.ERROR}
-                                        icon={<DeleteRounded/>}
-                                        tooltip={"Clear filters"}
-                                        onClick={() => {
-                                            this.clearSearchFilter();
-                                            // TODO: Make better
-                                            setTimeout(() => this.rerender(updateInputChannel), 500);
-                                        }}
-                                    />
-                                }/>
-                            ), updateChannel)
-                        ]}/>
-                    ]}/>,
-                    // Filter component
-                    this.component(() => {
-                        // TODO: Fix: Clearing doesn't delete input value
-                        console.log("render filter input", this.ls().filterState.titleFilter)
+    getCurrentFolder(): Folder {
+        return this.local.state.currentFolderData.get()[0] as Folder;
+    }
 
-                        return (
-                            <Input placeholder={"Search folders & documents"} inputMode={"search"} defaultValue={this.ls().filterState.titleFilter} onChange={ev => {
-                                const newTitleFilter: string = ev.target.value;
-                                this.ls().debouncedTitleFilterUpdater(newTitleFilter);
+    reloadFolderView() {
+        this.local.state.currentFolderData.query();
+        this.rerender("current-folder");
+    }
+
+    openCreateFolderSetup() {
+        this.dialog(
+            <StaticDrawerMenu body={props => (
+                <FolderSetupDialog actions={{
+                    onSubmit: (folder: Folder) => {
+                        const [parentFolder] = this.local.state.currentFolderData.get();
+                        if (parentFolder === undefined) {
+                            return false;
+                        }
+                        folder.parentFolder = parentFolder.id;
+                        try {
+                            AtlasMain.atlas().api().createSubFolder(parentFolder.id, folder);
+                            setTimeout(() => {
+                                AtlasMain.atlas(atlas => {
+                                    atlas.rerender("folders");
+                                });
+                            }, 1);
+                            this.closeLocalDialog();
+                            this.reloadFolderView();
+
+                            return true;
+                        } catch (e) {
+                            return false;
+                        }
+                    }
+                }}/>
+            )}/>
+        );
+    }
+
+    private onClose() {
+        this.props.onClose();
+    }
+
+    private isDocumentActive(documentID: string): boolean {
+        return this.local.state.viewMultiplexers.filter(mux => mux.activeDocumentID === documentID).length > 0;
+    }
+
+    private getDocumentMultiplexer(documentID: string): DocumentViewMultiplexerControlConfig | undefined {
+        return this.local.state.viewMultiplexers.filter(mux => mux.activeDocumentID === documentID)[0] ?? undefined;
+    }
+
+    private selectMultiplexer(): Promise<string> {
+        return new Promise<string>((resolve, reject) => {
+            this.dialog(
+                <StaticDrawerMenu body={props => (
+                    <SettingsGroup elements={
+                        this.local.state.viewMultiplexers.map(mux => (
+                            <SettingsElement groupDisplayMode forceRenderSubpageIcon title={mux.groupTitle} onClick={element => {
+                                this.closeLocalDialog();
+                                resolve(mux.groupID);
                             }}/>
-                        );
-                    }, updateInputChannel)
-                ]}/>
+                        ))
+                    }/>
+                )}/>
             );
+        })
+    }
+
+    private updateCurrentFolder(newFolderID: string) {
+        this.local.setState({
+            currentFolderID: newFolderID
+        }, new Map<string, any>(), () => {
+            this.reloadFolderView();
+        });
+    }
+
+    private openDocumentInMobileMode(data: AtlasDocument) {
+        // Create a persistent updater
+        this.ls().documentBodyUpdaters.set(data.id, _.debounce((body: string) => {
+            AtlasMain.atlas(atlas => {
+                const api = atlas.api();
+                api.updateDocument(data.id, document => {
+                    document.body = body;
+                    return document;
+                });
+                this.getDocumentState(data.id).saveState = DocumentSaveState.SAVED;
+                this.rerender(this.toDocumentSpecificChannel(data.id, "persistence-sync-state"));
+            });
+        }, 2e3));
+
+        // Set initial document save state to synchronized (saved)
+        this.local.state.documentStates.set(data.id, {
+            saveState: DocumentSaveState.SAVED
+        });
+
+        // TODO: Don't render a DocumentViewController directly, render the main multiplexer instead
+        //  - For the main mux to work the opening logic has to be nealy reverted back to classic openDocument logic -> mux logic
+        // Open a new DocumentViewController instance with the chosen document selected
+        this.dialog((
+            <DocumentViewController
+                view={this}
+                document={data}
+                updateBody={body => this.updateBody(data.id, body)}
+            />
+        ), () => {
+            // Remove the persistent updater
+            this.ls().documentBodyUpdaters.delete(data.id)
         });
     }
 
@@ -306,86 +369,6 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
         }, ["multiplexer-removed"]);
     }
 
-    private onClose() {
-        this.props.onClose();
-    }
-
-    getCurrentFolder(): Folder {
-        return this.local.state.currentFolderData.get()[0] as Folder;
-    }
-
-    private updateCurrentFolder(newFolderID: string) {
-        this.local.setState({
-            currentFolderID: newFolderID
-        }, new Map<string, any>(), () => {
-            this.reloadFolderView();
-        });
-    }
-
-    // TODO: merge with updateCurrentFolder(..)
-    reloadFolderView() {
-        this.local.state.currentFolderData.query();
-        this.rerender("current-folder");
-    }
-
-    private folderLevelViewAssembly() {
-        this.assembly.assembly("folder-level-view", theme => {
-            return this.component(local => (
-                <QueryDisplay<Folder | undefined> q={this.local.state.currentFolderData} renderer={{
-                    success: (q, f: Folder | undefined) => {
-                        // TODO: use 'f' -> Clean up this code
-                        const currentFolder = this.local.state.currentFolderData.get()[0];
-                        const tree: Array<Folder> = new Array<Folder>();
-                        let folder = currentFolder;
-                        tree.push(folder as Folder);
-                        while (folder?.parentFolder !== undefined) {
-                            folder = AtlasMain.atlas().api().getFolder(folder.parentFolder);
-                            tree.push(folder);
-                        }
-                        return (
-                            <FolderPathView
-                                path={tree.reverse()}
-                                gotoFolder={selectedFolder => {
-                                    this.updateCurrentFolder(selectedFolder.id);
-                                }}
-                            />
-                        );
-                    }
-                }}/>
-            ), ...Q.allChannels("current-folder"));
-        })
-    }
-
-    openCreateFolderSetup() {
-        this.dialog(
-            <StaticDrawerMenu body={props => (
-                <FolderSetupDialog actions={{
-                    onSubmit: (folder: Folder) => {
-                        const [parentFolder] = this.local.state.currentFolderData.get();
-                        if (parentFolder === undefined) {
-                            return false;
-                        }
-                        folder.parentFolder = parentFolder.id;
-                        try {
-                            AtlasMain.atlas().api().createSubFolder(parentFolder.id, folder);
-                            setTimeout(() => {
-                                AtlasMain.atlas(atlas => {
-                                    atlas.rerender("folders");
-                                });
-                            }, 1);
-                            this.closeLocalDialog();
-                            this.reloadFolderView();
-
-                            return true;
-                        } catch (e) {
-                            return false;
-                        }
-                    }
-                }}/>
-            )}/>
-        );
-    }
-
     public openCreateBlankDocumentSetup() {
         this.dialog(
             <DocumentCreateWizard
@@ -393,48 +376,6 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                 currentFolder={this.getCurrentFolder()}
             />
         );
-    }
-
-    private folderViewAssembly() {
-        this.assembly.assembly("folder-view", theme => {
-            const currentFolder = this.local.state.currentFolderData.get()[0] as Folder;
-            const subFolders = AtlasMain.atlas().api().getAllFolders({
-                test(subFolder: Folder): boolean {
-                    return !!currentFolder.subFolderIDs?.includes(subFolder.id);
-                }
-            });
-
-            return (
-                <Flex fw elements={[
-                    <Flex fw elements={[
-                        subFolders.length > 0 ? (
-                            <FolderList
-                                folders={subFolders}
-                            />
-                        ) : (
-                            <Flex margin={createMargin(20, 0, 20, 0)} fw align={Align.CENTER} justifyContent={Justify.CENTER} gap={px()} elements={[
-                                <Text
-                                    text={"Empty"}
-                                    // fontSize={px(11)}
-                                    type={TextType.secondaryDescription}
-                                    bold
-                                />,
-                                <Text
-                                    text={"Create folder"}
-                                    fontSize={px(11)}
-                                    cursor={Cursor.pointer}
-                                    highlight
-                                    coloredText
-                                    visualMeaning={VM.INFO}
-                                    type={TextType.secondaryDescription}
-                                    onClick={() => this.openCreateFolderSetup()}
-                                />
-                            ]}/>
-                        )
-                    ]}/>,
-                ]}/>
-            );
-        });
     }
 
     public updateMultiplexer(multiplexerID: string, updateChannels: Array<string>, updater: (multiplexer: DocumentViewMultiplexerControlConfig) => DocumentViewMultiplexerControlConfig) {
@@ -468,50 +409,8 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
         return this.local.state.viewMultiplexers.filter(mux => mux.documents.filter(doc => doc.id === documentID).length > 0).length > 0;
     }
 
-    private isDocumentActive(documentID: string): boolean {
-        return this.local.state.viewMultiplexers.filter(mux => mux.activeDocumentID === documentID).length > 0;
-    }
-
-    private getDocumentMultiplexer(documentID: string): DocumentViewMultiplexerControlConfig | undefined {
-        return this.local.state.viewMultiplexers.filter(mux => mux.activeDocumentID === documentID)[0] ?? undefined;
-    }
-
     public toDocumentSpecificChannel(documentID: string, channel: string): string {
         return `${documentID}-${channel}`
-    }
-
-    private openDocumentInMobileMode(data: AtlasDocument) {
-        // Create a persistent updater
-        this.ls().documentBodyUpdaters.set(data.id, _.debounce((body: string) => {
-            AtlasMain.atlas(atlas => {
-                const api = atlas.api();
-                api.updateDocument(data.id, document => {
-                    document.body = body;
-                    return document;
-                });
-                this.getDocumentState(data.id).saveState = DocumentSaveState.SAVED;
-                this.rerender(this.toDocumentSpecificChannel(data.id, "persistence-sync-state"));
-            });
-        }, 2e3));
-
-        // Set initial document save state to synchronized (saved)
-        this.local.state.documentStates.set(data.id, {
-            saveState: DocumentSaveState.SAVED
-        });
-
-        // TODO: Don't render a DocumentViewController directly, render the main multiplexer instead
-        //  - For the main mux to work the opening logic has to be nealy reverted back to classic openDocument logic -> mux logic
-        // Open a new DocumentViewController instance with the chosen document selected
-        this.dialog((
-            <DocumentViewController
-                view={this}
-                document={data}
-                updateBody={body => this.updateBody(data.id, body)}
-            />
-        ), () => {
-            // Remove the persistent updater
-            this.ls().documentBodyUpdaters.delete(data.id)
-        });
     }
 
     public openDocument(data: AtlasDocument, muxID: string | undefined = undefined) {
@@ -593,23 +492,6 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
         });
     }
 
-    private selectMultiplexer(): Promise<string> {
-        return new Promise<string>((resolve, reject) => {
-            this.dialog(
-                <StaticDrawerMenu body={props => (
-                    <SettingsGroup elements={
-                        this.local.state.viewMultiplexers.map(mux => (
-                            <SettingsElement groupDisplayMode forceRenderSubpageIcon title={mux.groupTitle} onClick={element => {
-                                this.closeLocalDialog();
-                                resolve(mux.groupID);
-                            }}/>
-                        ))
-                    }/>
-                )}/>
-            );
-        })
-    }
-
     public getDocumentsInCurrentFolder(applyFilters: boolean = true): Array<AtlasDocument> {
         const documentIDs: Array<string> = this.getCurrentFolder().documentsIDs ?? new Array<string>();
         let documents: Array<AtlasDocument> = new Array<AtlasDocument>();
@@ -647,16 +529,6 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
         return documents;
     }
 
-    private documentViewAssembly() {
-        this.assembly.assembly("document-view", theme => {
-            return (
-                <DocumentList
-                    documents={this.getDocumentsInCurrentFolder()}
-                />
-            );
-        });
-    }
-
     public updateBody(documentID: string, newBody: string) {
         setTimeout(() => {
             if (this.getDocumentState(documentID).saveState !== DocumentSaveState.PENDING) {
@@ -680,6 +552,146 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
             throw new Error(`getDocumentState cannot find state for document id '${documentID}'`)
         }
         return state;
+    }
+
+    // ASSEMBLIES
+
+    private folderLevelViewAssembly() {
+        this.assembly.assembly("folder-level-view", theme => {
+            return this.component(local => (
+                <QueryDisplay<Folder | undefined> q={this.local.state.currentFolderData} renderer={{
+                    success: (q, f: Folder | undefined) => {
+                        // TODO: use 'f' -> Clean up this code
+                        const currentFolder = this.local.state.currentFolderData.get()[0];
+                        const tree: Array<Folder> = new Array<Folder>();
+                        let folder = currentFolder;
+                        tree.push(folder as Folder);
+                        while (folder?.parentFolder !== undefined) {
+                            folder = AtlasMain.atlas().api().getFolder(folder.parentFolder);
+                            tree.push(folder);
+                        }
+                        return (
+                            <FolderPathView
+                                path={tree.reverse()}
+                                gotoFolder={selectedFolder => {
+                                    this.updateCurrentFolder(selectedFolder.id);
+                                }}
+                            />
+                        );
+                    }
+                }}/>
+            ), ...Q.allChannels("current-folder"));
+        })
+    }
+
+    private folderViewAssembly() {
+        this.assembly.assembly("folder-view", theme => {
+            const currentFolder = this.local.state.currentFolderData.get()[0] as Folder;
+            const subFolders = AtlasMain.atlas().api().getAllFolders({
+                test(subFolder: Folder): boolean {
+                    return !!currentFolder.subFolderIDs?.includes(subFolder.id);
+                }
+            });
+
+            return (
+                <Flex fw elements={[
+                    <Flex fw elements={[
+                        subFolders.length > 0 ? (
+                            <FolderList
+                                folders={subFolders}
+                            />
+                        ) : (
+                            <Flex margin={createMargin(20, 0, 20, 0)} fw align={Align.CENTER} justifyContent={Justify.CENTER} gap={px()} elements={[
+                                <Text
+                                    text={"Empty"}
+                                    // fontSize={px(11)}
+                                    type={TextType.secondaryDescription}
+                                    bold
+                                />,
+                                <Text
+                                    text={"Create folder"}
+                                    fontSize={px(11)}
+                                    cursor={Cursor.pointer}
+                                    highlight
+                                    coloredText
+                                    visualMeaning={VM.INFO}
+                                    type={TextType.secondaryDescription}
+                                    onClick={() => this.openCreateFolderSetup()}
+                                />
+                            ]}/>
+                        )
+                    ]}/>,
+                ]}/>
+            );
+        });
+    }
+
+    private documentViewAssembly() {
+        this.assembly.assembly("document-view", theme => {
+            return (
+                <DocumentList
+                    documents={this.getDocumentsInCurrentFolder()}
+                />
+            );
+        });
+    }
+
+    private menuFilterAssembly() {
+        this.assembly.assembly("menu-filter", theme => {
+            const updateChannel = "search-filter-state";
+            const updateInputChannel = "search-filter-input";
+            return (
+                <Flex fw elements={[
+                    // Filter header & toolbar
+                    <FlexRow fw align={Align.CENTER} style={{ minHeight: "20px" }} justifyContent={Justify.SPACE_BETWEEN} elements={[
+                        <Text text={"Filters"} bold/>,
+                        <FlexRow align={Align.CENTER} gap={theme.gaps.smallGab} elements={[
+                            this.component(() => (
+                                <If condition={this.isSearchFilterAffective()} ifTrue={
+                                    // Filter is effective
+                                    <Icon
+                                        colored
+                                        uiNoHighlightOnDefault
+                                        coloredOnDefault={false}
+                                        visualMeaning={VM.ERROR}
+                                        icon={<DeleteRounded/>}
+                                        tooltip={"Clear filters"}
+                                        onClick={() => {
+                                            this.clearSearchFilter();
+                                            // TODO: Make better
+                                            setTimeout(() => this.rerender(updateInputChannel), 500);
+                                        }}
+                                    />
+                                }/>
+                            ), updateChannel)
+                        ]}/>
+                    ]}/>,
+                    // Filter component
+                    this.component(() => {
+                        // TODO: Fix: Clearing doesn't delete input value
+                        console.log("render filter input", this.ls().filterState.titleFilter)
+
+                        return (
+                            <Input placeholder={"Search folders & documents"} inputMode={"search"} defaultValue={this.ls().filterState.titleFilter} onChange={ev => {
+                                const newTitleFilter: string = ev.target.value;
+                                this.ls().debouncedTitleFilterUpdater(newTitleFilter);
+                            }}/>
+                        );
+                    }, updateInputChannel)
+                ]}/>
+            );
+        });
+    }
+
+    private sideMenuAssembly() {
+        this.assembly.assembly("side-menu", theme => {
+            return (
+                <AF elements={[
+                    <SideMenu view={this}/>,
+                    this.component(() => this.ls().menuVisible ? <Separator orientation={Orientation.VERTICAL}/> : <></>, "menu"),
+                ]}/>
+            );
+        })
     }
 
     private menuAssembly() {
@@ -849,9 +861,14 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                     <OverflowWithHeader dir={FlexDirection.COLUMN_REVERSE} staticContainer={{ gap: px(), elements: [] }} overflowContainer={{
                         elements: [
                             <Flex fh fw gap={px()} flexDir={FlexDirection.ROW} elements={[
-                                <SideMenu view={this}/>,
+                                // <SideMenu view={this}/>,
+
+                                this.a("side-menu"),
+
                                 this.component(() => this.a("menu"), "menu"),
-                                <Separator orientation={Orientation.VERTICAL}/>,
+
+                                // <Separator orientation={Orientation.VERTICAL}/>,
+
                                 this.component(local => {
                                     return (
                                         <LiteGrid style={{ width: "100%" }} columns={local.state.viewMultiplexers.length} children={

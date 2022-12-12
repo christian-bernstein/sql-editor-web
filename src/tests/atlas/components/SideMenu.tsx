@@ -70,8 +70,8 @@ export class SideMenu extends BC<SideMenuProps, any, any> {
                     enableCustomBorderRadii: true,
                     fallbackCustomBorderRadii: px(0)
                 }}
-                // bgColor={t.colors.backgroundHighlightInputColor}
-                bgColor={Color.ofHex("#222B38")}
+                bgColor={t.colors.backgroundHighlightColor}
+                // bgColor={Color.ofHex("#222B38")}
                 elements={[
                     this.a("content-root")
                 ]}
