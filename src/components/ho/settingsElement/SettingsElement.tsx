@@ -51,6 +51,8 @@ export type SettingsElementProps = WithVisualMeaning & {
     quickChildElements?: (element: SettingsElement) => Array<JSX.Element>,
 
     deactivateOnClick?: boolean
+
+    alternateTitleRenderer?: (element: SettingsElement) => JSX.Element
 }
 
 export type SettingsElementLocalState = {
@@ -63,6 +65,11 @@ export class SettingsElement extends BernieComponent<SettingsElementProps, any, 
         super(props, undefined, {
             processing: false
         });
+    }
+
+    init() {
+        super.init();
+        this.titleAssembly();
     }
 
     private onSelect(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
@@ -155,6 +162,28 @@ export class SettingsElement extends BernieComponent<SettingsElementProps, any, 
         this.rerender("appendix");
     }
 
+    private titleAssembly() {
+        this.assembly.assembly("title", theme => {
+            if (this.props.alternateTitleRenderer !== undefined) {
+                return (
+                    <Flex margin={createMargin(0, 0, 0, theme.gaps.smallGab.times(2).withPlus(26).measurand)} elements={[
+                        this.props.alternateTitleRenderer(this)
+                    ]}/>
+                );
+            }
+
+            return (
+                <Text
+                    // TODO: Add visual meaning
+                    cursor={Cursor.pointer}
+                    text={this.props.title}
+                    whitespace={"nowrap"}
+                    margin={createMargin(0, 0, 0, theme.gaps.smallGab.times(2).withPlus(26).measurand)}
+                />
+            );
+        })
+    }
+
     componentRender(p: SettingsElementProps, s: any, l: SettingsElementLocalState, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         return (
             <FlexBox width={percent(100)} align={Align.START} gap={t.gaps.smallGab}>
@@ -200,13 +229,7 @@ export class SettingsElement extends BernieComponent<SettingsElementProps, any, 
                                             }/>
                                     }/>
                                 }/>
-                                <Text
-                                    // TODO: Add visual meaning
-                                    cursor={Cursor.pointer}
-                                    text={p.title}
-                                    whitespace={"nowrap"}
-                                    margin={createMargin(0, 0, 0, t.gaps.smallGab.times(2).withPlus(26).measurand)}
-                                />
+                                {this.a("title")}
                             </FlexBox>
 
                             <FlexBox align={Align.CENTER} style={{

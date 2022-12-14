@@ -13,9 +13,12 @@ export interface IAtlasAPI {
     deleteFolder(id: string): boolean;
     deleteCategory(id: string): boolean;
     deleteDocument(id: string): boolean;
+
+    // TODO: Make IPredicate inline lambda
     getAllDocuments(...predicates: Array<IPredicate<AtlasDocument>>): Array<AtlasDocument>;
     getAllFolders(...predicates: Array<IPredicate<Folder>>): Array<Folder>;
     getAllCategories(...predicates: Array<IPredicate<Category>>): Array<Category>;
+
     createDocument(...data: Array<AtlasDocument>): boolean;
     createCategory(...data: Array<Category>): boolean;
     createFolder(...data: Array<Folder>): boolean;

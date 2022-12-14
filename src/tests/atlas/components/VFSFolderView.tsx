@@ -311,11 +311,13 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
         //  - For the main mux to work the opening logic has to be nealy reverted back to classic openDocument logic -> mux logic
         // Open a new DocumentViewController instance with the chosen document selected
         this.dialog((
-            <DocumentViewController
-                view={this}
-                document={data}
-                updateBody={body => this.updateBody(data.id, body)}
-            />
+            <Screen deactivatePadding children={
+                <DocumentViewController
+                    view={this}
+                    document={data}
+                    updateBody={body => this.updateBody(data.id, body)}
+                />
+            }/>
         ), () => {
             // Remove the persistent updater
             this.ls().documentBodyUpdaters.delete(data.id)
@@ -593,6 +595,7 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                 }
             });
 
+            // TODO: Remove empty jsx -> is part of FolderList already
             return (
                 <Flex fw elements={[
                     <Flex fw elements={[
@@ -905,9 +908,8 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
                 <Screen deactivatePadding children={
                     <Centered fullHeight children={
                         <Flex align={Align.CENTER} elements={[
-                            <Text text={"Atlas"}/>,
-                            <Description text={"Loading"}/>,
-                            <LinearProgress variant={"indeterminate"}/>,
+                            <Text text={"Atlas"} renderMarkdown={false}/>,
+                            <Description text={"Loading"} renderMarkdown={false}/>
                         ]}/>
                     }/>
                 }/>
