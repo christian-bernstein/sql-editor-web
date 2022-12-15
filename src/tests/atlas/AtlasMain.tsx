@@ -11,7 +11,7 @@ import {IAtlasAPI} from "./api/IAtlasAPI";
 import {FolderComponent} from "./components/FolderComponent";
 import {FolderPreviewComponent} from "./components/FolderPreviewComponent";
 import {Button} from "../../components/lo/Button";
-import {percent, px} from "../../logic/style/DimensionalMeasured";
+import {percent, px, vw} from "../../logic/style/DimensionalMeasured";
 import {FolderSetupDialog} from "./components/FolderSetupDialog";
 import {Folder} from "./data/Folder";
 import {StaticDrawerMenu} from "../../components/lo/StaticDrawerMenu";
@@ -52,6 +52,8 @@ import {FileInput} from "../../components/ho/fileInput/FileInput";
 import {UpstreamTransactionType} from "../../frameworks/hyperion/UpstreamTransactionType";
 import {EntityMovePromptComponent} from "./components/EntityMovePromptComponent";
 import {Description} from "../../components/lo/Description";
+import {AtlasLogo} from "./components/branding/AtlasLogo";
+import {isMobile} from "react-device-detect";
 
 export type AtlasMainProps = {
     api: IAtlasAPI
@@ -64,6 +66,7 @@ export type AtlasMainLocalState = {
     vfsFolderViewOpened: boolean,
     iconDict: IconDict,
     keyCommandOrchestrator: CommandOrchestrator
+    displayLoadingScreen: boolean
 }
 
 export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
@@ -79,7 +82,8 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
         super(props, undefined, {
             vfsFolderViewOpened: false,
             iconDict: atlasIconDict,
-            keyCommandOrchestrator: new CommandOrchestrator()
+            keyCommandOrchestrator: new CommandOrchestrator(),
+            displayLoadingScreen: true
         });
     }
 
@@ -88,6 +92,7 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
         AtlasMain.atlasInstance = this;
         HyperionAPI.hyperion(prop => prop.setStreamAdapter(new HyperionIndexedDBStreamAdapter()), () => new HyperionAPI());
         this.folderAssembly();
+        this.loadingDisplayAssembly();
 
         this.ls().keyCommandOrchestrator.registerCommand({
             title: "Toggle",
@@ -268,6 +273,8 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
         super.componentDidMount();
         this.registerGloriaCommandInput();
         this.initKeyCommandOrchestrator();
+
+        this.setLoadingScreen(false);
     }
 
     componentWillUnmount() {
@@ -523,6 +530,12 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
         });
     }
 
+    private setLoadingScreen(showLoadingScreen: boolean) {
+        this.local.setStateWithChannels({
+            displayLoadingScreen: showLoadingScreen
+        }, ["loading-display"]);
+    }
+
     // ASSEMBLIES
 
     private folderAssembly() {
@@ -761,30 +774,63 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
         })
     }
 
-    componentRender(p: any, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
-        return (
-            <AF elements={[
-                // Visual content
+    private loadingDisplayAssembly() {
+        this.assembly.assembly("loading-display", theme => {
+            if (isMobile) {
+                return (
+                    <Screen deactivatePadding children={
+                        <Centered fullHeight children={
+                            <Flex align={Align.CENTER} elements={[
+                                <AtlasLogo width={vw(50)}/>,
+                                <Description text={"Loading"} fontSize={px(20)} renderMarkdown={true}/>
+                            ]}/>
+                        }/>
+                    }/>
+                );
+            }
+
+            return (
                 <Screen deactivatePadding children={
-                    <Flex fh fw align={Align.CENTER} elements={[
-                        this.a("folder")
-                    ]}/>
-                }/>,
+                    <Centered fullHeight children={
+                        <Flex align={Align.CENTER} elements={[
+                            <AtlasLogo width={vw(10)}/>,
+                            <Description text={"Loading"} fontSize={px(20)} renderMarkdown={true}/>
+                        ]}/>
+                    }/>
+                }/>
+            );
+        });
+    }
 
-                // logic components
-                <HOCWrapper body={() => <></>} componentDidMount={wrapper => {
-                    this.local.setState({
-                        gloriaDialogHOCWrapper: wrapper
-                    });
-                }}/>,
+    componentRender(p: any, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
+        return this.component(local => {
+            // Display the loading screen
+            if (local.state.displayLoadingScreen) return this.a("loading-display");
+            // Display the general website
+            return (
+                <AF elements={[
+                    // Visual content
+                    <Screen deactivatePadding children={
+                        <Flex fh fw align={Align.CENTER} elements={[
+                            this.a("folder")
+                        ]}/>
+                    }/>,
 
-                // key command hint components
-                <HOCWrapper body={() => <></>} componentDidMount={wrapper => {
-                    this.local.setState({
-                        keyCommandDialogHOCWrapper: wrapper
-                    });
-                }}/>
-            ]}/>
-        );
+                    // logic components
+                    <HOCWrapper body={() => <></>} componentDidMount={wrapper => {
+                        this.local.setState({
+                            gloriaDialogHOCWrapper: wrapper
+                        });
+                    }}/>,
+
+                    // key command hint components
+                    <HOCWrapper body={() => <></>} componentDidMount={wrapper => {
+                        this.local.setState({
+                            keyCommandDialogHOCWrapper: wrapper
+                        });
+                    }}/>
+                ]}/>
+            )
+        }, "loading-display");
     }
 }

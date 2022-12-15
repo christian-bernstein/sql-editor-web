@@ -5,7 +5,7 @@ import {Screen} from "../../../components/lo/Page";
 import {Flex, FlexRow} from "../../../components/lo/FlexBox";
 import {FlexDirection} from "../../../logic/style/FlexDirection";
 import {Text, TextType} from "../../../components/lo/Text";
-import {percent, px} from "../../../logic/style/DimensionalMeasured";
+import {percent, px, vw} from "../../../logic/style/DimensionalMeasured";
 import {ReactComponent as SettingsIcon} from "../../../assets/icons/ic-20/ic20-settings.svg";
 import {Icon} from "../../../components/lo/Icon";
 import {Justify} from "../../../logic/style/Justify";
@@ -59,6 +59,7 @@ import {Optional} from "../../../logic/Optional";
 import {Centered} from "../../../components/lo/PosInCenter";
 import {Description} from "../../../components/lo/Description";
 import {LinearProgress} from "@mui/material";
+import {AtlasLogo} from "./branding/AtlasLogo";
 
 export type VFSFolderViewProps = {
     initialFolderID?: string,
@@ -904,12 +905,25 @@ export class VFSFolderView extends BC<VFSFolderViewProps, any, VFSFolderViewLoca
 
     private loadingInterruptAssembly() {
         this.assembly.assembly("loading-interrupt", theme => {
+            if (isMobile) {
+                return (
+                    <Screen deactivatePadding children={
+                        <Centered fullHeight children={
+                            <Flex align={Align.CENTER} elements={[
+                                <AtlasLogo width={vw(50)}/>,
+                                <Description text={"Loading"} fontSize={px(20)} renderMarkdown={true}/>
+                            ]}/>
+                        }/>
+                    }/>
+                );
+            }
+
             return (
                 <Screen deactivatePadding children={
                     <Centered fullHeight children={
                         <Flex align={Align.CENTER} elements={[
-                            <Text text={"Atlas"} renderMarkdown={false}/>,
-                            <Description text={"Loading"} renderMarkdown={false}/>
+                            <AtlasLogo width={vw(10)}/>,
+                            <Description text={"Loading"} fontSize={px(20)} renderMarkdown={true}/>
                         ]}/>
                     }/>
                 }/>

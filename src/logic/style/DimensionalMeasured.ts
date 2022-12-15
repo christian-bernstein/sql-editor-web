@@ -97,6 +97,11 @@ export function vh(measurand: number = 0): DimensionalMeasured {
 }
 
 // noinspection SpellCheckingInspection
+export function vw(measurand: number = 0): DimensionalMeasured {
+    return dimension(measurand, Dimension.vw);
+}
+
+// noinspection SpellCheckingInspection
 export function em(measurand: number = 0): DimensionalMeasured {
     return dimension(measurand, Dimension.em);
 }
