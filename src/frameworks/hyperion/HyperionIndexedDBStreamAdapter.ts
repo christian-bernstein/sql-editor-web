@@ -3,26 +3,9 @@ import {Consumer} from "../../logic/Consumer";
 import {UpstreamCacheStreamCompletedResult} from "./UpstreamCacheStreamCompletedResult";
 import {HyperionStorableEntry} from "./HyperionStorableEntry";
 import {HyperionUpstreamTransaction} from "./HyperionUpstreamTransaction";
-import Dexie, {Table} from "dexie";
-import {DBFile, FileDB} from "../../pages/unit/tests/DBTest";
 import {UpstreamTransactionType} from "./UpstreamTransactionType";
-
-export interface DBHyperionEntry {
-    id?: string,
-    value?: string
-}
-
-export class HyperionDB extends Dexie {
-
-    public entries!: Table<DBHyperionEntry>
-
-    constructor() {
-        super("HyperionDB");
-        this.version(1).stores({
-            entries: "id,value"
-        });
-    }
-}
+import {DBHyperionEntry} from "./DBHyperionEntry";
+import {HyperionDB} from "./HyperionDB";
 
 export class HyperionIndexedDBStreamAdapter implements IHyperionStreamAdapter {
 

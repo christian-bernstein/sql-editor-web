@@ -2,7 +2,7 @@ import {TheiaSource} from "./TheiaSource";
 import {TheiaLoadResult} from "./TheiaLoadResult";
 
 export interface ITheiaNode {
-    getDataSpan(): Array<string>;
+    getDataSpan(): Promise<Array<string>>;
     addSource(source: TheiaSource): Promise<boolean>;
     getSourceDescriptors(ids: Array<string>): Promise<Array<TheiaSource>>;
     getAllSourceDescriptors(): Promise<Array<TheiaSource>>;
