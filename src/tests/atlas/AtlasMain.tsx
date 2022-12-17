@@ -54,6 +54,8 @@ import {EntityMovePromptComponent} from "./components/EntityMovePromptComponent"
 import {Description} from "../../components/lo/Description";
 import {AtlasLogo} from "./components/branding/AtlasLogo";
 import {isMobile} from "react-device-detect";
+import {TheiaAPI} from "../../frameworks/theia/TheiaAPI";
+import {TheiaLocalDBNode} from "../../frameworks/theia/TheiaLocalDBNode";
 
 export type AtlasMainProps = {
     api: IAtlasAPI
@@ -90,7 +92,11 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
     init() {
         super.init();
         AtlasMain.atlasInstance = this;
+        // Init hyperion api
         HyperionAPI.hyperion(prop => prop.setStreamAdapter(new HyperionIndexedDBStreamAdapter()), () => new HyperionAPI());
+        // Init theia api
+        TheiaAPI.theia(prop => prop.addNode("local", new TheiaLocalDBNode()), () => new TheiaAPI());
+
         this.folderAssembly();
         this.loadingDisplayAssembly();
 
