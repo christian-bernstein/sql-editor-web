@@ -61,6 +61,7 @@ import {Centered} from "../../components/lo/PosInCenter";
 import {CircularProgress} from "@mui/material";
 import {HyperionTest} from "./tests/HyperionTest";
 import {HyperionImageTest} from "./tests/HyperionImageTest";
+import {DiffStreamerTest} from "./tests/DiffStreamerTest";
 
 export type UnitTestPageLocalState = {
     fdh: FormDataHub
@@ -78,6 +79,7 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
         UnitTestUtils.createTest(CommandPaletteTest.test);
         UnitTestUtils.createTest(HyperionTest.test);
         UnitTestUtils.createTest(HyperionImageTest.test);
+        UnitTestUtils.createTest(DiffStreamerTest.test);
     }
 
     constructor() {
