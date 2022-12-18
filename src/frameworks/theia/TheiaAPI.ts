@@ -77,16 +77,24 @@ export class TheiaAPI implements ITheiaAPI {
         });
     }
 
-    private getSpanningNode(sourceID: string): Optional<ITheiaNode> {
-        return Array
-            .from(this.nodes)
-            .map(e => e[1])
-            .find(node => node.getDataSpan().includes(sourceID))
+    private getSpanningNode(sourceID: string): Promise<Optional<ITheiaNode>> {
+        return new Promise<Optional<ITheiaNode>>((resolve, reject) => {
+            try {
+                const node = Array.from(this.nodes).map(e => e[1]).find(async node => {
+                    const span = await node.getDataSpan();
+                    return span.includes(sourceID);
+                });
+                if (node !== undefined) resolve(node);
+                resolve(undefined);
+            } catch (e) {
+                reject(e);
+            }
+        });
     }
 
     private withSpanningNode<T>(sourceID: string, withNode: (node: ITheiaNode, resolve: (value: (T | PromiseLike<T>)) => void, reject: (reason?: any) => void) => void): Promise<T> {
-        return new Promise((resolve, reject) => {
-            const node = this.getSpanningNode(sourceID);
+        return new Promise(async (resolve, reject) => {
+            const node = await this.getSpanningNode(sourceID);
             if (node === undefined) reject();
             withNode(node!, resolve, reject);
         });
