@@ -15,7 +15,7 @@ export class Button extends BC<ButtonProps, any, any> {
 
     componentRender(p: ButtonProps, s: any, l: any, t: Themeable.Theme, a: Assembly): JSX.Element | undefined {
         const Button = styled.button`
-          padding: 10px 31px;
+          padding: 7px 31px;
           border: solid 2px black;
           background-color: transparent;
           transition: all 150ms ease-in-out;
@@ -62,7 +62,8 @@ export class Button extends BC<ButtonProps, any, any> {
         return (
             <Button style={p.style} onClick={event => p.onClick?.(event)} children={
                 <Typography text={p.text} style={{
-                    textTransform: "uppercase"
+                    textTransform: "uppercase",
+                    lineHeight: "17px"
                 }}/>
             }/>
         );

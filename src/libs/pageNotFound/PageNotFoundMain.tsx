@@ -17,6 +17,9 @@ import {Align} from "../sql/logic/style/Align";
 import Illustration404 from "./assets/404-illustration.png";
 import {PortfolioAPI} from "../portfolio/PortfolioAPI";
 import {MainFooter} from "../portfolio/components/MainFooter";
+import {MainHeader} from "../portfolio/components/MainHeader";
+import {MouseParallaxChild, MouseParallaxContainer} from "react-parallax-mouse";
+import {OverflowBehaviour} from "../sql/logic/style/OverflowBehaviour";
 
 export class PageNotFoundMain extends BC<any, any, any> {
 
@@ -33,7 +36,9 @@ export class PageNotFoundMain extends BC<any, any, any> {
                     height={percent(100)}
                     staticContainer={{
                         elements: [
-                            <MainFooter/>
+                            <MainFooter
+                                showLogo={false}
+                            />
                         ]
                     }}
                     overflowContainer={{
@@ -91,7 +96,7 @@ export class PageNotFoundMain extends BC<any, any, any> {
                     }}
                     staticContainerHeader={{
                         elements: [
-
+                            <MainHeader/>
                         ]
                     }}
                 />
