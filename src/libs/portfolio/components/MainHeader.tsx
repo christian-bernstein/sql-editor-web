@@ -58,7 +58,7 @@ export class MainHeader extends BC<any, any, any> {
                         <Icon colored color={Color.ofHex("#000000")} icon={<GitHub/>}/>,
                         <Icon colored color={Color.ofHex("#000000")} icon={<LinkedIn/>}/>,
                         <Icon colored color={Color.ofHex("#000000")} icon={<Instagram/>}/>,
-                        <Icon colored color={Color.ofHex("#000000")} style={{ transform: "rotate(90deg)" }} icon={<Twitter/>}/>,
+                        <Icon colored color={Color.ofHex("#000000")} icon={<Twitter/>}/>,
 
                         <Button text={"Contact"}/>
                     ]}/>
