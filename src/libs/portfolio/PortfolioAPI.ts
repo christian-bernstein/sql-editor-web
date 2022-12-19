@@ -21,7 +21,8 @@ export class PortfolioAPI {
             discordLink: "",
             instagramLink: "",
             linkedinLink: "",
-            twitterLink: ""
+            twitterLink: "",
+            githubLink: "https://github.com/christian-bernstein"
         }
     }
 

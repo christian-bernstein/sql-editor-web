@@ -26,7 +26,7 @@ export class NavElement extends BC<NavElementProps, any, any> {
             width: 80%;
             height: 2px;
             background-color: black;
-            opacity: 0;
+            opacity: ${(p.fixedActive ?? false) ? 1 : 0};
             transition: opacity 100ms ease-in-out;
           }
           

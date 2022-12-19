@@ -11,6 +11,10 @@ import {Typography} from "../../../comsys/renaissance/components/Typography";
 import {Align} from "../../sql/logic/style/Align";
 import {TextLink} from "../../../comsys/renaissance/components/TextLink";
 import {NavElement} from "../../../comsys/renaissance/components/NavElement";
+import {Icon} from "../../sql/components/lo/Icon";
+import {GitHub, Instagram, LinkedIn, Twitter} from "@mui/icons-material";
+import {ReactComponent as Discord} from "../../../comsys/renaissance/assets/discord-mark-black.svg";
+import {Color} from "../../sql/logic/style/Color";
 
 export class MainFooter extends BC<any, any, any> {
 
@@ -21,13 +25,22 @@ export class MainFooter extends BC<any, any, any> {
             <Flex fw gap={px(50)} elements={[
 
                 // Upper line :: Sitemap & social links
-                <FlexRow fw align={Align.CENTER} elements={[
+                <FlexRow fw justifyContent={Justify.SPACE_BETWEEN} align={Align.CENTER} elements={[
                     // Left side :: Sitemap
                     <FlexRow align={Align.CENTER} gap={px(36)} elements={[
                         <NavElement href={"/"} title={"Home"}/>,
                         <NavElement href={"portfolio"} title={"Portfolio"}/>,
                         <NavElement href={"work"} title={"Work"}/>,
                         <NavElement href={"bernie-suite"} title={"Bernie suite"}/>
+                    ]}/>,
+
+                    // Right side :: social links
+                    <FlexRow justifyContent={Justify.FLEX_END} align={Align.CENTER} gap={px(23)} elements={[
+                        <Icon colored color={Color.ofHex("#000000")} icon={<Discord/>}/>,
+                        <Icon colored color={Color.ofHex("#000000")} icon={<GitHub/>}/>,
+                        <Icon colored color={Color.ofHex("#000000")} icon={<LinkedIn/>}/>,
+                        <Icon colored color={Color.ofHex("#000000")} icon={<Instagram/>}/>,
+                        <Icon colored color={Color.ofHex("#000000")} style={{ transform: "rotate(90deg)" }} icon={<Twitter/>}/>,
                     ]}/>
 
                 ]}/>,

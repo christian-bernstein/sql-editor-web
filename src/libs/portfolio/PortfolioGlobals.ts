@@ -4,5 +4,6 @@ export type PortfolioGlobals = {
     linkedinLink: string,
     twitterLink: string,
     instagramLink: string,
-    discordLink: string
+    discordLink: string,
+    githubLink: string
 }
