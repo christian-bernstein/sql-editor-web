@@ -1,5 +1,5 @@
 import {BernieComponent} from "../../../logic/BernieComponent";
-import {EditorCommandError} from "../../../pages/editor/EditorCommandError";
+import {EditorCommandError} from "../../../libs/sql/pages/editor/EditorCommandError";
 import {Themeable} from "../../../logic/style/Themeable";
 import {Assembly} from "../../../logic/assembly/Assembly";
 import {ObjectVisualMeaning} from "../../../logic/style/ObjectVisualMeaning";

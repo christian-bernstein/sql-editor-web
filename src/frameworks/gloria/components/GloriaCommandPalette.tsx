@@ -24,10 +24,10 @@ import {ReactComponent as ContextMenuIcon} from "../../../assets/icons/ic-20/ic2
 import {createMargin} from "../../../logic/style/Margin";
 import {OverflowBehaviour} from "../../../logic/style/OverflowBehaviour";
 import {AF} from "../../../components/logic/ArrayFragment";
-import {ConfigManager} from "../../../tests/atlas/config/ConfigManager";
+import {ConfigManager} from "../../../libs/atlas/config/ConfigManager";
 import {
     LocalStorageConfigManagerPersistentAdapter
-} from "../../../tests/atlas/config/LocalStorageConfigManagerPersistentAdapter";
+} from "../../../libs/atlas/config/LocalStorageConfigManagerPersistentAdapter";
 import {GloriaCommandPaletteConfig} from "../config/GloriaCommandPaletteConfig";
 import {KeyHint} from "../../../components/lo/KeyHint";
 import {Centered} from "../../../components/lo/PosInCenter";

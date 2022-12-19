@@ -4,7 +4,7 @@ import {Redirect, Route, Switch} from "react-router-dom";
 import React from "react";
 import {ViewConfig} from "./ViewConfig";
 import {ViewRenderContext} from "./ViewRenderContext";
-import {BoardingPage} from "../../pages/boarding/BoardingPage";
+import {BoardingPage} from "../../libs/sql/pages/boarding/BoardingPage";
 import {FlexBox} from "../../components/lo/FlexBox";
 import {Icon} from "../../components/lo/Icon";
 import {ReactComponent as TestIcon} from "../../assets/icons/ic-20/ic20-alert.svg";
@@ -29,10 +29,10 @@ import {Text} from "../../components/lo/Text";
 import {If} from "../../components/logic/If";
 import {BadgedWrapper} from "../../components/lo/BadgedWrapper";
 import {Badge} from "../../components/lo/Badge";
-import DashboardPage from "../../pages/dashboard/DashboardPage";
-import {UnitTestPage} from "../../pages/unit/UnitTestPage";
+import DashboardPage from "../../libs/sql/pages/dashboard/DashboardPage";
+import {UnitTestPage} from "../../libs/sql/pages/unit/UnitTestPage";
 import {EpicureHubPage} from "../../tests/epicure/pages/hub/EpicureHubPage";
-import {DocumentationPage} from "../../pages/documentation/DocumentationPage";
+import {DocumentationPage} from "../../libs/sql/pages/documentation/DocumentationPage";
 
 export class ScreenManager {
 

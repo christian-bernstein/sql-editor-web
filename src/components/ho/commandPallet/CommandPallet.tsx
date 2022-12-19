@@ -10,7 +10,7 @@ import {FlexDirection} from "../../../logic/style/FlexDirection";
 import {Separator} from "../../lo/Separator";
 import {CodeEditor} from "../../lo/CodeEditor";
 import {cs} from "../../../logic/state/State";
-import {DebugEditorLocalState} from "../../../pages/editor/debug/DebugEditor";
+import {DebugEditorLocalState} from "../../../libs/sql/pages/editor/debug/DebugEditor";
 
 export type CommandPalletProps = {
     isOpen: boolean

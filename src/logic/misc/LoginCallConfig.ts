@@ -1,4 +1,4 @@
-import {Credentials} from "../../pages/login/Credentials";
+import {Credentials} from "../../libs/sql/pages/login/Credentials";
 
 export type LoginCallConfig = {
     initialLoginProcedure: "session" | "session-credentials" | "credentials"

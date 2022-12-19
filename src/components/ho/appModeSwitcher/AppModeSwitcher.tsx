@@ -11,7 +11,7 @@ import {ObjectVisualMeaning, VM} from "../../../logic/style/ObjectVisualMeaning"
 import {Justify} from "../../../logic/style/Justify";
 import {Align} from "../../../logic/style/Align";
 import {HOCWrapper} from "../../HOCWrapper";
-import {AppPageMode} from "../../../pages/app/AppPageMode";
+import {AppPageMode} from "../../../libs/sql/pages/app/AppPageMode";
 import {getOr} from "../../../logic/Utils";
 import React, {useEffect, useState} from "react";
 import {Step as MUIStep, StepContent, StepLabel, Stepper} from "@mui/material";

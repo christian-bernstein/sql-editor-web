@@ -3,7 +3,7 @@ import {Assembly} from "../../../logic/assembly/Assembly";
 import {Themeable} from "../../../logic/style/Themeable";
 import {Box} from "../../lo/Box";
 import {ElementHeader} from "../../lo/ElementHeader";
-import {SavedCommand} from "../../../pages/editor/SavedCommand";
+import {SavedCommand} from "../../../libs/sql/pages/editor/SavedCommand";
 import {Text} from "../../lo/Text";
 import {CodeEditor} from "../../lo/CodeEditor";
 import {Button} from "../../lo/Button";

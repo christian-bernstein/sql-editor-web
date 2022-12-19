@@ -1,9 +1,9 @@
 import {Program} from "./Program";
 import {LocatableProgram} from "./LocatableProgram";
 import {Screen} from "../components/lo/Page";
-import {AppPageMode} from "../pages/app/AppPageMode";
+import {AppPageMode} from "../libs/sql/pages/app/AppPageMode";
 import {getOr} from "../logic/Utils";
-import {AppPage} from "../pages/app/AppPage";
+import {AppPage} from "../libs/sql/pages/app/AppPage";
 
 export class Driver {
 

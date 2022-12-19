@@ -1,10 +1,10 @@
-import {Editor} from "../../pages/editor/Editor";
+import {Editor} from "../../libs/sql/pages/editor/Editor";
 import {SessionCommandType} from "../data/SessionCommandType";
 import {App, utilizeGlobalTheme} from "../app/App";
 import {ProjectInfoData} from "../data/ProjectInfoData";
 import {SQLCommandQueryResponsePacketData} from "../../libs/sql/packets/in/SQLCommandQueryResponsePacketData";
-import {ScriptResult} from "../../pages/editor/tabs/scripting/ScriptResult";
-import {SimpleInputConfig} from "../../pages/editor/tabs/scripting/SimpleInputConfig";
+import {ScriptResult} from "../../libs/sql/pages/editor/tabs/scripting/ScriptResult";
+import {SimpleInputConfig} from "../../libs/sql/pages/editor/tabs/scripting/SimpleInputConfig";
 import {Screen} from "../../components/lo/Page";
 import {Box} from "../../components/lo/Box";
 import {percent, px} from "../style/DimensionalMeasured";
