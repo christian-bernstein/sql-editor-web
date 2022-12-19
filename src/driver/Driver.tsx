@@ -5,6 +5,7 @@ import {AppPageMode} from "../libs/sql/pages/app/AppPageMode";
 import {getOr} from "../libs/sql/logic/Utils";
 import {AppPage} from "../libs/sql/pages/app/AppPage";
 import {PortfolioMain} from "../libs/portfolio/PortfolioMain";
+import {PageNotFoundMain} from "../libs/pageNotFound/PageNotFoundMain";
 
 export class Driver {
 
@@ -66,9 +67,7 @@ export class Driver {
 
         this.registerGlobal404Page({
             render: props => (
-                <Screen children={
-                    <p>404</p>
-                }/>
+                <PageNotFoundMain/>
             )
         });
     }
