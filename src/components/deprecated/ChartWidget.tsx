@@ -1,5 +1,5 @@
 import React from "react";
-import "../../styles/components/ChartWidget.scss";
+import "../../libs/sql/styles/components/ChartWidget.scss";
 
 export type ChartWidgetProps = {
     title: string,

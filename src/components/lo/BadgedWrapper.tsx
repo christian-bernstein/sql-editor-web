@@ -1,5 +1,5 @@
 import React from "react";
-import "../../styles/components/BadgedWrapper.scss";
+import "../../libs/sql/styles/components/BadgedWrapper.scss";
 import styled from "styled-components";
 
 export type BadgedWrapperProps = {

@@ -2,7 +2,7 @@ import React from "react";
 import {SessionHistoryEntry} from "../../../logic/misc/SessionHistoryEntry";
 import {ReactComponent as ArrowRight} from "../../../assets/icons/ic-20/ic20-arrow-right.svg";
 import {BarLoader} from "react-spinners";
-import "../../../styles/components/ContinueAs.scss";
+import "../../../libs/sql/styles/components/ContinueAs.scss";
 import {App, utilizeGlobalTheme} from "../../../logic/app/App";
 import {Redirect} from "react-router-dom";
 import {SimpleErrorBadge} from "../../deprecated/SimpleErrorBadge";

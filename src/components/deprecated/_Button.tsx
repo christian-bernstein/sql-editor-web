@@ -1,5 +1,5 @@
 import React, {CSSProperties, MouseEventHandler} from "react";
-import "../../styles/components/Button.scss";
+import "../../libs/sql/styles/components/Button.scss";
 import {ComponentStyle} from "../../logic/style/ComponentStyle";
 
 export type ButtonProps = {

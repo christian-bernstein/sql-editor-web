@@ -1,4 +1,4 @@
-import "../../styles/components/Annotation.scss";
+import "../../libs/sql/styles/components/Annotation.scss";
 import React from "react";
 
 export type AnnotationProps = {

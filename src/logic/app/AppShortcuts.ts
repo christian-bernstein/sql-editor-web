@@ -1,5 +1,5 @@
 import {App} from "./App";
-import {QuickActionShard} from "../../shards/quickAction/QuickActionShard";
+import {QuickActionShard} from "../../libs/sql/shards/quickAction/QuickActionShard";
 
 export class AppShortcuts {
 

@@ -14,7 +14,7 @@ import {ReactComponent as CloseIcon} from "../../../assets/icons/ic-20/ic20-clos
 import {ReactComponent as TableIcon} from "../../../assets/icons/ic-20/ic20-view-table.svg";
 import {App, utilizeGlobalTheme} from "../../../logic/app/App";
 import {Text, TextType} from "../../../components/lo/Text";
-import {DBSessionCacheShard} from "../../../shards/dbSessionCache/DBSessionCacheShard";
+import {DBSessionCacheShard} from "../../../libs/sql/shards/dbSessionCache/DBSessionCacheShard";
 import {percent, px} from "../../../logic/style/DimensionalMeasured";
 import {Box} from "../../../components/lo/Box";
 import {ObjectVisualMeaning} from "../../../logic/style/ObjectVisualMeaning";

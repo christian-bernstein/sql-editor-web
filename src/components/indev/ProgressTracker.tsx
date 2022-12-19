@@ -1,4 +1,4 @@
-import "../../styles/components/ProjectTracker.scss";
+import "../../libs/sql/styles/components/ProjectTracker.scss";
 import React from "react";
 import {App} from "../../logic/app/App";
 import {TaskInformation} from "../../logic/misc/TaskInformation";

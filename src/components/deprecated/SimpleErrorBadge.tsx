@@ -1,5 +1,5 @@
 import React from "react";
-import "../../styles/components/SimpleErrorBadge.scss";
+import "../../libs/sql/styles/components/SimpleErrorBadge.scss";
 import {ReactComponent as ErrorIcon} from "../../assets/icons/ic-16/ic16-warning.svg";
 
 export class SimpleErrorBadge extends React.Component<any, any> {

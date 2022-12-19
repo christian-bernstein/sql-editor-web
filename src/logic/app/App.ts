@@ -26,10 +26,10 @@ import {ScreenManager} from "../screen/ScreenManager";
 import {AppShortcuts} from "./AppShortcuts";
 import {Cache} from "../cache/Cache";
 import {ModalDisplay} from "../modal/ModalDisplay";
-import {NetworkShard} from "../../shards/network/NetworkShard";
-import {DBSessionCacheShard} from "../../shards/dbSessionCache/DBSessionCacheShard";
-import {LocalStorageShard} from "../../shards/localStorage/LocalStorageShard";
-import {SettingsShard} from "../../shards/settings/SettingsShard";
+import {NetworkShard} from "../../libs/sql/shards/network/NetworkShard";
+import {DBSessionCacheShard} from "../../libs/sql/shards/dbSessionCache/DBSessionCacheShard";
+import {LocalStorageShard} from "../../libs/sql/shards/localStorage/LocalStorageShard";
+import {SettingsShard} from "../../libs/sql/shards/settings/SettingsShard";
 
 export function utilizeApp(): App {
     return App.app();

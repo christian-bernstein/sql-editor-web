@@ -1,0 +1,98 @@
+@import "../themes.css";
+
+.session-history-entry {
+  width: 100%;
+  max-width: 100%;
+  border-radius: $border-radius;
+  font-family: "OperatorMono", monospace;
+  align-items: center;
+  text-align: center;
+  letter-spacing: 0.03em;
+  font-size: 16px;
+  font-weight: bold;
+  border: 1px solid $border-color-secondary;
+  background-color: $background-highlight-color;
+  color: $font-primary-color;
+  padding: 16px 12px;
+  transition: all 100ms linear;
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-gap: 10px;
+  user-select: none;
+  white-space: nowrap;
+  box-sizing: border-box;
+  position: relative;
+  cursor: pointer;
+
+  &:hover {
+    filter: brightness(120%);
+    box-shadow: 0 0 0 4px $border-primary-shadow;
+    border: 1px solid $primary-highlight-color !important;
+  }
+
+  .name-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    overflow: hidden;
+    width: 100%;
+
+    p {
+      font-style: normal;
+      font-weight: 350;
+      font-size: 14px;
+      line-height: 19px;
+      display: flex;
+      align-items: center;
+      text-align: center;
+      letter-spacing: 0.03em;
+      overflow-x: hidden;
+      text-overflow: ellipsis;
+      margin: 0;
+    }
+
+    .name {
+      user-select: text;
+      margin-left: 6px;
+      text-overflow: ellipsis;
+      color: #C6C6C6;
+    }
+
+    .avatar {
+      margin-left: 10px;
+      border-radius: 50%;
+      height: 20px;
+      width: 20px;
+      border: 1px solid $border-color-secondary;
+    }
+
+    .avatar-loader {
+      margin-left: 10px;
+      border-radius: 50%;
+      border: 1px solid $border-color-secondary;
+      height: 20px;
+      width: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+
+      & * {
+        position: absolute;
+        left: 0;
+        top: 0;
+      }
+    }
+  }
+
+  .icon {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    svg {
+      // fill: $primary-color;
+      fill: $primary-highlight-color;
+    }
+  }
+}

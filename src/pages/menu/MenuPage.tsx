@@ -1,5 +1,5 @@
 import React from "react";
-import "../../styles/pages/MenuPage.scss";
+import "../../libs/sql/styles/pages/MenuPage.scss";
 import {App, utilizeGlobalTheme} from "../../logic/app/App";
 import {Text, TextType} from "../../components/lo/Text";
 import {getMeaningfulColors, MeaningfulColors, Themeable} from "../../logic/style/Themeable";

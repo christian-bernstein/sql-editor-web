@@ -1,6 +1,6 @@
 import React, {ForwardedRef} from "react";
-import "../../styles/pages/AppPage.scss";
-import "../../styles/utils.scss";
+import "../../libs/sql/styles/pages/AppPage.scss";
+import "../../libs/sql/styles/utils.scss";
 import "react-tiger-transition/styles/main.min.css";
 import {BrowserRouter, Route, Switch} from "react-router-dom";
 import {DefaultSpecialPages} from "../../logic/misc/DefaultSpecialPages";
@@ -17,7 +17,7 @@ import {SelectAppConfigPageV2} from "../../debug/pages/selectAppConfig/SelectApp
 import {AppConfigSelectionData} from "../../debug/components/AppConfigSelector";
 import {CommandPallet} from "../../components/ho/commandPallet/CommandPallet";
 import {DebugEditor} from "../editor/debug/DebugEditor";
-import {DBSessionCacheShard} from "../../shards/dbSessionCache/DBSessionCacheShard";
+import {DBSessionCacheShard} from "../../libs/sql/shards/dbSessionCache/DBSessionCacheShard";
 import {RegexPage} from "../../libs/regex/RegexPage";
 import {Assembly} from "../../logic/assembly/Assembly";
 import {Slide, SwipeableDrawer, ThemeProvider} from "@mui/material";
@@ -49,13 +49,13 @@ import {ClientDisplayPlaygroundDialog} from "../../debug/pages/clientDisplay/Cli
 import {MenuPageV2} from "../menu/v2/MenuPageV2";
 import {If} from "../../components/logic/If";
 import {Shard} from "../../logic/misc/Shard";
-import {QuickActionShard} from "../../shards/quickAction/QuickActionShard";
+import {QuickActionShard} from "../../libs/sql/shards/quickAction/QuickActionShard";
 import {LogPageDisplayVersion} from "../log/LogPageDisplayVersion";
 import {ProjectPreview, ProjectPreviewProps} from "../../components/ho/projectPreview/ProjectPreview";
 import {AppPageMode} from "./AppPageMode";
 import {ImportDatasetDialog, ImportDatasetDialogProps} from "../importDatasets/ImportDatasetDialog";
-import {NetworkShard} from "../../shards/network/NetworkShard";
-import {LocalStorageShard} from "../../shards/localStorage/LocalStorageShard";
+import {NetworkShard} from "../../libs/sql/shards/network/NetworkShard";
+import {LocalStorageShard} from "../../libs/sql/shards/localStorage/LocalStorageShard";
 import {UnitTestPage} from "../unit/UnitTestPage";
 import {MenuState} from "../menu/v2/MenuState";
 import {BernieComponent} from "../../logic/BernieComponent";
@@ -67,7 +67,7 @@ import {Box} from "../../components/lo/Box";
 import {AF} from "../../components/logic/ArrayFragment";
 import {MobileNavigation} from "../../components/ho/bottomNavigation/MobileNavigation";
 import {Mobile} from "../../components/logic/Media";
-import {SettingsShard} from "../../shards/settings/SettingsShard";
+import {SettingsShard} from "../../libs/sql/shards/settings/SettingsShard";
 import {FirstJoinIntroductionLauncher} from "../../components/ho/firstJoinIntroduction/FirstJoinIntroductionLauncher";
 
 export type AppPageProps = {

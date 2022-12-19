@@ -1,0 +1,90 @@
+@import "../themes.css";
+@import "../utils.css";
+
+.project-info {
+  @include border();
+
+  cursor: pointer;
+  scroll-snap-align: start;
+  scroll-margin-left: $padding-page;
+  width: 200px;
+  flex: 0 0 200px;
+  position: relative;
+  box-sizing: border-box;
+  padding: 1.2em;
+  border-radius: 27px;
+  border: 1px solid $border-color-secondary;
+
+  .project-header {
+
+    .project-badge {
+      width: 10px;
+      height: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 50%;
+      background-color: $background-highlight-color;
+      padding: 5px;
+
+      svg {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        path {
+          fill: black;
+        }
+      }
+
+      &.offline {
+        background-color: $background-highlight-color;
+      }
+
+      &.error {
+        background-color: $error-color;
+      }
+
+      &.warn {
+        background-color: $warn-color;
+      }
+
+      &.online {
+        background-color: $primary-highlight-color;
+      }
+    }
+
+    .project-contributors {
+
+    }
+  }
+
+  .project-title {
+    margin: .5em 0;
+    font-style: normal;
+    font-weight: bold;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 16px;
+    line-height: 27px;
+    overflow: hidden;
+  }
+
+  .project-charts {
+    width: 100%;
+    display: grid;
+    box-sizing: content-box;
+    grid-gap: .5rem;
+    grid-template:
+            "a" 1fr
+            "b" 1fr;
+
+    :nth-child(1) {
+      grid-area: a;
+    }
+
+    :nth-child(2) {
+      grid-area: b;
+    }
+  }
+}

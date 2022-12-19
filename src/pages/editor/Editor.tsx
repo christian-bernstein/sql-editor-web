@@ -1,4 +1,4 @@
-import "../../styles/pages/EditorPage.scss";
+import "../../libs/sql/styles/pages/EditorPage.scss";
 import React, {ForwardedRef} from "react";
 import {Screen} from "../../components/lo/Page";
 import {LiteGrid} from "../../components/lo/LiteGrid";
@@ -19,7 +19,7 @@ import {ReactComponent as OptionsIcon} from "../../assets/icons/ic-20/ic20-play.
 import {ReactComponent as SaveIcon} from "../../assets/icons/ic-20/ic20-bookmark-add.svg";
 import {App, utilizeGlobalTheme} from "../../logic/app/App";
 import {Text, TextType} from "../../components/lo/Text";
-import {DBSessionCacheShard} from "../../shards/dbSessionCache/DBSessionCacheShard";
+import {DBSessionCacheShard} from "../../libs/sql/shards/dbSessionCache/DBSessionCacheShard";
 import {percent, px} from "../../logic/style/DimensionalMeasured";
 import {Box} from "../../components/lo/Box";
 import {ObjectVisualMeaning} from "../../logic/style/ObjectVisualMeaning";

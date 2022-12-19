@@ -1,4 +1,4 @@
-import "../../styles/pages/LoginPage.scss";
+import "../../libs/sql/styles/pages/LoginPage.scss";
 import React, {ChangeEvent} from "react";
 import {Credentials} from "./Credentials";
 import {CredentialsPreCheckResult} from "./CredentialsPreCheckResult";

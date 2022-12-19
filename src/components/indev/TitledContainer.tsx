@@ -1,5 +1,5 @@
 import React from "react";
-import "../../styles/components/TitledContainer.scss";
+import "../../libs/sql/styles/components/TitledContainer.scss";
 
 export type TitledContainerProps = {
     header: JSX.Element,

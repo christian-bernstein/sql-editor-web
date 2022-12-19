@@ -1,4 +1,4 @@
-import '../styles/App.scss';
+import '../libs/sql/styles/App.scss';
 import React, {Dispatch, useState} from "react";
 import {Button, CssBaseline, Link, Theme, ThemeProvider} from "@mui/material";
 import {Login, LightDarkThemeSwitch} from "../tests/Learning";

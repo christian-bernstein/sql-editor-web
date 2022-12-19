@@ -1,5 +1,5 @@
 import React from "react";
-import "../../styles/pages/DashboardPage.scss";
+import "../../libs/sql/styles/pages/DashboardPage.scss";
 import {ProjectInfo} from "../../components/ho/projectInfo/ProjectInfo";
 import {App, utilizeGlobalTheme} from "../../logic/app/App";
 import {ProjectInfoData} from "../../logic/data/ProjectInfoData";
@@ -17,7 +17,7 @@ import {Icon} from "../../components/lo/Icon";
 import {getOr} from "../../logic/Utils";
 import {Centered} from "../../components/lo/PosInCenter";
 import {em, percent, px} from "../../logic/style/DimensionalMeasured";
-import {DBSessionCacheShard} from "../../shards/dbSessionCache/DBSessionCacheShard";
+import {DBSessionCacheShard} from "../../libs/sql/shards/dbSessionCache/DBSessionCacheShard";
 import {Redirect} from "react-router-dom";
 import {ListProjectResponsePacketData} from "../../libs/sql/packets/in/ListProjectResponsePacketData";
 import {getMeaningfulColors, MeaningfulColors, Themeable} from "../../logic/style/Themeable";
