@@ -1,17 +1,125 @@
-/* Error: Undefined variable.
- *   ,
- * 8 |   padding: $padding-page;
- *   |            ^^^^^^^^^^^^^
- *   '
- *   LoginPage.scss 8:12  root stylesheet */
-
-body::before {
-  font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono",
-      "Droid Sans Mono", monospace, monospace;
-  white-space: pre;
-  display: block;
-  padding: 1em;
-  margin-bottom: 1em;
-  border-bottom: 2px solid black;
-  content: "Error: Undefined variable.\a   \2577 \a 8 \2502    padding: $padding-page;\d\a   \2502             ^^^^^^^^^^^^^\a   \2575 \a   LoginPage.scss 8:12  root stylesheet";
+.login-page {
+  overflow-y: scroll;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  padding: 1.6em;
+  background-color: #171717;
+  color: white;
 }
+.login-page .login-page-foreground {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.login-page .login-page-foreground .l-p-f-header {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  align-items: center;
+}
+.login-page .login-page-foreground .l-p-f-header svg {
+  width: 24px;
+  height: 24px;
+}
+.login-page .login-page-foreground .l-p-f-header .page-name {
+  justify-self: center;
+  color: white;
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  font-style: normal;
+  font-weight: 900;
+  font-size: 14px;
+  line-height: 27px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+.login-page .login-page-foreground .login {
+  gap: 0.6rem;
+}
+
+.state-display {
+  border-radius: 6px;
+  margin-bottom: 1em;
+}
+.state-display:first-child {
+  background-color: #171717;
+  border: 1px solid #30363D;
+  padding: 10px;
+}
+.state-display:first-child .react-json-view {
+  background-color: #222429 !important;
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+  outline: none;
+}
+
+.login {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: #171717;
+}
+.login * {
+  font-family: "OperatorMono", monospace;
+}
+.login .login-btn {
+  border-radius: 6px;
+  height: 2.7rem;
+  color: white;
+  border: 1px solid #30363D;
+  transition: all 200ms;
+  transform: scale(1);
+}
+.login .login-btn.active {
+  background-color: #71D99E;
+}
+.login .login-btn.inactive {
+  background-color: #222429;
+  display: inline-block;
+  color: #4F4F4F;
+}
+.login .login-btn:active {
+  transform: scale(0.99);
+  filter: brightness(105%);
+}
+
+.session {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.session * + * {
+  margin-top: 0.4rem;
+}
+.session .logout-btn {
+  border-radius: 6px;
+  background-color: #71D99E;
+  height: 2.7rem;
+  color: white;
+  border: 1px solid black;
+}
+
+/* Change Autocomplete styles in Chrome*/
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  -webkit-text-fill-color: white;
+  -webkit-box-shadow: 0 0 0 1000px #222429 inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/*# sourceMappingURL=LoginPage.css.map */

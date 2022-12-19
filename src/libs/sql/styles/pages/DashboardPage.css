@@ -1,17 +1,58 @@
-/* Error: Undefined variable.
- *   ,
- * 6 |   padding: $padding-page;
- *   |            ^^^^^^^^^^^^^
- *   '
- *   DashboardPage.scss 6:12  root stylesheet */
-
-body::before {
-  font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono",
-      "Droid Sans Mono", monospace, monospace;
-  white-space: pre;
-  display: block;
-  padding: 1em;
-  margin-bottom: 1em;
-  border-bottom: 2px solid black;
-  content: "Error: Undefined variable.\a   \2577 \a 6 \2502    padding: $padding-page;\d\a   \2502             ^^^^^^^^^^^^^\a   \2575 \a   DashboardPage.scss 6:12  root stylesheet";
+.dashboard-page {
+  width: 100%;
+  height: 100%;
+  padding: 1.6em;
+  background-color: #171717;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
+.dashboard-page .dashboard-header {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.dashboard-page .dashboard-header .left-icons {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 1.4rem;
+}
+.dashboard-page .dashboard-header .left-icons * {
+  fill: white;
+}
+.dashboard-page .dashboard-header .right-icons {
+  display: inline-flex;
+  flex-wrap: wrap;
+  flex-direction: row-reverse;
+  gap: 1.5rem;
+}
+.dashboard-page .dashboard-header .right-icons * {
+  fill: white;
+}
+.dashboard-page .dashboard-content .project-view .project-view-header h2 {
+  font-style: normal;
+  font-weight: bold;
+  font-size: 20px;
+  line-height: 29px;
+  display: flex;
+  align-items: center;
+}
+.dashboard-page .dashboard-content .project-view .project-view-header .projects {
+  margin-left: -1.6em;
+  margin-right: -1.6em;
+  margin-top: 10px;
+  box-sizing: content-box;
+  padding: 0 1.6em;
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  gap: 1em;
+  flex: 0 0 300px;
+  overflow-x: scroll;
+  scroll-snap-type: x mandatory;
+}
+
+/*# sourceMappingURL=DashboardPage.css.map */

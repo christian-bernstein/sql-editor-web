@@ -1,5 +1,5 @@
-@import "../themes.css";
-@import "../utils.css";
+@import "../themes.scss";
+@import "../utils.scss";
 
 .project-info {
   @include border();

@@ -1,17 +1,74 @@
-/* Error: Undefined mixin.
- *   ,
- * 5 |   @include border();
- *   |   ^^^^^^^^^^^^^^^^^
- *   '
- *   ProjectInfo.scss 5:3  root stylesheet */
-
-body::before {
-  font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono",
-      "Droid Sans Mono", monospace, monospace;
-  white-space: pre;
-  display: block;
-  padding: 1em;
-  margin-bottom: 1em;
-  border-bottom: 2px solid black;
-  content: "Error: Undefined mixin.\a   \2577 \a 5 \2502    @include border();\d\a   \2502    ^^^^^^^^^^^^^^^^^\a   \2575 \a   ProjectInfo.scss 5:3  root stylesheet";
+@import "themes.css";
+.project-info {
+  transition: all 100ms linear;
+  cursor: pointer;
+  scroll-snap-align: start;
+  scroll-margin-left: 1.6em;
+  width: 200px;
+  flex: 0 0 200px;
+  position: relative;
+  box-sizing: border-box;
+  padding: 1.2em;
+  border-radius: 27px;
+  border: 1px solid #30363D;
 }
+.project-info:hover {
+  filter: brightness(120%);
+  border: 1px solid #71D99E !important;
+  box-shadow: 0 0 0 4px rgba(113, 217, 158, 0.13);
+}
+.project-info .project-header .project-badge {
+  width: 10px;
+  height: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  background-color: #222429;
+  padding: 5px;
+}
+.project-info .project-header .project-badge svg {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.project-info .project-header .project-badge svg path {
+  fill: black;
+}
+.project-info .project-header .project-badge.offline {
+  background-color: #222429;
+}
+.project-info .project-header .project-badge.error {
+  background-color: #D93240;
+}
+.project-info .project-header .project-badge.warn {
+  background-color: #FBBE63;
+}
+.project-info .project-header .project-badge.online {
+  background-color: #A9E5C3;
+}
+.project-info .project-title {
+  margin: 0.5em 0;
+  font-style: normal;
+  font-weight: bold;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 16px;
+  line-height: 27px;
+  overflow: hidden;
+}
+.project-info .project-charts {
+  width: 100%;
+  display: grid;
+  box-sizing: content-box;
+  grid-gap: 0.5rem;
+  grid-template: "a" 1fr "b" 1fr;
+}
+.project-info .project-charts :nth-child(1) {
+  grid-area: a;
+}
+.project-info .project-charts :nth-child(2) {
+  grid-area: b;
+}
+
+/*# sourceMappingURL=ProjectInfo.css.map */

@@ -1,17 +1,23 @@
-/* Error: Undefined variable.
- *    ,
- * 12 |   color: $error-color;
- *    |          ^^^^^^^^^^^^
- *    '
- *   SimpleErrorBadge.scss 12:10  root stylesheet */
-
-body::before {
-  font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono",
-      "Droid Sans Mono", monospace, monospace;
-  white-space: pre;
-  display: block;
-  padding: 1em;
-  margin-bottom: 1em;
-  border-bottom: 2px solid black;
-  content: "Error: Undefined variable.\a    \2577 \a 12 \2502    color: $error-color;\d\a    \2502           ^^^^^^^^^^^^\a    \2575 \a   SimpleErrorBadge.scss 12:10  root stylesheet";
+.simple-error-badge {
+  margin: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  text-align: right;
+  gap: 3px;
+  border-radius: 5px;
+  padding: 2px 0.5em;
+  color: #D93240;
+  border: 1px solid #D93240;
+  background-color: rgba(217, 50, 64, 0.1);
 }
+.simple-error-badge svg path {
+  fill: #D93240;
+}
+.simple-error-badge .simple-error-badge-text {
+  margin: 0;
+  font-size: 11px;
+  font-weight: lighter;
+}
+
+/*# sourceMappingURL=SimpleErrorBadge.css.map */

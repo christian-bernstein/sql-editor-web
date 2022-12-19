@@ -1,17 +1,30 @@
-/* Error: Undefined variable.
- *    ,
- * 14 |     border: 1px solid $border-color-secondary;
- *    |                       ^^^^^^^^^^^^^^^^^^^^^^^
- *    '
- *   Button.scss 14:23  root stylesheet */
-
-body::before {
-  font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono",
-      "Droid Sans Mono", monospace, monospace;
-  white-space: pre;
-  display: block;
-  padding: 1em;
-  margin-bottom: 1em;
-  border-bottom: 2px solid black;
-  content: "Error: Undefined variable.\a    \2577 \a 14 \2502      border: 1px solid $border-color-secondary;\d\a    \2502                        ^^^^^^^^^^^^^^^^^^^^^^^\a    \2575 \a   Button.scss 14:23  root stylesheet";
+.button.internally-styled {
+  font-family: "OperatorMono", monospace;
+  align-items: center;
+  text-align: center;
+  letter-spacing: 0.03em;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: bold;
+  width: 100%;
+  border: 1px solid #30363D;
+  background-color: #222429;
+  color: white;
+  padding: 16px 16px;
+  transition: all 100ms linear;
+  user-select: none;
 }
+.button.internally-styled:hover {
+  filter: brightness(120%);
+  box-shadow: 0 0 0 4px rgba(113, 217, 158, 0.13);
+  border: 1px solid #A9E5C3 !important;
+}
+.button.internally-styled:active {
+  border: 1px solid #A9E5C3, 3px solid rgba(113, 217, 158, 0.13) !important;
+}
+.button.primary {
+  border: 1px solid #A9E5C3;
+  background-color: #71D99E;
+}
+
+/*# sourceMappingURL=Button.css.map */

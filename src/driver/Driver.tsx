@@ -4,6 +4,7 @@ import {Screen} from "../libs/sql/components/lo/Page";
 import {AppPageMode} from "../libs/sql/pages/app/AppPageMode";
 import {getOr} from "../libs/sql/logic/Utils";
 import {AppPage} from "../libs/sql/pages/app/AppPage";
+import {PortfolioMain} from "../libs/portfolio/PortfolioMain";
 
 export class Driver {
 
@@ -16,13 +17,11 @@ export class Driver {
         /**
          * Root website, this is the portfolio website
          */
-        this.programRegistry.set("root", {
+        this.programRegistry.set("main", {
             path: "/",
             exact: true,
             render: props => (
-                <Screen children={
-                    <p>Test</p>
-                }/>
+                <PortfolioMain/>
             )
         });
 

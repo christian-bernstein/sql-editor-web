@@ -1,7 +1,7 @@
 import React, {useMemo, useState} from "react";
 import {Input} from "../../libs/sql/components/lo/Input";
 import {ObjectVisualMeaning} from "../../libs/sql/logic/style/ObjectVisualMeaning";
-import {AppConfigSelectionData, AppConfigSelector} from "../../debug/components/AppConfigSelector";
+import {AppConfigSelectionData, AppConfigSelector} from "../../libs/sql/debug/components/AppConfigSelector";
 import {v4} from "uuid";
 import {Themeable} from "../../libs/sql/logic/style/Themeable";
 import {arrayFactory} from "../../libs/sql/logic/Utils";

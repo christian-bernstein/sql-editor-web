@@ -1,17 +1,34 @@
-/* Error: Undefined variable.
- *   ,
- * 4 |   border: 1px solid $border-color-secondary;
- *   |                     ^^^^^^^^^^^^^^^^^^^^^^^
- *   '
- *   ChartWidget.scss 4:21  root stylesheet */
-
-body::before {
-  font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono",
-      "Droid Sans Mono", monospace, monospace;
-  white-space: pre;
-  display: block;
-  padding: 1em;
-  margin-bottom: 1em;
-  border-bottom: 2px solid black;
-  content: "Error: Undefined variable.\a   \2577 \a 4 \2502    border: 1px solid $border-color-secondary;\d\a   \2502                      ^^^^^^^^^^^^^^^^^^^^^^^\a   \2575 \a   ChartWidget.scss 4:21  root stylesheet";
+.chart-widget {
+  border: 1px solid #30363D;
+  border-radius: 17px;
+  width: 100%;
+  overflow: hidden;
 }
+.chart-widget .chart-widget-foreground {
+  padding: 0.5em;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.chart-widget .chart-widget-foreground .value {
+  margin: 0;
+  font-style: normal;
+  font-weight: bold;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+  line-height: 27px;
+  overflow: hidden;
+}
+.chart-widget .chart-widget-foreground .title {
+  margin: 0;
+  font-style: normal;
+  font-weight: bold;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+  line-height: 27px;
+  overflow: hidden;
+}
+
+/*# sourceMappingURL=ChartWidget.css.map */
