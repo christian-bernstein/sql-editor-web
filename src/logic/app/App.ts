@@ -49,7 +49,7 @@ export function utilizeUserProfile(defUser: UserData = {
     }
 }
 
-export const defaultGlobalFallbackTheme: Themeable.Theme = Themeable.darkTritanopiaTheme;
+export let defaultGlobalFallbackTheme: Themeable.Theme = Themeable.darkTritanopiaTheme;
 
 export let globalFallbackTheme: Themeable.Theme = Array.from(Themeable.getAllThemes().values()).filter(theme =>
     theme.displayName === fromLocalStorage("globalFallbackTheme", defaultGlobalFallbackTheme.displayName)

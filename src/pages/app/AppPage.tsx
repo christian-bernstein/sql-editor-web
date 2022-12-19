@@ -18,7 +18,7 @@ import {AppConfigSelectionData} from "../../debug/components/AppConfigSelector";
 import {CommandPallet} from "../../components/ho/commandPallet/CommandPallet";
 import {DebugEditor} from "../editor/debug/DebugEditor";
 import {DBSessionCacheShard} from "../../shards/dbSessionCache/DBSessionCacheShard";
-import {RegexPage} from "../../tests/regex/RegexPage";
+import {RegexPage} from "../../libs/regex/RegexPage";
 import {Assembly} from "../../logic/assembly/Assembly";
 import {Slide, SwipeableDrawer, ThemeProvider} from "@mui/material";
 import {TransitionProps} from "@mui/material/transitions";
