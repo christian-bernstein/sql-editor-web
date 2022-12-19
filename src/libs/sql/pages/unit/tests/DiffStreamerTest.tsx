@@ -1,18 +1,18 @@
-import {BC} from "../../../../../logic/BernieComponent";
+import {BC} from "../../../logic/BernieComponent";
 import {UnitTestUtils} from "../UnitTestUtils";
 import React from "react";
-import {Assembly} from "../../../../../logic/assembly/Assembly";
-import {Themeable} from "../../../../../logic/style/Themeable";
+import {Assembly} from "../../../logic/assembly/Assembly";
+import {Themeable} from "../../../logic/style/Themeable";
 import Editor from "@monaco-editor/react";
-import {State} from "../../../../../logic/state/State";
-import {Screen} from "../../../../../components/lo/Page";
-import {Centered} from "../../../../../components/lo/PosInCenter";
-import {Flex, FlexRow} from "../../../../../components/lo/FlexBox";
-import {Align} from "../../../../../logic/style/Align";
-import {px, vh} from "../../../../../logic/style/DimensionalMeasured";
-import {Box} from "../../../../../components/lo/Box";
-import {Text} from "../../../../../components/lo/Text";
-import {Separator} from "../../../../../components/lo/Separator";
+import {State} from "../../../logic/state/State";
+import {Screen} from "../../../components/lo/Page";
+import {Centered} from "../../../components/lo/PosInCenter";
+import {Flex, FlexRow} from "../../../components/lo/FlexBox";
+import {Align} from "../../../logic/style/Align";
+import {px, vh} from "../../../logic/style/DimensionalMeasured";
+import {Box} from "../../../components/lo/Box";
+import {Text} from "../../../components/lo/Text";
+import {Separator} from "../../../components/lo/Separator";
 
 export type DiffStreamerTestGlobalState = {
     apiCallCount: number,

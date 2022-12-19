@@ -1,12 +1,12 @@
 import React from "react";
-import {Themeable} from "../../logic/style/Themeable";
-import {utilizeGlobalTheme} from "../../logic/app/App";
-import {Box} from "../../components/lo/Box";
-import {OverflowBehaviour} from "../../logic/style/OverflowBehaviour";
-import {Text, TextType} from "../../components/lo/Text";
-import {LiteGrid} from "../../components/lo/LiteGrid";
-import {px} from "../../logic/style/DimensionalMeasured";
-import {ObjectVisualMeaning} from "../../logic/style/ObjectVisualMeaning";
+import {Themeable} from "../sql/logic/style/Themeable";
+import {utilizeGlobalTheme} from "../sql/logic/app/App";
+import {Box} from "../sql/components/lo/Box";
+import {OverflowBehaviour} from "../sql/logic/style/OverflowBehaviour";
+import {Text, TextType} from "../sql/components/lo/Text";
+import {LiteGrid} from "../sql/components/lo/LiteGrid";
+import {px} from "../sql/logic/style/DimensionalMeasured";
+import {ObjectVisualMeaning} from "../sql/logic/style/ObjectVisualMeaning";
 
 export type CheatsheetData = {
     categories: {

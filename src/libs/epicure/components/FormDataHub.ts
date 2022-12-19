@@ -1,4 +1,4 @@
-import {FDHConfig} from "../../../logic/fdh/FDHConfig";
+import {FDHConfig} from "../../sql/logic/fdh/FDHConfig";
 
 export class FormDataHub {
 

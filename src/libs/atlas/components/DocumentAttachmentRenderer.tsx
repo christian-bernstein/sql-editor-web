@@ -1,27 +1,27 @@
-import {BC} from "../../../logic/BernieComponent";
-import {Assembly} from "../../../logic/assembly/Assembly";
-import {Themeable} from "../../../logic/style/Themeable";
-import {Q, Queryable} from "../../../logic/query/Queryable";
+import {BC} from "../../sql/logic/BernieComponent";
+import {Assembly} from "../../sql/logic/assembly/Assembly";
+import {Themeable} from "../../sql/logic/style/Themeable";
+import {Q, Queryable} from "../../sql/logic/query/Queryable";
 import {DBDocumentAttachment} from "../data/DBDocumentAttachment";
 import {AtlasMain} from "../AtlasMain";
-import {QueryDisplay} from "../../../components/logic/QueryDisplay";
-import {QueryError} from "../../../logic/query/QueryError";
-import {Flex, FlexBox} from "../../../components/lo/FlexBox";
-import {Icon} from "../../../components/lo/Icon";
+import {QueryDisplay} from "../../sql/components/logic/QueryDisplay";
+import {QueryError} from "../../sql/logic/query/QueryError";
+import {Flex, FlexBox} from "../../sql/components/lo/FlexBox";
+import {Icon} from "../../sql/components/lo/Icon";
 import {ReactComponent as AttachmentIcon} from "../../../assets/icons/ic-20/ic20-attachment.svg";
-import {Button} from "../../../components/lo/Button";
+import {Button} from "../../sql/components/lo/Button";
 import React from "react";
-import {ObjectVisualMeaning} from "../../../logic/style/ObjectVisualMeaning";
-import {StaticDrawerMenu} from "../../../components/lo/StaticDrawerMenu";
-import {Screen} from "../../../components/lo/Page";
-import {Box} from "../../../components/lo/Box";
-import {percent} from "../../../logic/style/DimensionalMeasured";
-import {Align} from "../../../logic/style/Align";
-import {Justify} from "../../../logic/style/Justify";
-import {AnomalyInfo} from "../../../components/ho/anomalyInfo/AnomalyInfo";
-import {OverflowBehaviour} from "../../../logic/style/OverflowBehaviour";
+import {ObjectVisualMeaning} from "../../sql/logic/style/ObjectVisualMeaning";
+import {StaticDrawerMenu} from "../../sql/components/lo/StaticDrawerMenu";
+import {Screen} from "../../sql/components/lo/Page";
+import {Box} from "../../sql/components/lo/Box";
+import {percent} from "../../sql/logic/style/DimensionalMeasured";
+import {Align} from "../../sql/logic/style/Align";
+import {Justify} from "../../sql/logic/style/Justify";
+import {AnomalyInfo} from "../../sql/components/ho/anomalyInfo/AnomalyInfo";
+import {OverflowBehaviour} from "../../sql/logic/style/OverflowBehaviour";
 import {PuffLoader} from "react-spinners";
-import {Text} from "../../../components/lo/Text";
+import {Text} from "../../sql/components/lo/Text";
 
 export type DocumentAttachmentRendererProps = {
     attachmentID: string,

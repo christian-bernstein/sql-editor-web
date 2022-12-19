@@ -1,22 +1,22 @@
-import {BernieComponent} from "../../../../logic/BernieComponent";
-import {Assembly} from "../../../../logic/assembly/Assembly";
-import {Themeable} from "../../../../logic/style/Themeable";
-import {FlexBox} from "../../../../components/lo/FlexBox";
-import {Screen} from "../../../../components/lo/Page";
-import {percent} from "../../../../logic/style/DimensionalMeasured";
-import {Justify} from "../../../../logic/style/Justify";
-import {Text} from "../../../../components/lo/Text";
-import {OverflowBehaviour} from "../../../../logic/style/OverflowBehaviour";
+import {BernieComponent} from "../../logic/BernieComponent";
+import {Assembly} from "../../logic/assembly/Assembly";
+import {Themeable} from "../../logic/style/Themeable";
+import {FlexBox} from "../../components/lo/FlexBox";
+import {Screen} from "../../components/lo/Page";
+import {percent} from "../../logic/style/DimensionalMeasured";
+import {Justify} from "../../logic/style/Justify";
+import {Text} from "../../components/lo/Text";
+import {OverflowBehaviour} from "../../logic/style/OverflowBehaviour";
 import {ReactComponent as LogoutIcon} from "../../../../assets/icons/ic-20/ic20-turn-off.svg";
 import {ReactComponent as SettingsIcon} from "../../../../assets/icons/ic-20/ic20-settings.svg";
 import {ReactComponent as AppLogo} from "../../../../assets/logo.svg";
-import {Box} from "../../../../components/lo/Box";
-import {FlexDirection} from "../../../../logic/style/FlexDirection";
-import {Align} from "../../../../logic/style/Align";
-import {Icon} from "../../../../components/lo/Icon";
-import {ObjectVisualMeaning} from "../../../../logic/style/ObjectVisualMeaning";
-import {AppHeader} from "../../../../components/lo/AppHeader";
-import {App} from "../../../../logic/app/App";
+import {Box} from "../../components/lo/Box";
+import {FlexDirection} from "../../logic/style/FlexDirection";
+import {Align} from "../../logic/style/Align";
+import {Icon} from "../../components/lo/Icon";
+import {ObjectVisualMeaning} from "../../logic/style/ObjectVisualMeaning";
+import {AppHeader} from "../../components/lo/AppHeader";
+import {App} from "../../logic/app/App";
 
 export class MobileMenuPage extends BernieComponent<any, any, any> {
 

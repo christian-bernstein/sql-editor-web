@@ -11,7 +11,7 @@ import {AtlasDB} from "../../api/AtlasDB";
 import {DBDocumentAttachment} from "../../data/DBDocumentAttachment";
 import {FormDataHub} from "../../../epicure/components/FormDataHub";
 import {ISOV1Data} from "./ISOV1Data";
-import {GenericBC} from "../../../../logic/BernieComponent";
+import {GenericBC} from "../../../sql/logic/BernieComponent";
 
 export class ISOAdapterV1 implements IISOAdapter {
 

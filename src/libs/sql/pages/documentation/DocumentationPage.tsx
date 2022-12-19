@@ -1,17 +1,17 @@
-import {BernieComponent} from "../../../../logic/BernieComponent";
-import {FlexBox} from "../../../../components/lo/FlexBox";
-import {percent, px} from "../../../../logic/style/DimensionalMeasured";
-import {Text} from "../../../../components/lo/Text";
-import {Image} from "../../../../components/lo/Image";
-import {CodeDisplay} from "../../../../components/lo/CodeDisplay";
+import {BernieComponent} from "../../logic/BernieComponent";
+import {FlexBox} from "../../components/lo/FlexBox";
+import {percent, px} from "../../logic/style/DimensionalMeasured";
+import {Text} from "../../components/lo/Text";
+import {Image} from "../../components/lo/Image";
+import {CodeDisplay} from "../../components/lo/CodeDisplay";
 import React from "react";
-import {Themeable} from "../../../../logic/style/Themeable";
-import {Assembly} from "../../../../logic/assembly/Assembly";
-import {Screen} from "../../../../components/lo/Page";
-import {Centered} from "../../../../components/lo/PosInCenter";
-import {Desktop, Mobile, Tablet} from "../../../../components/logic/Media";
-import {OverflowBehaviour} from "../../../../logic/style/OverflowBehaviour";
-import {LiteGrid} from "../../../../components/lo/LiteGrid";
+import {Themeable} from "../../logic/style/Themeable";
+import {Assembly} from "../../logic/assembly/Assembly";
+import {Screen} from "../../components/lo/Page";
+import {Centered} from "../../components/lo/PosInCenter";
+import {Desktop, Mobile, Tablet} from "../../components/logic/Media";
+import {OverflowBehaviour} from "../../logic/style/OverflowBehaviour";
+import {LiteGrid} from "../../components/lo/LiteGrid";
 
 export class DocumentationPage extends BernieComponent<any, any, any> {
 

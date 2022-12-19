@@ -1,23 +1,23 @@
-import {BernieComponent} from "../../../../../logic/BernieComponent";
-import {Assembly} from "../../../../../logic/assembly/Assembly";
-import {Themeable} from "../../../../../logic/style/Themeable";
-import {Box} from "../../../../../components/lo/Box";
-import {percent, px} from "../../../../../logic/style/DimensionalMeasured";
-import {Flex} from "../../../../../components/lo/FlexBox";
-import {Align} from "../../../../../logic/style/Align";
-import {AF} from "../../../../../components/logic/ArrayFragment";
-import {Icon} from "../../../../../components/lo/Icon";
+import {BernieComponent} from "../../../logic/BernieComponent";
+import {Assembly} from "../../../logic/assembly/Assembly";
+import {Themeable} from "../../../logic/style/Themeable";
+import {Box} from "../../../components/lo/Box";
+import {percent, px} from "../../../logic/style/DimensionalMeasured";
+import {Flex} from "../../../components/lo/FlexBox";
+import {Align} from "../../../logic/style/Align";
+import {AF} from "../../../components/logic/ArrayFragment";
+import {Icon} from "../../../components/lo/Icon";
 import {ReactComponent as SourceIcon} from "../../../../../assets/icons/ic-20/ic20-bluetooth.svg";
 import {ReactComponent as DirectionIcon} from "../../../../../assets/icons/ic-20/ic20-direction.svg";
 import {Slider} from "@mui/material";
-import {Button} from "../../../../../components/lo/Button";
+import {Button} from "../../../components/lo/Button";
 import {ReactComponent as VolumeDownIcon} from "../../../../../assets/icons/ic-20/ic20-volume-min.svg";
 import React from "react";
-import {FlexDirection} from "../../../../../logic/style/FlexDirection";
-import {ObjectVisualMeaning} from "../../../../../logic/style/ObjectVisualMeaning";
-import {Text, TextType} from "../../../../../components/lo/Text";
-import {Justify} from "../../../../../logic/style/Justify";
-import {Color} from "../../../../../logic/style/Color";
+import {FlexDirection} from "../../../logic/style/FlexDirection";
+import {ObjectVisualMeaning} from "../../../logic/style/ObjectVisualMeaning";
+import {Text, TextType} from "../../../components/lo/Text";
+import {Justify} from "../../../logic/style/Justify";
+import {Color} from "../../../logic/style/Color";
 
 export class ComponentCollection extends BernieComponent<any, any, any> {
 

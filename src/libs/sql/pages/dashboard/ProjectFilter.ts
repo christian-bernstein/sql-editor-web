@@ -1,5 +1,5 @@
-import {ProjectInfoData} from "../../../../logic/data/ProjectInfoData";
-import {WithVisualMeaning} from "../../../../logic/style/WithVisualMeaning";
+import {ProjectInfoData} from "../../logic/data/ProjectInfoData";
+import {WithVisualMeaning} from "../../logic/style/WithVisualMeaning";
 import DashboardPage from "./DashboardPage";
 
 export type ProjectFilter = WithVisualMeaning & {

@@ -1,15 +1,15 @@
-import {BC} from "../../../../logic/BernieComponent";
-import {Button} from "../../../../components/lo/Button";
-import {percent, px} from "../../../../logic/style/DimensionalMeasured";
-import {Flex} from "../../../../components/lo/FlexBox";
-import {Align} from "../../../../logic/style/Align";
-import {Icon} from "../../../../components/lo/Icon";
+import {BC} from "../../../sql/logic/BernieComponent";
+import {Button} from "../../../sql/components/lo/Button";
+import {percent, px} from "../../../sql/logic/style/DimensionalMeasured";
+import {Flex} from "../../../sql/components/lo/FlexBox";
+import {Align} from "../../../sql/logic/style/Align";
+import {Icon} from "../../../sql/components/lo/Icon";
 import {ReactComponent as FileIcon} from "../../../../assets/icons/ic-20/ic20-file.svg";
-import {Text, TextType} from "../../../../components/lo/Text";
-import {Tooltip} from "../../../../components/ho/tooltip/Tooltip";
+import {Text, TextType} from "../../../sql/components/lo/Text";
+import {Tooltip} from "../../../sql/components/ho/tooltip/Tooltip";
 import React from "react";
-import {Themeable} from "../../../../logic/style/Themeable";
-import {Assembly} from "../../../../logic/assembly/Assembly";
+import {Themeable} from "../../../sql/logic/style/Themeable";
+import {Assembly} from "../../../sql/logic/assembly/Assembly";
 
 export type WizardRoutineCardProps = {
     tooltip: string,

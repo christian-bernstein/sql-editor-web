@@ -1,4 +1,4 @@
-import {Client} from "../../../../logic/data/Client";
+import {Client} from "../../logic/data/Client";
 
 export type HistoryEntry = {
     id: string,

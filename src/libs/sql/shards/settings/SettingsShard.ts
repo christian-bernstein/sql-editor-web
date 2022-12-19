@@ -1,7 +1,7 @@
-import {Shard} from "../../../../logic/misc/Shard";
-import {ISettingsAPI} from "../../../../logic/settings/ISettingsAPI";
-import {App} from "../../../../logic/app/App";
-import {SettingsAPI} from "../../../../logic/settings/SettingsAPI";
+import {Shard} from "../../logic/misc/Shard";
+import {ISettingsAPI} from "../../logic/settings/ISettingsAPI";
+import {App} from "../../logic/app/App";
+import {SettingsAPI} from "../../logic/settings/SettingsAPI";
 
 export class SettingsShard extends Shard {
 

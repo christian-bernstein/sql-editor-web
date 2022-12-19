@@ -4,8 +4,8 @@ import {Button, CssBaseline, Link, Theme, ThemeProvider} from "@mui/material";
 import {Login, LightDarkThemeSwitch} from "../tests/Learning";
 import debugImage from "../assets/filaments/overlays/login-screen.png";
 import SwipeableDebugDrawer from "../tests/SwipeableDebugDrawer";
-import Store from "../logic/misc/Store";
-import {Environment} from "../logic/Environment";
+import Store from "../libs/sql/logic/misc/Store";
+import {Environment} from "../libs/sql/logic/Environment";
 
 export class App extends React.Component {
 

@@ -1,17 +1,17 @@
-import {BernieComponent} from "../../logic/BernieComponent";
-import {Themeable} from "../../logic/style/Themeable";
-import {Assembly} from "../../logic/assembly/Assembly";
-import {LiteGrid} from "../../components/lo/LiteGrid";
-import {AF} from "../../components/logic/ArrayFragment";
-import {Box} from "../../components/lo/Box";
-import {DimensionalMeasured, percent, px} from "../../logic/style/DimensionalMeasured";
-import {FlexBox} from "../../components/lo/FlexBox";
-import {Icon} from "../../components/lo/Icon";
+import {BernieComponent} from "../../libs/sql/logic/BernieComponent";
+import {Themeable} from "../../libs/sql/logic/style/Themeable";
+import {Assembly} from "../../libs/sql/logic/assembly/Assembly";
+import {LiteGrid} from "../../libs/sql/components/lo/LiteGrid";
+import {AF} from "../../libs/sql/components/logic/ArrayFragment";
+import {Box} from "../../libs/sql/components/lo/Box";
+import {DimensionalMeasured, percent, px} from "../../libs/sql/logic/style/DimensionalMeasured";
+import {FlexBox} from "../../libs/sql/components/lo/FlexBox";
+import {Icon} from "../../libs/sql/components/lo/Icon";
 import {ReactComponent as TImage} from "./assets/t.svg";
 import {ReactComponent as BlankImage} from "./assets/blank.svg";
-import {array, arrayFactory} from "../../logic/Utils";
-import {Map} from "../../components/logic/Map";
-import {Centered} from "../../components/lo/PosInCenter";
+import {array, arrayFactory} from "../../libs/sql/logic/Utils";
+import {Map} from "../../libs/sql/components/logic/Map";
+import {Centered} from "../../libs/sql/components/lo/PosInCenter";
 
 export type WFCComponentProps = {
     dimension: number

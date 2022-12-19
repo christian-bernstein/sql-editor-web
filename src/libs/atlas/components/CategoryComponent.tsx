@@ -1,22 +1,22 @@
-import {BC} from "../../../logic/BernieComponent";
+import {BC} from "../../sql/logic/BernieComponent";
 import {Category} from "../data/Category";
-import {Themeable} from "../../../logic/style/Themeable";
-import {Assembly} from "../../../logic/assembly/Assembly";
-import {Flex} from "../../../components/lo/FlexBox";
-import {getOr} from "../../../logic/Utils";
-import {VM} from "../../../logic/style/ObjectVisualMeaning";
-import {DrawerHeader} from "../../../components/lo/DrawerHeader";
+import {Themeable} from "../../sql/logic/style/Themeable";
+import {Assembly} from "../../sql/logic/assembly/Assembly";
+import {Flex} from "../../sql/components/lo/FlexBox";
+import {getOr} from "../../sql/logic/Utils";
+import {VM} from "../../sql/logic/style/ObjectVisualMeaning";
+import {DrawerHeader} from "../../sql/components/lo/DrawerHeader";
 import {AtlasMain} from "../AtlasMain";
 import {DocumentComponent} from "./DocumentComponent";
 import {UnresolvedDocumentComponent} from "./UnresolvedDocumentComponent";
-import {SettingsGroup} from "../../../components/lo/SettingsGroup";
+import {SettingsGroup} from "../../sql/components/lo/SettingsGroup";
 import {DocumentSetupDialog} from "./DocumentSetupDialog";
-import {percent, px} from "../../../logic/style/DimensionalMeasured";
-import {Button} from "../../../components/lo/Button";
+import {percent, px} from "../../sql/logic/style/DimensionalMeasured";
+import {Button} from "../../sql/components/lo/Button";
 import React from "react";
-import {StaticDrawerMenu} from "../../../components/lo/StaticDrawerMenu";
-import {FlexDirection} from "../../../logic/style/FlexDirection";
-import {Icon} from "../../../components/lo/Icon";
+import {StaticDrawerMenu} from "../../sql/components/lo/StaticDrawerMenu";
+import {FlexDirection} from "../../sql/logic/style/FlexDirection";
+import {Icon} from "../../sql/components/lo/Icon";
 import {ReactComponent as SettingsIcon} from "../../../assets/icons/ic-20/ic20-settings.svg";
 
 export type CategoryComponentProps = {

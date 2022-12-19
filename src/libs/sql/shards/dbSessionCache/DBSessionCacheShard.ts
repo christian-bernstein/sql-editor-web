@@ -1,5 +1,5 @@
-import {ProjectInfoData} from "../../../../logic/data/ProjectInfoData";
-import {Shard} from "../../../../logic/misc/Shard";
+import {ProjectInfoData} from "../../logic/data/ProjectInfoData";
+import {Shard} from "../../logic/misc/Shard";
 
 export class DBSessionCacheShard extends Shard {
 

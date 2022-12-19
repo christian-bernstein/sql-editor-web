@@ -1,11 +1,11 @@
 import {FormElement} from "../../components/FormElement";
-import {Input} from "../../../../components/lo/Input";
+import {Input} from "../../../sql/components/lo/Input";
 import {FilterSetting} from "../../FilterSetting";
 import {filter} from "../../EpicureAPI";
-import {FlexBox} from "../../../../components/lo/FlexBox";
-import {percent} from "../../../../logic/style/DimensionalMeasured";
-import {NumberRange} from "../../../../logic/data/NumberRange";
-import {Text} from "../../../../components/lo/Text";
+import {FlexBox} from "../../../sql/components/lo/FlexBox";
+import {percent} from "../../../sql/logic/style/DimensionalMeasured";
+import {NumberRange} from "../../../sql/logic/data/NumberRange";
+import {Text} from "../../../sql/components/lo/Text";
 
 export namespace Filters {
 

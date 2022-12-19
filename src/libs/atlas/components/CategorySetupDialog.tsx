@@ -1,22 +1,22 @@
-import {BC} from "../../../logic/BernieComponent";
+import {BC} from "../../sql/logic/BernieComponent";
 import {Folder} from "../data/Folder";
 import {FormDataHub} from "../../epicure/components/FormDataHub";
-import {Assembly} from "../../../logic/assembly/Assembly";
-import {Themeable} from "../../../logic/style/Themeable";
+import {Assembly} from "../../sql/logic/assembly/Assembly";
+import {Themeable} from "../../sql/logic/style/Themeable";
 import {Category} from "../data/Category";
-import {Flex} from "../../../components/lo/FlexBox";
-import {DrawerHeader} from "../../../components/lo/DrawerHeader";
-import {VM} from "../../../logic/style/ObjectVisualMeaning";
-import {percent, px} from "../../../logic/style/DimensionalMeasured";
-import {Button} from "../../../components/lo/Button";
-import {Screen} from "../../../components/lo/Page";
+import {Flex} from "../../sql/components/lo/FlexBox";
+import {DrawerHeader} from "../../sql/components/lo/DrawerHeader";
+import {VM} from "../../sql/logic/style/ObjectVisualMeaning";
+import {percent, px} from "../../sql/logic/style/DimensionalMeasured";
+import {Button} from "../../sql/components/lo/Button";
+import {Screen} from "../../sql/components/lo/Page";
 import React from "react";
 import {v4} from "uuid";
 import {BaseEntitySetupComponent} from "./BaseEntitySetupComponent";
-import {OverflowWithHeader} from "../../../components/lo/OverflowWithHeader";
-import {FlexDirection} from "../../../logic/style/FlexDirection";
-import {LiteGrid} from "../../../components/lo/LiteGrid";
-import {AF} from "../../../components/logic/ArrayFragment";
+import {OverflowWithHeader} from "../../sql/components/lo/OverflowWithHeader";
+import {FlexDirection} from "../../sql/logic/style/FlexDirection";
+import {LiteGrid} from "../../sql/components/lo/LiteGrid";
+import {AF} from "../../sql/components/logic/ArrayFragment";
 
 interface CategorySetupDialogActions {
     onSubmit(category: Category): boolean;

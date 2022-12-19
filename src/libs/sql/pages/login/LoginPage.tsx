@@ -8,15 +8,15 @@ import {ReactComponent as AppLogo} from "../../../../assets/logo.svg";
 import {Redirect} from "react-router-dom";
 import {BarLoader} from "react-spinners";
 import {css} from "@emotion/react";
-import {App} from "../../../../logic/app/App";
-import {Input} from "../../../../components/lo/Input";
-import {FlexBox} from "../../../../components/lo/FlexBox";
-import {FlexDirection} from "../../../../logic/style/FlexDirection";
-import {Align} from "../../../../logic/style/Align";
-import {Text, TextType} from "../../../../components/lo/Text";
-import {Justify} from "../../../../logic/style/Justify";
-import {ServerConnectionIcon} from "../../../../components/ho/serverConnectionIcon/ServerConnectionIcon";
-import {Icon} from "../../../../components/lo/Icon";
+import {App} from "../../logic/app/App";
+import {Input} from "../../components/lo/Input";
+import {FlexBox} from "../../components/lo/FlexBox";
+import {FlexDirection} from "../../logic/style/FlexDirection";
+import {Align} from "../../logic/style/Align";
+import {Text, TextType} from "../../components/lo/Text";
+import {Justify} from "../../logic/style/Justify";
+import {ServerConnectionIcon} from "../../components/ho/serverConnectionIcon/ServerConnectionIcon";
+import {Icon} from "../../components/lo/Icon";
 
 export type LoginPageProps = {
     calledFromWhere?: string

@@ -1,5 +1,5 @@
-import {LogEntry} from "../../../../logic/data/LogEntry";
-import {Themeable} from "../../../../logic/style/Themeable";
+import {LogEntry} from "../../logic/data/LogEntry";
+import {Themeable} from "../../logic/style/Themeable";
 import {LogPage} from "./LogPage";
 
 export interface LogBodyRenderer {

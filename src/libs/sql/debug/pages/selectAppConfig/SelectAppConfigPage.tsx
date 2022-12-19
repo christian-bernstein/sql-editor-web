@@ -1,26 +1,26 @@
 import React, {useMemo, useState} from "react";
 import styled from "styled-components";
-import {Themeable} from "../../../../../logic/style/Themeable";
-import {utilizeGlobalTheme} from "../../../../../logic/app/App";
+import {Themeable} from "../../../logic/style/Themeable";
+import {utilizeGlobalTheme} from "../../../logic/app/App";
 import {AppConfigSelectionData, AppConfigSelector} from "../../components/AppConfigSelector";
-import {Text, TextType} from "../../../../../components/lo/Text";
-import {Dimension} from "../../../../../logic/style/Dimension";
-import {Input} from "../../../../../components/lo/Input";
-import {dimension, px} from "../../../../../logic/style/DimensionalMeasured";
-import {FlexBox} from "../../../../../components/lo/FlexBox";
+import {Text, TextType} from "../../../components/lo/Text";
+import {Dimension} from "../../../logic/style/Dimension";
+import {Input} from "../../../components/lo/Input";
+import {dimension, px} from "../../../logic/style/DimensionalMeasured";
+import {FlexBox} from "../../../components/lo/FlexBox";
 import {v4} from "uuid";
 import _ from "lodash";
-import {Icon} from "../../../../../components/lo/Icon";
+import {Icon} from "../../../components/lo/Icon";
 import {ReactComponent as FilterIcon} from "../../../../../assets/icons/ic-24/ic24-filter.svg";
 import {ReactComponent as DebugIcon} from "../../../../../assets/icons/ic-20/ic20-bug.svg";
 import {ReactComponent as Logo} from "../../../../../assets/retired_logo_v2.svg";
-import {Togglable} from "../../../../../components/logic/Togglable";
-import {ObjectVisualMeaning} from "../../../../../logic/style/ObjectVisualMeaning";
-import {AppHeader} from "../../../../../components/lo/AppHeader";
-import {FlexDirection} from "../../../../../logic/style/FlexDirection";
-import {LiteGrid} from "../../../../../components/lo/LiteGrid";
-import {getOr} from "../../../../../logic/Utils";
-import {Environment} from "../../../../../logic/Environment";
+import {Togglable} from "../../../components/logic/Togglable";
+import {ObjectVisualMeaning} from "../../../logic/style/ObjectVisualMeaning";
+import {AppHeader} from "../../../components/lo/AppHeader";
+import {FlexDirection} from "../../../logic/style/FlexDirection";
+import {LiteGrid} from "../../../components/lo/LiteGrid";
+import {getOr} from "../../../logic/Utils";
+import {Environment} from "../../../logic/Environment";
 
 
 export type SelectAppConfigPageProps = {

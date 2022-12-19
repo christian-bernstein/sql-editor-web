@@ -1,20 +1,20 @@
-import {BC} from "../../../../logic/BernieComponent";
-import {Assembly} from "../../../../logic/assembly/Assembly";
-import {Themeable} from "../../../../logic/style/Themeable";
+import {BC} from "../../../sql/logic/BernieComponent";
+import {Assembly} from "../../../sql/logic/assembly/Assembly";
+import {Themeable} from "../../../sql/logic/style/Themeable";
 import {ConfigProps} from "../../config/ConfigProps";
 import {MarkdownViewerReloadPolicyConfig} from "../../config/configurations/MarkdownViewerReloadPolicyConfig";
-import {Box} from "../../../../components/lo/Box";
-import {Flex} from "../../../../components/lo/FlexBox";
-import {DrawerHeader} from "../../../../components/lo/DrawerHeader";
-import {Justify} from "../../../../logic/style/Justify";
-import {Align} from "../../../../logic/style/Align";
-import {Text, TextType} from "../../../../components/lo/Text";
-import {percent, px} from "../../../../logic/style/DimensionalMeasured";
-import {Button} from "../../../../components/lo/Button";
-import {FlexDirection} from "../../../../logic/style/FlexDirection";
-import {createMargin} from "../../../../logic/style/Margin";
-import {NumberSelector} from "../../../../components/lo/NumberSelector";
-import {ObjectVisualMeaning, VM} from "../../../../logic/style/ObjectVisualMeaning";
+import {Box} from "../../../sql/components/lo/Box";
+import {Flex} from "../../../sql/components/lo/FlexBox";
+import {DrawerHeader} from "../../../sql/components/lo/DrawerHeader";
+import {Justify} from "../../../sql/logic/style/Justify";
+import {Align} from "../../../sql/logic/style/Align";
+import {Text, TextType} from "../../../sql/components/lo/Text";
+import {percent, px} from "../../../sql/logic/style/DimensionalMeasured";
+import {Button} from "../../../sql/components/lo/Button";
+import {FlexDirection} from "../../../sql/logic/style/FlexDirection";
+import {createMargin} from "../../../sql/logic/style/Margin";
+import {NumberSelector} from "../../../sql/components/lo/NumberSelector";
+import {ObjectVisualMeaning, VM} from "../../../sql/logic/style/ObjectVisualMeaning";
 import {ParentComponentProps} from "../../utils/ParentComponentProps";
 
 export type MarkdownViewerReloadPolicyMenuProps = ConfigProps<MarkdownViewerReloadPolicyConfig> & ParentComponentProps

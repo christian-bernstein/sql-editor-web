@@ -1,7 +1,7 @@
-import {BC} from "../../../../../logic/BernieComponent";
+import {BC} from "../../../logic/BernieComponent";
 import {AtlasMain} from "../../../../atlas/AtlasMain";
-import {Assembly} from "../../../../../logic/assembly/Assembly";
-import {Themeable} from "../../../../../logic/style/Themeable";
+import {Assembly} from "../../../logic/assembly/Assembly";
+import {Themeable} from "../../../logic/style/Themeable";
 import {UnitTestUtils} from "../UnitTestUtils";
 import {InDevAtlasAPI} from "../../../../atlas/api/InDevAtlasAPI";
 

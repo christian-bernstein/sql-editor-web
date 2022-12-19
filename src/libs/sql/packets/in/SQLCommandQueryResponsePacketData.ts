@@ -1,5 +1,5 @@
-import {Client} from "../../../../logic/data/Client";
-import {Column} from "../../../../logic/data/Column";
+import {Client} from "../../logic/data/Client";
+import {Column} from "../../logic/data/Column";
 import {EditorCommandError} from "../../pages/editor/EditorCommandError";
 
 export type SQLCommandQueryResponsePacketData = {

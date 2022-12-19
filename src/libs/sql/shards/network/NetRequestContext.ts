@@ -1,4 +1,4 @@
-import {Environment} from "../../../../logic/Environment";
+import {Environment} from "../../logic/Environment";
 
 export type NetRequestContext<T, V> = {
     onStart?: () => void,

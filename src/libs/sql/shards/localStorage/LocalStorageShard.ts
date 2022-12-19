@@ -1,4 +1,4 @@
-import {Shard} from "../../../../logic/misc/Shard";
+import {Shard} from "../../logic/misc/Shard";
 
 export class LocalStorageShard extends Shard {
 

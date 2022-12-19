@@ -1,24 +1,24 @@
-import {BC} from "../../../../../logic/BernieComponent";
+import {BC} from "../../../logic/BernieComponent";
 import {UnitTestUtils} from "../UnitTestUtils";
-import {Themeable} from "../../../../../logic/style/Themeable";
-import {Assembly} from "../../../../../logic/assembly/Assembly";
-import {HyperionImageProducer} from "../../../../../frameworks/hyperion/producers/HyperionImageProducer";
-import {Flex, FlexRow} from "../../../../../components/lo/FlexBox";
-import {Separator} from "../../../../../components/lo/Separator";
-import {Orientation} from "../../../../../logic/style/Orientation";
-import {percent, px} from "../../../../../logic/style/DimensionalMeasured";
-import {Box} from "../../../../../components/lo/Box";
-import {Form} from "../../../../../components/Form";
-import {Input} from "../../../../../components/lo/Input";
-import {Button} from "../../../../../components/lo/Button";
-import {FormTransactionType} from "../../../../../components/FormTransactionType";
-import {Text} from "../../../../../components/lo/Text";
-import {InformationBox} from "../../../../../components/ho/informationBox/InformationBox";
-import {ObjectVisualMeaning} from "../../../../../logic/style/ObjectVisualMeaning";
-import {Description} from "../../../../../components/lo/Description";
+import {Themeable} from "../../../logic/style/Themeable";
+import {Assembly} from "../../../logic/assembly/Assembly";
+import {HyperionImageProducer} from "../../../../atlas/hyperion/producers/HyperionImageProducer";
+import {Flex, FlexRow} from "../../../components/lo/FlexBox";
+import {Separator} from "../../../components/lo/Separator";
+import {Orientation} from "../../../logic/style/Orientation";
+import {percent, px} from "../../../logic/style/DimensionalMeasured";
+import {Box} from "../../../components/lo/Box";
+import {Form} from "../../../components/Form";
+import {Input} from "../../../components/lo/Input";
+import {Button} from "../../../components/lo/Button";
+import {FormTransactionType} from "../../../components/FormTransactionType";
+import {Text} from "../../../components/lo/Text";
+import {InformationBox} from "../../../components/ho/informationBox/InformationBox";
+import {ObjectVisualMeaning} from "../../../logic/style/ObjectVisualMeaning";
+import {Description} from "../../../components/lo/Description";
 import {Checkbox} from "@mui/material";
-import {Align} from "../../../../../logic/style/Align";
-import {Justify} from "../../../../../logic/style/Justify";
+import {Align} from "../../../logic/style/Align";
+import {Justify} from "../../../logic/style/Justify";
 
 export type HyperionImageTestLocalState = {
     hyperionEntryID?: string,

@@ -1,27 +1,27 @@
-import {BC} from "../../../logic/BernieComponent";
+import {BC} from "../../sql/logic/BernieComponent";
 import {Folder} from "../data/Folder";
-import {Themeable} from "../../../logic/style/Themeable";
-import {Assembly} from "../../../logic/assembly/Assembly";
-import {Text, TextType} from "../../../components/lo/Text";
-import {getOr} from "../../../logic/Utils";
-import {SettingsElement} from "../../../components/ho/settingsElement/SettingsElement";
+import {Themeable} from "../../sql/logic/style/Themeable";
+import {Assembly} from "../../sql/logic/assembly/Assembly";
+import {Text, TextType} from "../../sql/components/lo/Text";
+import {getOr} from "../../sql/logic/Utils";
+import {SettingsElement} from "../../sql/components/ho/settingsElement/SettingsElement";
 import {ReactComponent as FolderIcon} from "../../../assets/icons/ic-20/ic20-folder.svg";
-import {Flex, FlexRow} from "../../../components/lo/FlexBox";
-import {VM} from "../../../logic/style/ObjectVisualMeaning";
-import {Color} from "../../../logic/style/Color";
-import {px} from "../../../logic/style/DimensionalMeasured";
-import {Align} from "../../../logic/style/Align";
-import {If} from "../../../components/logic/If";
-import {Icon} from "../../../components/lo/Icon";
+import {Flex, FlexRow} from "../../sql/components/lo/FlexBox";
+import {VM} from "../../sql/logic/style/ObjectVisualMeaning";
+import {Color} from "../../sql/logic/style/Color";
+import {px} from "../../sql/logic/style/DimensionalMeasured";
+import {Align} from "../../sql/logic/style/Align";
+import {If} from "../../sql/components/logic/If";
+import {Icon} from "../../sql/components/lo/Icon";
 import {DriveFileMoveRounded, StarRounded} from "@mui/icons-material";
 import React from "react";
-import {StaticDrawerMenu} from "../../../components/lo/StaticDrawerMenu";
+import {StaticDrawerMenu} from "../../sql/components/lo/StaticDrawerMenu";
 import {AtlasMain} from "../AtlasMain";
 import {ReactComponent as ActionsIcon} from "../../../assets/icons/ic-20/ic20-more-ver.svg";
-import {DrawerHeader} from "../../../components/lo/DrawerHeader";
-import {SettingsGroup} from "../../../components/lo/SettingsGroup";
+import {DrawerHeader} from "../../sql/components/lo/DrawerHeader";
+import {SettingsGroup} from "../../sql/components/lo/SettingsGroup";
 import {EntityMovePromptComponent} from "./EntityMovePromptComponent";
-import {Description} from "../../../components/lo/Description";
+import {Description} from "../../sql/components/lo/Description";
 
 export type FolderProps = {
     data: Folder,

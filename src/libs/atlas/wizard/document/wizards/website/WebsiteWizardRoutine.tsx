@@ -1,23 +1,23 @@
 import {WizardRoutine} from "../../WizardRoutine";
 import {WizardRoutineCard} from "../../../../components/documentWizard/WizardRoutineCard";
 import React from "react";
-import {Button} from "../../../../../../components/lo/Button";
+import {Button} from "../../../../../sql/components/lo/Button";
 import {AtlasDocument} from "../../../../data/AtlasDocument";
-import {Flex} from "../../../../../../components/lo/FlexBox";
-import {BC} from "../../../../../../logic/BernieComponent";
-import {Themeable} from "../../../../../../logic/style/Themeable";
-import {Assembly} from "../../../../../../logic/assembly/Assembly";
-import {StaticDrawerMenu} from "../../../../../../components/lo/StaticDrawerMenu";
+import {Flex} from "../../../../../sql/components/lo/FlexBox";
+import {BC} from "../../../../../sql/logic/BernieComponent";
+import {Themeable} from "../../../../../sql/logic/style/Themeable";
+import {Assembly} from "../../../../../sql/logic/assembly/Assembly";
+import {StaticDrawerMenu} from "../../../../../sql/components/lo/StaticDrawerMenu";
 import Editor from "@monaco-editor/react";
-import {DrawerHeader} from "../../../../../../components/lo/DrawerHeader";
-import {percent, px} from "../../../../../../logic/style/DimensionalMeasured";
-import {ObjectVisualMeaning, VM} from "../../../../../../logic/style/ObjectVisualMeaning";
+import {DrawerHeader} from "../../../../../sql/components/lo/DrawerHeader";
+import {percent, px} from "../../../../../sql/logic/style/DimensionalMeasured";
+import {ObjectVisualMeaning, VM} from "../../../../../sql/logic/style/ObjectVisualMeaning";
 import _ from "lodash";
-import {FlexDirection} from "../../../../../../logic/style/FlexDirection";
+import {FlexDirection} from "../../../../../sql/logic/style/FlexDirection";
 import {WizardSubRoutine} from "../../WizardSubRoutine";
 import {DefaultWizardEngine} from "../../engines/DefaultWizardEngine";
 import {WebsiteDocumentArchetype} from "../../../../data/documentArchetypes/WebsiteDocumentArchetype";
-import {Text, TextType} from "../../../../../../components/lo/Text";
+import {Text, TextType} from "../../../../../sql/components/lo/Text";
 import {DocumentType} from "../../../../data/DocumentType";
 
 export const websiteWizardRoutine: WizardRoutine = {

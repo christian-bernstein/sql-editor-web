@@ -1,25 +1,25 @@
-import {BC} from "../../../logic/BernieComponent";
-import {Themeable} from "../../../logic/style/Themeable";
-import {Assembly} from "../../../logic/assembly/Assembly";
+import {BC} from "../../sql/logic/BernieComponent";
+import {Themeable} from "../../sql/logic/style/Themeable";
+import {Assembly} from "../../sql/logic/assembly/Assembly";
 import {AtlasMain} from "../AtlasMain";
-import {Flex} from "../../../components/lo/FlexBox";
-import {StaticDrawerMenu} from "../../../components/lo/StaticDrawerMenu";
+import {Flex} from "../../sql/components/lo/FlexBox";
+import {StaticDrawerMenu} from "../../sql/components/lo/StaticDrawerMenu";
 import React from "react";
 import fileDownload from 'js-file-download';
-import {Button} from "../../../components/lo/Button";
-import {DrawerHeader} from "../../../components/lo/DrawerHeader";
-import {ObjectVisualMeaning, VM} from "../../../logic/style/ObjectVisualMeaning";
-import {percent, px} from "../../../logic/style/DimensionalMeasured";
-import {Align} from "../../../logic/style/Align";
-import {Text, TextType} from "../../../components/lo/Text";
-import {Badge} from "../../../components/lo/Badge";
-import {createMargin} from "../../../logic/style/Margin";
-import {CodeDisplay} from "../../../components/lo/CodeDisplay";
-import {Screen} from "../../../components/lo/Page";
-import {OverflowBehaviour} from "../../../logic/style/OverflowBehaviour";
+import {Button} from "../../sql/components/lo/Button";
+import {DrawerHeader} from "../../sql/components/lo/DrawerHeader";
+import {ObjectVisualMeaning, VM} from "../../sql/logic/style/ObjectVisualMeaning";
+import {percent, px} from "../../sql/logic/style/DimensionalMeasured";
+import {Align} from "../../sql/logic/style/Align";
+import {Text, TextType} from "../../sql/components/lo/Text";
+import {Badge} from "../../sql/components/lo/Badge";
+import {createMargin} from "../../sql/logic/style/Margin";
+import {CodeDisplay} from "../../sql/components/lo/CodeDisplay";
+import {Screen} from "../../sql/components/lo/Page";
+import {OverflowBehaviour} from "../../sql/logic/style/OverflowBehaviour";
 import {ISOBase} from "../iso/ISOBase";
-import {Q, Queryable} from "../../../logic/query/Queryable";
-import {QueryDisplay} from "../../../components/logic/QueryDisplay";
+import {Q, Queryable} from "../../sql/logic/query/Queryable";
+import {QueryDisplay} from "../../sql/components/logic/QueryDisplay";
 
 export type ISODownloadComponentLocalState = {
     iso: Q<ISOBase | undefined>,

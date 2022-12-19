@@ -1,8 +1,8 @@
 import React from "react";
-import {array} from "../../logic/Utils";
-import {FlexBox} from "../../components/lo/FlexBox";
-import {FlexDirection} from "../../logic/style/FlexDirection";
-import {Align} from "../../logic/style/Align";
+import {array} from "../../libs/sql/logic/Utils";
+import {FlexBox} from "../../libs/sql/components/lo/FlexBox";
+import {FlexDirection} from "../../libs/sql/logic/style/FlexDirection";
+import {Align} from "../../libs/sql/logic/style/Align";
 
 let hook: () => void;
 

@@ -1,18 +1,18 @@
-import {BC} from "../../../../../logic/BernieComponent";
+import {BC} from "../../../logic/BernieComponent";
 import {UnitTestUtils} from "../UnitTestUtils";
-import {Assembly} from "../../../../../logic/assembly/Assembly";
-import {Themeable} from "../../../../../logic/style/Themeable";
+import {Assembly} from "../../../logic/assembly/Assembly";
+import {Themeable} from "../../../logic/style/Themeable";
 import Dexie, {Table} from "dexie";
-import {Flex} from "../../../../../components/lo/FlexBox";
-import {Input} from "../../../../../components/lo/Input";
+import {Flex} from "../../../components/lo/FlexBox";
+import {Input} from "../../../components/lo/Input";
 import React from "react";
 import {v4} from "uuid";
-import {Q, Queryable} from "../../../../../logic/query/Queryable";
-import {QueryDisplay} from "../../../../../components/logic/QueryDisplay";
-import {Group} from "../../../../../components/lo/Group";
-import {percent} from "../../../../../logic/style/DimensionalMeasured";
-import {Orientation} from "../../../../../logic/style/Orientation";
-import {Button} from "../../../../../components/lo/Button";
+import {Q, Queryable} from "../../../logic/query/Queryable";
+import {QueryDisplay} from "../../../components/logic/QueryDisplay";
+import {Group} from "../../../components/lo/Group";
+import {percent} from "../../../logic/style/DimensionalMeasured";
+import {Orientation} from "../../../logic/style/Orientation";
+import {Button} from "../../../components/lo/Button";
 
 export interface DBFile {
     id?: string

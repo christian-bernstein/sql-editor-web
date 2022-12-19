@@ -1,15 +1,15 @@
-import {BC} from "../../../logic/BernieComponent";
+import {BC} from "../../sql/logic/BernieComponent";
 import {ISOBase} from "../iso/ISOBase";
-import {Assembly} from "../../../logic/assembly/Assembly";
-import {Themeable} from "../../../logic/style/Themeable";
-import {Box} from "../../../components/lo/Box";
-import {percent, px} from "../../../logic/style/DimensionalMeasured";
-import {Flex, FlexRow} from "../../../components/lo/FlexBox";
-import {DrawerHeader} from "../../../components/lo/DrawerHeader";
-import {VM} from "../../../logic/style/ObjectVisualMeaning";
-import {Text, TextType} from "../../../components/lo/Text";
-import {Tooltip} from "../../../components/ho/tooltip/Tooltip";
-import {Icon} from "../../../components/lo/Icon";
+import {Assembly} from "../../sql/logic/assembly/Assembly";
+import {Themeable} from "../../sql/logic/style/Themeable";
+import {Box} from "../../sql/components/lo/Box";
+import {percent, px} from "../../sql/logic/style/DimensionalMeasured";
+import {Flex, FlexRow} from "../../sql/components/lo/FlexBox";
+import {DrawerHeader} from "../../sql/components/lo/DrawerHeader";
+import {VM} from "../../sql/logic/style/ObjectVisualMeaning";
+import {Text, TextType} from "../../sql/components/lo/Text";
+import {Tooltip} from "../../sql/components/ho/tooltip/Tooltip";
+import {Icon} from "../../sql/components/lo/Icon";
 import {ReactComponent as FolderIcon} from "../../../assets/icons/ic-20/ic20-folder.svg";
 import {ReactComponent as CategoryIcon} from "../../../assets/icons/ic-20/ic20-list-bullet.svg";
 import {
@@ -18,10 +18,10 @@ import {
     SimCardRounded
 } from "@mui/icons-material";
 import moment from "moment";
-import {SettingsGroup} from "../../../components/lo/SettingsGroup";
-import {SettingsElement} from "../../../components/ho/settingsElement/SettingsElement";
+import {SettingsGroup} from "../../sql/components/lo/SettingsGroup";
+import {SettingsElement} from "../../sql/components/ho/settingsElement/SettingsElement";
 import {ISOV1Data} from "../iso/v1/ISOV1Data";
-import {createMargin} from "../../../logic/style/Margin";
+import {createMargin} from "../../sql/logic/style/Margin";
 
 export type ISOBasePreviewProps = {
     iso: ISOBase

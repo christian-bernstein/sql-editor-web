@@ -1,25 +1,25 @@
-import {BernieComponent} from "../../../../logic/BernieComponent";
-import {Themeable} from "../../../../logic/style/Themeable";
-import {Assembly} from "../../../../logic/assembly/Assembly";
+import {BernieComponent} from "../../logic/BernieComponent";
+import {Themeable} from "../../logic/style/Themeable";
+import {Assembly} from "../../logic/assembly/Assembly";
 import {UnitTestUtils} from "./UnitTestUtils";
 import React from "react";
-import {Flex} from "../../../../components/lo/FlexBox";
-import {Centered} from "../../../../components/lo/PosInCenter";
-import {Button} from "../../../../components/lo/Button";
-import {percent, px} from "../../../../logic/style/DimensionalMeasured";
-import {Text} from "../../../../components/lo/Text";
-import {Input} from "../../../../components/lo/Input";
-import {Group} from "../../../../components/lo/Group";
-import {HOCWrapper} from "../../../../components/HOCWrapper";
+import {Flex} from "../../components/lo/FlexBox";
+import {Centered} from "../../components/lo/PosInCenter";
+import {Button} from "../../components/lo/Button";
+import {percent, px} from "../../logic/style/DimensionalMeasured";
+import {Text} from "../../components/lo/Text";
+import {Input} from "../../components/lo/Input";
+import {Group} from "../../components/lo/Group";
+import {HOCWrapper} from "../../components/HOCWrapper";
 import fileDownload from "js-file-download";
-import {AF} from "../../../../components/logic/ArrayFragment";
+import {AF} from "../../components/logic/ArrayFragment";
 import {StringQuery} from "../../../atlas/components/queries/StringQuery";
-import {FileInput} from "../../../../components/ho/fileInput/FileInput";
-import {FileInputSubmissionMode} from "../../../../components/ho/fileInput/FileInputSubmissionMode";
+import {FileInput} from "../../components/ho/fileInput/FileInput";
+import {FileInputSubmissionMode} from "../../components/ho/fileInput/FileInputSubmissionMode";
 import {pdfjs} from "react-pdf";
 import {Document} from "react-pdf/dist/esm/entry.webpack";
-import {StaticDrawerMenu} from "../../../../components/lo/StaticDrawerMenu";
-import {VM} from "../../../../logic/style/ObjectVisualMeaning";
+import {StaticDrawerMenu} from "../../components/lo/StaticDrawerMenu";
+import {VM} from "../../logic/style/ObjectVisualMeaning";
 
 export class QuickTest extends BernieComponent<any, any, any> {
 

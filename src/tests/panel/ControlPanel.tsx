@@ -1,5 +1,5 @@
 import React from "react";
-import {Environment} from "../../logic/Environment";
+import {Environment} from "../../libs/sql/logic/Environment";
 import "./style.scss";
 import "./spinners.scss";
 import "./Chart.scss";

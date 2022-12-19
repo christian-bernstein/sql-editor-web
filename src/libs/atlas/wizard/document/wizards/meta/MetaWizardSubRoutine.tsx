@@ -1,6 +1,6 @@
 import {WizardSubRoutine} from "../../WizardSubRoutine";
 import {AtlasDocument} from "../../../../data/AtlasDocument";
-import {StaticDrawerMenu} from "../../../../../../components/lo/StaticDrawerMenu";
+import {StaticDrawerMenu} from "../../../../../sql/components/lo/StaticDrawerMenu";
 import {DocumentSetupDialog} from "../../../../components/DocumentSetupDialog";
 import React from "react";
 

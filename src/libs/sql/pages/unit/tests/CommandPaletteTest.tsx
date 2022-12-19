@@ -1,17 +1,17 @@
-import {BC} from "../../../../../logic/BernieComponent";
+import {BC} from "../../../logic/BernieComponent";
 import {UnitTestUtils} from "../UnitTestUtils";
-import {Themeable} from "../../../../../logic/style/Themeable";
-import {Assembly} from "../../../../../logic/assembly/Assembly";
-import {Button} from "../../../../../components/lo/Button";
-import {Flex} from "../../../../../components/lo/FlexBox";
-import {Centered} from "../../../../../components/lo/PosInCenter";
-import {vh} from "../../../../../logic/style/DimensionalMeasured";
+import {Themeable} from "../../../logic/style/Themeable";
+import {Assembly} from "../../../logic/assembly/Assembly";
+import {Button} from "../../../components/lo/Button";
+import {Flex} from "../../../components/lo/FlexBox";
+import {Centered} from "../../../components/lo/PosInCenter";
+import {vh} from "../../../logic/style/DimensionalMeasured";
 import { TransitionGroup } from 'react-transition-group';
 import {Fade, Zoom} from "@mui/material";
 import Box from "@mui/material/Box";
-import {Screen} from "../../../../../components/lo/Page";
-import {Gloria} from "../../../../../frameworks/gloria/Gloria";
-import {GloriaCommandPalette} from "../../../../../frameworks/gloria/components/GloriaCommandPalette";
+import {Screen} from "../../../components/lo/Page";
+import {Gloria} from "../../../../atlas/gloria/Gloria";
+import {GloriaCommandPalette} from "../../../../atlas/gloria/components/GloriaCommandPalette";
 
 export class CommandPaletteTest extends BC<any, any, any> {
 

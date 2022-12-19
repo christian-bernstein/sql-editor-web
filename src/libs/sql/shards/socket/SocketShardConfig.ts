@@ -1,4 +1,4 @@
-import {ConnectorConfig} from "../../../../logic/network/ConnectorConfig";
+import {ConnectorConfig} from "../../logic/network/ConnectorConfig";
 
 export type SocketShardConfig = {
     centralConnectorConfigs: ConnectorConfig[],

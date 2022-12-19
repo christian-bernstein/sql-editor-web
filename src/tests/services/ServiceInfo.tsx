@@ -1,12 +1,12 @@
 import React from "react";
-import {TitledContainer} from "../../components/indev/TitledContainer";
+import {TitledContainer} from "../../libs/sql/components/indev/TitledContainer";
 import {ReactComponent as Server} from "../../assets/icons/server.svg";
 import {ReactComponent as Chevron} from "../../assets/icons/chevron-up.svg";
-import {Badge} from "../../components/lo/Badge";
-import {Color} from "../../logic/style/Color";
+import {Badge} from "../../libs/sql/components/lo/Badge";
+import {Color} from "../../libs/sql/logic/style/Color";
 import {ServiceLoadState} from "./ServiceLoadState";
 import "./ServiceInfo.scss";
-import {Annotation, AnnotationProps} from "../../components/lo/Annotation";
+import {Annotation, AnnotationProps} from "../../libs/sql/components/lo/Annotation";
 
 export type ServiceInfoProps = {
     servicePath?: string,

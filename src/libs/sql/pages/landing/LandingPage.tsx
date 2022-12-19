@@ -1,25 +1,25 @@
-import {BernieComponent} from "../../../../logic/BernieComponent";
-import {Assembly} from "../../../../logic/assembly/Assembly";
-import {Themeable} from "../../../../logic/style/Themeable";
-import {Screen} from "../../../../components/lo/Page";
-import {AF} from "../../../../components/logic/ArrayFragment";
-import {Flex} from "../../../../components/lo/FlexBox";
-import {LiteGrid} from "../../../../components/lo/LiteGrid";
-import {Icon} from "../../../../components/lo/Icon";
+import {BernieComponent} from "../../logic/BernieComponent";
+import {Assembly} from "../../logic/assembly/Assembly";
+import {Themeable} from "../../logic/style/Themeable";
+import {Screen} from "../../components/lo/Page";
+import {AF} from "../../components/logic/ArrayFragment";
+import {Flex} from "../../components/lo/FlexBox";
+import {LiteGrid} from "../../components/lo/LiteGrid";
+import {Icon} from "../../components/lo/Icon";
 import {ReactComponent as LogoIcon} from "../../../../assets/logo.svg";
 import React from "react";
-import {Text, TextType} from "../../../../components/lo/Text";
-import {FlexDirection} from "../../../../logic/style/FlexDirection";
-import {Align} from "../../../../logic/style/Align";
-import {Justify} from "../../../../logic/style/Justify";
-import {NavLink} from "../../../../components/lo/NavLink";
-import {Button} from "../../../../components/lo/Button";
-import {ObjectVisualMeaning} from "../../../../logic/style/ObjectVisualMeaning";
-import {DimensionalMeasured, percent, px} from "../../../../logic/style/DimensionalMeasured";
-import {Cursor} from "../../../../logic/style/Cursor";
-import {Default} from "../../../../components/logic/Media";
-import {Dimension} from "../../../../logic/style/Dimension";
-import {createMargin} from "../../../../logic/style/Margin";
+import {Text, TextType} from "../../components/lo/Text";
+import {FlexDirection} from "../../logic/style/FlexDirection";
+import {Align} from "../../logic/style/Align";
+import {Justify} from "../../logic/style/Justify";
+import {NavLink} from "../../components/lo/NavLink";
+import {Button} from "../../components/lo/Button";
+import {ObjectVisualMeaning} from "../../logic/style/ObjectVisualMeaning";
+import {DimensionalMeasured, percent, px} from "../../logic/style/DimensionalMeasured";
+import {Cursor} from "../../logic/style/Cursor";
+import {Default} from "../../components/logic/Media";
+import {Dimension} from "../../logic/style/Dimension";
+import {createMargin} from "../../logic/style/Margin";
 
 export type LandingPageProps = {
 }

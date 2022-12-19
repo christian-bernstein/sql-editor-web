@@ -1,15 +1,15 @@
-import {BernieComponent} from "../../logic/BernieComponent";
-import {Themeable} from "../../logic/style/Themeable";
-import {Assembly} from "../../logic/assembly/Assembly";
-import {Centered} from "../../components/lo/PosInCenter";
-import {AreaChartComponent} from "../../components/ho/areaChart/AreaChartComponent";
-import {Screen} from "../../components/lo/Page";
+import {BernieComponent} from "../../libs/sql/logic/BernieComponent";
+import {Themeable} from "../../libs/sql/logic/style/Themeable";
+import {Assembly} from "../../libs/sql/logic/assembly/Assembly";
+import {Centered} from "../../libs/sql/components/lo/PosInCenter";
+import {AreaChartComponent} from "../../libs/sql/components/ho/areaChart/AreaChartComponent";
+import {Screen} from "../../libs/sql/components/lo/Page";
 import React from "react";
-import {ObjectVisualMeaning} from "../../logic/style/ObjectVisualMeaning";
-import {App} from "../../logic/app/App";
+import {ObjectVisualMeaning} from "../../libs/sql/logic/style/ObjectVisualMeaning";
+import {App} from "../../libs/sql/logic/app/App";
 import {PingPacketData} from "../../libs/sql/packets/out/PingPacketData";
 import {PongPacketData} from "../../libs/sql/packets/in/PongPacketData";
-import {array, getOr} from "../../logic/Utils";
+import {array, getOr} from "../../libs/sql/logic/Utils";
 
 export class LatencyDisplay extends BernieComponent<any, any, {
     series: number[],

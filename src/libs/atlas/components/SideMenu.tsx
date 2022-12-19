@@ -1,17 +1,17 @@
-import {BC} from "../../../logic/BernieComponent";
-import {Themeable} from "../../../logic/style/Themeable";
-import {Assembly} from "../../../logic/assembly/Assembly";
-import {Flex} from "../../../components/lo/FlexBox";
-import {Box} from "../../../components/lo/Box";
-import {percent, px} from "../../../logic/style/DimensionalMeasured";
+import {BC} from "../../sql/logic/BernieComponent";
+import {Themeable} from "../../sql/logic/style/Themeable";
+import {Assembly} from "../../sql/logic/assembly/Assembly";
+import {Flex} from "../../sql/components/lo/FlexBox";
+import {Box} from "../../sql/components/lo/Box";
+import {percent, px} from "../../sql/logic/style/DimensionalMeasured";
 import {VFSFolderView} from "./VFSFolderView";
 import {ReactComponent as MenuIcon} from "../../../assets/icons/ic-20/ic20-menu.svg";
-import {Icon} from "../../../components/lo/Icon";
-import {FlexDirection} from "../../../logic/style/FlexDirection";
-import {Justify} from "../../../logic/style/Justify";
-import {OverflowWithHeader} from "../../../components/lo/OverflowWithHeader";
+import {Icon} from "../../sql/components/lo/Icon";
+import {FlexDirection} from "../../sql/logic/style/FlexDirection";
+import {Justify} from "../../sql/logic/style/Justify";
+import {OverflowWithHeader} from "../../sql/components/lo/OverflowWithHeader";
 import {ExitToAppRounded} from "@mui/icons-material";
-import {Color} from "../../../logic/style/Color";
+import {Color} from "../../sql/logic/style/Color";
 
 export type SideMenuProps = {
     view: VFSFolderView

@@ -1,28 +1,28 @@
-import {BC} from "../../logic/BernieComponent";
-import {Themeable} from "../../logic/style/Themeable";
-import {Assembly} from "../../logic/assembly/Assembly";
-import {ObjectVisualMeaning, VM} from "../../logic/style/ObjectVisualMeaning";
+import {BC} from "../../libs/sql/logic/BernieComponent";
+import {Themeable} from "../../libs/sql/logic/style/Themeable";
+import {Assembly} from "../../libs/sql/logic/assembly/Assembly";
+import {ObjectVisualMeaning, VM} from "../../libs/sql/logic/style/ObjectVisualMeaning";
 import React from "react";
-import {Flex, FlexRow} from "../../components/lo/FlexBox";
+import {Flex, FlexRow} from "../../libs/sql/components/lo/FlexBox";
 import {ReactComponent as OnStateIcon} from "../../assets/icons/ic-20/ic20-turn-off.svg";
 import {ReactComponent as RefreshIcon} from "../../assets/icons/ic-20/ic20-refresh.svg";
 import {ReactComponent as ContextIcon} from "../../assets/icons/ic-20/ic20-more-ver.svg";
 import {ReactComponent as PlugIcon} from "../../assets/icons/ic-20/ic20-plugin.svg";
 import {ReactComponent as FunctionIcon} from "../../assets/icons/ic-20/ic20-functions.svg";
-import {Icon} from "../../components/lo/Icon";
-import {If} from "../../components/logic/If";
-import {Align} from "../../logic/style/Align";
-import {Justify} from "../../logic/style/Justify";
-import {Text, TextType} from "../../components/lo/Text";
-import {percent, px} from "../../logic/style/DimensionalMeasured";
+import {Icon} from "../../libs/sql/components/lo/Icon";
+import {If} from "../../libs/sql/components/logic/If";
+import {Align} from "../../libs/sql/logic/style/Align";
+import {Justify} from "../../libs/sql/logic/style/Justify";
+import {Text, TextType} from "../../libs/sql/components/lo/Text";
+import {percent, px} from "../../libs/sql/logic/style/DimensionalMeasured";
 import _ from "lodash";
-import {Button} from "../../components/lo/Button";
-import {StaticDrawerMenu} from "../../components/lo/StaticDrawerMenu";
-import {AF} from "../../components/logic/ArrayFragment";
-import {createMargin} from "../../logic/style/Margin";
-import {DrawerHeader} from "../../components/lo/DrawerHeader";
-import {Box} from "../../components/lo/Box";
-import {Cursor} from "../../logic/style/Cursor";
+import {Button} from "../../libs/sql/components/lo/Button";
+import {StaticDrawerMenu} from "../../libs/sql/components/lo/StaticDrawerMenu";
+import {AF} from "../../libs/sql/components/logic/ArrayFragment";
+import {createMargin} from "../../libs/sql/logic/style/Margin";
+import {DrawerHeader} from "../../libs/sql/components/lo/DrawerHeader";
+import {Box} from "../../libs/sql/components/lo/Box";
+import {Cursor} from "../../libs/sql/logic/style/Cursor";
 
 export type DevelopmentHuePlugToggleCardProps = {
 

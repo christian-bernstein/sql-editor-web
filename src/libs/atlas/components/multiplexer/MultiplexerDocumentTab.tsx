@@ -1,28 +1,28 @@
-import {BernieComponent} from "../../../../logic/BernieComponent";
-import {Themeable} from "../../../../logic/style/Themeable";
-import {Assembly} from "../../../../logic/assembly/Assembly";
+import {BernieComponent} from "../../../sql/logic/BernieComponent";
+import {Themeable} from "../../../sql/logic/style/Themeable";
+import {Assembly} from "../../../sql/logic/assembly/Assembly";
 import {AtlasDocument} from "../../data/AtlasDocument";
 import {DocumentViewMultiplexer} from "../DocumentViewMultiplexer";
 import {DocumentState} from "../../data/DocumentState";
 import {VFSFolderView} from "../VFSFolderView";
-import {Flex, FlexRow} from "../../../../components/lo/FlexBox";
-import {px} from "../../../../logic/style/DimensionalMeasured";
-import {Box} from "../../../../components/lo/Box";
-import {Description} from "../../../../components/lo/Description";
-import {If} from "../../../../components/logic/If";
+import {Flex, FlexRow} from "../../../sql/components/lo/FlexBox";
+import {px} from "../../../sql/logic/style/DimensionalMeasured";
+import {Box} from "../../../sql/components/lo/Box";
+import {Description} from "../../../sql/components/lo/Description";
+import {If} from "../../../sql/components/logic/If";
 import {DocumentSaveState} from "../../data/DocumentSaveState";
-import {Icon} from "../../../../components/lo/Icon";
-import {VM} from "../../../../logic/style/ObjectVisualMeaning";
+import {Icon} from "../../../sql/components/lo/Icon";
+import {VM} from "../../../sql/logic/style/ObjectVisualMeaning";
 import {ReactComponent as PendingIcon} from "../../../../assets/icons/ic-20/ic20-hourglass-progress.svg";
 import {ReactComponent as SavedIcon} from "../../../../assets/icons/ic-20/ic20-check.svg";
 import {ReactComponent as ActionsIcon} from "../../../../assets/icons/ic-20/ic20-more-ver.svg";
 import {ReactComponent as CloseIcon} from "../../../../assets/icons/ic-20/ic20-close.svg";
-import {Align} from "../../../../logic/style/Align";
-import {Cursor} from "../../../../logic/style/Cursor";
-import {Dot} from "../../../../components/lo/Dot";
+import {Align} from "../../../sql/logic/style/Align";
+import {Cursor} from "../../../sql/logic/style/Cursor";
+import {Dot} from "../../../sql/components/lo/Dot";
 import {IconLookup} from "../../icons/IconLookup";
 import {AtlasMain} from "../../AtlasMain";
-import {ObjectJSONDisplay} from "../../../../components/ho/objectJSONDisplay/ObjectJSONDisplay";
+import {ObjectJSONDisplay} from "../../../sql/components/ho/objectJSONDisplay/ObjectJSONDisplay";
 
 export type MultiplexerDocumentTabProps = {
     document: AtlasDocument,

@@ -3,7 +3,7 @@ import Highlight from "react-highlighter";
 import {getRegExp, RegexPage} from "./RegexPage";
 import {TestDisplay} from "./TestDisplay";
 import {Test} from "./Test";
-import {getOr} from "../../logic/Utils";
+import {getOr} from "../sql/logic/Utils";
 
 export const getLocalStoreValue: (type: "regex" | "search", def?: string) => string = (type, def) =>  {
     const item = window.localStorage.getItem(type);

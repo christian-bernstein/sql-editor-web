@@ -1,6 +1,6 @@
 import {VFSFolderView} from "../../components/VFSFolderView";
 import {Folder} from "../../data/Folder";
-import {BC} from "../../../../logic/BernieComponent";
+import {BC} from "../../../sql/logic/BernieComponent";
 import {AtlasDocument} from "../../data/AtlasDocument";
 import {WizardSubRoutine} from "./WizardSubRoutine";
 

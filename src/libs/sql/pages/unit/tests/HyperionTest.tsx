@@ -1,25 +1,25 @@
-import {BC} from "../../../../../logic/BernieComponent";
-import {Themeable} from "../../../../../logic/style/Themeable";
-import {Assembly} from "../../../../../logic/assembly/Assembly";
+import {BC} from "../../../logic/BernieComponent";
+import {Themeable} from "../../../logic/style/Themeable";
+import {Assembly} from "../../../logic/assembly/Assembly";
 import {UnitTestUtils} from "../UnitTestUtils";
-import {Flex} from "../../../../../components/lo/FlexBox";
-import {Box} from "../../../../../components/lo/Box";
-import {Form} from "../../../../../components/Form";
-import {Input} from "../../../../../components/lo/Input";
-import {Button} from "../../../../../components/lo/Button";
-import {FormTransactionType} from "../../../../../components/FormTransactionType";
-import {HyperionAPI} from "../../../../../frameworks/hyperion/HyperionAPI";
-import {px} from "../../../../../logic/style/DimensionalMeasured";
+import {Flex} from "../../../components/lo/FlexBox";
+import {Box} from "../../../components/lo/Box";
+import {Form} from "../../../components/Form";
+import {Input} from "../../../components/lo/Input";
+import {Button} from "../../../components/lo/Button";
+import {FormTransactionType} from "../../../components/FormTransactionType";
+import {HyperionAPI} from "../../../../atlas/hyperion/HyperionAPI";
+import {px} from "../../../logic/style/DimensionalMeasured";
 import {v4} from "uuid";
-import {Description} from "../../../../../components/lo/Description";
-import {HyperionIndexedDBStreamAdapter} from "../../../../../frameworks/hyperion/HyperionIndexedDBStreamAdapter";
-import {FileInput} from "../../../../../components/ho/fileInput/FileInput";
-import {QueryDisplay} from "../../../../../components/logic/QueryDisplay";
-import {Q, Queryable} from "../../../../../logic/query/Queryable";
-import {HyperionStorableEntry} from "../../../../../frameworks/hyperion/HyperionStorableEntry";
-import {Optional} from "../../../../../logic/Optional";
-import {QueryError} from "../../../../../logic/query/QueryError";
-import {UpstreamTransactionType} from "../../../../../frameworks/hyperion/UpstreamTransactionType";
+import {Description} from "../../../components/lo/Description";
+import {HyperionIndexedDBStreamAdapter} from "../../../../atlas/hyperion/HyperionIndexedDBStreamAdapter";
+import {FileInput} from "../../../components/ho/fileInput/FileInput";
+import {QueryDisplay} from "../../../components/logic/QueryDisplay";
+import {Q, Queryable} from "../../../logic/query/Queryable";
+import {HyperionStorableEntry} from "../../../../atlas/hyperion/HyperionStorableEntry";
+import {Optional} from "../../../logic/Optional";
+import {QueryError} from "../../../logic/query/QueryError";
+import {UpstreamTransactionType} from "../../../../atlas/hyperion/UpstreamTransactionType";
 
 export type HyperionTestLocalState = {
     hyperionFileQueryable: Q<Optional<HyperionStorableEntry>>

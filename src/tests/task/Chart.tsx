@@ -1,15 +1,15 @@
 import React from "react";
-import {Box} from "../../components/lo/Box";
-import {Text, TextType} from "../../components/lo/Text";
-import {createMargin} from "../../logic/style/Margin";
+import {Box} from "../../libs/sql/components/lo/Box";
+import {Text, TextType} from "../../libs/sql/components/lo/Text";
+import {createMargin} from "../../libs/sql/logic/style/Margin";
 import styled, {StyledComponent} from "styled-components";
-import {Themeable} from "../../logic/style/Themeable";
-import {App} from "../../logic/app/App";
-import {DimensionalMeasured} from "../../logic/style/DimensionalMeasured";
-import {Dimension} from "../../logic/style/Dimension";
+import {Themeable} from "../../libs/sql/logic/style/Themeable";
+import {App} from "../../libs/sql/logic/app/App";
+import {DimensionalMeasured} from "../../libs/sql/logic/style/DimensionalMeasured";
+import {Dimension} from "../../libs/sql/logic/style/Dimension";
 import {ReactComponent as PlayIcon} from "../../assets/icons/ic-16/ic16-play.svg";
-import {TaskInformation} from "../../logic/misc/TaskInformation";
-import {TaskPiece} from "../../logic/misc/TaskPiece";
+import {TaskInformation} from "../../libs/sql/logic/misc/TaskInformation";
+import {TaskPiece} from "../../libs/sql/logic/misc/TaskPiece";
 
 export type ChartProps = {
 

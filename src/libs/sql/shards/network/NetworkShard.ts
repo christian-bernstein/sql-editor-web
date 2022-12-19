@@ -1,7 +1,7 @@
-import {Shard} from "../../../../logic/misc/Shard";
+import {Shard} from "../../logic/misc/Shard";
 import {NetRequestContext} from "./NetRequestContext";
 import {IntrinsicCommandPacketData} from "../../packets/out/IntrinsicCommandPacketData";
-import {App} from "../../../../logic/app/App";
+import {App} from "../../logic/app/App";
 import {SQLCommandUpdateResponsePacketData} from "../../packets/in/SQLCommandUpdateResponsePacketData";
 import {SQLCommandQueryResponsePacketData} from "../../packets/in/SQLCommandQueryResponsePacketData";
 

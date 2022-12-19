@@ -1,11 +1,11 @@
 import {UnitTestUtils} from "../UnitTestUtils";
-import {BernieComponent} from "../../../../../logic/BernieComponent";
-import {Assembly} from "../../../../../logic/assembly/Assembly";
-import {Themeable} from "../../../../../logic/style/Themeable";
-import {ProjectCard} from "../../../../../components/ho/projectCard/ProjectCard";
+import {BernieComponent} from "../../../logic/BernieComponent";
+import {Assembly} from "../../../logic/assembly/Assembly";
+import {Themeable} from "../../../logic/style/Themeable";
+import {ProjectCard} from "../../../components/ho/projectCard/ProjectCard";
 import {v4} from "uuid";
-import {LoadState} from "../../../../../logic/misc/LoadState";
-import {px} from "../../../../../logic/style/DimensionalMeasured";
+import {LoadState} from "../../../logic/misc/LoadState";
+import {px} from "../../../logic/style/DimensionalMeasured";
 
 export class ProjectCardTest extends BernieComponent<any, any, any> {
 

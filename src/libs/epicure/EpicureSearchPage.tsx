@@ -1,18 +1,18 @@
-import {BernieComponent} from "../../logic/BernieComponent";
-import {Assembly} from "../../logic/assembly/Assembly";
-import {Themeable} from "../../logic/style/Themeable";
+import {BernieComponent} from "../sql/logic/BernieComponent";
+import {Assembly} from "../sql/logic/assembly/Assembly";
+import {Themeable} from "../sql/logic/style/Themeable";
 import {Recipe} from "./Recipe";
 import {UnitOfMeasure} from "./UnitOfMeasure";
-import {Screen} from "../../components/lo/Page";
+import {Screen} from "../sql/components/lo/Page";
 import React from "react";
-import {AppHeader} from "../../components/lo/AppHeader";
-import {Input} from "../../components/lo/Input";
-import {FlexBox} from "../../components/lo/FlexBox";
-import {FlexDirection} from "../../logic/style/FlexDirection";
-import {percent} from "../../logic/style/DimensionalMeasured";
-import {OverflowBehaviour} from "../../logic/style/OverflowBehaviour";
+import {AppHeader} from "../sql/components/lo/AppHeader";
+import {Input} from "../sql/components/lo/Input";
+import {FlexBox} from "../sql/components/lo/FlexBox";
+import {FlexDirection} from "../sql/logic/style/FlexDirection";
+import {percent} from "../sql/logic/style/DimensionalMeasured";
+import {OverflowBehaviour} from "../sql/logic/style/OverflowBehaviour";
 import {RecipeComponent} from "./RecipeComponent";
-import {arrayFactory} from "../../logic/Utils";
+import {arrayFactory} from "../sql/logic/Utils";
 
 export type EpicureSearchPageLocalState = {
     recipes: Recipe[]

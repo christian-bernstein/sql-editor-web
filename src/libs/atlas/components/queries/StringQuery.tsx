@@ -1,16 +1,16 @@
-import {BernieComponent} from "../../../../logic/BernieComponent";
-import {Flex} from "../../../../components/lo/FlexBox";
-import {DrawerHeader} from "../../../../components/lo/DrawerHeader";
-import {ObjectVisualMeaning, VM} from "../../../../logic/style/ObjectVisualMeaning";
-import {FlexDirection} from "../../../../logic/style/FlexDirection";
-import {percent, px} from "../../../../logic/style/DimensionalMeasured";
-import {Button} from "../../../../components/lo/Button";
+import {BernieComponent} from "../../../sql/logic/BernieComponent";
+import {Flex} from "../../../sql/components/lo/FlexBox";
+import {DrawerHeader} from "../../../sql/components/lo/DrawerHeader";
+import {ObjectVisualMeaning, VM} from "../../../sql/logic/style/ObjectVisualMeaning";
+import {FlexDirection} from "../../../sql/logic/style/FlexDirection";
+import {percent, px} from "../../../sql/logic/style/DimensionalMeasured";
+import {Button} from "../../../sql/components/lo/Button";
 import Editor from "@monaco-editor/react";
-import {Text, TextType} from "../../../../components/lo/Text";
-import {StaticDrawerMenu} from "../../../../components/lo/StaticDrawerMenu";
+import {Text, TextType} from "../../../sql/components/lo/Text";
+import {StaticDrawerMenu} from "../../../sql/components/lo/StaticDrawerMenu";
 import React from "react";
-import {Themeable} from "../../../../logic/style/Themeable";
-import {Assembly} from "../../../../logic/assembly/Assembly";
+import {Themeable} from "../../../sql/logic/style/Themeable";
+import {Assembly} from "../../../sql/logic/assembly/Assembly";
 import _ from "lodash";
 
 export type StringQueryProps = {

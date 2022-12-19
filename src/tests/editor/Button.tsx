@@ -1,6 +1,6 @@
 import React from "react";
-import {Themeable} from "../../logic/style/Themeable";
-import {utilizeApp, utilizeGlobalTheme} from "../../logic/app/App";
+import {Themeable} from "../../libs/sql/logic/style/Themeable";
+import {utilizeApp, utilizeGlobalTheme} from "../../libs/sql/logic/app/App";
 import styled from "styled-components";
 
 export type ButtonProps = {

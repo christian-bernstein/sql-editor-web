@@ -1,15 +1,15 @@
-import {BernieComponent} from "../../logic/BernieComponent";
+import {BernieComponent} from "../sql/logic/BernieComponent";
 import {Recipe} from "./Recipe";
-import {Themeable} from "../../logic/style/Themeable";
-import {Assembly} from "../../logic/assembly/Assembly";
-import {Box} from "../../components/lo/Box";
-import {Text, TextType} from "../../components/lo/Text";
+import {Themeable} from "../sql/logic/style/Themeable";
+import {Assembly} from "../sql/logic/assembly/Assembly";
+import {Box} from "../sql/components/lo/Box";
+import {Text, TextType} from "../sql/components/lo/Text";
 import React from "react";
-import {percent} from "../../logic/style/DimensionalMeasured";
-import {Separator} from "../../components/lo/Separator";
-import {FlexBox} from "../../components/lo/FlexBox";
-import {FlexDirection} from "../../logic/style/FlexDirection";
-import {Justify} from "../../logic/style/Justify";
+import {percent} from "../sql/logic/style/DimensionalMeasured";
+import {Separator} from "../sql/components/lo/Separator";
+import {FlexBox} from "../sql/components/lo/FlexBox";
+import {FlexDirection} from "../sql/logic/style/FlexDirection";
+import {Justify} from "../sql/logic/style/Justify";
 
 export type RecipeComponentProps = {
     recipe: Recipe

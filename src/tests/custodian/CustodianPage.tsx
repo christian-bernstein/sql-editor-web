@@ -1,9 +1,9 @@
 import React from "react";
-import {App} from "../../logic/app/App";
-import {Themeable} from "../../logic/style/Themeable";
-import {Environment} from "../../logic/Environment";
+import {App} from "../../libs/sql/logic/app/App";
+import {Themeable} from "../../libs/sql/logic/style/Themeable";
+import {Environment} from "../../libs/sql/logic/Environment";
 import {BrowserRouter, Redirect, Route} from "react-router-dom";
-import {Assembly} from "../../logic/assembly/Assembly";
+import {Assembly} from "../../libs/sql/logic/assembly/Assembly";
 
 export type CustodianPageProps = {
     appTitle: string

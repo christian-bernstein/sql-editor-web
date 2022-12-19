@@ -1,6 +1,6 @@
-import {BernieComponent} from "../../../../logic/BernieComponent";
-import {Assembly} from "../../../../logic/assembly/Assembly";
-import {Themeable} from "../../../../logic/style/Themeable";
+import {BernieComponent} from "../../logic/BernieComponent";
+import {Assembly} from "../../logic/assembly/Assembly";
+import {Themeable} from "../../logic/style/Themeable";
 
 export class EditProfilePage extends BernieComponent<any, any, any> {
 

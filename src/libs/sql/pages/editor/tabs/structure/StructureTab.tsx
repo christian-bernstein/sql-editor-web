@@ -1,33 +1,33 @@
-import {BernieComponent} from "../../../../../../logic/BernieComponent";
+import {BernieComponent} from "../../../../logic/BernieComponent";
 import {TabProps} from "../TabProps";
-import {Assembly} from "../../../../../../logic/assembly/Assembly";
-import {Themeable} from "../../../../../../logic/style/Themeable";
-import {FlexBox} from "../../../../../../components/lo/FlexBox";
-import {percent, px} from "../../../../../../logic/style/DimensionalMeasured";
+import {Assembly} from "../../../../logic/assembly/Assembly";
+import {Themeable} from "../../../../logic/style/Themeable";
+import {FlexBox} from "../../../../components/lo/FlexBox";
+import {percent, px} from "../../../../logic/style/DimensionalMeasured";
 import ReactDataGrid from "@inovua/reactdatagrid-community";
 import '@inovua/reactdatagrid-community/theme/blue-dark.css';
 import React, {CSSProperties} from "react";
-import {App} from "../../../../../../logic/app/App";
-import {SessionCommandType} from "../../../../../../logic/data/SessionCommandType";
-import {DBTable} from "../../../../../../logic/data/DBTable";
-import {Align} from "../../../../../../logic/style/Align";
-import {Justify} from "../../../../../../logic/style/Justify";
-import {FlexDirection} from "../../../../../../logic/style/FlexDirection";
-import {Text, TextType} from "../../../../../../components/lo/Text";
-import {Cursor} from "../../../../../../logic/style/Cursor";
+import {App} from "../../../../logic/app/App";
+import {SessionCommandType} from "../../../../logic/data/SessionCommandType";
+import {DBTable} from "../../../../logic/data/DBTable";
+import {Align} from "../../../../logic/style/Align";
+import {Justify} from "../../../../logic/style/Justify";
+import {FlexDirection} from "../../../../logic/style/FlexDirection";
+import {Text, TextType} from "../../../../components/lo/Text";
+import {Cursor} from "../../../../logic/style/Cursor";
 
 import {ReactComponent as BrowseIcon} from "../../../../../../assets/icons/ic-20/ic20-view-table.svg";
 import {ReactComponent as SearchIcon} from "../../../../../../assets/icons/ic-20/ic20-search.svg";
 import {ReactComponent as InsertIcon} from "../../../../../../assets/icons/ic-20/ic20-publish.svg";
 import {ReactComponent as ArrowLeftUpIcon} from "../../../../../../assets/icons/arrow-left-up.svg";
-import {Icon} from "../../../../../../components/lo/Icon";
-import {ObjectVisualMeaning} from "../../../../../../logic/style/ObjectVisualMeaning";
+import {Icon} from "../../../../components/lo/Icon";
+import {ObjectVisualMeaning} from "../../../../logic/style/ObjectVisualMeaning";
 import {TypeRowSelection} from "@inovua/reactdatagrid-community/types";
-import {Button} from "../../../../../../components/lo/Button";
-import {OverflowBehaviour} from "../../../../../../logic/style/OverflowBehaviour";
+import {Button} from "../../../../components/lo/Button";
+import {OverflowBehaviour} from "../../../../logic/style/OverflowBehaviour";
 import {TableActionConfig} from "./TableActionConfig";
-import {getOr} from "../../../../../../logic/Utils";
-import {If} from "../../../../../../components/logic/If";
+import {getOr} from "../../../../logic/Utils";
+import {If} from "../../../../components/logic/If";
 
 export type StructureTabProps = TabProps & {
 }

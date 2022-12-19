@@ -1,9 +1,9 @@
-import {BernieComponent} from "../../../../../logic/BernieComponent";
+import {BernieComponent} from "../../../logic/BernieComponent";
 import {UnitTestUtils} from "../UnitTestUtils";
-import {Assembly} from "../../../../../logic/assembly/Assembly";
-import {Themeable} from "../../../../../logic/style/Themeable";
+import {Assembly} from "../../../logic/assembly/Assembly";
+import {Themeable} from "../../../logic/style/Themeable";
 import {SnackbarProvider, withSnackbar } from "notistack";
-import {Button} from "../../../../../components/lo/Button";
+import {Button} from "../../../components/lo/Button";
 
 export class SnackbarTest extends BernieComponent<any, any, any> {
 

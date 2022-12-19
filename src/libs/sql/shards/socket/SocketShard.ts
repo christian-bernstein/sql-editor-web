@@ -1,8 +1,8 @@
-import {Shard} from "../../../../logic/misc/Shard";
+import {Shard} from "../../logic/misc/Shard";
 import {SocketShardConfig} from "./SocketShardConfig";
-import {Environment} from "../../../../logic/Environment";
+import {Environment} from "../../logic/Environment";
 import Connector = Environment.Connector;
-import {ConnectorConfig} from "../../../../logic/network/ConnectorConfig";
+import {ConnectorConfig} from "../../logic/network/ConnectorConfig";
 
 export class SocketShard extends Shard {
 

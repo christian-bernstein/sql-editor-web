@@ -1,22 +1,22 @@
-import {BC} from "../../../logic/BernieComponent";
-import {Assembly} from "../../../logic/assembly/Assembly";
-import {Themeable} from "../../../logic/style/Themeable";
-import {Flex} from "../../../components/lo/FlexBox";
-import {DrawerHeader} from "../../../components/lo/DrawerHeader";
-import {VM} from "../../../logic/style/ObjectVisualMeaning";
-import {percent, px} from "../../../logic/style/DimensionalMeasured";
-import {Button} from "../../../components/lo/Button";
-import {Align} from "../../../logic/style/Align";
-import {Text, TextType} from "../../../components/lo/Text";
-import {StaticDrawerMenu} from "../../../components/lo/StaticDrawerMenu";
+import {BC} from "../../sql/logic/BernieComponent";
+import {Assembly} from "../../sql/logic/assembly/Assembly";
+import {Themeable} from "../../sql/logic/style/Themeable";
+import {Flex} from "../../sql/components/lo/FlexBox";
+import {DrawerHeader} from "../../sql/components/lo/DrawerHeader";
+import {VM} from "../../sql/logic/style/ObjectVisualMeaning";
+import {percent, px} from "../../sql/logic/style/DimensionalMeasured";
+import {Button} from "../../sql/components/lo/Button";
+import {Align} from "../../sql/logic/style/Align";
+import {Text, TextType} from "../../sql/components/lo/Text";
+import {StaticDrawerMenu} from "../../sql/components/lo/StaticDrawerMenu";
 import React from "react";
 import {ISODownloadComponent} from "./ISODownloadComponent";
 import {ISOUploadComponent} from "./ISOUploadComponent";
 import {Download, ImportExportRounded, Upload} from "@mui/icons-material";
-import {Icon} from "../../../components/lo/Icon";
-import {LiteGrid} from "../../../components/lo/LiteGrid";
-import {AF} from "../../../components/logic/ArrayFragment";
-import {Tooltip} from "../../../components/ho/tooltip/Tooltip";
+import {Icon} from "../../sql/components/lo/Icon";
+import {LiteGrid} from "../../sql/components/lo/LiteGrid";
+import {AF} from "../../sql/components/logic/ArrayFragment";
+import {Tooltip} from "../../sql/components/ho/tooltip/Tooltip";
 
 export class ISOHubComponent extends BC<any, any, any> {
 

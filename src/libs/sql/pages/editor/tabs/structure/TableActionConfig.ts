@@ -1,5 +1,5 @@
 import {StructureTab} from "./StructureTab";
-import NumberRange from "../../../../../../logic/data/NumberRange";
+import NumberRange from "../../../../logic/data/NumberRange";
 
 export type TableActionConfig = {
     actionButtonRenderer: (instance: StructureTab, config: TableActionConfig) => JSX.Element,

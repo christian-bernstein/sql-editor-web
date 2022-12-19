@@ -22,8 +22,8 @@ import {
     useMediaQuery, useTheme
 } from "@mui/material";
 import {Fingerprint, Notifications, Visibility, VisibilityOff} from "@mui/icons-material";
-import Store from "../logic/misc/Store";
-import {Environment} from "../logic/Environment";
+import Store from "../libs/sql/logic/misc/Store";
+import {Environment} from "../libs/sql/logic/Environment";
 import bg from "../assets/filaments/profile.gif";
 import logo from "../assets/retired_logo_v2.svg";
 import {v4} from "uuid";
