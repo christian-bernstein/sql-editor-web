@@ -40,7 +40,7 @@ import {Assembly} from "../../../logic/assembly/Assembly";
 import {SessionCommandType} from "../../../logic/data/SessionCommandType";
 import {CustomTooltip} from "../../../components/lo/CustomTooltip";
 import {TransitionProps} from '@mui/material/transitions';
-import {SQLCommandQueryResponsePacketData} from "../../../packets/in/SQLCommandQueryResponsePacketData";
+import {SQLCommandQueryResponsePacketData} from "../../../libs/sql/packets/in/SQLCommandQueryResponsePacketData";
 import {DebugTableDataDisplayPage} from "../../../components/ho/tableDataDisplay/TableDataDisplay";
 import {ServerConnectionIcon} from "../../../components/ho/serverConnectionIcon/ServerConnectionIcon";
 import {Separator} from "../../../components/lo/Separator";

@@ -29,8 +29,8 @@ import {ClientDeviceType} from "../../logic/data/ClientDeviceType";
 import {v4} from "uuid";
 import Banner from "../../assets/images/img-4.gif";
 import ProfilePicture from "../../assets/images/img-4.gif";
-import {CDNRequestPacketData} from "../../packets/out/CDNRequestPacketData";
-import {CDNResponsePacketData} from "../../packets/in/CDNResponsePacketData";
+import {CDNRequestPacketData} from "../../libs/sql/packets/out/CDNRequestPacketData";
+import {CDNResponsePacketData} from "../../libs/sql/packets/in/CDNResponsePacketData";
 import {Debug} from "../../components/logic/Debug";
 
 export type MenuPageProps = {

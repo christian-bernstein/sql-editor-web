@@ -1,4 +1,4 @@
-import {UserAttributeType} from "../../logic/data/UserAttributeType";
+import {UserAttributeType} from "../../../../logic/data/UserAttributeType";
 
 export type CheckUserAttributeAvailabilityRequestPacketData = {
     type: UserAttributeType,

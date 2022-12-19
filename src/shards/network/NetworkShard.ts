@@ -1,9 +1,9 @@
 import {Shard} from "../../logic/misc/Shard";
 import {NetRequestContext} from "./NetRequestContext";
-import {IntrinsicCommandPacketData} from "../../packets/out/IntrinsicCommandPacketData";
+import {IntrinsicCommandPacketData} from "../../libs/sql/packets/out/IntrinsicCommandPacketData";
 import {App} from "../../logic/app/App";
-import {SQLCommandUpdateResponsePacketData} from "../../packets/in/SQLCommandUpdateResponsePacketData";
-import {SQLCommandQueryResponsePacketData} from "../../packets/in/SQLCommandQueryResponsePacketData";
+import {SQLCommandUpdateResponsePacketData} from "../../libs/sql/packets/in/SQLCommandUpdateResponsePacketData";
+import {SQLCommandQueryResponsePacketData} from "../../libs/sql/packets/in/SQLCommandQueryResponsePacketData";
 
 export class NetworkShard extends Shard {
 

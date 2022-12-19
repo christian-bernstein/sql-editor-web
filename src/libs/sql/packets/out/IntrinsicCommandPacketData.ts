@@ -1,4 +1,4 @@
-import {SessionCommandType} from "../../logic/data/SessionCommandType";
+import {SessionCommandType} from "../../../../logic/data/SessionCommandType";
 
 export type IntrinsicCommandPacketData = {
     type: SessionCommandType,

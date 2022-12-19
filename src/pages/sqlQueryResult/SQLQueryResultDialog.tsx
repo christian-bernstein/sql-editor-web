@@ -1,7 +1,7 @@
 import {BernieComponent} from "../../logic/BernieComponent";
 import {Assembly} from "../../logic/assembly/Assembly";
 import {getMeaningfulColors, Themeable} from "../../logic/style/Themeable";
-import {SQLCommandQueryResponsePacketData} from "../../packets/in/SQLCommandQueryResponsePacketData";
+import {SQLCommandQueryResponsePacketData} from "../../libs/sql/packets/in/SQLCommandQueryResponsePacketData";
 import {FlexBox} from "../../components/lo/FlexBox";
 import {FlexDirection} from "../../logic/style/FlexDirection";
 import {ReactComponent as FirstIcon} from "../../assets/icons/ic-20/ic20-audio-prev.svg";

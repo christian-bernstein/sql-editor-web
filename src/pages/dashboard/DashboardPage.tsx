@@ -19,7 +19,7 @@ import {Centered} from "../../components/lo/PosInCenter";
 import {em, percent, px} from "../../logic/style/DimensionalMeasured";
 import {DBSessionCacheShard} from "../../shards/dbSessionCache/DBSessionCacheShard";
 import {Redirect} from "react-router-dom";
-import {ListProjectResponsePacketData} from "../../packets/in/ListProjectResponsePacketData";
+import {ListProjectResponsePacketData} from "../../libs/sql/packets/in/ListProjectResponsePacketData";
 import {getMeaningfulColors, MeaningfulColors, Themeable} from "../../logic/style/Themeable";
 import {ObjectVisualMeaning} from "../../logic/style/ObjectVisualMeaning";
 import {CustomTooltip} from "../../components/lo/CustomTooltip";

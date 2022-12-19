@@ -21,7 +21,7 @@ import {Cursor} from "../../logic/style/Cursor";
 import {Input} from "../../components/lo/Input";
 import {If} from "../../components/logic/If";
 import {Align} from "../../logic/style/Align";
-import {ProjectDeleteRequestPacketData} from "../../packets/out/ProjectDeleteRequestPacketData";
+import {ProjectDeleteRequestPacketData} from "../../libs/sql/packets/out/ProjectDeleteRequestPacketData";
 
 export type DeleteProjectDialogProps = {
     project: ProjectInfoData,

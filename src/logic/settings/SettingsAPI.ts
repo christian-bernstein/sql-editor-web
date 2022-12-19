@@ -1,6 +1,6 @@
 import {App} from "../app/App";
-import {SettingsRequestPacketData} from "../../packets/out/SettingsRequestPacketData";
-import {SettingsResponsePacketData} from "../../packets/in/SettingsResponsePacketData";
+import {SettingsRequestPacketData} from "../../libs/sql/packets/out/SettingsRequestPacketData";
+import {SettingsResponsePacketData} from "../../libs/sql/packets/in/SettingsResponsePacketData";
 import {ISettingsAPI} from "./ISettingsAPI";
 
 export class SettingsAPI implements ISettingsAPI {

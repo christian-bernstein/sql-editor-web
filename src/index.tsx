@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './styles/index.scss';
-import './styles/fonts.scss'
+import './index.scss';
+import './fonts.scss'
 import {DriverReactBridge} from "./driver/DriverReactBridge";
 import reportWebVitals from "./reportWebVitals";
 import {Driver} from "./driver/Driver";

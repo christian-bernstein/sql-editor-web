@@ -23,8 +23,8 @@ import {ReactComponent as EditIcon} from "../../../assets/icons/ic-20/ic20-edit.
 import {ReactComponent as MoveIcon} from "../../../assets/icons/ic-20/ic20-direction.svg";
 import {ReactComponent as DeleteIcon} from "../../../assets/icons/ic-20/ic20-delete.svg";
 import {App, utilizeGlobalTheme} from "../../../logic/app/App";
-import {ProjectFileSizeRequestPacketData} from "../../../packets/out/ProjectFileSizeRequestPacketData";
-import {ProjectFileSizeResponsePacketData} from "../../../packets/in/ProjectFileSizeResponsePacketData";
+import {ProjectFileSizeRequestPacketData} from "../../../libs/sql/packets/out/ProjectFileSizeRequestPacketData";
+import {ProjectFileSizeResponsePacketData} from "../../../libs/sql/packets/in/ProjectFileSizeResponsePacketData";
 import {getOr, Utils} from "../../../logic/Utils";
 import {Q, Queryable} from "../../../logic/query/Queryable";
 import {QueryDisplay} from "../../logic/QueryDisplay";

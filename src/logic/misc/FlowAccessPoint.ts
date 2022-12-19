@@ -1,5 +1,5 @@
 import {App} from "../app/App";
-import {FlowResponsePacketData} from "../../packets/in/FlowResponsePacketData";
+import {FlowResponsePacketData} from "../../libs/sql/packets/in/FlowResponsePacketData";
 
 export class FlowAccessPoint {
 

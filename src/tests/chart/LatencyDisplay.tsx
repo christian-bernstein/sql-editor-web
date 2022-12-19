@@ -7,8 +7,8 @@ import {Screen} from "../../components/lo/Page";
 import React from "react";
 import {ObjectVisualMeaning} from "../../logic/style/ObjectVisualMeaning";
 import {App} from "../../logic/app/App";
-import {PingPacketData} from "../../packets/out/PingPacketData";
-import {PongPacketData} from "../../packets/in/PongPacketData";
+import {PingPacketData} from "../../libs/sql/packets/out/PingPacketData";
+import {PongPacketData} from "../../libs/sql/packets/in/PongPacketData";
 import {array, getOr} from "../../logic/Utils";
 
 export class LatencyDisplay extends BernieComponent<any, any, {

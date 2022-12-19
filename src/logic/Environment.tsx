@@ -2,10 +2,10 @@ import React, {Dispatch, SetStateAction} from "react";
 import {v4} from "uuid";
 import {ConnectorConfig} from "./network/ConnectorConfig";
 import {App} from "./app/App";
-import {SocketSwitchProtocolDataPacket} from "../packets/in/SocketSwitchProtocolDataPacket";
+import {SocketSwitchProtocolDataPacket} from "../libs/sql/packets/in/SocketSwitchProtocolDataPacket";
 import {LatencySnapshot} from "./network/LatencySnapshot";
-import {PingPacketData} from "../packets/out/PingPacketData";
-import {PongPacketData} from "../packets/in/PongPacketData";
+import {PingPacketData} from "../libs/sql/packets/out/PingPacketData";
+import {PongPacketData} from "../libs/sql/packets/in/PongPacketData";
 import {getOr} from "./Utils";
 import {NetChannelConfig} from "./network/NetChannelConfig";
 

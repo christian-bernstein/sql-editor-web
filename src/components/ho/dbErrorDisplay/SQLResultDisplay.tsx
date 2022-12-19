@@ -22,8 +22,8 @@ import {Box} from "../../lo/Box";
 import React from "react";
 import {getOr} from "../../../logic/Utils";
 import {utilizeGlobalTheme} from "../../../logic/app/App";
-import {SQLCommandQueryResponsePacketData} from "../../../packets/in/SQLCommandQueryResponsePacketData";
-import {SQLCommandUpdateResponsePacketData} from "../../../packets/in/SQLCommandUpdateResponsePacketData";
+import {SQLCommandQueryResponsePacketData} from "../../../libs/sql/packets/in/SQLCommandQueryResponsePacketData";
+import {SQLCommandUpdateResponsePacketData} from "../../../libs/sql/packets/in/SQLCommandUpdateResponsePacketData";
 import {SessionCommandType} from "../../../logic/data/SessionCommandType";
 
 export type SQLResultDisplayProps = {

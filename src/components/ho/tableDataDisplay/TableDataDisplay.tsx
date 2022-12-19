@@ -18,7 +18,7 @@ import {Text, TextType} from "../../lo/Text";
 import {FlexDirection} from "../../../logic/style/FlexDirection";
 import {ObjectVisualMeaning} from "../../../logic/style/ObjectVisualMeaning";
 import {Themeable} from "../../../logic/style/Themeable";
-import {SQLCommandQueryResponsePacketData} from "../../../packets/in/SQLCommandQueryResponsePacketData";
+import {SQLCommandQueryResponsePacketData} from "../../../libs/sql/packets/in/SQLCommandQueryResponsePacketData";
 import {cs} from "../../../logic/state/State";
 import {RenderController} from "../../../libs/regex/RenderController";
 import {getOr} from "../../../logic/Utils";

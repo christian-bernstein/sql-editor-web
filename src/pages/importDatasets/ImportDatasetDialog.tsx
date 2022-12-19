@@ -34,7 +34,7 @@ import {format} from "sql-formatter";
 import {AppHeader} from "../../components/lo/AppHeader";
 import {Icon} from "../../components/lo/Icon";
 import {Default, Mobile} from "../../components/logic/Media";
-import {SQLCommandUpdateResponsePacketData} from "../../packets/in/SQLCommandUpdateResponsePacketData";
+import {SQLCommandUpdateResponsePacketData} from "../../libs/sql/packets/in/SQLCommandUpdateResponsePacketData";
 import _ from "lodash";
 import {SQLResultDisplay} from "../../components/ho/dbErrorDisplay/SQLResultDisplay";
 import {ContextCompound} from "../../components/ho/contextCompound/ContextCompound";
