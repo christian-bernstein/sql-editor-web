@@ -2,7 +2,7 @@ import {Folder} from "../data/Folder";
 import {AtlasDocument} from "../data/AtlasDocument";
 import {Category} from "../data/Category";
 import {IPredicate} from "./IPredicate";
-import {FormDataHub} from "../../../tests/epicure/components/FormDataHub";
+import {FormDataHub} from "../../epicure/components/FormDataHub";
 import {AtlasDB} from "./AtlasDB";
 import {IISOAdapter} from "../iso/IISOAdapter";
 

@@ -1,5 +1,5 @@
 import {BC} from "../../../logic/BernieComponent";
-import {FormDataHub} from "../../../tests/epicure/components/FormDataHub";
+import {FormDataHub} from "../../epicure/components/FormDataHub";
 import {Category} from "../data/Category";
 import {Folder} from "../data/Folder";
 import {Themeable} from "../../../logic/style/Themeable";
@@ -9,7 +9,7 @@ import {DrawerHeader} from "../../../components/lo/DrawerHeader";
 import {VM} from "../../../logic/style/ObjectVisualMeaning";
 import {percent, px} from "../../../logic/style/DimensionalMeasured";
 import {Button} from "../../../components/lo/Button";
-import {FormElement} from "../../../tests/epicure/components/FormElement";
+import {FormElement} from "../../epicure/components/FormElement";
 import {Input} from "../../../components/lo/Input";
 import {Group} from "../../../components/lo/Group";
 import {Orientation} from "../../../logic/style/Orientation";

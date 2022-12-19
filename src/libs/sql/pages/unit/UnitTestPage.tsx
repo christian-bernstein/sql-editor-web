@@ -27,7 +27,7 @@ import {App, defaultGlobalFallbackTheme, globalFallbackTheme, setGlobalFallbackT
 import {If} from "../../../../components/logic/If";
 import {Cursor} from "../../../../logic/style/Cursor";
 import {Icon} from "../../../../components/lo/Icon";
-import {FormDataHub} from "../../../../tests/epicure/components/FormDataHub";
+import {FormDataHub} from "../../../epicure/components/FormDataHub";
 import {SettingsElement} from "../../../../components/ho/settingsElement/SettingsElement";
 import {IOSwitch} from "../../../../components/lo/IOSwitch";
 import {SettingsGroup} from "../../../../components/lo/SettingsGroup";

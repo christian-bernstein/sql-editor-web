@@ -73,7 +73,7 @@ import {EditorLogicCompanion} from "../../../../logic/editor/EditorLogicCompanio
 import _ from "lodash";
 import {format} from "sql-formatter";
 import SwipeableViews from "react-swipeable-views";
-import {FormDataHub} from "../../../../tests/epicure/components/FormDataHub";
+import {FormDataHub} from "../../../epicure/components/FormDataHub";
 import {StructureTab} from "./tabs/structure/StructureTab";
 import {DatabaseScriptingTab} from "./tabs/scripting/DatabaseScriptingTab";
 

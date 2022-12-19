@@ -1,6 +1,6 @@
 import {BC} from "../../../logic/BernieComponent";
 import {Folder} from "../data/Folder";
-import {FormDataHub} from "../../../tests/epicure/components/FormDataHub";
+import {FormDataHub} from "../../epicure/components/FormDataHub";
 import {Assembly} from "../../../logic/assembly/Assembly";
 import {Themeable} from "../../../logic/style/Themeable";
 import {Category} from "../data/Category";

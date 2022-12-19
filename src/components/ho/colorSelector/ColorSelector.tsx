@@ -17,7 +17,7 @@ import {Separator} from "../../lo/Separator";
 import {LiteGrid} from "../../lo/LiteGrid";
 import {AF} from "../../logic/ArrayFragment";
 import {Cursor} from "../../../logic/style/Cursor";
-import {FormDataHub} from "../../../tests/epicure/components/FormDataHub";
+import {FormDataHub} from "../../../libs/epicure/components/FormDataHub";
 import {utilizeGlobalTheme} from "../../../logic/app/App";
 import {If} from "../../logic/If";
 import {Button} from "../../lo/Button";

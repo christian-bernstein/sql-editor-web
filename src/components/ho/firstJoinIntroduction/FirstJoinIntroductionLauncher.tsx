@@ -1,7 +1,7 @@
 import {BernieComponent} from "../../../logic/BernieComponent";
 import {StaticDrawerMenu} from "../../lo/StaticDrawerMenu";
 import {FirstJoinIntroduction} from "./FirstJoinIntroduction";
-import {FormDataHub} from "../../../tests/epicure/components/FormDataHub";
+import {FormDataHub} from "../../../libs/epicure/components/FormDataHub";
 
 export enum AcknowledgeState {
     ACKNOWLEDGED, REJECTED, NEUTRAL

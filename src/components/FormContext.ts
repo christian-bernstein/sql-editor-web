@@ -1,5 +1,5 @@
 import {Form} from "./Form";
-import {FormDataHub} from "../tests/epicure/components/FormDataHub";
+import {FormDataHub} from "../libs/epicure/components/FormDataHub";
 import {FormTransactionType} from "./FormTransactionType";
 
 export type FormContext = {

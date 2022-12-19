@@ -16,7 +16,7 @@ import {Flex} from "../../../components/lo/FlexBox";
 import {LiteGrid} from "../../../components/lo/LiteGrid";
 import {AF} from "../../../components/logic/ArrayFragment";
 import {BaseEntitySetupComponent} from "./BaseEntitySetupComponent";
-import {FormDataHub} from "../../../tests/epicure/components/FormDataHub";
+import {FormDataHub} from "../../epicure/components/FormDataHub";
 
 export interface FolderEditDialogActions {
     onSubmit(folder: Folder): void,

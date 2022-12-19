@@ -1,5 +1,5 @@
 import {EditorLogicCompanion} from "../../../../../logic/editor/EditorLogicCompanion";
-import {FormDataHub} from "../../../../../tests/epicure/components/FormDataHub";
+import {FormDataHub} from "../../../../epicure/components/FormDataHub";
 import {Editor} from "../Editor";
 import {ProjectInfoData} from "../../../../../logic/data/ProjectInfoData";
 

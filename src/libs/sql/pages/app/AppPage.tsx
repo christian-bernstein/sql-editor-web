@@ -40,7 +40,7 @@ import {SignupPage} from "../signup/SignupPage";
 import {Editor} from "../editor/Editor";
 import {LogPage} from "../log/LogPage";
 import {v4} from "uuid";
-import {EpicureSearchPage} from "../../../../tests/epicure/EpicureSearchPage";
+import {EpicureSearchPage} from "../../../epicure/EpicureSearchPage";
 import {DeleteProjectDialog} from "../deleteProject/DeleteProjectDialog";
 import {OpenMainDialogWithParamsProps} from "../../../../logic/misc/OpenMainDialogWithParamsProps";
 import {ServerInfoDialog} from "../serverInfo/ServerInfoDialog";

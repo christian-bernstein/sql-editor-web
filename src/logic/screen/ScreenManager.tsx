@@ -31,7 +31,7 @@ import {BadgedWrapper} from "../../components/lo/BadgedWrapper";
 import {Badge} from "../../components/lo/Badge";
 import DashboardPage from "../../libs/sql/pages/dashboard/DashboardPage";
 import {UnitTestPage} from "../../libs/sql/pages/unit/UnitTestPage";
-import {EpicureHubPage} from "../../tests/epicure/pages/hub/EpicureHubPage";
+import {EpicureHubPage} from "../../libs/epicure/pages/hub/EpicureHubPage";
 import {DocumentationPage} from "../../libs/sql/pages/documentation/DocumentationPage";
 
 export class ScreenManager {

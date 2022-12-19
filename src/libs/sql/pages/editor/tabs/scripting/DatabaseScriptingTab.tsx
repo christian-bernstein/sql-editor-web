@@ -2,7 +2,7 @@ import {BernieComponent} from "../../../../../../logic/BernieComponent";
 import {Text, TextType} from "../../../../../../components/lo/Text";
 import {percent, px} from "../../../../../../logic/style/DimensionalMeasured";
 import Editor from "@monaco-editor/react";
-import {FormDataHub} from "../../../../../../tests/epicure/components/FormDataHub";
+import {FormDataHub} from "../../../../../epicure/components/FormDataHub";
 import _ from "lodash";
 import {getOr} from "../../../../../../logic/Utils";
 import {FlexBox} from "../../../../../../components/lo/FlexBox";
