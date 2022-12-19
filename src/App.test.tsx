@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import {App} from './deprecated/App';
+import {App} from './libs/sql/deprecated/App';
 
 test('renders learn react link', () => {
   render(<App />);

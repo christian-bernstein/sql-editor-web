@@ -13,7 +13,7 @@ import Store from "../libs/sql/logic/misc/Store";
 import {Environment} from "../libs/sql/logic/Environment";
 import SwipeableViews from "react-swipeable-views";
 import {TabPanel} from "../libs/sql/logic/misc/TabPanel";
-import {App} from "../deprecated/App";
+import {App} from "../libs/sql/deprecated/App";
 
 const drawerBleeding = 56;
 
