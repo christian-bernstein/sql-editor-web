@@ -1,3 +1,8 @@
+sql-editor-banner.png
+
+![Banner](http://christian-bernstein.de/cdn/sql-editor-banner.png)
+
+
 <div align="center">
     <h1>SQL-Editor</h1>
     <a href="https://christian-bernstein.de/sql/1">SQL Editor</a>
