@@ -36,7 +36,7 @@ export class MainHeader extends BC<any, any, any> {
                         <NavElement href={"work"} title={"Work"}/>,
                         <NavElement href={"bernie-suite"} title={"Bernie suite"}/>
                     ]}/>,
-
+                    
                     <Centered children={
                         <span style={{
                             position: "relative"

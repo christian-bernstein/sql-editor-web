@@ -19,20 +19,31 @@ export class Screen extends BC<ScreenProps, any, any> {
           height: 100vh;
           background-color: white;
           position: relative;
+          display: flex;
+          justify-content: center;
         `;
 
         const Background = styled.div`
           position: absolute;
           width: 100%;
           height: 100%;
-          padding: 0 300px;
         `;
 
         const Content = styled.div`
           width: 100%;
           height: 100%;
-          padding: 0 300px;
           z-index: 100;
+          
+          padding-left: .75rem;
+          padding-right: .75rem;
+          
+          @media (min-width: 1400px) {
+            max-width: 1320px;
+          }
+
+          @media (min-width: 1580px) {
+            max-width: 1550px;
+          }
         `;
 
         return (

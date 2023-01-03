@@ -66,7 +66,7 @@ export class MainFooter extends BC<MainFooterProps, any, any> {
                             <Icon colored color={Color.ofHex("#000000")} icon={<GitHub/>}/>,
                             <Icon colored color={Color.ofHex("#000000")} icon={<LinkedIn/>}/>,
                             <Icon colored color={Color.ofHex("#000000")} icon={<Instagram/>}/>,
-                            <Icon colored color={Color.ofHex("#000000")} style={{ transform: "rotate(90deg)" }} icon={<Twitter/>}/>,
+                            <Icon colored color={Color.ofHex("#000000")} icon={<Twitter/>}/>,
                         ]}/>
                     ]}/>
                 }/>,
@@ -78,7 +78,7 @@ export class MainFooter extends BC<MainFooterProps, any, any> {
                     <AF elements={[
                         <Flex fh justifyContent={Justify.CENTER} elements={[
                             <Typography text={globals.copyrightNote} style={{
-                                fontSize: "14px",
+                                fontSize: "12px",
                                 fontWeight: 400,
                                 fontFamily: 'Poppins, sans-serif'
                             }}/>
@@ -86,7 +86,7 @@ export class MainFooter extends BC<MainFooterProps, any, any> {
                         <Flex fh fw align={Align.CENTER} justifyContent={Justify.CENTER} elements={[
                             <TextLink href={`mailto:${globals.contactEmail}`} visibleLink={
                                 <Typography text={globals.contactEmail} style={{
-                                    fontSize: "14px",
+                                    fontSize: "12px",
                                     fontWeight: 400,
                                     fontFamily: 'Poppins, sans-serif'
                                 }}/>
@@ -95,14 +95,14 @@ export class MainFooter extends BC<MainFooterProps, any, any> {
                         <FlexRow fh gap={px(51)} align={Align.CENTER} justifyContent={Justify.FLEX_END} elements={[
                             <TextLink href={"privacy"} visibleLink={
                                 <Typography text={"Privacy"} style={{
-                                    fontSize: "14px",
+                                    fontSize: "12px",
                                     fontWeight: 400,
                                     fontFamily: 'Poppins, sans-serif'
                                 }}/>
                             }/>,
                             <TextLink href={"imprint"} visibleLink={
                                 <Typography text={"Imprint"} style={{
-                                    fontSize: "14px",
+                                    fontSize: "12px",
                                     fontWeight: 400,
                                     fontFamily: 'Poppins, sans-serif'
                                 }}/>

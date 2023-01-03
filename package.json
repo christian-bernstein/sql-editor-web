@@ -36,6 +36,7 @@
     "@uiw/react-codemirror": "^4.3.2",
     "@uiw/react-md-editor": "^3.9.4",
     "apexcharts": "^3.28.3",
+    "axios": "^1.2.1",
     "bootstrap": "^4.6.0",
     "caniuse-lite": "^1.0.30001373",
     "codemirror": "^5.65.0",

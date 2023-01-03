@@ -54,7 +54,8 @@ export class PageNotFoundMain extends BC<any, any, any> {
 
                                         <Typography style={{
                                             marginTop: 4,
-                                            fontFamily: 'DM Serif Text'
+                                            fontFamily: 'DM Serif Text',
+                                            fontSize: "16px"
                                         }} text={"Sorry, the page you are looking for doesn't exist or has been removed"}/>,
 
                                         <Link children={<Button text={"Back to start"} style={{
