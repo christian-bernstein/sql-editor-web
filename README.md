@@ -1,5 +1,3 @@
-sql-editor-banner.png
-
 ![Banner](https://github.com/christian-bernstein/sql-editor-web/blob/48031558c42cdb084b49631138a75a8179821afb/sql-editor-banner.png?raw=true)
 
 
