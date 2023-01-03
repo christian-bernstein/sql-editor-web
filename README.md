@@ -4,7 +4,7 @@ sql-editor-banner.png
 
 
 <div align="center">
-    <h1>SQL-Editor</h1>
+    <h1>SQL-Editor Frontend</h1>
     <a href="https://christian-bernstein.de/sql/1">SQL Editor</a>
     <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
     <a href="https://christian-bernstein.de/sql/1">Download</a>
