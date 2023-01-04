@@ -37,7 +37,7 @@ I also plan on releasing a finished version of the editor to the public.
 it is not advised to use it for anything else then 'playing around'.)*
 
 ## Updates & Issues
-This project is developed semi-actively. Any issues will be resolved.
+This project is developed semi-actively. Any issue will be resolved.
 Use [GitHub Issues](https://github.com/christian-bernstein/sql-editor-web/issues) to let us know about any issues you encountered.
 Feature requests are more than welcome. [Write a feature request here](https://github.com/users/christian-bernstein/projects/3). 
 
