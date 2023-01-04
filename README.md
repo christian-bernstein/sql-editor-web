@@ -23,7 +23,7 @@ This repository contains the SQL-Editor frontend source
 I started the SQL-Editor project in mid 2021, based on an earlier project from 2019. The frontend and backend 
 (which is not open source yet) were part of an optional graduation project I made for my high school graduation in 2022.
 
-The goal was to create an easy-to-use, web-based environment for students at my school to learn and get comfortable 
+The objective was to create an easy-to-use, web-based environment for students at my school to learn and get comfortable 
 writing SQL and interacting with real databases. For me, it was a great opportunity to start diving into web development.
 
 ## Timeline
