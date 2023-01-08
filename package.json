@@ -55,7 +55,7 @@
     "lodash.debounce": "^4.0.8",
     "lord-icon-element": "^3.4.1",
     "lottie-web": "^5.9.4",
-    "moment": "^2.29.3",
+    "moment": "^2.29.4",
     "node-sass": "^8.0.0",
     "notistack": "^2.0.5",
     "npm": "^8.13.1",
