@@ -253,8 +253,8 @@ export class FolderComponent extends BC<FolderProps, any, any> {
                     if (parentFolder !== undefined) {
                         return (
                             <FlexRow align={Align.CENTER} gap={px()} elements={[
-                                <Description visualMeaning={VM.WARNING} coloredText text={parentFolder.title ?? "N/A"}/>,
-                                <Description visualMeaning={VM.UI_NO_HIGHLIGHT} coloredText text={"/"}/>,
+                                // <Description visualMeaning={VM.WARNING} coloredText text={parentFolder.title ?? "N/A"}/>,
+                                // <Description visualMeaning={VM.UI_NO_HIGHLIGHT} coloredText text={"/"}/>,
                                 <Description text={p.data.title ?? "N/A"}/>
                             ]}/>
                         );

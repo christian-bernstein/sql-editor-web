@@ -82,10 +82,11 @@ class MarkdownDocumentView extends BC<MarkdownDocumentViewProps, any, MarkdownDo
 
     componentDidMount() {
         super.componentDidMount();
-        this.updateRenderedMarkdownViewer();
         this.local.setStateWithChannels({
             sourceMirror: (JSON.parse(this.props.context.data.documentGetter().body as string) as MarkdownDocumentArchetype).source ?? "Cannot load.."
         }, ["source-updated"]);
+
+        this.updateRenderedMarkdownViewer();
     }
 
     private getMarkdownViewerReloadPolicyConfig(): MarkdownViewerReloadPolicyConfig{

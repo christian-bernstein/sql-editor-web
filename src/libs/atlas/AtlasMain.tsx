@@ -395,7 +395,7 @@ export class AtlasMain extends BC<AtlasMainProps, any, AtlasMainLocalState> {
                                                         // TODO: Rerender
                                                     },
                                                     entry: {
-                                                        id: "document-view-background-image",
+                                                        id: "atlas-document-background",
                                                         value: ctx.dataURL ?? "error"
                                                     }
                                                 }));
