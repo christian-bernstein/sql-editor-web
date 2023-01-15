@@ -56,9 +56,9 @@ export class Queryable<T> {
     }
 
     private changeQueryState(to: DataQueryState) {
-        console.debug("re-rendering", this.config.listeners.map(channelBase => (
-            Queryable.channels(channelBase, to)[0]
-        )), "with data", this.data, "State will be", to)
+        // console.debug("re-rendering", this.config.listeners.map(channelBase => (
+        //     Queryable.channels(channelBase, to)[0]
+        // )), "with data", this.data, "State will be", to)
         // this.config.component().ifActive(component => console.error("still active"))
         this.state = to;
         this.config.component().rerender(
@@ -71,12 +71,12 @@ export class Queryable<T> {
     private runQuery() {
         try {
             this.config.process(data => {
-                console.info("Q: Query successful");
+                // console.info("Q: Query successful");
                 this.data = data;
                 this.checksum = undefined;
                 this.changeQueryState(DataQueryState.SUCCESS);
             }, (error) => {
-                console.info("Q: Query rejected", error);
+                // console.info("Q: Query rejected", error);
                 this.error = error;
                 this.checksum = undefined;
                 this.changeQueryState(DataQueryState.ERROR);

@@ -51,8 +51,10 @@ import {
     Api,
     ApiRounded,
     Apps,
-    DarkModeRounded, DesignServicesRounded,
-    ErrorRounded, GridViewRounded,
+    DarkModeRounded,
+    DesignServicesRounded,
+    ErrorRounded,
+    GridViewRounded,
     LightModeRounded,
     PlayArrowRounded,
     RefreshRounded
@@ -62,6 +64,9 @@ import {CircularProgress} from "@mui/material";
 import {HyperionTest} from "./tests/HyperionTest";
 import {HyperionImageTest} from "./tests/HyperionImageTest";
 import {DiffStreamerTest} from "./tests/DiffStreamerTest";
+import {AnalysisFacetChip} from "../../../../driver/components/AnalysisFacetChip";
+import {FlexWrap} from "../../logic/style/FlexWrap";
+import {LiteGrid} from "../../components/lo/LiteGrid";
 
 export type UnitTestPageLocalState = {
     fdh: FormDataHub
@@ -465,40 +470,23 @@ export class UnitTestPage extends BernieComponent<any, any, UnitTestPageLocalSta
 
                                                     // this.a("toolbar"),
 
+                                                    <LiteGrid style={{
+                                                        gridGap: theme.gaps.smallGab.css(),
+                                                        gridTemplateColumns: "repeat(auto-fit, minmax(100px, auto))"
+                                                    }} children={
+                                                        <AF elements={[
+                                                            <AnalysisFacetChip facetID={"test"}/>,
+                                                            <AnalysisFacetChip facetID={"test"}/>,
+                                                            <AnalysisFacetChip facetID={"test"}/>,
+                                                            <AnalysisFacetChip facetID={"test"}/>,
+                                                            <AnalysisFacetChip facetID={"test"}/>,
+                                                        ]}/>
+                                                    }/>,
+
+
 
                                                     this.a("unit-selector")
                                                 ]}/>
-
-                                                {/*
-                                                <Flex width={percent(100)}>
-                                                    <SettingsGroup title={"UI settings"} elements={[
-                                                        <SettingsElement
-                                                            title={"Enable pure mode"}
-                                                            description={"Pure mode hides unnecessary UI elements from the unit-test page"}
-                                                            groupDisplayMode
-                                                            appendixGenerator={element => {
-                                                                return this.component(local => {
-                                                                    const pure = this.isPure();
-                                                                    return (
-                                                                        <IOSwitch checked={pure} onChange={(event, checked) => {
-                                                                            this.togglePureMode(checked, 100);
-                                                                        }}/>
-                                                                    );
-                                                                }, "data");
-                                                            }}
-                                                            onClick={element => {
-                                                                this.togglePureMode(undefined);
-                                                            }}
-                                                            iconConfig={{
-                                                                enable: true,
-                                                                iconGenerator: element => (
-                                                                    <Icon icon={<ControlsIcon/>}/>
-                                                                )
-                                                            }}
-                                                        />
-                                                    ]}/>
-                                                </Flex>
-                                                */}
                                             </Flex>
                                         );
                                     }}/>

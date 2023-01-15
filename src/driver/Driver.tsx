@@ -6,12 +6,24 @@ import {getOr} from "../libs/sql/logic/Utils";
 import {AppPage} from "../libs/sql/pages/app/AppPage";
 import {PortfolioMain} from "../libs/portfolio/PortfolioMain";
 import {PageNotFoundMain} from "../libs/pageNotFound/PageNotFoundMain";
+import {AnalyticsManager} from "./AnalyticsManager";
 
 export class Driver {
 
     public static readonly programRegistry: Map<string, LocatableProgram> = new Map<string, LocatableProgram>();
 
     public static readonly ERROR_404_PROGRAM_ID = "err_404"
+
+    private static singleton: Driver | undefined  = undefined;
+
+    public readonly analyticsManager: AnalyticsManager = new AnalyticsManager();
+
+    public static driver(): Driver {
+        if (Driver.singleton === undefined) {
+            Driver.singleton = new Driver();
+        }
+        return Driver.singleton;
+    }
 
     public static boot(): void {
 
@@ -78,4 +90,14 @@ export class Driver {
             path: "*",
         });
     }
+}
+
+export function driver(): Driver {
+    return Driver.driver();
+}
+
+export function withDriver(action: (driver: Driver) => void): Driver {
+    const d = Driver.driver();
+    action(d);
+    return d;
 }

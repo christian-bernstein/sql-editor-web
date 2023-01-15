@@ -689,17 +689,18 @@ export namespace Themeable {
 
     export const blackTheme = theme({
         colors: createColorPallet({
-            backgroundColor: Color.ofHex("#000000"),
-            backgroundHighlightColor200: Color.ofHex("#222222"),
+            backgroundColor: Color.ofHex("#121212"),
+            backgroundHighlightColor200: Color.ofHex("#191919"),
             backgroundHighlightColor: Color.ofHex("#171717"),
-            backgroundColorOuter: Color.ofHex("#171717")
+            backgroundColorOuter: Color.ofHex("#171717"),
+            primaryColor: Color.ofHex("#FFCE61"),
+            borderPrimaryColor: Color.ofHex("#313131")
         }, darkTritanopiaThemePallet)
     });
 
     export const malaPallet = createColorPallet({
         backgroundColor: Color.ofHex("#000000"),
         backgroundHighlightColor200: Color.ofHex("#222222"),
-        // backgroundHighlightColor: Color.ofHex("#171717"),
         backgroundHighlightColor: Color.ofHex("#ffffff"),
         backgroundColorOuter: Color.ofHex("#171717"),
 
