@@ -19,7 +19,7 @@ The objective was to create an easy-to-use, web-based environment for students a
 writing SQL and interacting with real databases. For me, it was a great opportunity to start diving into web development.
 
 ## Updates & Issues
-This project is archived. I won't continue adding new features and resolve security vulnerabilities and bugs.
+This project is archived. I won't continue adding new features or resolve security vulnerabilities and bugs.
 
 
 ## Fun Metrics
